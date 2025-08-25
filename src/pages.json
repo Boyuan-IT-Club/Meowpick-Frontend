@@ -1,0 +1,79 @@
+{
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "",
+    "navigationStyle": "custom",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "pages": [
+    {
+      "path": "pages/home/home",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/course/index/index",
+      "style": {}
+    },
+    {
+      "path": "pages/course/comment/index",
+      "style": {
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/find/index/index",
+      "style": {}
+    },
+    {
+      "path": "pages/find/choose/index",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/find/choose/teacher",
+      "style": {}
+    },
+    {
+      "path": "pages/my-comments/my-comments",
+      "style": {
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/home/letter",
+      "style": {
+        "navigationBarTitleText": "给用户的一封信",
+        "navigationStyle": "default"
+      }
+    },
+    {
+      "path": "pages/home/update-log",
+      "style": {
+        "navigationBarTitleText": "版本更新日志",
+        "navigationStyle": "default"
+      }
+    },
+    {
+      "path": "pages/web-frame/web-frame"
+    }
+  ],
+  "tabBar": {
+    "color": "#ffffff",
+    "selectedColor": "#ffffff",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/find/index/index",
+        "text": "搜索"
+      },
+      {
+        "pagePath": "pages/my-comments/my-comments",
+        "text": "我的吐槽"
+      }
+    ]
+  }
+}

@@ -1,0 +1,174 @@
+$card: #ffffffb3;
+$main: #191919;
+$second: #818181;
+.title {
+  color: $main;
+  @apply
+  text-sm font-bold
+  ;
+}
+
+.course-box {
+  @apply
+  px-2 pt-2 text-white
+  ;
+
+  .title {
+    @apply
+    text-white
+    font-bold mb-2
+    ;
+  }
+}
+
+.course_bottom {
+  @apply
+  bg-white
+  p-3
+  rounded-tl-xl rounded-tr-xl
+
+  ;
+}
+
+.new-box {
+  position: sticky;
+  top: 95%;
+  left: 90%;
+  z-index: 1;
+
+  @apply
+  flex justify-center items-center
+  w-9 h-9
+  rounded-full
+  bg-blue-200
+  ;
+}
+
+
+.action {
+  @apply
+  ml-28
+  flex justify-between
+  my-4
+  ;
+
+  .action_btn {
+    color: $main;
+    @apply
+    py-2.5 px-14
+    rounded-lg
+    bg-white
+    text-sm font-bold;
+
+    &.active {
+      color: white;
+      backdrop-filter: blur(10px);
+      background-color: rgba(255, 255, 255, .23);
+    }
+  }
+}
+
+.action-show {
+  @apply
+  ml-28
+  flex justify-between items-center
+  my-4 py-1.5 px-1.5 rounded
+  ;
+
+  color: $card;
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, .23);
+}
+
+.action-score {
+  @apply
+  flex justify-between items-center
+  ;
+}
+
+.score {
+  @apply
+  relative
+  my-2 p-2
+  rounded-lg;
+  backdrop-filter: blur(10px);
+  background-color: rgba(0, 0, 0, 0.23);
+
+
+  .no-score {
+    @apply
+    h-24
+    flex justify-center items-center
+    ;
+  }
+
+  .score-number {
+    color: $card;
+    font-size: .83rem;
+  }
+
+  .line {
+    height: 1px;
+    background-color: #8181813b;
+    @apply
+    w-full my-2;
+  }
+
+  .tips {
+    @apply
+    flex
+    text-sm;
+
+    .tips-label {
+      @apply
+      mx-2;
+    }
+  }
+
+}
+
+.intro {
+  @apply
+  mt-5 mb-6;
+  .content {
+    @apply
+    my-2;
+  }
+}
+
+.teacher {
+  @apply
+  mt-8 mb-5;
+  .teacher-list {
+    @apply
+    min-h-24 my-2;
+  }
+}
+
+.short-comment {
+  background-color: $card;
+  @apply
+  py-3 px-2 my-3
+  rounded-lg;
+
+  .title {
+    @apply font-bold;
+  }
+}
+
+.trend {
+  @apply
+  my-3
+  ;
+
+  .title {
+    @apply my-2;
+  }
+
+  .list {
+    @apply
+    h-24
+    bg-green-200
+    ;
+  }
+}

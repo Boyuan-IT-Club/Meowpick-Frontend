@@ -1,0 +1,66 @@
+.index {
+  @apply
+  bg-white p-1 my-2
+  rounded
+  ;
+}
+
+.header {
+  font-size: .8rem;
+  @apply
+  flex justify-between
+  ;
+
+  .user {
+    @apply
+    flex
+    ;
+  }
+
+  .avatar {
+    @apply
+    rounded-full overflow-hidden
+    w-7 h-7
+    mr-4
+    ;
+    image {
+      @apply
+      w-full h-full
+      ;
+    }
+  }
+
+  .time {
+    @apply
+    text-gray-400
+    ;
+  }
+}
+
+.text {
+  @apply
+  py-2 px-4
+  ;
+}
+
+.operations {
+  @apply
+  flex justify-between
+  ;
+
+  .item {
+    @apply
+    flex
+    ;
+
+    .icon {
+      @apply
+      ml-2
+      ;
+    }
+
+    &.active {
+      color: crimson;
+    }
+  }
+}

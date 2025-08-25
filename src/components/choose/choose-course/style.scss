@@ -1,0 +1,61 @@
+@import "src/main";
+.index {
+  @apply
+  relative
+  p-3 mb-5
+  ;
+}
+
+.imgs {
+  @apply
+  flex
+  mb-3
+  ;
+
+  .page-photo {
+    @apply
+    w-28 h-36 rounded-xl
+    overflow-hidden
+    ;
+
+    backdrop-filter: blur(10px);
+    background-color: rgba(0, 0, 0, 0.03);
+  }
+
+  .course-time {
+    @apply
+    flex-1 rounded-xl overflow-hidden
+    ml-5
+    ;
+
+    backdrop-filter: blur(10px);
+    background-color: rgba(0, 0, 0, 0.03);
+  }
+}
+
+.header {
+  @apply
+  mb-3
+  ;
+}
+
+.score {
+  @apply
+  flex
+  ;
+
+  .num {
+    color: orange;
+  }
+
+  .rate {
+    @apply
+    mr-2
+    ;
+  }
+}
+
+.desc {
+  color: $second;
+  font-size: .84rem;
+}

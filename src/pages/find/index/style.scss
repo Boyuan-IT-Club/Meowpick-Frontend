@@ -1,0 +1,74 @@
+.content {
+  @apply
+  relative
+  min-h-full px-3 pt-2
+  bg-transparent
+  ;
+
+  image {
+    top: 35%;
+    right: 0;
+    transform: translatey(-50%);
+
+    @apply
+    z-10
+    absolute
+    ;
+  }
+
+  .input {
+    @apply
+    rounded-lg
+    overflow-hidden
+    ;
+  }
+
+  .recent {
+    @apply
+    py-2 mt-2
+    ;
+
+    .title {
+      @apply
+      font-bold
+      ;
+    }
+
+    .text {
+
+      .item {
+        @apply
+        my-3
+        flex justify-between
+        ;
+      }
+
+      .txt {
+        @apply
+        flex-1;
+      }
+
+      .icon {
+        @apply
+        flex justify-center items-center
+        w-8
+        text-red-800 font-bold
+        ;
+      }
+    }
+
+    .user-list {
+      @apply
+      flex
+      h-20 my-2
+      bg-green-200
+      ;
+    }
+  }
+}
+
+.find, .category, .recommend {
+  @apply
+  relative z-30
+  ;
+}

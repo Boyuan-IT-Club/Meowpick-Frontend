@@ -1,0 +1,36 @@
+$card: #ffffffb3;
+$main: #191919;
+$second: #818181;
+.nut-tab-pane {
+  padding: 0 !important;
+  background-color: transparent !important;
+}
+.top-bar {
+  position: absolute;
+  top: 0;
+  background-color: #b70030;
+  width: 100vw;
+  height: 26vw;
+  z-index: 2;
+  .go-back {
+    position: absolute;
+    top: 15vw;
+    left: 5vw;
+    width: 100vw;
+    display: flex;
+    flex-direction: row;
+    .txt {
+      color: #ffffff;
+      width: 100vw;
+      font-size: 5vw;
+      margin-left: 2vw;
+      margin-top: 0.5vw;
+      letter-spacing: 0.2vw;
+      font-weight: bold;
+    }
+    .icon {
+      width: 5vw;
+      height: 8.53vw;
+    }
+  }
+}

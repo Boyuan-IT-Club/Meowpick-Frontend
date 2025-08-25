@@ -1,0 +1,14 @@
+.index {
+  @apply
+  p-4
+  ;
+  margin-bottom: env(safe-area-inset-bottom);
+  height: 35vh;
+  padding-top: 20px;
+}
+
+.footer {
+  @apply
+  flex justify-between
+  ;
+}

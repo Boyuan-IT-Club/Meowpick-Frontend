@@ -1,0 +1,37 @@
+name: build
+
+on:
+  push:
+    tags: [ 'v*.*.*' ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+
+jobs:
+
+  build-mp:
+    env:
+      UPLOAD_KEY: ${{ secrets.UPLOAD_KEY }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build Mini Program
+        run: yarn install && yarn api && yarn build:mp-weixin
+      - name: Upload artifact
+        run: node scripts/upload.mjs
+#      - name: Send Change Log
+#        uses: xh-polaris/send-changelog@v1
+#        with:
+#          webhook_url: ${{ secrets.WEBHOOK_URL }}
+#          title: MeowChat小程序更新日志

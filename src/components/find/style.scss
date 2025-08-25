@@ -1,0 +1,42 @@
+.wrapper {
+  background-color: #EDEDEF;
+  @apply
+  rounded-tl-lg rounded-tr-lg
+  shadow overflow-hidden
+  ;
+
+  .input-box {
+    @apply
+    flex
+    ;
+
+    .icon {
+      @apply
+      relative
+      flex justify-center items-center
+      w-14 h-14
+      text-gray-700
+      ;
+
+      &::after {
+        content: "";
+        width: 1px;
+        height: 30%;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+        @apply
+        absolute
+        bg-gray-400
+        ;
+      }
+    }
+  }
+
+  .search-text {
+    @apply
+    flex-1 h-14 px-3 rounded
+    text-gray-700
+    ;
+  }
+}
