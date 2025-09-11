@@ -28,7 +28,9 @@
         >
           <image :src="item.icon" class="emoji" />
           <text class="tag-txt">{{ item.text }}</text>
+          <image src="@/images/deletetag.png" class="delete-icon" />
         </view>
+
       </view>
     </view>
     <view class="tag-box">
@@ -95,28 +97,26 @@ const goBack = () => {
   });
 };
 function AddTags(text: string) {
-  for (const tag of TotalTags.value) {
-    if (tag.text === text && !tag.isSelected && SelectedTags.value.length < 4) {
-      tag.isSelected = true;
-      SelectedTags.value.push(tag);
-      tags.value.push(tag.text);
-      break;
-    }
-    if (SelectedTags.value.length === 4) {
+  if (SelectedTags.value.length >= 4) {
+    const isAlreadySelected = SelectedTags.value.some(tag => tag.text === text);
+    if (!isAlreadySelected) {
       uni.showToast({
         title: "最多添加4个",
         icon: "none"
       });
     }
+    return;
   }
-  // for (const tag of tags) {
-  //     if (tag.text === text && tag.isSelected) {
-  //         tag.isSelected = false;
-  //         SelectedTags.value = SelectedTags.value.filter((selectedTag) => selectedTag.text !== text);
-  //         break;
-  //     }
-  // }
+  for (const tag of TotalTags.value) {
+    if (tag.text === text && !tag.isSelected) {
+      tag.isSelected = true;
+      SelectedTags.value.push(tag);
+      tags.value.push(tag.text);
+      break;
+    }
+  }
 }
+
 function RemoveTags(text: string) {
   for (const tag of SelectedTags.value) {
     if (tag.text === text && tag.isSelected) {
@@ -131,8 +131,8 @@ function RemoveTags(text: string) {
 }
 
 const commit = async () => {
-  if (isClicked.value) return;
-  if (!text.value) {
+  if (isClicked.value) return; //防重复提交
+  if (!text.value) { //验证内容是否为空
     uni.showToast({
       title: "未填写吐槽",
       duration: 2000,
@@ -142,7 +142,7 @@ const commit = async () => {
   }
 
   isClicked.value = true;
-  try {
+  try { //提交评价
     console.log(id.value, {
       text: text.value,
       tags: tags.value
@@ -154,7 +154,7 @@ const commit = async () => {
       tags: tags.value
     });
 
-    uni.navigateBack({
+    uni.navigateBack({ //提交成功后返回课程详情界面
       delta: 1
     });
   } catch (error) {
@@ -240,31 +240,38 @@ const commit = async () => {
       }
     }
     .selected-box {
-      display: flex;
-      flex-wrap: wrap;
-      width: 85vw;
-      margin-left: 3vw;
-      .tag-item {
-        background: #f1f1f1;
-        display: flex;
-        flex-direction: row;
-        padding: 1vw;
-        border-radius: 2vw;
-        width: 18vw;
-        margin-left: 2vw;
-        margin-top: 2vw;
-        .emoji {
-          width: 6.4vw;
-          height: 6.4vw;
-        }
-        .tag-txt {
-          margin-top: 1vw;
-          margin-left: 1vw;
-          font-size: 4vw;
-          white-space: nowrap;
-        }
-      }
+  .tag-item {
+    position: relative;  /* 方便叉号定位 */
+    background: #f1f1f1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 1vw;
+    border-radius: 2vw;
+    width: 18vw;
+    margin-left: 2vw;
+    margin-top: 2vw;
+
+    .emoji {
+      width: 6.4vw;
+      height: 6.4vw;
     }
+    .tag-txt {
+      margin-top: 1vw;
+      margin-left: 1vw;
+      font-size: 4vw;
+      white-space: nowrap;
+    }
+    .delete-icon {
+      position: absolute;
+      top: -2vw;
+      right: -2vw;
+      width: 4vw;
+      height: 4vw;
+    }
+  }
+}
+
   }
   .tag-box {
     border-style: dashed; /* 设置边框样式为虚线 */
