@@ -62,7 +62,7 @@ export function useChoose() {
     post: []
   });
   const suggestList = ref<object[]>([]);
-  const page = ref(1);
+  const page = ref(0);
 
   function jump(id: string) {
     // map[type.value].setData(item)
@@ -91,7 +91,11 @@ export function useChoose() {
         pageNum: page,
         pageSize: 15
       }).then((res) => {
-        suggestList.value = [...suggestList.value, ...res.data.payload];
+        suggestList.value = res.data.data.list.map((item, index) => ({
+          data: item.name,        // name → data
+          type: item.type,        // 保留英文类型
+          id: index               // 给每条数据一个唯一 id
+        }));
       });
     }
   }
