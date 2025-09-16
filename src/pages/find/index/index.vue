@@ -25,8 +25,8 @@
         <view class="text">
           <view class="box">
             <view v-for="item in recent" class="item">
-              <view class="txt" @click="jump2Recent(item.text!)">
-                {{ item.text }}
+              <view class="txt" @click="jump2Recent(item.query!)">
+                {{ item.query }}
               </view>
               <!--                                <div class="icon" @click="commitInput(item.text!)">↖</div>-->
             </view>
@@ -47,10 +47,10 @@ const tokenStore = useTokenStore();
 const recentText = ref("");
 const hot = ["思政类", "英语类", "体育类", "劳动与创造"];
 
-const recent = shallowRef<SearchHistoryVO[]>([]);
+const recent = ref<SearchHistoryVO[]>([]);
 onShow(() => {
   http.SearchController.recent().then((res) => {
-    recent.value = res.data.payload;
+    recent.value = res.data.data.history;
   });
   uni.hideTabBar();
 });
