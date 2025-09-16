@@ -62,7 +62,7 @@ export function useChoose() {
     post: []
   });
   const suggestList = ref<object[]>([]);
-  const page = ref(0);
+  const page = ref(1);
 
   function jump(id: string) {
     // map[type.value].setData(item)
@@ -87,7 +87,7 @@ export function useChoose() {
   function suggestContent(page: number) {
     if (keyword.value) {
       http.SearchController.suggest({
-        search: keyword.value,
+        keyword: keyword.value,
         pageNum: page,
         pageSize: 15
       }).then((res) => {
