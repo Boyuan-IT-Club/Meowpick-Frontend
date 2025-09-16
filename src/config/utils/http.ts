@@ -19,10 +19,10 @@ class HttpRequest<
       method: "POST",
       body: data,
       type: ContentType.Json,
-      baseURL: "https://meowchat.xhpolaris.com/auth"
+      baseURL: import.meta.env.VITE_SERVER_HOST_PORT
     });
-    useTokenStore().store(resp.data.accessToken);
-    console.log(resp.data.accessToken);
+    useTokenStore().store(resp.data.data.accessToken);
+    console.log(resp.data.data.accessToken);
   }
 }
 
@@ -36,7 +36,7 @@ const api = new HttpRequest({
 api.instance.interceptors.request.use(
     (config) => {
       const backendEnv = ref(uni.getStorageSync(StorageKeys.BackendEnv));
-      config.headers![process.env.VITE_TOKEN_NAME] = `Berry ${
+      config.headers![process.env.VITE_TOKEN_NAME] = `Bearer ${
           useTokenStore().token
       }`;
       config.headers!["X-Xh-Env"] = backendEnv.value;
