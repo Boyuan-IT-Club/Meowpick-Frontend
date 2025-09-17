@@ -39,7 +39,7 @@ const showPanel2 = ref(false);
 const totalComment = ref(0);
 onShow(() => {
   http.SearchController.total().then((res) => {
-    totalComment.value = res.data.payload;
+    totalComment.value = res.data.data.count;
   });
 });
 
