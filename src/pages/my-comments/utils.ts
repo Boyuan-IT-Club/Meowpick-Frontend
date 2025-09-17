@@ -10,11 +10,11 @@ export function useCourseComment() {
     }
     if (query) {
       http.CommentController.history({ page, size: 5 }).then((res) => {
-        res.data.payload.rows?.forEach((comment) => {
+        res.data.data.rows?.forEach((comment) => {
           list.value[comment.id!] = comment;
           console.log(comment.uid);
         });
-        query = Object.values(list.value).length < res.data.payload.total!;
+        query = Object.values(list.value).length < res.data.data.total!;
       });
     }
   }
