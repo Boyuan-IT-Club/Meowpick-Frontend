@@ -21,8 +21,8 @@
           <text class="tag-txt">{{ item }}</text>
         </view>
       </view>
-      <view class="time">{{ format(props.data.crateAt) }}</view>
-      <view class="content">{{ props.data.text }}</view>
+      <view class="time">{{ format(props.data.createdAt) }}</view>
+      <view class="content">{{ props.data.content }}</view>
       <view class="like">
         <image
           :src="data.relation?.like ? Liked : Like"

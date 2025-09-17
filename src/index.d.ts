@@ -8,11 +8,9 @@ declare global {
   }
 
   type JsonRet<T> = {
-    state: {
-      msg: string;
-      code: number;
-    };
-    payload: T;
+    msg: string;
+    code: number;
+    data: T;
   };
 
   interface InitializeComponent {
