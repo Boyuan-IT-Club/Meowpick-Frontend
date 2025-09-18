@@ -91,7 +91,7 @@ export function useChoose() {
         pageNum: page,
         pageSize: 15
       }).then((res) => {
-        suggestList.value = res.data.data.list.map((item, index) => ({
+        suggestList.value = res.data.data.suggestions.map((item, index) => ({
           data: item.name,        // name → data
           type: item.type,        // 保留英文类型
           id: index               // 给每条数据一个唯一 id

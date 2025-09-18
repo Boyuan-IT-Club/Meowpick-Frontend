@@ -50,7 +50,7 @@ const hot = ["思政类", "英语类", "体育类", "劳动与创造"];
 const recent = ref<SearchHistoryVO[]>([]);
 onShow(() => {
   http.SearchController.recent().then((res) => {
-    recent.value = res.data.data.history;
+    recent.value = res.data.data.histories;
   });
   uni.hideTabBar();
 });
