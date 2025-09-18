@@ -12,9 +12,9 @@ export function useCourse() {
     // ins.id = data
     id.value = data;
     http.CourseController.get(data).then((res) => {
-      course.value = res.data.payload;
+      course.value = res.data.data;
 
-      http.TeacherController.getBatch(res.data.payload.data?.teachers!).then(
+      http.TeacherController.getBatch(res.data.data.data?.teachers!).then(
         (res) => {
           teachers.value = res.data.payload;
         }

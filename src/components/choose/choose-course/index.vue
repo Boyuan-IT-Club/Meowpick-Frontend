@@ -3,23 +3,23 @@
     <div class="search-result">
       <view class="title">
         <view class="name">
-          {{ props.data?.data.name }}
+          {{ props.data?.name }}
         </view>
-        <view class="dept-name">{{ props.data?.data.category }}</view>
+        <view class="dept-name">{{ props.data?.category }}</view>
       </view>
       <view class="information">
         <view class="circle" />
-        <view class="department">{{ props.data?.data.department }}</view>
+        <view class="department">{{ props.data?.department }}</view>
         <view class="circle" />
         <view
-          v-for="item of props.data?.data?.teacherList"
+          v-for="item of props.data?.teacherList"
           class="instructor"
           >{{ item.name }}</view
         >
       </view>
       <view class="tip">
         <view
-          v-for="item of getTop3List(props.data.data?.tagCount!)"
+          v-for="item of getTop3List(props.data?.tagCount!)"
           class="item"
         >
           <image class="emoji" :src="Emoji(item.tag)" />
