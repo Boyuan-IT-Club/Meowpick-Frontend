@@ -12,8 +12,8 @@
           </template>
         </view>
       </view>
-      <view class="time">{{ format(data.crateAt) }}</view>
-      <view class="content">{{ data.text }}</view>
+      <view class="time">{{ format(data.createdAt) }}</view>
+      <view class="content">{{ data.content }}</view>
       <view class="like">
         <image
           :src="data.relation?.like ? Liked : Like"

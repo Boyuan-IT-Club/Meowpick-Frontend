@@ -15,10 +15,10 @@ export function useCourseComment(p: Props) {
     }
     if (query) {
       http.CommentController.query({ id, page }).then((res) => {
-        res.data.data.rows?.forEach((comment) => {
+        res.data.data.comments?.forEach((comment) => {
           list.value[comment.id!] = comment;
         });
-        query = Object.values(list.value).length < res.data.data.count!;
+        query = Object.values(list.value).length < res.data.data.total!;
       });
     }
   }
