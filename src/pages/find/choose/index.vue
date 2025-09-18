@@ -5,8 +5,9 @@
       <ul>
         <li
           v-for="item in rows.course"
+          :key="item.id"
           class="course-li"
-          @click="jump(item.data?.id!)"
+          @click="jump(item.id)"
         >
           <choose-course :data="item" />
         </li>

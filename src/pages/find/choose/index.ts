@@ -43,7 +43,7 @@ export function useChoose() {
       }).then((res) => {
         rows.value[type.value] = [
           ...rows.value[type.value]!,
-          ...res.data.data.histories!
+          ...res.data.data.courses!
         ];
         console.log("搜索信息：", rows.value[type.value]);
       });
