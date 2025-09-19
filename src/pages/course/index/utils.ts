@@ -18,8 +18,8 @@ export function useCourseComment(p: Props) {
         res.data.data.comments?.forEach((comment) => {
           list.value[comment.id!] = {
             ...comment,
-            like: comment.relation?.like ?? false,
-            likeCnt: comment.relation?.like_cnt ?? 0
+            like: comment.like ?? false,
+            likeCnt: comment.likeCnt ?? 0
           };
         });
         query = Object.values(list.value).length < res.data.data.total!;
