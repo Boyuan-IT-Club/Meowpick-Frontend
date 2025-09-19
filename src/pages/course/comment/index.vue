@@ -148,9 +148,10 @@ const commit = async () => {
       tags: tags.value
     });
 
+    // 修改请求参数结构以匹配新的后端接口
     const res = await http.CommentController.add({
-      target: id.value,
-      text: text.value,
+      courseId: id.value,  // 将 target 改为 courseId
+      content: text.value, // 将 text 改为 content
       tags: tags.value
     });
 
