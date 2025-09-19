@@ -16,11 +16,11 @@
       <view class="content">{{ data.content }}</view>
       <view class="like">
         <image
-          :src="data.relation?.like ? Liked : Like"
+          :src="data.like ? Liked : Like"
           class="like-icon"
           @click="like"
         />
-        <view class="like-num">{{ data.relation?.like_cnt }}</view>
+        <view class="like-num">{{ data.likeCnt }}</view>
       </view>
     </view>
   </view>

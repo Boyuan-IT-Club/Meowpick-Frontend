@@ -16,7 +16,11 @@ export function useCourseComment(p: Props) {
     if (query) {
       http.CommentController.query({ id, page }).then((res) => {
         res.data.data.comments?.forEach((comment) => {
-          list.value[comment.id!] = comment;
+          list.value[comment.id!] = {
+            ...comment,
+            like: comment.relation?.like ?? false,
+            likeCnt: comment.relation?.like_cnt ?? 0
+          };
         });
         query = Object.values(list.value).length < res.data.data.total!;
       });
@@ -24,10 +28,8 @@ export function useCourseComment(p: Props) {
   }
 
   function like(target: string) {
-    list.value[target].relation!.like = !list.value[target].relation!.like;
-    list.value[target].relation!.like_cnt! += list.value[target].relation!.like
-      ? 1
-      : -1;
+    list.value[target].like = !list.value[target].like;
+    list.value[target].likeCnt! += list.value[target].like ? 1 : -1;
     http.ActionController.like(target, {});
   }
 
