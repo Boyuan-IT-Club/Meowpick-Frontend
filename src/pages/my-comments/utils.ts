@@ -1,29 +1,32 @@
 import type { CommentVO } from "@/api/data-contracts";
 export function useCourseComment() {
   const page = shallowRef(0);
-  const list = ref<{ [key: string]: CommentVO }>({});
+  const list = ref<CommentVO[]>([]);
   let query = true;
 
   function fetch(page: number) {
-    if (page == 0) {
+    if (page === 0) {
       query = true;
+      list.value = [];
     }
+
     if (query) {
       http.CommentController.history({ page, size: 5 }).then((res) => {
-        res.data.data.rows?.forEach((comment) => {
-          list.value[comment.id!] = comment;
-          console.log(comment.uid);
+        res.data.data.comments?.forEach((comment) => {
+          list.value.push(comment);
         });
-        query = Object.values(list.value).length < res.data.data.total!;
+        query = list.value.length < res.data.data.total!;
       });
     }
   }
 
   function like(target: string) {
-    list.value[target].relation!.like = !list.value[target].relation!.like;
-    list.value[target].relation!.like_cnt! += list.value[target].relation!.like
-      ? 1
-      : -1;
+    const comment = list.value.find(c => c.id === target);
+    if (!comment) return;
+
+    comment.like = !comment.like;
+    comment.likeCnt += comment.like ? 1 : -1;
+
     http.ActionController.like(target, {});
   }
 
