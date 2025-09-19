@@ -52,9 +52,9 @@ api.instance.interceptors.request.use(
 api.instance.interceptors.response.use(
     (res) => {
       console.log(res.data);
-      if (res.data.userId != undefined) {
-        useTokenStore().setUserId(res.data.userId);
-        console.log("存储userId", res.data.userId);
+      if (res.data.data.userId != undefined) {
+        useTokenStore().setUserId(res.data.data.userId);
+        console.log("存储userId", res.data.data.userId);
       }
       // const code = res.data.state.code;
       // const msg = res.data.state.errMsg || '系统未知错误，请反馈给管理员';

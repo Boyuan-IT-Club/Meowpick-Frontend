@@ -2,18 +2,21 @@
   <view class="my-comment-box">
     <view class="comment-box">
       <view class="title">
-        <view class="name">{{ props.data.course.name }}</view>
-        <view class="dept-name">{{ props.data.course.category }}</view>
+        <!-- 暂时用占位文本显示课程信息 -->
+        <view class="name">{{ props.data.course?.name || "课程名" }}</view>
+        <view class="dept-name">{{ props.data.course?.category || "分类" }}</view>
       </view>
       <view class="information">
         <view class="circle" />
-        <view class="department">{{ props.data.course.department }}</view>
+        <view class="department">{{ props.data.course?.department || "系别" }}</view>
         <view class="circle" />
+        <!-- 暂时用占位教师列表 -->
         <view
-          v-for="item of props.data.course?.teacherList"
+          v-for="item of props.data.course?.teacherList || [{name:'教师A'}]"
           class="instructor"
-          >{{ item.name }}</view
         >
+          {{ item.name }}
+        </view>
       </view>
       <view class="tag">
         <view v-for="item of limitedTags(props.data.tags!)" class="item">
@@ -25,11 +28,11 @@
       <view class="content">{{ props.data.content }}</view>
       <view class="like">
         <image
-          :src="data.relation?.like ? Liked : Like"
+          :src="props.data.like ? Liked : Like"
           class="like-icon"
           @click="like"
         />
-        <view class="like-num">{{ props.data.relation?.like_cnt }}</view>
+        <view class="like-num">{{ props.data.likeCnt }}</view>
       </view>
     </view>
   </view>

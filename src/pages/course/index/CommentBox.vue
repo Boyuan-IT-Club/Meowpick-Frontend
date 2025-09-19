@@ -1,6 +1,6 @@
 <template>
   <view class="comment-box">
-    <view v-if="data.user?.id === tokenStore.userId" class="my-box" />
+    <view v-if="tokenStore.userId && String(data.userId) === String(tokenStore.userId)" class="my-box" />
     <view class="box">
       <view class="comment-header">
         <view class="tag">
