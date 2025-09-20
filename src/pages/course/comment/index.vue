@@ -241,37 +241,41 @@ const commit = async () => {
       }
     }
     .selected-box {
-  .tag-item {
-    position: relative;  /* 方便叉号定位 */
-    background: #f1f1f1;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 1vw;
-    border-radius: 2vw;
-    width: 18vw;
-    margin-left: 2vw;
-    margin-top: 2vw;
+      display: flex;         /* 横向排列 */
+      flex-wrap: wrap;       /* 超出换行 */
+      width: 85vw;           /* 保持和下面可选标签一致 */
+      margin-left: 3vw;      /* 调整和box-title对齐 */
+      .tag-item {
+        position: relative;  /* 方便叉号定位 */
+        background: #f1f1f1;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 1vw;
+        border-radius: 2vw;
+        width: 18vw;
+        margin-left: 2vw;
+        margin-top: 2vw;
 
-    .emoji {
-      width: 6.4vw;
-      height: 6.4vw;
+        .emoji {
+          width: 6.4vw;
+          height: 6.4vw;
+        }
+        .tag-txt {
+          margin-top: 1vw;
+          margin-left: 1vw;
+          font-size: 4vw;
+          white-space: nowrap;
+        }
+        .delete-icon {
+          position: absolute;
+          top: -2vw;
+          right: -2vw;
+          width: 4vw;
+          height: 4vw;
+        }
+      }
     }
-    .tag-txt {
-      margin-top: 1vw;
-      margin-left: 1vw;
-      font-size: 4vw;
-      white-space: nowrap;
-    }
-    .delete-icon {
-      position: absolute;
-      top: -2vw;
-      right: -2vw;
-      width: 4vw;
-      height: 4vw;
-    }
-  }
-}
 
   }
   .tag-box {

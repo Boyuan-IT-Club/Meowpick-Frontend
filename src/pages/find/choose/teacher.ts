@@ -12,7 +12,12 @@ export function useChoose() {
         page,
         size: 5
       }).then((res) => {
-        rows.value = [...rows.value, ...res.data.payload.rows!];
+        const courses = res.data.data.courses!.map(course => ({
+          ...course,
+          teacherList: course.teachers || [], // 给模板的 teacherList 字段
+          tagCount: course.tagCount || {}     // 保证 tagCount 不为 null
+        }));
+        rows.value = [...rows.value, { courses }];
       });
     }
   }

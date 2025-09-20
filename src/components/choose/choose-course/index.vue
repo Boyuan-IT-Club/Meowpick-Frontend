@@ -12,7 +12,7 @@
         <view class="department">{{ props.data?.department }}</view>
         <view class="circle" />
         <view
-          v-for="item of props.data?.teacherList"
+          v-for="item of props.data?.teachers"
           class="instructor"
           >{{ item.name }}</view
         >

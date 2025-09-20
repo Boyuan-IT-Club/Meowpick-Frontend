@@ -2,20 +2,18 @@
   <view class="my-comment-box">
     <view class="comment-box">
       <view class="title">
-        <!-- 暂时用占位文本显示课程信息 -->
-        <view class="name">{{ props.data.course?.name || "课程名" }}</view>
-        <view class="dept-name">{{ props.data.course?.category || "分类" }}</view>
+        <view class="name">{{ props.data.name }}</view>
+        <view class="dept-name">{{ props.data.category }}</view>
       </view>
       <view class="information">
         <view class="circle" />
-        <view class="department">{{ props.data.course?.department || "系别" }}</view>
+        <view class="department">{{ props.data.department }}</view>
         <view class="circle" />
-        <!-- 暂时用占位教师列表 -->
         <view
-          v-for="item of props.data.course?.teacherList || [{name:'教师A'}]"
+          v-for="item of props.data.teachers"
           class="instructor"
         >
-          {{ item.name }}
+          {{ item }}
         </view>
       </view>
       <view class="tag">
@@ -43,6 +41,7 @@ import { CommentVO } from "@/api/data-contracts";
 import { Emoji, limitedTags } from "@/utils/tags";
 import Liked from "@/images/like_active.png";
 import Like from "@/images/like-icon.png";
+
 type Props = {
   data: CommentVO;
 };
@@ -61,8 +60,7 @@ function format(timeStamp: string): string {
   const year = date.getFullYear();
   const month = (date.getMonth() + 1).toString().padStart(2, "0");
   const day = date.getDate().toString().padStart(2, "0");
-
-  return `${String(year)}-${month}-${day}`;
+  return `${year}-${month}-${day}`;
 }
 </script>
 
