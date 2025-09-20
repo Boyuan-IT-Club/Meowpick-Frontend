@@ -19,7 +19,7 @@
         <image src="@/images/teacher-icon.png" class="icon" />
         <text class="tip">任课教师</text>
       </view>
-      <view v-for="item of teachers" class="teachers">
+      <view v-for="item of data.teachers" class="teachers">
         <view class="content">{{ item.name }}</view>
       </view>
     </view>
@@ -28,7 +28,7 @@
         <image src="@/images/campus-icon.png" class="icon" />
         <text class="tip">开设校区</text>
       </view>
-      <text class="content">{{ getCampus(data.campuses) }}</text>
+      <text class="content">{{ (data.campuses || []).join('、') }}</text>
     </view>
     <view class="link">
       <view class="title">
@@ -36,7 +36,8 @@
         <text class="tip">相关课程</text>
       </view>
       <view
-        v-for="item of limitedList(data.link!)"
+        v-for="(item, index) of limitedList(data.link)"
+        :key="index"
         class="class-link"
         @click="jump(item[0])"
       >
@@ -50,7 +51,6 @@ import type { CourseVO, TeacherVO } from "@/api/data-contracts";
 
 type Props = {
   data: CourseVO;
-  teachers: TeacherVO[];
 };
 const props = defineProps<Props>();
 
@@ -74,8 +74,8 @@ const getCampus = (campuses: string[]) => {
     return "没有找到相关校区";
   }
 };
-const limitedList = (link: string[][]) => {
-  return link.slice(0, 2);
+const limitedList = (link: string[][] | null) => {
+  return (link || []).slice(0, 2);
 };
 </script>
 

@@ -43,7 +43,7 @@
     "build:quickapp-webview-union": "uni build -p quickapp-webview-union",
     "prepare": "husky install",
     "type-check": "vue-tsc --noEmit",
-    "api": "npx swagger-typescript-api -p https://api.xhpolaris.com/meowpick-test/v3/api-docs/swagger.json -o ./src/api --modular --templates ./templates/modular --axios --enum-names-as-values --module-name-first-tag --single-http-client",
+    "api": "npx swagger-typescript-api -p https://api.xhpolaris.com/meowpick/v3/api-docs/swagger.json -o ./src/api --modular --templates ./templates/modular --axios --enum-names-as-values --module-name-first-tag --single-http-client",
     "release": "release-it"
   },
   "dependencies": {

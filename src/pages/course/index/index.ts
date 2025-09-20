@@ -9,26 +9,19 @@ export function useCourse() {
   const trends = shallowRef<CourseVO[]>([]);
 
   function fetch(data: string) {
-    // ins.id = data
     id.value = data;
     http.CourseController.get(data).then((res) => {
-      course.value = res.data.data;
-
-      http.TeacherController.getBatch(res.data.data.data?.teachers!).then(
-        (res) => {
-          teachers.value = res.data.payload;
-        }
-      );
+      if (res.data.code === 0 && res.data.data) {
+        course.value = {
+          data: res.data.data,
+        };
+      }
 
       const _link = course.value.data?.link ?? [];
       const link: string[] = [];
       _link.forEach((ln) => {
         link.push(ln[0]);
       });
-
-      // http.CourseController.list(link).then((res) => {
-      //     trends.value = res.data.payload;
-      // });
     });
   }
   return {
