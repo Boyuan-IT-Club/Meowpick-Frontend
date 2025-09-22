@@ -85,19 +85,33 @@ export function useChoose() {
   // }
 
   function suggestContent(page: number) {
-    if (keyword.value) {
-      http.SearchController.suggest({
-        keyword: keyword.value,
-        pageNum: page,
-        pageSize: 15
-      }).then((res) => {
-        suggestList.value = res.data.data.suggestions.map((item, index) => ({
-          data: item.name,        // name → data
-          type: item.type,        // 保留英文类型
-          id: index               // 给每条数据一个唯一 id
-        }));
-      });
-    }
+    if (!keyword.value) return;
+
+    http.SearchController.suggest({
+      keyword: keyword.value,
+      pageNum: page,
+      pageSize: 15
+    }).then((res) => {
+      const suggestions = res.data.data.suggestions || [];
+
+      // 合并旧数据和新数据
+      const merged = [...suggestList.value, ...suggestions.map((item: any) => ({
+        data: item.name,
+        type: item.type,
+        id: `${item.type}-${item.name}` // 用 type+name 拼接做唯一 id
+      }))];
+
+      // 去重：type+name 一起判断
+      const unique = merged.filter(
+        (item, index, self) =>
+          index === self.findIndex(
+            (t) => t.type === item.type && t.data === item.data
+          )
+      );
+
+      suggestList.value = unique;
+      console.log("去重后提示信息：", suggestList.value);
+    });
   }
 
   watch([page], () => {
