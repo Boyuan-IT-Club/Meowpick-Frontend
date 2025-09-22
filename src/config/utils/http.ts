@@ -15,7 +15,7 @@ class HttpRequest<
 
   async sign_in(data: any) {
     const resp = await this.request({
-      path: `/sign_in`,
+      path: `/api/sign_in`,
       method: "POST",
       body: data,
       type: ContentType.Json,
