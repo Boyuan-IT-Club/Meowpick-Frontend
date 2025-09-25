@@ -109,7 +109,7 @@ const jump2List = (keyword: string, type: string) => {
     });
   } else {
     uni.navigateTo({
-      url: `/pages/find/choose/index?keyword=${keyword}`
+      url: `/pages/find/choose/index?keyword=${keyword}&type=${type}`
     });
   }
 };

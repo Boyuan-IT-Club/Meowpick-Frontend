@@ -1,9 +1,9 @@
-import type { CommentVO, Course, TeacherVO } from "@/api/data-contracts";
+import type { CommentVO, Course, CourseVO, TeacherVO } from "@/api/data-contracts";
 
 type choose = {
-  course?: Course[];
-  teacher?: Course[];
-  department?: Course[];
+  course?: CourseVO[];
+  teacher?: CourseVO[];
+  department?: CourseVO[];
   category?: any[];
 };
 const map = {
@@ -39,11 +39,23 @@ export function useChoose() {
         keyword: keyword.value,
         type: type.value,
         page,
-        size: 10
+        pageSize: 10
       }).then((res) => {
+        // 确保 type.value 对应的数组已初始化
+        if (!rows.value[type.value]) {
+          rows.value[type.value] = [];
+        }
+        
+        // 正确处理响应数据，将 teachers 映射为 teacherList 以匹配组件需要的数据结构
+        const courses = (res.data.data.courses || []).map(course => ({
+          ...course,
+          teacherList: course.teachers || [], // 给模板的 teacherList 字段
+          tagCount: course.tagCount || {}     // 保证 tagCount 不为 null
+        }));
+        
         rows.value[type.value] = [
           ...rows.value[type.value]!,
-          ...res.data.data.courses!
+          ...courses
         ];
         console.log("搜索信息：", rows.value[type.value]);
       });

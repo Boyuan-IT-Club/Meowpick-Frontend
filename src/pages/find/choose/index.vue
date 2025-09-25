@@ -4,7 +4,7 @@
     <view class="box">
       <ul>
         <li
-          v-for="item in rows.course"
+          v-for="item in rows[type]"
           :key="item.id"
           class="course-li"
           @click="jump(item.id)"
@@ -22,6 +22,7 @@ import { useChoose } from "./index";
 const { type, keyword, jump, rows, page } = useChoose();
 onLoad((options: any) => {
   keyword.value = options.keyword;
+  type.value = options.type || "course";
   PubSub.publish("commit_input", options.keyword);
 });
 

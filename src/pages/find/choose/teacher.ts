@@ -10,7 +10,7 @@ export function useChoose() {
         keyword: keyword.value,
         type: "teacher",
         page,
-        size: 5
+        pageSize: 5
       }).then((res) => {
         const courses = res.data.data.courses!.map(course => ({
           ...course,

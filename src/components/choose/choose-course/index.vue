@@ -12,7 +12,7 @@
         <view class="department">{{ props.data?.department }}</view>
         <view class="circle" />
         <view
-          v-for="item of props.data?.teachers"
+          v-for="item of props.data?.teacherList"
           class="instructor"
           >{{ item.name }}</view
         >
@@ -31,11 +31,11 @@
 </template>
 
 <script setup lang="ts">
-import type { Course } from "@/api/data-contracts";
+import type { CourseVO } from "@/api/data-contracts";
 import { Emoji, getTop3List } from "@/utils/tags";
 
 type Props = {
-  data: Course;
+  data: CourseVO;
 };
 const props = defineProps<Props>();
 </script>

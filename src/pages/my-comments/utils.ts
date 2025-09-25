@@ -11,7 +11,7 @@ export function useCourseComment() {
     }
 
     if (query) {
-      http.CommentController.history({ page, size: 5 }).then((res) => {
+      http.CommentController.history({ page, pageSize: 5 }).then((res) => {
         res.data.data.comments?.forEach((comment) => {
           list.value.push(comment);
         });
