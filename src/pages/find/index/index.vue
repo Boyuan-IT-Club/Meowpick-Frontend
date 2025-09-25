@@ -115,7 +115,7 @@ const deleteHistory = () => {
   }
 
   .recent {
-    margin-top: 13vw;
+    margin-top: 6vw;
     margin-left: 4vw;
 
     .history {
