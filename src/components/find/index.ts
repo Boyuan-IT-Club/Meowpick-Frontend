@@ -138,7 +138,7 @@ export const SearchTypeMap = (type: string) => {
       return "课程";
     case "teacher":
       return "教师";
-    case "depart":
+    case "department":
       return "院系";
     case "category":
       return "类别";

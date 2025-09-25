@@ -3,7 +3,7 @@ import type { CommentVO, Course, TeacherVO } from "@/api/data-contracts";
 type choose = {
   course?: Course[];
   teacher?: Course[];
-  depart?: Course[];
+  department?: Course[];
   category?: any[];
 };
 const map = {
@@ -15,13 +15,13 @@ const map = {
 
 export function useChoose() {
   const keyword = shallowRef("");
-  const type = shallowRef<"course" | "teacher" | "depart" | "category">(
+  const type = shallowRef<"course" | "teacher" | "department" | "category">(
     "course"
   );
   const rows = ref<choose>({
     course: [],
     teacher: [],
-    depart: [],
+    department: [],
     category: []
   });
   const page = ref(0);

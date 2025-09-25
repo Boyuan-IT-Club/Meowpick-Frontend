@@ -176,7 +176,7 @@ const jump2List = (keyword: string, type: string) => {
           font-size: 3.3vw;
         }
       }
-      .type-depart {
+      .type-department {
         background-color: #d5eeff;
         padding: 1vw 2vw 1vw 2vw;
         border-radius: 4vw;
