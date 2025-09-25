@@ -6,16 +6,16 @@
       <view class="input">
         <find @keydown="handleKeydown" />
       </view>
-      <view class="hot">
-        <text class="title">热搜</text>
-        <view class="text">
-          <view class="box">
-            <view v-for="item of hot" class="item">
-              <view class="txt" @click="jump2search(item)">{{ item }}</view>
-            </view>
-          </view>
-        </view>
-      </view>
+<!--      <view class="hot">-->
+<!--        <text class="title">热搜</text>-->
+<!--        <view class="text">-->
+<!--          <view class="box">-->
+<!--            <view v-for="item of hot" class="item">-->
+<!--              <view class="txt" @click="jump2search(item)">{{ item }}</view>-->
+<!--            </view>-->
+<!--          </view>-->
+<!--        </view>-->
+<!--      </view>-->
       <view class="recent">
         <view class="history">
           <text class="title">搜索历史</text>
@@ -45,7 +45,7 @@ import { useTokenStore } from "@/config";
 
 const tokenStore = useTokenStore();
 const recentText = ref("");
-const hot = ["思政类", "英语类", "体育类", "劳动与创造"];
+// const hot = ["思政类", "英语类", "体育类", "劳动与创造"];
 
 const recent = ref<SearchHistoryVO[]>([]);
 onShow(() => {
