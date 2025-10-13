@@ -19,6 +19,11 @@
 </template>
 
 <script setup lang="ts">
+onLoad(() => {
+  // 当用户访问这封信时，标记为已读
+  uni.setStorageSync('hasReadLetter', true);
+});
+
 const text1 = `全新版的 选课猫 终于和大家见面啦！`;
 const text2 = `原开发团队的朋友们大多已经毕业或升学，因此选课猫曾有一段时间陷入无人维护的状态。`;
 const text3 = `在 2025 年暑假，我们新团队正式接过选课猫的维护与重构任务。`;

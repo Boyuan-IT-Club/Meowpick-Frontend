@@ -1,11 +1,13 @@
 <template>
   <view class="tool-box">
     <view class="to-users">
-      <image
-        src="../../images/to-users.png"
-        class="picture"
-        @click="goToLetter"
-      />
+      <view class="letter-container" @click="goToLetter">
+        <image
+          src="../../images/to-users.png"
+          class="picture"
+        />
+        <view v-if="showNewIcon" class="new-badge">NEW</view>
+      </view>
       <image
         src="../../images/update-log.png"
         class="picture"
@@ -25,17 +27,28 @@
 const showPanel1 = ref(false);
 const showPanel2 = ref(false);
 const totalComment = ref(0);
+const showNewIcon = ref(true);
+
 onShow(() => {
   http.SearchController.total().then((res) => {
     totalComment.value = res.data.data.count;
   });
+  
+  // 检查用户是否已经查看过信件
+  const hasReadLetter = uni.getStorageSync('hasReadLetter');
+  showNewIcon.value = !hasReadLetter;
 });
 
 const goToLetter = () => {
   uni.navigateTo({
     url: "/pages/home/letter"
   });
+  
+  // 设置用户已查看信件的状态
+  uni.setStorageSync('hasReadLetter', true);
+  showNewIcon.value = false;
 };
+
 const goToUpdate = () => {
   uni.navigateTo({
     url: "/pages/home/update-log"
@@ -51,6 +64,27 @@ const goToUpdate = () => {
     display: flex;
     flex-direction: column;
     margin-left: 5vw;
+    .letter-container {
+      position: relative;
+      width: 48vw;
+      height: 18vw;
+      .picture {
+        width: 48vw;
+        height: 18vw;
+      }
+      .new-badge {
+        position: absolute;
+        top: -1vw;
+        right: -1vw;
+        background-color: #ff0000;
+        color: #ffffff;
+        font-size: 3vw;
+        font-weight: bold;
+        padding: 1vw 2vw;
+        border-radius: 3vw;
+        z-index: 10;
+      }
+    }
     .picture {
       width: 48vw;
       height: 18vw;
