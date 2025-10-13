@@ -2,40 +2,35 @@
   <view class="background">
     <image src="@/images/cat.png" class="background-image" />
     <view class="box">
-      <!--            <view class="title">给用户的一封信</view>-->
       <p class="text">{{ text1 }}</p>
       <p class="text">{{ text2 }}</p>
       <p class="text">{{ text3 }}</p>
       <p class="text">{{ text4 }}</p>
       <p class="text">{{ text5 }}</p>
-      <view class="goto-mewoChat" @click="goToMewoChat">点击传送</view>
-      <!--            <p class="text">{{ text6 }}</p>-->
-      <!--            <view class="getID" @click="copyWeChatID">点我复制微信号</view>-->
+      <p class="text">{{ text6 }}</p>
+      <p class="text">{{ text7 }}</p>
+      <p class="text">{{ text8 }}</p>
+      <p class="text">{{ text9 }}</p>
+      <p class="text">{{ text10 }}</p>
+      <p class="text">{{ text11 }}</p>
+      <p class="text">{{ text12 }}</p>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-const text1 = `感谢同学们对选课猫一直以来的支持!  (鞠躬)`;
-const text2 = `选课猫最初是开发者为了方便老乡群记录课程评价而开发的，最初的选课猫仅有老乡们对于体育课程的评价。后来应大家要求开发了新版，涵盖了学校所有开设课程，从此后课程评价的增长一发不可收拾，从最初的100余条评价，到现在马上突破4000条，使用人数也远超预期。`;
-const text3 = `用户数上升也带来了一个问题，选课猫作为一个完全非盈利的项目，每逢选课都会产生上百元的服务器成本，总所周知ECNU每学期三轮选课，也就是一年六次的大出血……为了防止用户快速增长，我们曾经甚至关闭了选课猫的小程序搜索入口，仅允许老用户使用。`;
-const text4 = `我们也尝试在平台内接入广告，但广告带来的收入至今为止不足百元，因此我们选择移除广告，让小程序更加干净。`;
-const text5 = `>我们团队的新项目也已经上线啦!新项目将长期致力于城市流浪猫的救助和治理，欢迎大家支持!`;
-const text6 = `>选课猫项目也招募小伙伴来重构，团队有服务器可以部署。`;
-const goToMewoChat = () => {
-  uni.navigateToMiniProgram({
-    appId: "wxd7e995c7b9d793b8"
-  });
-};
-// const weChatID = ref('你的微信号');
-// const copyWeChatID = async () => {
-//     try {
-//         await navigator.clipboard.writeText(weChatID.value);
-//         console.log('微信号已复制到剪贴板');
-//     } catch (err) {
-//         console.error('复制失败: ', err);
-//     }
-// };
+const text1 = `全新版的 选课猫 终于和大家见面啦！`;
+const text2 = `原开发团队的朋友们大多已经毕业或升学，因此选课猫曾有一段时间陷入无人维护的状态。`;
+const text3 = `在 2025 年暑假，我们新团队正式接过选课猫的维护与重构任务。`;
+const text4 = ``;
+const text5 = `也许大家暂时不会觉得新版有太多变化，这是因为我们暂未增加新功能。`;
+const text6 = `但事实上，我们已经彻底重构了选课猫的整体后端架构，让系统更加稳定流畅。`;
+const text7 = `今后在选课高峰期，也不再那么容易出现崩溃的情况啦！`;
+const text8 = ``;
+const text9 = `未来，我们还计划逐步推出更多功能，`;
+const text10 = `包括大家期待已久的「新增课程和老师」功能等。`;
+const text11 = `感谢大家一直以来对选课猫的喜爱与支持 ❤`;
+const text12 = `选课猫团队 2025年10月13日`;
 </script>
 
 <style scoped lang="scss">
@@ -74,18 +69,6 @@ const goToMewoChat = () => {
       white-space: pre-wrap;
       margin-top: 2vw;
       font-size: 4vw;
-    }
-    .goto-mewoChat {
-      color: #3399ff;
-      font-weight: bold;
-      margin-top: 2vw;
-      font-size: 4vw;
-    }
-    .getID {
-      color: #3399ff;
-      border-bottom: 0.5vw solid #3399ff;
-      margin-top: 2vw;
-      width: 29vw;
     }
   }
 }
