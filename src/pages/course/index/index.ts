@@ -32,7 +32,3 @@ export function useCourse() {
     fetch
   };
 }
-
-export function caculateTimeago(dateTimeStamp: any) {
-  return useTime(dateTimeStamp);
-}

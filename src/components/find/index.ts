@@ -52,7 +52,7 @@ const map = {
   post: useCourseStore()
 };
 
-export function useChoose() {
+export function useSuggest() {
   const keyword = shallowRef("");
   const type = shallowRef<"course" | "teacher" | "comment" | "post">("course");
   const rows = ref<choose>({

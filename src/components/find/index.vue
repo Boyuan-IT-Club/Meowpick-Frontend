@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { useInput, useChoose, SearchTypeMap } from "./index";
+import { useInput, useSuggest, SearchTypeMap } from "./index";
 import { useRoute } from "vue-router";
 
 const props = defineProps<{
@@ -57,7 +57,7 @@ const emit = defineEmits<{
 }>();
 
 const { searchText, placeHolder, list, searchHistory, text } = useInput();
-const { keyword, type, rows, page, jump, suggestList } = useChoose();
+const { keyword, type, rows, page, jump, suggestList } = useSuggest();
 
 const isVisible = ref(false);
 function handleInput() {
