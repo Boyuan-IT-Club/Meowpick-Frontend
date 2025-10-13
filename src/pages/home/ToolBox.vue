@@ -19,18 +19,6 @@
       </view>
     </view>
   </view>
-  <view class="to-chat">
-    <view class="cat-box">
-      <view class="info">
-        <view class="cat-title">MewoChat 小程序</view>
-        <view class="cat-tool">
-          <view class="go-app" @click="goToMewoChat">进入程序</view>
-          <view class="introduction" @click="getInstruction">查看介绍</view>
-        </view>
-      </view>
-      <image src="@/images/mewochat-icon.jpg" class="mewo-chat" />
-    </view>
-  </view>
 </template>
 
 <script setup lang="ts">
@@ -43,12 +31,6 @@ onShow(() => {
   });
 });
 
-const goToMewoChat = () => {
-  uni.navigateToMiniProgram({
-    appId: "wxd7e995c7b9d793b8"
-  });
-};
-
 const goToLetter = () => {
   uni.navigateTo({
     url: "/pages/home/letter"
@@ -57,13 +39,6 @@ const goToLetter = () => {
 const goToUpdate = () => {
   uni.navigateTo({
     url: "/pages/home/update-log"
-  });
-};
-
-const getInstruction = () => {
-  const Url = "https://mp.weixin.qq.com/s/HCwy-C7lFVyOBf5qUOhtSA";
-  uni.navigateTo({
-    url: `/pages/web-frame/web-frame?url=${Url}`
   });
 };
 </script>
@@ -110,79 +85,6 @@ const getInstruction = () => {
         font-size: 5.86vw;
         font-weight: bold;
       }
-    }
-  }
-}
-.to-chat {
-  margin-left: 6.5vw;
-  margin-top: 2vw;
-  .cat-box {
-    width: 85vw;
-    height: 24.53vw;
-    background-color: #ffffff;
-    box-shadow: 2px 2px 16px 0px #0000001f;
-    border-radius: 5vw;
-    display: flex;
-    flex-direction: row;
-    .info {
-      display: flex;
-      flex-direction: column;
-      .cat-title {
-        margin-left: 4vw;
-        margin-top: 4vw;
-        font-weight: 550;
-        font-size: 4vw;
-      }
-      .cat-tool {
-        display: flex;
-        flex-direction: row;
-        margin-top: 3vw;
-        .go-app {
-          margin-left: 3vw;
-          color: #175aaa;
-          background-color: #6aaeff99;
-          border-radius: 2vw;
-          font-size: 3.46vw;
-          padding: 1.5vw;
-        }
-        .introduction {
-          margin-left: 3vw;
-          color: #165fb6;
-          background: #6aaeff3d;
-          border-radius: 2vw;
-          font-size: 3.46vw;
-          padding: 1.5vw;
-        }
-      }
-    }
-    .mewo-chat {
-      width: 22vw;
-      height: 22vw;
-      margin-left: 18vw;
-      margin-top: 1vw;
-    }
-  }
-}
-.shadow {
-  position: fixed;
-  top: 0;
-  left: 0;
-  background-color: #22222244;
-  width: 100vw;
-  height: 200vw;
-  z-index: 98;
-  .panel {
-    position: fixed;
-    background-color: #ffffff;
-    width: 85vw;
-    height: 150vw;
-    z-index: 99;
-    top: 40vw;
-    left: 7.5vw;
-    border-radius: 3vw;
-    box-shadow: 2px 2px 16px 0px #0000001f;
-    .title {
-      font-weight: bold;
     }
   }
 }
