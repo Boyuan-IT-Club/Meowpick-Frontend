@@ -20,7 +20,7 @@
         </view>
         <view class="toolbox" />
         <ToolBox class="toolbox" />
-        <DebugPanel class="debug-panel" />
+<!--        <DebugPanel class="debug-panel" />-->
     </view>
 </template>
 
