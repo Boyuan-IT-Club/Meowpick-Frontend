@@ -59,20 +59,37 @@
     },
     {
       "path": "pages/web-frame/web-frame"
+    },
+    {
+      "path": "pages/proposal/list/list", 
+      "style": {
+        "navigationStyle": "custom"  
+      }
+    },
+    {
+      "path": "pages/proposal/propose/propose",  
+      "style": {
+        "navigationStyle": "custom"  
+      }
     }
   ],
   "tabBar": {
     "color": "#ffffff",
     "selectedColor": "#ffffff",
     "backgroundColor": "#ffffff",
+    "position": "bottom",
     "list": [
       {
-        "pagePath": "pages/find/index/index",
+        "pagePath": "pages/home/home",
         "text": "搜索"
       },
       {
         "pagePath": "pages/my-comments/my-comments",
         "text": "我的吐槽"
+      },
+      {
+        "pagePath": "pages/proposal/list/list",
+        "text": "新增"
       }
     ]
   }
