@@ -93,7 +93,7 @@ onLoad((options: any) => {
 });
 
 const GoBack = () => {
-  uni.navigateTo({
+  uni.switchTab({
     url: "/pages/home/home"
   });
 };
