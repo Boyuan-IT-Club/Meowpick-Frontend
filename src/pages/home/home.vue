@@ -19,7 +19,13 @@
 import ToolBox from "@/pages/home/ToolBox.vue";
 import Logo from "@/images/logo.png";
 import DebugPanel from "@/components/DebugPanel.vue";
-import TopBar from "@/components/top-bar/top-bar.vue"; 
+import TopBar from "@/components/top-bar/top-bar.vue";
+import { onShow } from "@dcloudio/uni-app";
+
+// 隐藏原生tabBar，避免与自定义导航栏冲突
+onShow(() => {
+    uni.hideTabBar();
+});
 
 // 跳转逻辑
 const goToSearch = () => {
