@@ -9,41 +9,33 @@
           <!-- 第一行 -->
           <view class="form-item">
             <text class="label">课程名称</text>
-            <input type="text" class="input" placeholder="请输入课程名称" v-model="formData.courseName" />
+            <fuzzy-search 
+              v-model="formData.courseName" 
+              :options="courseNameOptions" 
+              placeholder="请输入课程名称"
+              @select="handleCourseNameSelect"
+            />
           </view>
           <view class="form-item">
             <text class="label">开课院系（单选）</text>
-            <view class="campus-selector">
-              <view class="picker" @click="toggleCampusPanel">
-                <view class="picker-view">
-                  {{ selectedCampus || '请选择院系' }}
-                  <image 
-                    src="/static/images/arrow-down.png" 
-                    class="arrow-icon" 
-                    :class="{ 'rotate': isCampusPanelOpen }"
-                  />
-                </view>
-              </view>
-              
-              <!-- 院系面板 -->
-              <view class="campus-panel" v-if="isCampusPanelOpen">
-                <view 
-                  class="campus-item" 
-                  v-for="(item, index) in departments" 
-                  :key="index"
-                  @click="handleCampusSelect(item)"
-                >
-                  {{ item }}
-                </view>
-              </view>
-            </view>
+            <fuzzy-search 
+              v-model="formData.department" 
+              :options="departments" 
+              placeholder="请输入或选择院系"
+              @select="handleDepartmentSelect"
+            />
           </view>
 
           <!-- 其他部分保持不变 -->
           <!-- 第二行 -->
           <view class="form-item">
             <text class="label">授课教师（多选）</text>
-            <input type="text" class="input" placeholder="请输入教师姓名，用逗号分隔" v-model="formData.teachers" />
+            <fuzzy-search 
+              v-model="teachersInput" 
+              :options="teachersOptions" 
+              placeholder="请输入教师姓名"
+              @select="handleTeacherSelect"
+            />
           </view>
           <view class="form-item">
             <text class="label">开课校区（多选）</text>
@@ -79,7 +71,12 @@
           <!-- 第三行 -->
           <view class="form-item">
             <text class="label">课程代码</text>
-            <input type="text" class="input" placeholder="请输入课程代码" v-model="formData.courseCode" />
+            <fuzzy-search 
+              v-model="formData.courseCode" 
+              :options="courseCodeOptions" 
+              placeholder="请输入课程代码"
+              @select="handleCourseCodeSelect"
+            />
           </view>
           <view class="form-item">
             <text class="label">分类</text>
@@ -199,28 +196,61 @@ const departments = [
   '河口海岸科学研究院'
 ];
 
-// 单选院系相关
-const isCampusPanelOpen = ref(false);
-const selectedCampus = ref('');
+// 课程名称选项（示例数据，实际项目中可能从API获取）
+const courseNameOptions = [
+  '高等数学A',
+  '线性代数',
+  '大学物理',
+  '程序设计基础',
+  '数据结构',
+  '操作系统',
+  '计算机网络',
+  '数据库原理',
+  '软件工程',
+  '人工智能导论'
+];
+
+// 教师选项（示例数据，实际项目中可能从API获取）
+const teachersOptions = [
+  '张三',
+  '李四',
+  '王五',
+  '赵六',
+  '孙七',
+  '周八',
+  '吴九',
+  '郑十'
+];
 
 // 多选校区相关
 const isMultiCampusPanelOpen = ref(false);
 const selectedMultiCampuses = ref<string[]>([]);
 
-// 单选院系选择逻辑
-const toggleCampusPanel = () => {
-  isCampusPanelOpen.value = !isCampusPanelOpen.value;
-  // 关闭其他面板
-  if (isCampusPanelOpen.value) {
-    isMultiCampusPanelOpen.value = false;
-    isCategoryPanelOpen.value = false;
-  }
+// 教师输入状态
+const teachersInput = ref('');
+
+// 模糊搜索组件事件处理
+const handleCourseNameSelect = (value: string) => {
+  console.log('选择课程名称:', value);
 };
 
-const handleCampusSelect = (item: string) => {
-  selectedCampus.value = item;
-  formData.department = item;  // 修改为department字段
-  isCampusPanelOpen.value = false;
+const handleDepartmentSelect = (value: string) => {
+  console.log('选择院系:', value);
+};
+
+const handleTeacherSelect = (value: string) => {
+  // 处理教师多选逻辑
+  if (formData.teachers) {
+    // 检查是否已存在
+    if (!formData.teachers.includes(value)) {
+      formData.teachers += ', ' + value;
+    }
+  } else {
+    formData.teachers = value;
+  }
+  // 清空输入框以便继续选择
+  teachersInput.value = '';
+  console.log('选择教师:', value);
 };
 
 // 其他部分保持不变
@@ -245,6 +275,10 @@ const handleMultiCampusSelect = (item: string) => {
   }
   // 更新表单数据
   formData.campuses = selectedMultiCampuses.value.join(',');
+};
+
+const handleCourseCodeSelect = (value: string) => {
+  console.log('选择课程代码:', value);
 };
 
 // 分类数据（层级结构）
