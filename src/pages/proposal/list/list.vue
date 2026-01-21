@@ -212,6 +212,11 @@ onMounted(() => {
 onShow(() => {
   fetchProposals();
 });
+
+// 页面隐藏时的处理逻辑
+onHide(() => {
+  // 页面隐藏时可以执行的清理操作
+});
 const goToPropose = () => uni.navigateTo({ url: "/pages/proposal/propose/propose" });
 </script>
 
