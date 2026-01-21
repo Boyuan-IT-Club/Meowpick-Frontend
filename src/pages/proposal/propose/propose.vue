@@ -248,8 +248,7 @@ const handleTeacherSelect = (value: string) => {
   } else {
     formData.teachers = value;
   }
-  // 清空输入框以便继续选择
-  teachersInput.value = '';
+  // 不再清空输入框，让用户可以继续输入或选择
   console.log('选择教师:', value);
 };
 
