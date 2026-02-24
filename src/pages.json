@@ -61,13 +61,13 @@
       "path": "pages/web-frame/web-frame"
     },
     {
-      "path": "pages/proposal/list/list", 
+      "path": "pages/proposal/list", 
       "style": {
         "navigationStyle": "custom"  
       }
     },
     {
-      "path": "pages/proposal/propose/propose",  
+      "path": "pages/proposal/propose",  
       "style": {
         "navigationStyle": "custom"  
       }
@@ -88,7 +88,7 @@
         "text": "我的吐槽"
       },
       {
-        "pagePath": "pages/proposal/list/list",
+        "pagePath": "pages/proposal/list",
         "text": "新增"
       }
     ]

@@ -74,7 +74,7 @@ const goToMyComments = () => {
 const goToProposalList = () => {
   console.log('点击新增');
   uni.switchTab({
-    url: "/pages/proposal/list/list"
+    url: "/pages/proposal/list"
   });
 };
 </script>

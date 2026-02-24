@@ -217,7 +217,11 @@ onShow(() => {
 onHide(() => {
   // 页面隐藏时可以执行的清理操作
 });
-const goToPropose = () => uni.navigateTo({ url: "/pages/proposal/propose/propose" });
+const goToPropose = () => {
+  uni.navigateTo({ 
+    url: "/pages/proposal/propose" 
+  });
+};
 </script>
 
 <style scoped lang="scss">
@@ -402,7 +406,7 @@ const goToPropose = () => uni.navigateTo({ url: "/pages/proposal/propose/propose
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 10;
+    z-index: 1;
     box-shadow: 0 4px 10px rgba(183, 0, 48, 0.3);
 
     .plus {
