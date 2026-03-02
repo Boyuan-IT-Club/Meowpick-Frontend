@@ -1,0 +1,30 @@
+.star-box {
+  @apply
+  flex
+  mx-8
+  ;
+
+  .star {
+    @apply
+    flex flex-col justify-center items-center
+    ;
+    .number {
+      @apply
+      text-5xl
+      ;
+    }
+  }
+
+  .rank {
+    @apply
+    flex-1
+    pl-3
+    ;
+  }
+
+  .star-item {
+    @apply
+    flex items-center
+    text-sm;
+  }
+}

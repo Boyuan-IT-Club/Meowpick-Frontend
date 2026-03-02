@@ -1,0 +1,104 @@
+{
+  "name": "",
+  "appid": "",
+  "description": "",
+  "versionName": "1.0.0",
+  "versionCode": "100",
+  "transformPx": false,
+  "app-plus": {
+    "usingComponents": true,
+    "nvueStyleCompiler": "uni-app",
+    "compilerVersion": 3,
+    "splashscreen": {
+      "alwaysShowBeforeRender": true,
+      "waiting": true,
+      "autoclose": true,
+      "delay": 0
+    },
+    "modules": {},
+    "distribute": {
+      "android": {
+        "permissions": [
+          "<uses-permission android:name=\"android.permission.CHANGE_NETWORK_STATE\"/>",
+          "<uses-permission android:name=\"android.permission.MOUNT_UNMOUNT_FILESYSTEMS\"/>",
+          "<uses-permission android:name=\"android.permission.VIBRATE\"/>",
+          "<uses-permission android:name=\"android.permission.READ_LOGS\"/>",
+          "<uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\"/>",
+          "<uses-feature android:name=\"android.hardware.camera.autofocus\"/>",
+          "<uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>",
+          "<uses-permission android:name=\"android.permission.CAMERA\"/>",
+          "<uses-permission android:name=\"android.permission.GET_ACCOUNTS\"/>",
+          "<uses-permission android:name=\"android.permission.READ_PHONE_STATE\"/>",
+          "<uses-permission android:name=\"android.permission.CHANGE_WIFI_STATE\"/>",
+          "<uses-permission android:name=\"android.permission.WAKE_LOCK\"/>",
+          "<uses-permission android:name=\"android.permission.FLASHLIGHT\"/>",
+          "<uses-feature android:name=\"android.hardware.camera\"/>",
+          "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"
+        ]
+      },
+      "ios": {},
+      "sdkConfigs": {}
+    }
+  },
+  "quickapp": {},
+  "mp-weixin": {
+    "appid": "wxdffc445bde3313aa",
+    "setting": {
+      "es6": true,
+      "urlCheck": false,
+      "packNpmManually": true,
+      "packNpmRelationList": [
+        {
+          "packageJsonPath": "./package.json",
+          "miniprogramNpmDistDir": "./miniprogram/"
+        }
+      ]
+    },
+    "usingComponents": true
+  },
+  "mp-alipay": {
+    "usingComponents": true
+  },
+  "mp-baidu": {
+    "usingComponents": true
+  },
+  "mp-toutiao": {
+    "usingComponents": true
+  },
+  "uniStatistics": {
+    "enable": false
+  },
+  "vueVersion": "3",
+  "sap.platform.cf": {},
+  "sap.copilot": {},
+  "sap.insights": {},
+  "sap.cloud": {},
+  "start_url": "",
+  "sap.fe": {},
+  "sap.integration": {},
+  "sap.url": {},
+  "sap.platform.mobilecards": {},
+  "sap.platform.hcp": {},
+  "sap.bpa.task": {},
+  "sap.wda": {},
+  "sap.platform.abap": {},
+  "sap.gui": {},
+  "_version": "1.1.0",
+  "sap.cloud.portal": {},
+  "sap.ui.generic.app": {},
+  "sap.fiori": {},
+  "sap.package": {},
+  "sap.map": {},
+  "sap.card": {},
+  "sap.app": {},
+  "sap.ui5": {},
+  "sap.ui": {},
+  "sap.flp": {},
+  "sap.ovp": {},
+  "sap.mobile": {},
+  "sap.apf": {},
+  "sap.artifact": {},
+  "sap.wcf": {},
+  "sap.platform.sfsf": {},
+  "sap.ui.smartbusiness.app": {}
+}
