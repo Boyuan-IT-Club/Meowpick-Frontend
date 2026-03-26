@@ -71,6 +71,12 @@
       "style": {
         "navigationStyle": "custom"  
       }
+    },
+    {
+      "path": "pages/proposal/detail",  
+      "style": {
+        "navigationStyle": "custom"  
+      }
     }
   ],
   "tabBar": {

@@ -11,6 +11,8 @@ class HttpRequest<
   public CommentController = new CommentApi(this);
   public TeacherController = new TeacherApi(this);
   public ActionController = new ActionApi(this);
+  public ProposalController = new Proposal(this);
+  public LikeController = new Like(this);
 
   async sign_in(data: any) {
     const resp = await this.request({

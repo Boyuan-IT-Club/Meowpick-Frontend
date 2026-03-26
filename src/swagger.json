@@ -1,1 +1,1588 @@
-{"openapi":"3.0.1","info":{"title":"花狮选课猫文档","description":"swagger.json","version":"v1.0.1"},"externalDocs":{"description":"swagger.json","url":""},"servers":[{"url":"https://api.xhpolaris.com/meowpick","description":"Generated server url"}],"tags":[{"name":"CommentApi","description":"评论接口"},{"name":"TeacherApi","description":"教师接口"},{"name":"ActionApi","description":"用户行为接口"},{"name":"CourseApi","description":"课程接口"},{"name":"SearchController","description":"搜索接口"},{"name":"UserApi","description":"用户接口"}],"paths":{"/api/user/add":{"post":{"tags":["UserApi"],"operationId":"add","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/UserCmd$CreateCmd"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/UserVO"}}}}}}},"/api/teacher/update":{"post":{"tags":["TeacherApi"],"summary":"更新","operationId":"update","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/TeacherCmd$UpdateCmd"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/TeacherVO"}}}}}}},"/api/teacher/del/{id}":{"post":{"tags":["TeacherApi"],"summary":"删除","operationId":"del","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/TeacherVO"}}}}}}},"/api/teacher/batch":{"post":{"tags":["TeacherApi"],"operationId":"getBatch","requestBody":{"content":{"application/json":{"schema":{"type":"array","items":{"type":"string"}}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/TeacherVO"}}}}}}}},"/api/teacher/add":{"post":{"tags":["TeacherApi"],"summary":"新增","operationId":"add_1","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/TeacherCmd$CreateCmd"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/TeacherVO"}}}}}}},"/api/search":{"post":{"tags":["SearchController"],"operationId":"search","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/SearchCmd$Query"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PageEntityObject"}}}}}}},"/api/search/recent/remove/{id}":{"post":{"tags":["SearchController"],"summary":"删除搜索历史","operationId":"removeRecent","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"boolean"}}}}}}},"/api/course/update":{"post":{"tags":["CourseApi"],"summary":"更新课程","operationId":"update_1","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/CourseCmd$UpdateCmd"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/CourseVO"}}}}}}},"/api/course/list":{"post":{"tags":["CourseApi"],"operationId":"list","requestBody":{"content":{"application/json":{"schema":{"type":"array","items":{"type":"string"}}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/Course"}}}}}}}},"/api/course/del/{id}":{"post":{"tags":["CourseApi"],"summary":"删除课程","operationId":"del_1","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/CourseVO"}}}}}}},"/api/course/add":{"post":{"tags":["CourseApi"],"summary":"新增课程","operationId":"add_2","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/CourseCmd$CreateCmd"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/CourseVO"}}}}}}},"/api/comment/update":{"post":{"tags":["CommentApi"],"summary":"更新评论","operationId":"update_2","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/CommentCmd$UpdateCmd"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/CommentVO"}}}}}}},"/api/comment/reply/{id}":{"post":{"tags":["CommentApi"],"summary":"新增回复","operationId":"replyTo","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"string"}}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/ReplyCmd$CreateCmd"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/ReplyVO"}}}}}}},"/api/comment/history":{"post":{"tags":["CommentApi"],"operationId":"history","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/CommentCmd$History"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PageEntityCommentVO"}}}}}}},"/api/comment/del/{id}":{"post":{"tags":["CommentApi"],"summary":"删除评论","operationId":"del_2","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/CommentVO"}}}}}}},"/api/comment/add":{"post":{"tags":["CommentApi"],"summary":"新增评论","operationId":"add_3","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/CommentCmd$CreateCmd"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/CommentVO"}}}}}}},"/api/action/like/{id}":{"post":{"tags":["ActionApi"],"summary":"点赞","operationId":"like","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"string"}}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/ActionCmd$CreateCmd"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"boolean"}}}}}}},"/api/teacher/{id}":{"get":{"tags":["TeacherApi"],"summary":"获取详情","operationId":"get","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/TeacherVO"}}}}}}},"/api/teacher/query":{"get":{"tags":["TeacherApi"],"summary":"分页查询","operationId":"query","parameters":[{"name":"page","in":"query","required":false,"schema":{"type":"integer","format":"int32"}},{"name":"size","in":"query","required":false,"schema":{"type":"integer","format":"int32"}},{"name":"regex","in":"query","required":false,"schema":{"type":"string"}},{"name":"startAt","in":"query","required":false,"schema":{"type":"string","format":"date-time"}},{"name":"endAt","in":"query","required":false,"schema":{"type":"string","format":"date-time"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PageEntityTeacherVO"}}}}}}},"/api/search/total":{"get":{"tags":["SearchController"],"summary":"获取吐槽总数","operationId":"total","responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"integer","format":"int32"}}}}}}},"/api/search/suggest":{"get":{"tags":["SearchController"],"summary":"搜索建议","operationId":"suggest","parameters":[{"name":"search","in":"query","required":true,"schema":{"type":"string"}},{"name":"pageNum","in":"query","required":false,"schema":{"type":"integer","format":"int32","default":1}},{"name":"pageSize","in":"query","required":false,"schema":{"type":"integer","format":"int32","default":10}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"array","items":{"type":"object"}}}}}}}},"/api/search/recent":{"get":{"tags":["SearchController"],"summary":"最近搜过","operationId":"recent","responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/SearchHistoryVO"}}}}}}}},"/api/search/guess":{"get":{"tags":["SearchController"],"summary":"猜你想搜","operationId":"guess","responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"string"}}}}}}},"/api/course/{id}":{"get":{"tags":["CourseApi"],"summary":"获取详情","operationId":"get_1","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/Course"}}}}}}},"/api/course/query":{"get":{"tags":["CourseApi"],"summary":"分页查询","operationId":"query_1","parameters":[{"name":"name","in":"query","required":false,"schema":{"type":"string"}},{"name":"category","in":"query","required":false,"schema":{"type":"string"}},{"name":"department","in":"query","required":false,"schema":{"type":"string"}},{"name":"point","in":"query","required":false,"schema":{"type":"integer","format":"int32"}},{"name":"teachers","in":"query","required":false,"schema":{"type":"array","items":{"type":"string"}}},{"name":"campuses","in":"query","required":false,"schema":{"type":"array","items":{"type":"string"}}},{"name":"page","in":"query","required":false,"schema":{"type":"integer","format":"int32"}},{"name":"size","in":"query","required":false,"schema":{"type":"integer","format":"int32"}},{"name":"regex","in":"query","required":false,"schema":{"type":"string"}},{"name":"startAt","in":"query","required":false,"schema":{"type":"string","format":"date-time"}},{"name":"endAt","in":"query","required":false,"schema":{"type":"string","format":"date-time"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PageEntityCourseVO"}}}}}}},"/api/comment/{id}":{"get":{"tags":["CommentApi"],"summary":"获取详情","operationId":"get_2","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/ReplyVO"}}}}}}},"/api/comment/query":{"get":{"tags":["CommentApi"],"summary":"分页查询","operationId":"query_2","parameters":[{"name":"id","in":"query","required":false,"schema":{"type":"string"}},{"name":"page","in":"query","required":false,"schema":{"type":"integer","format":"int32"}},{"name":"size","in":"query","required":false,"schema":{"type":"integer","format":"int32"}},{"name":"regex","in":"query","required":false,"schema":{"type":"string"}},{"name":"startAt","in":"query","required":false,"schema":{"type":"string","format":"date-time"}},{"name":"endAt","in":"query","required":false,"schema":{"type":"string","format":"date-time"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PageEntityCommentVO"}}}}}}}},"components":{"schemas":{"UserCmd$CreateCmd":{"type":"object","properties":{"name":{"type":"string"},"avatar":{"type":"string"}}},"UserVO":{"type":"object","properties":{"id":{"type":"string"},"name":{"type":"string"},"avatar":{"type":"string"},"enable":{"type":"boolean"},"lock":{"type":"boolean"},"expire":{"type":"boolean"},"credential":{"type":"boolean"}}},"TeacherCmd$UpdateCmd":{"type":"object","properties":{"id":{"type":"string"},"avatar":{"type":"string"},"name":{"type":"string"},"depart":{"type":"string"},"position":{"type":"string"}}},"CourseVO":{"type":"object","properties":{"id":{"type":"string"},"name":{"type":"string"},"category":{"type":"string"},"department":{"type":"string"},"link":{"type":"array","items":{"type":"array","items":{"type":"string"}}},"point":{"type":"integer","format":"int32"},"describe":{"type":"string"},"teachers":{"type":"array","items":{"type":"string"}},"teacherList":{"type":"array","items":{"$ref":"#/components/schemas/TeacherVO"}},"campuses":{"type":"array","items":{"type":"string"}},"tagCount":{"type":"object","additionalProperties":{"type":"integer","format":"int32"}}}},"TeacherVO":{"type":"object","properties":{"id":{"type":"string"},"avatar":{"type":"string"},"name":{"type":"string"},"uid":{"type":"string"},"courses":{"type":"array","items":{"$ref":"#/components/schemas/CourseVO"}}}},"TeacherCmd$CreateCmd":{"type":"object","properties":{"avatar":{"type":"string"},"name":{"type":"string"},"depart":{"type":"string"},"position":{"type":"string"}}},"SearchCmd$Query":{"required":["keyword","type"],"type":"object","properties":{"page":{"type":"integer","format":"int32"},"size":{"type":"integer","format":"int32"},"regex":{"type":"string"},"startAt":{"type":"string","format":"date-time"},"endAt":{"type":"string","format":"date-time"},"keyword":{"type":"string"},"type":{"type":"string","enum":["course","teacher","depart","category"]}}},"PageEntityObject":{"type":"object","properties":{"total":{"type":"integer","format":"int64"},"rows":{"type":"array","items":{"type":"object"}}}},"CourseCmd$UpdateCmd":{"type":"object","properties":{"id":{"type":"string"},"name":{"type":"string"},"category":{"type":"string"},"department":{"type":"string"},"point":{"type":"integer","format":"int32"},"describe":{"type":"string"},"teachers":{"type":"array","items":{"type":"string"}},"campuses":{"type":"array","items":{"type":"string"}}}},"Course":{"type":"object","properties":{"data":{"$ref":"#/components/schemas/CourseVO"},"score":{"$ref":"#/components/schemas/Score"}}},"Score":{"type":"object","properties":{"avg":{"type":"number","format":"float"},"total":{"type":"integer","format":"int32"},"number":{"type":"number","format":"float"},"percent":{"type":"object","additionalProperties":{"type":"number","format":"float"}}}},"CourseCmd$CreateCmd":{"type":"object","properties":{"name":{"type":"string"},"category":{"type":"string"},"department":{"type":"string"},"point":{"type":"integer","format":"int32"},"describe":{"type":"string"},"teachers":{"type":"array","items":{"type":"string"}},"campuses":{"type":"array","items":{"type":"string"}}}},"CommentCmd$UpdateCmd":{"required":["id","target","text"],"type":"object","properties":{"id":{"type":"string"},"text":{"type":"string"},"target":{"type":"string"},"tags":{"type":"array","items":{"type":"string"}}}},"Action":{"type":"object","properties":{"uid":{"type":"string"},"emoji":{"type":"string"},"crateAt":{"type":"string","format":"date-time"}}},"ActionVO":{"type":"object","properties":{"like":{"type":"boolean"},"like_cnt":{"type":"integer","format":"int32"},"share":{"type":"boolean"},"likes":{"type":"array","items":{"$ref":"#/components/schemas/Action"}}}},"CommentVO":{"type":"object","properties":{"id":{"type":"string"},"text":{"type":"string"},"uid":{"type":"string"},"replies":{"type":"array","items":{"$ref":"#/components/schemas/ReplyVO"}},"tags":{"type":"array","items":{"type":"string"}},"target":{"type":"string"},"reply":{"type":"integer","format":"int32"},"relation":{"$ref":"#/components/schemas/ActionVO"},"crateAt":{"type":"string","format":"date-time"},"user":{"$ref":"#/components/schemas/UserVO"},"course":{"$ref":"#/components/schemas/CourseVO"}}},"ReplyVO":{"type":"object","properties":{"id":{"type":"string"},"uid":{"type":"string"},"text":{"type":"string"},"crateAt":{"type":"string","format":"date-time"},"updateAt":{"type":"string","format":"date-time"}}},"ReplyCmd$CreateCmd":{"required":["text"],"type":"object","properties":{"text":{"type":"string"}}},"CommentCmd$History":{"type":"object","properties":{"page":{"type":"integer","format":"int32"},"size":{"type":"integer","format":"int32"},"regex":{"type":"string"},"startAt":{"type":"string","format":"date-time"},"endAt":{"type":"string","format":"date-time"},"uid":{"type":"string"},"model":{"type":"string"}}},"PageEntityCommentVO":{"type":"object","properties":{"total":{"type":"integer","format":"int64"},"rows":{"type":"array","items":{"$ref":"#/components/schemas/CommentVO"}}}},"CommentCmd$CreateCmd":{"required":["target","text"],"type":"object","properties":{"target":{"type":"string"},"text":{"type":"string"},"score":{"type":"integer","format":"int32"},"tags":{"type":"array","items":{"type":"string"}}}},"ActionCmd$CreateCmd":{"type":"object","properties":{"emoji":{"type":"string"}}},"PageEntityTeacherVO":{"type":"object","properties":{"total":{"type":"integer","format":"int64"},"rows":{"type":"array","items":{"$ref":"#/components/schemas/TeacherVO"}}}},"SearchHistoryVO":{"type":"object","properties":{"id":{"type":"string"},"text":{"type":"string"},"createAt":{"type":"string","format":"date-time"}}},"PageEntityCourseVO":{"type":"object","properties":{"total":{"type":"integer","format":"int64"},"rows":{"type":"array","items":{"$ref":"#/components/schemas/CourseVO"}}}}}}}
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Meowpick Backend API",
+    "description": "选课猫后端接口文档",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "comment"
+    },
+    {
+      "name": "course"
+    },
+    {
+      "name": "like"
+    },
+    {
+      "name": "proposal"
+    },
+    {
+      "name": "auth"
+    },
+    {
+      "name": "courses"
+    },
+    {
+      "name": "search"
+    },
+    {
+      "name": "teacher"
+    }
+  ],
+  "paths": {
+    "/api/search/total": {
+      "get": {
+        "summary": "获取吐槽总数",
+        "deprecated": false,
+        "description": "获取系统中所有课程评论的总数量",
+        "tags": [
+          "comment"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.GetTotalCourseCommentsCountResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/comment/add": {
+      "post": {
+        "summary": "发布课程评论",
+        "deprecated": false,
+        "description": "用户对指定课程发布评论",
+        "tags": [
+          "comment"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dto.CreateCommentReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.CreateCommentResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/comment/history": {
+      "post": {
+        "summary": "获取我的评论历史",
+        "deprecated": false,
+        "description": "分页获取当前用户发布过的评论",
+        "tags": [
+          "comment"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dto.GetMyCommentsReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.GetMyCommentsResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/comment/query": {
+      "get": {
+        "summary": "分页获取课程评论",
+        "deprecated": false,
+        "description": "根据课程ID分页查询评论列表",
+        "tags": [
+          "comment"
+        ],
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "query",
+            "description": "课程ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "页码",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "每页数量",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ListCourseCommentsResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/course/{courseId}": {
+      "get": {
+        "summary": "获取课程信息",
+        "deprecated": false,
+        "description": "获取课程信息",
+        "tags": [
+          "course"
+        ],
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "description": "课程ID",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.GetCourseResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/course/campuses": {
+      "get": {
+        "summary": "获取课程开课校区",
+        "deprecated": false,
+        "description": "根据课程名字获取课程开课校区",
+        "tags": [
+          "course"
+        ],
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "课程名称关键词",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.GetCourseCampusesResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/course/categories": {
+      "get": {
+        "summary": "获取课程分类",
+        "deprecated": false,
+        "description": "根据课程名字获取课程分类",
+        "tags": [
+          "course"
+        ],
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "课程名称关键词",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.GetCourseCategoriesResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/course/departs": {
+      "get": {
+        "summary": "获取课程开课院系",
+        "deprecated": false,
+        "description": "根据课程名字获取课程开课院系",
+        "tags": [
+          "course"
+        ],
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "课程名称关键词",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.GetCourseDepartmentsResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/like/{likeId}": {
+      "post": {
+        "summary": "点赞 / 取消点赞",
+        "deprecated": false,
+        "description": "对指定目标（提案或评论）进行点赞或取消点赞操作；若已点赞则取消，未点赞则新增",
+        "tags": [
+          "like"
+        ],
+        "parameters": [
+          {
+            "name": "likeId",
+            "in": "path",
+            "description": "目标ID（提案ID或评论ID）",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dto.ToggleLikeReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ToggleLikeResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/proposal/{proposalId}": {
+      "get": {
+        "summary": "获取提案详情",
+        "deprecated": false,
+        "description": "根据提案ID查询提案完整信息",
+        "tags": [
+          "proposal"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "提案ID",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "proposalId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.GetProposalResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/proposal/{proposalId}/delete": {
+      "post": {
+        "summary": "删除提案",
+        "deprecated": false,
+        "description": "根据提案ID软删除提案（标记为已删除状态）",
+        "tags": [
+          "proposal"
+        ],
+        "parameters": [
+          {
+            "name": "proposalId",
+            "in": "path",
+            "description": "提案ID",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.DeleteProposalResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/proposal/add": {
+      "post": {
+        "summary": "新增提案",
+        "deprecated": false,
+        "description": "创建一个新的提案",
+        "tags": [
+          "proposal"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dto.CreateProposalReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.CreateProposalResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/proposal/suggest": {
+      "post": {
+        "summary": "获取提案搜索建议",
+        "deprecated": false,
+        "description": "根据关键词模糊分页搜索提案标题，返回匹配的提案建议列表",
+        "tags": [
+          "proposal"
+        ],
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "搜索关键词",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "页码",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "每页数量",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.GetProposalSuggestionsResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "get": {
+        "summary": "/api/proposal/suggest",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/proposal/list": {
+      "get": {
+        "summary": "分页获取提案列表",
+        "deprecated": false,
+        "description": "分页查询提案列表数据",
+        "tags": [
+          "proposal"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "页码",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "每页数量",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ListProposalResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/auth/sign_in": {
+      "post": {
+        "summary": "登录",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "auth"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dto.SignInReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.SignInResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/search": {
+      "post": {
+        "summary": "搜索课程列表",
+        "deprecated": false,
+        "description": "搜索课程列表",
+        "tags": [
+          "courses"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dto.ListCoursesReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ListCoursesResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/search/recent": {
+      "get": {
+        "summary": "获取最近搜索历史",
+        "deprecated": false,
+        "description": "获取最近搜索历史",
+        "tags": [
+          "search"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.GetSearchHistoriesResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/search/suggest": {
+      "get": {
+        "summary": "获取搜索建议",
+        "deprecated": false,
+        "description": "根据关键词获取搜索建议\n根据 type 不同执行不同的搜索逻辑：\n- course：模糊分页搜索课程\n- teacher：精确分页搜索教师开设的课程\n- category：精确分页搜索该类别下的课程\n- department：精确分页搜索该开课院系下的课程",
+        "tags": [
+          "search"
+        ],
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "搜索关键词",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.GetSearchSuggestionsResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/teacher/add": {
+      "post": {
+        "summary": "新建教师",
+        "deprecated": false,
+        "description": "新建教师",
+        "tags": [
+          "teacher"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dto.CreateTeacherReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.CreateTeacherResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/proposal/{proposalId}/approve": {
+      "post": {
+        "summary": "/api/proposal/{proposalId}/approve",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "proposalId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/proposal/{proposalId}/update": {
+      "post": {
+        "summary": "更新提案内容",
+        "deprecated": false,
+        "description": "根据提案ID修改提案的标题和内容",
+        "tags": [
+          "proposal"
+        ],
+        "parameters": [
+          {
+            "name": "proposalId",
+            "in": "path",
+            "description": "提案唯一ID",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dto.UpdateProposalReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "更新成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.UpdateProposalResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "dto.CommentVO": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "courseId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "like": {
+            "type": "boolean"
+          },
+          "likeCnt": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "teachers": {
+            "description": "这里还是直接返回教师名字+职称组合后的字符串列表",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "dto.CourseVO": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "teachers": {
+            "items": {
+              "$ref": "#/components/schemas/dto.TeacherVO"
+            },
+            "type": "array"
+          },
+          "campuses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tagCount": {
+            "type": "object",
+            "additionalProperties": {
+              "format": "int64",
+              "type": "integer"
+            },
+            "properties": {}
+          }
+        }
+      },
+      "dto.CreateCommentReq": {
+        "type": "object",
+        "required": [
+          "content",
+          "courseId"
+        ],
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "courseId": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "dto.CreateCommentResp": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "code": {
+            "type": "integer"
+          },
+          "content": {
+            "type": "string"
+          },
+          "courseId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "like": {
+            "type": "boolean"
+          },
+          "likeCnt": {
+            "type": "integer"
+          },
+          "msg": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "teachers": {
+            "description": "这里还是直接返回教师名字+职称组合后的字符串列表",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "dto.CreateProposalReq": {
+        "type": "object",
+        "required": [
+          "content",
+          "course",
+          "title"
+        ],
+        "properties": {
+          "course": {
+            "$ref": "#/components/schemas/dto.CourseVO"
+          },
+          "content": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      },
+      "dto.ProposalSuggestionsVO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      },
+      "dto.CreateProposalResp": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "msg": {
+            "type": "string"
+          },
+          "proposalId": {
+            "description": "提案ID",
+            "type": "string"
+          }
+        }
+      },
+      "dto.CreateTeacherReq": {
+        "type": "object",
+        "required": [
+          "department",
+          "name",
+          "title"
+        ],
+        "properties": {
+          "department": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      },
+      "dto.CreateTeacherResp": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "department": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "msg": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      },
+      "dto.GetCourseCampusesResp": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "msg": {
+            "type": "string"
+          },
+          "campuses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "dto.DeleteProposalResp": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "deleted": {
+            "type": "boolean"
+          },
+          "deletedAt": {
+            "type": "string"
+          },
+          "msg": {
+            "type": "string"
+          },
+          "operatorId": {
+            "type": "string"
+          },
+          "proposalId": {
+            "type": "string"
+          }
+        }
+      },
+      "dto.GetCourseCategoriesResp": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "msg": {
+            "type": "string"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "dto.GetCourseDepartmentsResp": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "msg": {
+            "type": "string"
+          },
+          "departments": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "dto.GetCourseResp": {
+        "type": "object",
+        "properties": {
+          "course": {
+            "$ref": "#/components/schemas/dto.CourseVO"
+          },
+          "code": {
+            "type": "integer"
+          },
+          "msg": {
+            "type": "string"
+          }
+        }
+      },
+      "dto.GetProposalSuggestionsResp": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "msg": {
+            "type": "string"
+          },
+          "suggestions": {
+            "items": {
+              "$ref": "#/components/schemas/dto.ProposalSuggestionsVO"
+            },
+            "type": "array"
+          }
+        }
+      },
+      "dto.GetMyCommentsReq": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer"
+          },
+          "pageSize": {
+            "type": "integer"
+          }
+        }
+      },
+      "dto.GetMyCommentsResp": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "comments": {
+            "items": {
+              "$ref": "#/components/schemas/dto.CommentVO"
+            },
+            "type": "array"
+          },
+          "msg": {
+            "type": "string"
+          },
+          "total": {
+            "type": "integer"
+          }
+        }
+      },
+      "dto.GetProposalResp": {
+        "type": "object",
+        "properties": {
+          "proposal": {
+            "$ref": "#/components/schemas/dto.ProposalVO"
+          },
+          "code": {
+            "type": "integer"
+          },
+          "msg": {
+            "type": "string"
+          }
+        }
+      },
+      "dto.GetSearchHistoriesResp": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "histories": {
+            "items": {
+              "$ref": "#/components/schemas/dto.SearchHistoryVO"
+            },
+            "type": "array"
+          },
+          "msg": {
+            "type": "string"
+          }
+        }
+      },
+      "dto.GetSearchSuggestionsResp": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "msg": {
+            "type": "string"
+          },
+          "suggestions": {
+            "items": {
+              "$ref": "#/components/schemas/dto.SearchSuggestionsVO"
+            },
+            "type": "array"
+          }
+        }
+      },
+      "dto.GetTotalCourseCommentsCountResp": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "msg": {
+            "type": "string"
+          }
+        }
+      },
+      "dto.ListCourseCommentsResp": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "comments": {
+            "items": {
+              "$ref": "#/components/schemas/dto.CommentVO"
+            },
+            "type": "array"
+          },
+          "msg": {
+            "type": "string"
+          },
+          "total": {
+            "type": "integer"
+          }
+        }
+      },
+      "dto.ListCoursesReq": {
+        "type": "object",
+        "properties": {
+          "keyword": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer"
+          },
+          "pageSize": {
+            "type": "integer"
+          },
+          "type": {
+            "description": "teacher or course",
+            "type": "string"
+          }
+        }
+      },
+      "dto.ListCoursesResp": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "courses": {
+            "description": "当前页的课程列表",
+            "items": {
+              "$ref": "#/components/schemas/dto.CourseVO"
+            },
+            "type": "array"
+          },
+          "msg": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer"
+          },
+          "pageSize": {
+            "type": "integer"
+          },
+          "total": {
+            "description": "符合条件的总记录数",
+            "type": "integer"
+          }
+        }
+      },
+      "dto.ListProposalResp": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "msg": {
+            "type": "string"
+          },
+          "proposals": {
+            "items": {
+              "$ref": "#/components/schemas/dto.ProposalVO"
+            },
+            "type": "array"
+          },
+          "total": {
+            "type": "integer"
+          }
+        }
+      },
+      "dto.ProposalVO": {
+        "type": "object",
+        "properties": {
+          "course": {
+            "$ref": "#/components/schemas/dto.CourseVO"
+          },
+          "content": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "deleted": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "string"
+          },
+          "like": {
+            "type": "boolean"
+          },
+          "likeCnt": {
+            "type": "integer"
+          },
+          "status": {
+            "description": "pending / approved / rejected",
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          }
+        }
+      },
+      "dto.SearchHistoryVO": {
+        "type": "object",
+        "properties": {
+          "createdAt": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "query": {
+            "type": "string"
+          }
+        }
+      },
+      "dto.SearchSuggestionsVO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "dto.SignInReq": {
+        "type": "object",
+        "required": [
+          "authId",
+          "authType",
+          "verifyCode"
+        ],
+        "properties": {
+          "authId": {
+            "description": "微信开放平台ID",
+            "type": "string"
+          },
+          "authType": {
+            "description": "认证类型(wechat/phone等)",
+            "type": "string"
+          },
+          "verifyCode": {
+            "description": "res.code",
+            "type": "string"
+          }
+        }
+      },
+      "dto.SignInResp": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string"
+          },
+          "code": {
+            "type": "integer"
+          },
+          "expiresIn": {
+            "type": "integer"
+          },
+          "msg": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          }
+        }
+      },
+      "dto.TeacherVO": {
+        "type": "object",
+        "properties": {
+          "department": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      },
+      "dto.ToggleLikeReq": {
+        "type": "object",
+        "properties": {
+          "targetId": {
+            "type": "string"
+          },
+          "targetType": {
+            "description": "1: \"proposal\"，2: \"comment\"",
+            "type": "string"
+          }
+        }
+      },
+      "dto.ToggleLikeResp": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "like": {
+            "type": "boolean"
+          },
+          "likeCnt": {
+            "type": "integer"
+          },
+          "msg": {
+            "type": "string"
+          }
+        }
+      },
+      "dto.UpdateProposalReq": {
+        "type": "object",
+        "required": [
+          "content",
+          "course",
+          "title"
+        ],
+        "properties": {
+          "course": {
+            "$ref": "#/components/schemas/dto.CourseVO"
+          },
+          "content": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      },
+      "dto.UpdateProposalResp": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "msg": {
+            "type": "string"
+          },
+          "proposalId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "responses": {},
+    "securitySchemes": {}
+  },
+  "servers": [],
+  "security": []
+}
