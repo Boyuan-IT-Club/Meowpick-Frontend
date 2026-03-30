@@ -77,6 +77,12 @@
       "style": {
         "navigationStyle": "custom"  
       }
+    },
+    {
+      "path": "pages/proposal/log",  
+      "style": {
+        "navigationStyle": "custom"  
+      }
     }
   ],
   "tabBar": {

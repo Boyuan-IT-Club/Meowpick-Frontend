@@ -543,7 +543,9 @@
         "summary": "/api/proposal/suggest",
         "deprecated": false,
         "description": "",
-        "tags": [],
+        "tags": [
+          "proposal"
+        ],
         "parameters": [],
         "responses": {
           "200": {
@@ -776,7 +778,7 @@
         "summary": "/api/proposal/{proposalId}/approve",
         "deprecated": false,
         "description": "",
-        "tags": [],
+        "tags": ["proposal"],
         "parameters": [
           {
             "name": "proposalId",

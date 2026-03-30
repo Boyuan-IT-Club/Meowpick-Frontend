@@ -53,7 +53,8 @@ api.instance.interceptors.request.use(
 api.instance.interceptors.response.use(
     (res) => {
       console.log(res.data);
-      if (res.data.data.userId != undefined) {
+      // 安全检查：确保 res.data 和 res.data.data 存在
+      if (res.data && res.data.data && res.data.data.userId != undefined) {
         useTokenStore().setUserId(res.data.data.userId);
         console.log("存储userId", res.data.data.userId);
       }
