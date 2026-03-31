@@ -10,9 +10,9 @@ const emit = defineEmits<{
 const text = ref("");
 
 function commit() {
-  http.CommentController.add({
-    target: props.id,
-    text: text.value
+  http.CommentController.commentAddCreate({
+    courseId: props.id,
+    content: text.value
   }).then(() => {
     emit("commit");
   });

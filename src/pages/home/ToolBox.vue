@@ -30,7 +30,7 @@ const totalComment = ref(0);
 const showNewIcon = ref(true);
 
 onShow(() => {
-  http.SearchController.total().then((res) => {
+  http.CommentController.searchTotalList().then((res) => {
     totalComment.value = res.data.data.count;
   });
   

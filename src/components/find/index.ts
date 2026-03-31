@@ -87,7 +87,7 @@ export function useSuggest() {
   function suggestContent(page: number) {
     if (!keyword.value) return;
 
-    http.SearchController.suggest({
+    http.SearchController.searchSuggestList({
       keyword: keyword.value,
       pageNum: page,
       pageSize: 15

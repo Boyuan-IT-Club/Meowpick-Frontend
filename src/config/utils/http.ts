@@ -1,18 +1,26 @@
-import { ContentType } from "@/api/http-client";
+import { ContentType, HttpClient } from "@/api/http-client";
+import { Course } from "@/api/Course";
+import { Comment } from "@/api/Comment";
+import { Teacher } from "@/api/Teacher";
+import { Search } from "@/api/Search";
+import { Like } from "@/api/Like";
+import { Proposal } from "@/api/Proposal";
+import { Auth } from "@/api/Auth";
 import { StorageKeys } from "@/utils/const";
 import { UniAdapter } from "uniapp-axios-adapter";
+import { useTokenStore } from "@/config";
+import { ref } from "vue";
 
 class HttpRequest<
     SecurityDataType = unknown
 > extends HttpClient<SecurityDataType> {
-  public CourseController = new CourseApi(this);
-  public SearchController = new SearchController(this);
-  public UserController = new UserApi(this);
-  public CommentController = new CommentApi(this);
-  public TeacherController = new TeacherApi(this);
-  public ActionController = new ActionApi(this);
+  public CourseController = new Course(this);
+  public SearchController = new Search(this);
+  public CommentController = new Comment(this);
+  public TeacherController = new Teacher(this);
   public ProposalController = new Proposal(this);
   public LikeController = new Like(this);
+  public AuthController = new Auth(this);
 
   async sign_in(data: any) {
     const resp = await this.request({

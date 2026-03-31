@@ -49,7 +49,7 @@ const recentText = ref("");
 
 const recent = ref<SearchHistoryVO[]>([]);
 onShow(() => {
-  http.SearchController.recent().then((res) => {
+  http.SearchController.searchRecentList().then((res) => {
     recent.value = res.data.data.histories;
   });
   uni.hideTabBar();
@@ -72,7 +72,8 @@ function handleKeydown(text: string) {
 
 const deleteHistory = () => {
   recent.value = [];
-  http.SearchController.removeRecent(tokenStore.userId);
+  // 接口已变更，暂时注释
+  // http.SearchController.removeRecent(tokenStore.userId);
 };
 </script>
 

@@ -35,7 +35,7 @@ export function useChoose() {
 
   function search(page: number) {
     if (keyword.value.length > 0) {
-      http.SearchController.search({
+      http.SearchController.searchSuggestList({
         keyword: keyword.value,
         type: type.value,
         page,
