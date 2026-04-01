@@ -130,9 +130,14 @@ interface LogEntry {
   id: string;
   proposalId: string;
   courseName: string;
-  action: 'approve' | 'reject' | 'new';
+  action: 'new' | 'approve' | 'reject';
   actionTime: string;
   operator: string;
+  campus?: string[];
+  department?: string;
+  teachers?: string;
+  courseCategory?: string;
+  reason?: string;
 }
 
 // 本地模拟数据
@@ -206,11 +211,18 @@ const mockProposals: Proposal[] = [
 
 // 本地模拟日志数据
 const mockLogs: LogEntry[] = [
-  { id: '1', proposalId: '2', courseName: '【提议新增】咖啡鉴赏与制作', action: 'approve', actionTime: '2024-01-15 14:30:00', operator: '管理员' },
-  { id: '2', proposalId: '5', courseName: '【提议新增】心理学与生活', action: 'new', actionTime: '2024-01-14 10:20:00', operator: 'user_112233' },
-  { id: '3', proposalId: '5', courseName: '【提议新增】心理学与生活', action: 'approve', actionTime: '2024-01-14 16:45:00', operator: '管理员' },
-  { id: '4', proposalId: '4', courseName: '【提议新增】Python数据分析实战', action: 'reject', actionTime: '2024-01-13 09:15:00', operator: '管理员' },
-  { id: '5', proposalId: '1', courseName: '【提议新增】深度学习进阶实战', action: 'new', actionTime: '2024-01-16 08:00:00', operator: 'user_654321' }
+  { id: '12', proposalId: '8', courseName: '计算机组成原理', campus: ['闵行校区'], department: '计算机科学与技术学院', teachers: '王建国', courseCategory: '专业课', reason: '课程内容有部分陈旧，建议更新最新的指令集架构内容，并且日常分占比太低。', action: 'approve', actionTime: '2024-04-01 10:15:00', operator: '管理员' },
+  { id: '11', proposalId: '8', courseName: '计算机组成原理', campus: ['闵行校区'], department: '计算机科学与技术学院', teachers: '王建国', courseCategory: '专业课', reason: '课程内容有部分陈旧，建议更新最新的指令集架构内容，并且日常分占比太低。', action: 'new', actionTime: '2024-04-01 08:30:00', operator: 'user_4589' },
+  { id: '10', proposalId: '9', courseName: '音乐剧鉴赏与排演', campus: ['普陀校区', '闵行校区'], department: '音乐学院', teachers: '李明', courseCategory: '通识选修', reason: '这门课非常有意思，强烈建议增加开课名额和增加跨校区排课。', action: 'reject', actionTime: '2024-03-31 16:20:00', operator: '管理员' },
+  { id: '9', proposalId: '9', courseName: '音乐剧鉴赏与排演', campus: ['普陀校区', '闵行校区'], department: '音乐学院', teachers: '李明', courseCategory: '通识选修', reason: '这门课非常有意思，强烈建议增加开课名额和增加跨校区排课。', action: 'new', actionTime: '2024-03-31 14:10:00', operator: 'user_7721' },
+  { id: '8', proposalId: '10', courseName: '人工智能伦理', campus: ['闵行校区'], department: '哲学系', teachers: '张三', courseCategory: '通识必修', reason: '当前AI发展迅速，伦理相关的约束探讨非常有必要面向全校工科生展开。', action: 'approve', actionTime: '2024-03-30 09:45:00', operator: '管理员' },
+  { id: '7', proposalId: '10', courseName: '人工智能伦理', campus: ['闵行校区'], department: '哲学系', teachers: '张三', courseCategory: '通识必修', reason: '当前AI发展迅速，伦理相关的约束探讨非常有必要面向全校工科生展开。', action: 'new', actionTime: '2024-03-29 20:30:00', operator: 'user_9912' },
+  { id: '6', proposalId: '11', courseName: '大学英语精读', campus: ['中北校区'], department: '外语学院', teachers: '英语教研组', courseCategory: '公共基础', reason: '任课老师信息有误，这学期的外教已经换人了，请管理员帮忙核实。', action: 'reject', actionTime: '2024-03-28 11:05:00', operator: '管理员' },
+  { id: '5', proposalId: '11', courseName: '大学英语精读', campus: ['中北校区'], department: '外语学院', teachers: '英语教研组', courseCategory: '公共基础', reason: '任课老师信息有误，这学期的外教已经换人了，请管理员帮忙核实。', action: 'new', actionTime: '2024-03-28 09:00:00', operator: 'user_3421' },
+  { id: '4', proposalId: '4', courseName: 'Python数据分析实战', campus: ['闵行校区'], department: '数据科学与工程学院', teachers: '李老师', courseCategory: '专业选修', reason: '希望开设一门实践性强的Python数据分析课程，学习pandas、numpy 等工具的使用。', action: 'reject', actionTime: '2024-01-15 09:15:00', operator: '管理员' },
+  { id: '3', proposalId: '5', courseName: '心理学与生活', campus: ['普陀校区'], department: '心理与认知科学学院', teachers: '王教授', courseCategory: '通识核心', reason: '希望能有一门面向全校学生的心理学通识课，帮助大家更好地理解自己和他人。', action: 'approve', actionTime: '2024-01-14 16:45:00', operator: '管理员' },
+  { id: '2', proposalId: '5', courseName: '心理学与生活', campus: ['普陀校区'], department: '心理与认知科学学院', teachers: '王教授', courseCategory: '通识核心', reason: '希望能有一门面向全校学生的心理学通识课，帮助大家更好地理解自己和他人。', action: 'new', actionTime: '2024-01-14 10:20:00', operator: 'user_112233' },
+  { id: '1', proposalId: '2', courseName: '咖啡鉴赏与制作', campus: ['中北校区'], department: '后勤保障部', teachers: '后勤咖啡师', courseCategory: '素质拓展', reason: '不仅要懂喝，还要懂做。', action: 'approve', actionTime: '2024-01-13 14:30:00', operator: '管理员' },
 ];
 
 // 当前用户ID（本地模拟）
@@ -218,7 +230,7 @@ const currentUserId = 'user_123456';
 // 管理员ID列表（本地模拟）
 const adminUserIds = ['user_123456', 'admin_001'];
 
-// 是否是管理员
+// 是否是管理员（恢复原状）
 const isAdmin = ref(false);
 
 // 检查是否是管理员
@@ -229,16 +241,16 @@ const checkAdmin = () => {
     method: 'GET'
   })
   .then((res) => {
-    console.log('[API] 管理员检查响应:', res.data);
+    console.log('[API] 管理员检查响应', res.data);
     if (res.data && res.data.code === 0) {
       isAdmin.value = res.data.data?.isAdmin ?? false;
-      console.log('[API] 管理员检查结果:', isAdmin.value ? '是管理员' : '不是管理员');
+      console.log('[API] 管理员检查结果', isAdmin.value ? '是管理员' : '不是管理员');
     } else {
       throw new Error(res.data?.msg || '接口失败');
     }
   })
   .catch((err) => {
-    console.error('[API] 管理员检查失败:', err.message || err);
+    console.error('[API] 管理员检查失败', err.message || err);
     console.log('[FALLBACK] 使用本地管理员列表判断');
     isAdmin.value = adminUserIds.includes(currentUserId);
     console.log('[FALLBACK] 本地判断结果:', isAdmin.value ? '是管理员' : '不是管理员');
@@ -480,7 +492,12 @@ const handleReject = async (index: number) => {
     mockLogs.unshift({
       id: Date.now().toString(),
       proposalId: proposal.id,
-      courseName: proposal.courseName,
+      courseName: proposal.courseName.replace(/^【.*?】/, ''), // 移除可能的【】前缀
+      campus: proposal.campus ? proposal.campus.split(',').map(s => s.trim()) : [],
+      department: '暂无院系(测试)',
+      teachers: proposal.teachers || '',
+      courseCategory: proposal.category || '',
+      reason: proposal.reason || '',
       action: 'reject',
       actionTime: new Date().toLocaleString(),
       operator: '管理员'
