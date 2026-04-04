@@ -1,4 +1,3 @@
-<!-- d:\MeowPick\Meowpick-Frontend\src\pages\proposal\propose.vue -->
 <template>
   <view class="container">
     <!-- Header -->
@@ -25,24 +24,28 @@
       <view class="card">
          <view class="card-title">基本信息</view>
          
-         <view class="form-row">
+         <view class="form-row" @click="openSearchModal('courseName')">
             <view class="label">课程名称</view>
-            <input class="input" v-model="formData.courseName" placeholder="请输入课程名称" />
+            <view class="input-display">{{ formData.courseName || '请输入课程名称' }}</view>
+            <text class="arrow">›</text>
          </view>
          
-         <view class="form-row">
+         <view class="form-row" @click="openSearchModal('courseCode')">
             <view class="label">课程代码</view>
-            <input class="input" v-model="formData.courseCode" placeholder="请输入课程代码 (选填)" />
+            <view class="input-display">{{ formData.courseCode || '请输入课程代码 (选填)' }}</view>
+            <text class="arrow">›</text>
          </view>
 
-         <view class="form-row">
+         <view class="form-row" @click="openSearchModal('department')">
             <view class="label">开课院系</view>
-            <input class="input" v-model="formData.department" placeholder="请输入开课院系" />
+            <view class="input-display">{{ formData.department || '请输入开课院系' }}</view>
+            <text class="arrow">›</text>
          </view>
          
-         <view class="form-row">
+         <view class="form-row" @click="openSearchModal('category')">
             <view class="label">课程类别</view>
-            <input class="input" v-model="formData.category" placeholder="请输入课程类别" />
+            <view class="input-display">{{ formData.category || '请输入课程类别' }}</view>
+            <text class="arrow">›</text>
          </view>
       </view>
 
@@ -51,9 +54,10 @@
       <view class="card">
          <view class="card-title">教学信息</view>
 
-         <view class="form-row">
+         <view class="form-row" @click="openTeacherModal">
             <view class="label">授课教师</view>
-            <input class="input" v-model="formData.teacher" placeholder="多位教师请用逗号分隔" />
+            <view class="input-display">{{ formData.teachers.length > 0 ? `${formData.teachers.length}位教师` : '请添加授课教师' }}</view>
+            <text class="arrow">›</text>
          </view>
 
          <view class="form-col">
@@ -89,16 +93,47 @@
       <view class="safe-area-bottom"></view>
 
     </view>
+
+    <!-- Search Modal Component -->
+    <SearchModal
+      v-model:visible="showSearchModal"
+      :title="modalTitle"
+      :placeholder="searchPlaceholder"
+      :dataSource="currentDataSource"
+      @select="handleSearchSelect"
+    />
+
+    <!-- Teacher List Modal Component -->
+    <TeacherListModal
+      v-model:visible="showTeacherModal"
+      :teachers="formData.teachers"
+      @add="handleAddTeacher"
+      @remove="handleRemoveTeacher"
+    />
+
+    <!-- Add Teacher Form Modal Component -->
+    <AddTeacherModal
+      v-model:visible="showAddTeacherForm"
+      @confirm="handleConfirmAddTeacher"
+    />
   </view>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue';
 import { http } from '@/config';
+import { campusesData, categoriesData, departmentsData } from '@/data/mappingData';
+import SearchModal from '@/components/SearchModal.vue';
+import TeacherListModal from '@/components/TeacherListModal.vue';
+import AddTeacherModal from '@/components/AddTeacherModal.vue';
 
-// System Info
+interface Teacher {
+  name: string;
+  title: string;
+  department: string;
+}
+
 const sysInfo = uni.getSystemInfoSync();
-// 默认胶囊信息
 let menuButtonInfo = { 
     width: 87, 
     height: 32, 
@@ -158,7 +193,6 @@ const contentSpacerStyle = computed(() => {
     };
 });
 
-// Data
 const submitting = ref(false);
 
 const formData = reactive({
@@ -166,26 +200,82 @@ const formData = reactive({
     courseCode: '',
     department: '',
     category: '',
-    teacher: '',
+    teachers: [] as Teacher[],
     campuses: [] as string[],
     reason: ''
 });
 
-// Options
 const campusOptions = ['普陀校区', '闵行校区', '临港校区'];
-const categoryOptions = ['计算机科学', '数据科学', '数学', '物理', '化学', '生物', '工程', '人文', '社会科学', '艺术', '体育', '其他'];
-const departmentOptions = [
-  '心理与认知科学学院', '社会发展学院', '化学与分子工程学院', '空间人工智能学院', 
-  '数据科学与工程学院', '美术学院', '软件工程学院', '教育学部', '国际教育中心', 
-  '外语学院', '英语系', '日语系', '大学英语教学部', '法语系', '中文系', '德语系',
-  '历史学系', '哲学系', '法学院', '马克思主义学院', '经管学院', '商学院', '体育与健康学院',
-  '数学科学学院', '物理学院', '政治与国际关系学院', '公共管理学院', '统计学院',
-  '生态与环境科学学院', '地理科学学院', '生命科学学院', '音乐学院', '计算机学院',
-  '传播学院', '设计学院', '其他'
-];
 
-// Logic
+const showSearchModal = ref(false);
+const showTeacherModal = ref(false);
+const showAddTeacherForm = ref(false);
+const currentField = ref('');
 
+const modalTitle = computed(() => {
+    const titles: Record<string, string> = {
+        courseName: '课程名称',
+        courseCode: '课程代码',
+        department: '开课院系',
+        category: '课程类别',
+        campuses: '开课校区'
+    };
+    return titles[currentField.value] || '搜索';
+});
+
+const searchPlaceholder = computed(() => {
+    const placeholders: Record<string, string> = {
+        courseName: '请输入课程名称进行搜索',
+        courseCode: '请输入课程代码进行搜索',
+        department: '请输入开课院系进行搜索',
+        category: '请输入课程类别进行搜索',
+        campuses: '请输入开课校区进行搜索'
+    };
+    return placeholders[currentField.value] || '请输入关键词';
+});
+
+const currentDataSource = computed(() => {
+    switch (currentField.value) {
+        case 'courseName':
+        case 'courseCode':
+            return [];
+        case 'department':
+            return departmentsData;
+        case 'category':
+            return categoriesData;
+        case 'campuses':
+            return campusesData;
+        default:
+            return [];
+    }
+});
+
+const openSearchModal = (field: string) => {
+    currentField.value = field;
+    showSearchModal.value = true;
+};
+
+const handleSearchSelect = (item: string) => {
+    switch (currentField.value) {
+        case 'courseName':
+            formData.courseName = item;
+            break;
+        case 'courseCode':
+            formData.courseCode = item;
+            break;
+        case 'department':
+            formData.department = item;
+            break;
+        case 'category':
+            formData.category = item;
+            break;
+        case 'campuses':
+            if (!formData.campuses.includes(item)) {
+                formData.campuses.push(item);
+            }
+            break;
+    }
+};
 
 const toggleCampus = (campus: string) => {
     const idx = formData.campuses.indexOf(campus);
@@ -196,6 +286,22 @@ const toggleCampus = (campus: string) => {
     }
 };
 
+const openTeacherModal = () => {
+    showTeacherModal.value = true;
+};
+
+const handleAddTeacher = () => {
+    showAddTeacherForm.value = true;
+};
+
+const handleRemoveTeacher = (index: number) => {
+    formData.teachers.splice(index, 1);
+};
+
+const handleConfirmAddTeacher = (teacher: Teacher) => {
+    formData.teachers.push(teacher);
+};
+
 const goBack = () => {
     uni.navigateBack();
 };
@@ -204,11 +310,12 @@ const submit = async () => {
     if (!formData.courseName.trim()) return uni.showToast({ title: '请输入课程名称', icon: 'none' });
     if (!formData.department) return uni.showToast({ title: '请选择开课院系', icon: 'none' });
     if (!formData.reason.trim()) return uni.showToast({ title: '请填写提议理由', icon: 'none' });
+    if (formData.teachers.length === 0) return uni.showToast({ title: '请添加授课教师', icon: 'none' });
+    if (formData.campuses.length === 0) return uni.showToast({ title: '请选择开课校区', icon: 'none' });
 
     submitting.value = true;
     
     try {
-        // 构造请求体
         const requestBody = {
             title: formData.courseName,
             content: formData.reason,
@@ -217,9 +324,7 @@ const submit = async () => {
                 code: formData.courseCode,
                 department: formData.department,
                 category: formData.category,
-                teachers: formData.teacher ? formData.teacher.split(',').map(t => ({
-                    name: t.trim()
-                })) : [],
+                teachers: formData.teachers,
                 campuses: formData.campuses
             }
         };
@@ -228,10 +333,10 @@ const submit = async () => {
             courseName: formData.courseName,
             department: formData.department,
             category: formData.category,
-            campuses: formData.campuses
+            campuses: formData.campuses,
+            teachers: formData.teachers
         });
         
-        // 调用后端接口
         console.log('[API] 开始提交提案');
         const res = await http.request({
             path: `/api/proposal/add`,
@@ -244,7 +349,6 @@ const submit = async () => {
         
         console.log('[API] 提交提案响应:', res.data);
         
-        // 检查响应
         if (res.data && res.data.code === 0) {
             console.log('[API] 提案提交成功');
             uni.showToast({ title: '提交成功', icon: 'success' });
@@ -255,17 +359,13 @@ const submit = async () => {
         }
     } catch (error) {
         console.error('[API] 提交提案请求失败:', error.message || error);
-        // 更详细的错误处理
         if (error.response) {
-            // 服务器返回错误
             console.error('[API] 服务器错误:', error.response.data);
             uni.showToast({ title: `服务器错误: ${error.response.status}`, icon: 'none' });
         } else if (error.request) {
-            // 请求已发送但没有收到响应
             console.error('[API] 网络错误: 未收到服务器响应');
             uni.showToast({ title: '网络错误，请检查网络连接', icon: 'none' });
         } else {
-            // 其他错误
             console.error('[API] 其他错误:', error.message);
             uni.showToast({ title: `错误: ${error.message}`, icon: 'none' });
         }
@@ -294,11 +394,10 @@ const submit = async () => {
 }
 
 .nav-content {
-    /* empty container can be targeted via inline styles */
 }
 
 .nav-title-container {
-    margin-left: 32rpx; /* Gap = padding-left of navbar */
+    margin-left: 32rpx;
     display: flex;
     align-items: center;
 
@@ -374,6 +473,24 @@ const submit = async () => {
         text-align: right;
         font-size: 28rpx;
         color: #333;
+    }
+    
+    .input-display {
+        flex: 1;
+        text-align: right;
+        font-size: 28rpx;
+        color: #333;
+        
+        &:empty::before {
+            content: attr(data-placeholder);
+            color: #ccc;
+        }
+    }
+    
+    .arrow {
+        margin-left: 10rpx;
+        color: #ccc;
+        font-size: 40rpx;
     }
     
     .picker-display {
