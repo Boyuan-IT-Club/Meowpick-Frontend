@@ -2,7 +2,7 @@
   <view class="top-bar">
     <view class="go-back" @click="goBack">
       <image src="@/images/go-back.png" class="icon" />
-      <view class="txt">{{ course.data.name }}</view>
+      <view class="txt">{{ courseData?.name || '课程吐槽' }}</view>
     </view>
   </view>
   <view class="ellipse" />
@@ -22,7 +22,8 @@
       </view>
       <view class="selected-box">
         <view
-          v-for="item of SelectedTags"
+          v-for="(item, index) of SelectedTags"
+          :key="index"
           class="tag-item"
           @click="RemoveTags(item.text)"
         >
@@ -40,7 +41,8 @@
       </view>
       <view class="chosen-box">
         <view
-          v-for="item of TotalTags"
+          v-for="(item, index) of TotalTags"
+          :key="index"
           class="tag-item"
           :style="{ backgroundColor: item.isSelected ? '#D3D3D3' : '#f1f1f1' }"
           @click="AddTags(item.text)"
@@ -69,15 +71,18 @@
   </view>
 </template>
 <script setup lang="ts">
+import { ref, onMounted } from "vue";
+import { onLoad, onShow } from "@dcloudio/uni-app";
+import { http } from "@/config";
 import { useCourse } from "@/pages/course/index/index";
-import { Tags, TotalTags, InitTags } from "@/utils/tags";
-import { Ref } from "vue";
+import { TotalTags, InitTags } from "@/utils/tags";
+import type { Tags } from "@/utils/tags";
 
 type Props = {};
 const props = defineProps<Props>();
 
 let course_id = "";
-const { fetch, id, course, teachers, trends } = useCourse();
+const { fetch, id, courseData, teachers } = useCourse();
 const text = ref("");
 const tags = ref<string[]>([]);
 const SelectedTags = ref<Tags[]>([]);

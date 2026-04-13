@@ -24,15 +24,28 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref } from 'vue';
+import { http } from '@/config';
+
 const showPanel1 = ref(false);
 const showPanel2 = ref(false);
 const totalComment = ref(0);
 const showNewIcon = ref(true);
 
-onShow(() => {
-  http.CommentController.searchTotalList().then((res) => {
-    totalComment.value = res.data.data.count;
-  });
+onMounted(() => {
+  console.log('[ToolBox] Mounted');
+  // 延迟 300ms 避开 reLaunch 后的状态交替期，确保 Token 准备就绪
+  setTimeout(() => {
+    console.log('[ToolBox] 开始获取吐槽总数');
+    http.CommentController.searchTotalList().then((res) => {
+      console.log('[ToolBox] Response:', res);
+      if (res && res.code === 0 && res.data) {
+        totalComment.value = res.data.count || 0;
+      }
+    }).catch(err => {
+      console.error('[ToolBox] Error:', err);
+    });
+  }, 300);
   
   // 检查用户是否已经查看过信件
   const hasReadLetter = uni.getStorageSync('hasReadLetter');

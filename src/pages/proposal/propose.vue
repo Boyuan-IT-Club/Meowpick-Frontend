@@ -123,9 +123,9 @@
 import { ref, reactive, computed } from 'vue';
 import { http } from '@/config';
 import { campusesData, categoriesData, departmentsData } from '@/data/mappingData';
-import SearchModal from '@/components/SearchModal.vue';
-import TeacherListModal from '@/components/TeacherListModal.vue';
-import AddTeacherModal from '@/components/AddTeacherModal.vue';
+import SearchModal from '@/components/proposal-components/SearchModal.vue';
+import TeacherListModal from '@/components/proposal-components/TeacherListModal.vue';
+import AddTeacherModal from '@/components/proposal-components/AddTeacherModal.vue';
 
 interface Teacher {
   name: string;
@@ -347,15 +347,15 @@ const submit = async () => {
             }
         });
         
-        console.log('[API] 提交提案响应:', res.data);
+        console.log('[API] 提交提案响应:', res);
         
-        if (res.data && res.data.code === 0) {
+        if (res && res.code === 0) {
             console.log('[API] 提案提交成功');
             uni.showToast({ title: '提交成功', icon: 'success' });
             setTimeout(() => uni.navigateBack(), 1500);
         } else {
-            console.error('[API] 提案提交失败:', res.data?.msg || '未知错误');
-            uni.showToast({ title: res.data?.msg || '提交失败', icon: 'none' });
+            console.error('[API] 提案提交失败:', res?.msg || '未知错误');
+            uni.showToast({ title: res?.msg || '提交失败', icon: 'none' });
         }
     } catch (error) {
         console.error('[API] 提交提案请求失败:', error.message || error);

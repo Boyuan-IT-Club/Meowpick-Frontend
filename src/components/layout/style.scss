@@ -1,8 +1,32 @@
-.root {
-  //box-sizing: border-box;
-  @apply
-  relative
-  w-full max-w-full
+.layout-root {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden; /* 防止页面级滚动 */
+}
 
-  overflow-y-scroll;
+.fixed-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0; /* 撑开全屏但禁止点击 */
+  z-index: 100;
+  pointer-events: none; /* 让触摸穿透到下面的 scroll-view */
+}
+
+.scroll-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100.2vh; /* 确保内容比容器高出一点，强制激活滚动 */
+  padding-bottom: calc(20vw + env(safe-area-inset-bottom));
 }

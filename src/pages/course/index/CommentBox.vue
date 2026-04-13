@@ -4,7 +4,7 @@
     <view class="box">
       <view class="comment-header">
         <view class="tag">
-          <template v-for="item of limitedTags(data.tags!)">
+          <template v-for="(item, index) of limitedTags(data.tags!)" :key="index">
             <view v-if="Emoji(item)" class="item">
               <image :src="Emoji(item)" class="emoji" />
               <text class="tag-txt">{{ item }}</text>

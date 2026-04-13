@@ -1,99 +1,63 @@
 <template>
-  <top-bar :selected="1" />
-  <view class="comment">
-    <scroll @bottom="handleBottom">
+  <layout @on-bottom="handleBottom">
+    <!-- 固定层：防止顶栏滚动 -->
+    <template #fixed>
+      <view class="top-bar-fixed-wrapper">
+        <top-bar :selected="1" />
+      </view>
+    </template>
+    
+    <!-- 滚动层内容 -->
+    <view class="comment-container">
       <view v-for="item of list" :key="item.id" class="item">
         <MyCommentBox :data="item" @like="like" />
       </view>
-    </scroll>
-  </view>
+      <!-- 底部留白，防止最后一条评论被挡住 -->
+      <view class="safe-area-bottom" />
+    </view>
+  </layout>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onShow } from "@dcloudio/uni-app";
 import { useCourseComment } from "@/pages/my-comments/utils";
 import MyCommentBox from "@/pages/my-comments/MyCommentBox.vue";
 
-onShow(() => {
-  fetch(page.value);
-  uni.hideTabBar();
-});
-
-const value = ref("2");
-
 const { list, like, next, fetch, page } = useCourseComment();
 
-const currentPage = ref("");
-const goToSearch = () => {
-  currentPage.value = "search";
-  uni.navigateTo({
-    url: "/pages/find/index/index"
-  });
-};
-const goToMyComments = () => {
-  uni.navigateTo({
-    url: "/pages/my-comments/my-comments"
-  });
-};
+onShow(() => {
+  // 确保每次进入页面都是从第一页开始加载
+  page.value = 1;
+  fetch(page.value);
+});
 
 function handleBottom() {
+  console.log('[MyComments] handleBottom triggered');
   next();
 }
 </script>
 
 <style scoped lang="scss">
-.top-bar {
-  position: fixed;
-  z-index: 99;
-  top: 0;
-  background-color: #b70030;
-  width: 100vw;
-  height: 25vw;
-  .tap-bar {
-    display: flex;
-    flex-direction: row;
-    position: fixed;
-    top: 14vw;
-    left: 8vw;
-    .search {
-      color: #ffffff;
-      font-size: 4vw;
-      letter-spacing: 0.6vw;
-      display: flex;
-      flex-direction: column;
-    }
-    .my-comment {
-      color: #ffffff;
-      font-size: 4.5vw;
-      margin-left: 10vw;
-      margin-top: -1vw;
-      letter-spacing: 0.3vw;
-      font-weight: bold;
-      display: flex;
-      flex-direction: column;
-      .chosen-search {
-        width: 7vw;
-        height: 1vw;
-        margin-top: 2vw;
-        margin-left: 5.5vw;
-        z-index: 1;
-      }
-    }
-  }
+.top-bar-fixed-wrapper {
+  pointer-events: auto;
+  z-index: 100;
 }
-.ellipse {
-  position: fixed;
-  top: 21vw;
-  background-color: #b70030;
+.comment-container {
+  padding-top: 30vw;
+  padding-left: 5vw;
+  padding-right: 5vw;
   width: 100vw;
-  height: 8vw;
-  border-radius: 50%;
-  z-index: 98;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
-.comment {
-  margin-top: 30vw;
-  margin-left: 5vw;
-  height: 200vw;
-  width: 100vw;
+
+.item {
+  margin-bottom: 4vw;
+}
+
+.safe-area-bottom {
+  height: 20vw;
+  width: 100%;
 }
 </style>

@@ -1,80 +1,73 @@
-import type { CommentVO, Course, CourseVO, TeacherVO } from "@/api/data-contracts";
-
-type choose = {
-  course?: CourseVO[];
-  teacher?: CourseVO[];
-  department?: CourseVO[];
-  category?: any[];
-};
-const map = {
-  course: useCourseStore(),
-  teacher: useCourseStore(),
-  comment: useCourseStore(),
-  post: useCourseStore()
-};
+import { ref, shallowRef, watch } from "vue";
+import { http } from "@/config";
+import type { CourseVO } from "@/api/data-contracts";
 
 export function useChoose() {
-  const keyword = shallowRef("");
-  const type = shallowRef<"course" | "teacher" | "department" | "category">(
-    "course"
-  );
-  const rows = ref<choose>({
-    course: [],
-    teacher: [],
-    department: [],
-    category: []
-  });
+  const keyword = ref("");
+  const type = ref<"course" | "teacher" | "department" | "category">("course");
+  // 直接提供一个扁平的 list 供模板使用，避免复杂的对象嵌套响应式问题
+  const list = ref<any[]>([]);
   const page = ref(0);
+  const loading = ref(false);
 
   function jump(id: string) {
-    // map[type.value].setData(item)
     uni.navigateTo({
       url: `/pages/course/index/index?id=${id}`
     });
   }
 
-  function search(page: number) {
-    if (keyword.value.length > 0) {
-      http.SearchController.searchSuggestList({
-        keyword: keyword.value,
-        type: type.value,
-        page,
-        pageSize: 10
-      }).then((res) => {
-        // 确保 type.value 对应的数组已初始化
-        if (!rows.value[type.value]) {
-          rows.value[type.value] = [];
-        }
-        
-        // 正确处理响应数据，将 teachers 映射为 teacherList 以匹配组件需要的数据结构
-        const courses = (res.data.data.courses || []).map(course => ({
+  function search(currentPage: number) {
+    if (!keyword.value) return;
+    
+    loading.value = true;
+    console.log(`[Search] Performing ${type.value} search for: ${keyword.value}, page: ${currentPage}`);
+
+    http.CoursesController.searchCreate({
+      keyword: keyword.value,
+      type: type.value,
+      page: currentPage,
+      pageSize: 10
+    }).then((res) => {
+      console.log(`[Search] API Success:`, res);
+      if (res && res.code === 0 && res.data) {
+        // 映射数据结构以匹配组件需求
+        const newCourses = (res.data.courses || []).map(course => ({
           ...course,
-          teacherList: course.teachers || [], // 给模板的 teacherList 字段
-          tagCount: course.tagCount || {}     // 保证 tagCount 不为 null
+          teacherList: course.teachers || [],
+          tagCount: course.tagCount || {}
         }));
-        
-        rows.value[type.value] = [
-          ...rows.value[type.value]!,
-          ...courses
-        ];
-        console.log("搜索信息：", rows.value[type.value]);
-      });
-    }
+
+        if (currentPage === 0) {
+          list.value = newCourses;
+        } else {
+          list.value = [...list.value, ...newCourses];
+        }
+        console.log(`[Search] List updated, total items: ${list.value.length}`);
+      }
+    }).finally(() => {
+      loading.value = false;
+    });
   }
 
-  watch([page], () => {
-    search(page.value);
+  // 监听页码变化
+  watch(page, (newPage) => {
+    search(newPage);
   });
+
+  // 监听关键词或类型变化，重置列表
   watch([keyword, type], () => {
-    rows.value[type.value] = [];
-    search(page.value);
+    console.log(`[Search] Criteria changed, resetting list`);
+    page.value = 0;
+    list.value = [];
+    search(0);
   });
 
   return {
     keyword,
     type,
-    rows,
+    list,
     page,
+    loading,
     jump
   };
 }

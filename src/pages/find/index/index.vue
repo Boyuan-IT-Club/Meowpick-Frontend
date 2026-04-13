@@ -1,34 +1,21 @@
 <template>
   <top-bar :selected="0" />
   <view class="content">
-    <!--        <img src="../../../images/cat.png" />-->
     <view class="find">
       <view class="input">
-        <find @keydown="handleKeydown" />
+        <find-component @on-keydown="handleKeydown" />
       </view>
-<!--      <view class="hot">-->
-<!--        <text class="title">热搜</text>-->
-<!--        <view class="text">-->
-<!--          <view class="box">-->
-<!--            <view v-for="item of hot" class="item">-->
-<!--              <view class="txt" @click="jump2search(item)">{{ item }}</view>-->
-<!--            </view>-->
-<!--          </view>-->
-<!--        </view>-->
-<!--      </view>-->
       <view class="recent">
         <view class="history">
           <text class="title">搜索历史</text>
-          <!--                    <image src="../../..//images/delete-icon.png" class="delete" @click="deleteHistory"></image>-->
         </view>
 
         <view class="text">
           <view class="box">
-            <view v-for="item in recent" class="item">
+            <view v-for="item in recent" :key="item.id" class="item">
               <view class="txt" @click="jump2Recent(item.query!)">
                 {{ item.query }}
               </view>
-              <!--                                <div class="icon" @click="commitInput(item.text!)">↖</div>-->
             </view>
           </view>
         </view>
@@ -40,26 +27,25 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
+import { onShow } from "@dcloudio/uni-app";
+import { http, PubSub } from "@/config";
 import type { SearchHistoryVO } from "@/api/data-contracts";
-import { useTokenStore } from "@/config";
-
-const tokenStore = useTokenStore();
-const recentText = ref("");
-// const hot = ["思政类", "英语类", "体育类", "劳动与创造"];
+import FindComponent from "@/components/find/index.vue";
 
 const recent = ref<SearchHistoryVO[]>([]);
-onShow(() => {
-  http.SearchController.searchRecentList().then((res) => {
-    recent.value = res.data.data.histories;
-  });
-  uni.hideTabBar();
-});
 
-function jump2search(keyword: string) {
-  uni.navigateTo({
-    url: `/pages/find/choose/index?keyword=${keyword}`
+onShow(() => {
+  console.log('[FindPage] onShow - Fetching recent searches');
+  http.SearchController.searchRecentList().then((res) => {
+    if (res && res.code === 0 && res.data) {
+      recent.value = res.data.histories || [];
+      console.log('[FindPage] Recent searches updated:', recent.value.length);
+    }
+  }).catch(err => {
+    console.error('[FindPage] Fetch recent failed:', err);
   });
-}
+});
 
 function jump2Recent(keyword: string) {
   PubSub.publish("commit_input", keyword);
@@ -69,90 +55,47 @@ function jump2Recent(keyword: string) {
 function handleKeydown(text: string) {
   console.log("Received text from ChildComponent:", text);
 }
-
-const deleteHistory = () => {
-  recent.value = [];
-  // 接口已变更，暂时注释
-  // http.SearchController.removeRecent(tokenStore.userId);
-};
 </script>
 
 <style scoped lang="scss">
 .content {
   position: fixed;
-  top: 35vw;
+  top: 30vw;
   left: 5vw;
-
-  .hot {
-    margin-top: 4vw;
-    margin-left: 4vw;
-
-    .title {
-      font-weight: bold;
-      font-size: 3.46vw;
-    }
-
-    .text {
-      .box {
-        margin-left: -5vw;
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-
-        .item {
-          background-color: #f2f2f2;
-          margin-left: 3vw;
-          margin-top: 3vw;
-          padding: 2vw;
-          border-radius: 3vw;
-
-          .txt {
-            color: #181818;
-            font-size: 3.2vw;
-          }
-        }
-      }
-    }
-  }
+  width: 90vw;
 
   .recent {
     margin-top: 6vw;
-    margin-left: 4vw;
+    margin-left: 2vw;
 
     .history {
       display: flex;
       flex-direction: row;
-
       .title {
         font-weight: bold;
         font-size: 3.46vw;
-      }
-
-      .delete {
-        width: 6vw;
-        height: 6vw;
-        margin-left: 60vw;
+        color: #333;
       }
     }
 
     .text {
       .box {
-        margin-left: -5vw;
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
+        margin-top: 2vw;
 
         .item {
           background-color: #f2f2f2;
-          margin-left: 3vw;
-          margin-top: 3vw;
-          padding: 2vw;
+          margin-right: 3vw;
+          margin-bottom: 3vw;
+          padding: 1.5vw 3vw;
           border-radius: 3vw;
-          max-width: 30vw;
 
           .txt {
             color: #181818;
             font-size: 3.2vw;
+            max-width: 30vw;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;

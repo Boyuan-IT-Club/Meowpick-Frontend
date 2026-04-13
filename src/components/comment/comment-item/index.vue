@@ -19,28 +19,26 @@ function like() {
   <div class="index">
     <div class="header">
       <div class="user">
-        <div class="avatar">
-          <image :src="data.user?.avatar" />
-        </div>
+        <!-- 如果没有头像和用户名，这里可以根据实际后端返回的数据调整 -->
         <div class="name">
-          {{ data.user?.name }}
+          {{ data.name || '匿名用户' }}
         </div>
       </div>
       <div class="time">
-        {{ caculateTimeago(data.crateAt) }}
+        {{ caculateTimeago(data.createdAt) }}
       </div>
     </div>
     <div class="text">
-      {{ data.text }}
+      {{ data.content }}
     </div>
     <div class="operations">
       <div class="actions">
         <div
           class="item like"
-          :class="{ active: data.relation?.like }"
+          :class="{ active: data.like }"
           @click="like"
         >
-          <span>{{ data.relation?.like_cnt }}</span>
+          <span>{{ data.likeCnt }}</span>
           <div class="icon">❤</div>
         </div>
       </div>

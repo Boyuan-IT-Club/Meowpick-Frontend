@@ -19,7 +19,7 @@
         <image src="@/images/teacher-icon.png" class="icon" />
         <text class="tip">任课教师</text>
       </view>
-      <view v-for="item of data.teachers" class="teachers">
+      <view v-for="(item, index) of (data.teachers || (data as any).teacherList || [])" :key="index" class="teachers">
         <view class="content">{{ item.name }}</view>
       </view>
     </view>
@@ -47,12 +47,17 @@
   </view>
 </template>
 <script setup lang="ts">
-import type { CourseVO, TeacherVO } from "@/api/data-contracts";
+import { onMounted } from "vue";
+import type { DtoCourseVO as CourseVO, DtoTeacherVO as TeacherVO } from "@/api/data-contracts";
 
 type Props = {
   data: CourseVO;
 };
 const props = defineProps<Props>();
+
+onMounted(() => {
+  console.log('[CourseHeader] Props data:', JSON.stringify(props.data));
+});
 
 const jump = (id: string) => {
   uni.navigateTo({

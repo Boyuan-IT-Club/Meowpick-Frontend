@@ -15,32 +15,41 @@
     },
     {
       "path": "pages/course/index/index",
-      "style": {}
+      "style": {
+        "disableScroll": true
+      }
     },
     {
       "path": "pages/course/comment/index",
       "style": {
-        "enablePullDownRefresh": true
+        "enablePullDownRefresh": true,
+        "disableScroll": true
       }
     },
     {
       "path": "pages/find/index/index",
-      "style": {}
+      "style": {
+        "disableScroll": true
+      }
     },
     {
       "path": "pages/find/choose/index",
       "style": {
-        "navigationStyle": "custom"
+        "navigationStyle": "custom",
+        "disableScroll": true
       }
     },
     {
       "path": "pages/find/choose/teacher",
-      "style": {}
+      "style": {
+        "disableScroll": true
+      }
     },
     {
       "path": "pages/my-comments/my-comments",
       "style": {
-        "enablePullDownRefresh": true
+        "enablePullDownRefresh": true,
+        "disableScroll": true
       }
     },
     {

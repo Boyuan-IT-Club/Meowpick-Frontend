@@ -12,14 +12,16 @@
         <view class="department">{{ props.data?.department }}</view>
         <view class="circle" />
         <view
-          v-for="item of props.data?.teacherList"
+          v-for="(item, index) of props.data?.teacherList"
+          :key="index"
           class="instructor"
           >{{ item.name }}</view
         >
       </view>
       <view class="tip">
         <view
-          v-for="item of getTop3List(props.data?.tagCount!)"
+          v-for="(item, index) of getTop3List(props.data?.tagCount!)"
+          :key="index"
           class="item"
         >
           <image class="emoji" :src="Emoji(item.tag)" />

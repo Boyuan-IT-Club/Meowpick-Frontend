@@ -92,7 +92,7 @@ export function useSuggest() {
       pageNum: page,
       pageSize: 15
     }).then((res) => {
-      const suggestions = res.data.data.suggestions || [];
+      const suggestions = res.data.suggestions || [];
 
       // 合并旧数据和新数据
       const merged = [...suggestList.value, ...suggestions.map((item: any) => ({

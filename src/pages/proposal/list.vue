@@ -229,12 +229,12 @@ const checkAdmin = () => {
     method: 'GET'
   })
   .then((res) => {
-    console.log('[API] 管理员检查响应:', res.data);
-    if (res.data && res.data.code === 0) {
-      isAdmin.value = res.data.data?.isAdmin ?? false;
+    console.log('[API] 管理员检查响应:', res);
+    if (res && res.code === 0) {
+      isAdmin.value = res.data?.isAdmin ?? false;
       console.log('[API] 管理员检查结果:', isAdmin.value ? '是管理员' : '不是管理员');
     } else {
-      throw new Error(res.data?.msg || '接口失败');
+      throw new Error(res?.msg || '接口失败');
     }
   })
   .catch((err) => {
@@ -288,19 +288,19 @@ const fetchProposals = () => {
     query: { page: 0, pageSize: 10 }
   })
   .then((res) => {
-    console.log('[API] 提案列表响应:', res.data);
+    console.log('[API] 提案列表响应:', res);
 
     // ✅ 第一层：判断业务是否成功
-    if (!res || !res.data) {
+    if (!res) {
       throw new Error('接口响应格式错误');
     }
 
     // 处理不同的响应情况
-    if (res.data.code === 0) {
+    if (res.code === 0) {
       // 成功找到提案
       console.log('[API] 提案列表获取成功');
       // ✅ 第二层：确保 data 存在
-      const list = res.data.data?.proposals || [];
+      const list = res.data?.proposals || [];
 
       if (!Array.isArray(list)) {
         throw new Error('proposals 不是数组');
@@ -329,13 +329,13 @@ const fetchProposals = () => {
       console.log('[API] 映射后的提案数据:', proposals.value);
 
       console.log('[API] 提案加载成功，共', proposals.value.length, '个提案');
-    } else if (res.data.code === 108000001 && res.data.msg === 'failed to find proposals') {
+    } else if (res.code === 108000001 && res.msg === 'failed to find proposals') {
       // 未找到提案，这是正常的业务场景
       console.log('[API] 未找到提案，显示空列表');
       proposals.value = [];
     } else {
       // 其他错误
-      throw new Error(res.data.msg || '接口失败');
+      throw new Error(res.msg || '接口失败');
     }
   })
   .catch((err) => {
@@ -439,8 +439,8 @@ const handleApprove = (index: number) => {
     path: `/api/proposal/${proposal.id}/approve`,
     method: 'POST'
   }).then((res) => {
-    console.log('[API] 提议通过响应:', res.data);
-    if (res.data && res.data.code === 0) {
+    console.log('[API] 提议通过响应:', res);
+    if (res && res.code === 0) {
       console.log('[API] 提议通过成功');
       uni.showToast({
         title: '已通过',
@@ -449,7 +449,7 @@ const handleApprove = (index: number) => {
       // 重新获取列表
       fetchProposals();
     } else {
-      console.error('[API] 提议通过失败:', res.data?.msg || '未知错误');
+      console.error('[API] 提议通过失败:', res?.msg || '未知错误');
       uni.showToast({
         title: '通过失败',
         icon: 'none'

@@ -6,13 +6,13 @@ export function useChoose() {
 
   function search(page: number) {
     if (keyword.value.length > 0) {
-      http.SearchController.searchSuggestList({
+      http.CoursesController.searchCreate({
         keyword: keyword.value,
         type: "teacher",
         page,
         pageSize: 5
       }).then((res) => {
-        const courses = res.data.data.courses!.map(course => ({
+        const courses = (res.data.courses || []).map(course => ({
           ...course,
           teacherList: course.teachers || [], // 给模板的 teacherList 字段
           tagCount: course.tagCount || {}     // 保证 tagCount 不为 null

@@ -10,14 +10,15 @@
         <view class="department">{{ props.data.department }}</view>
         <view class="circle" />
         <view
-          v-for="item of props.data.teachers"
+          v-for="(item, index) of props.data.teachers"
+          :key="index"
           class="instructor"
         >
           {{ item }}
         </view>
       </view>
       <view class="tag">
-        <view v-for="item of limitedTags(props.data.tags!)" class="item">
+        <view v-for="(item, index) of limitedTags(props.data.tags!)" :key="index" class="item">
           <image :src="Emoji(item)" class="emoji" />
           <text class="tag-txt">{{ item }}</text>
         </view>
