@@ -1,9 +1,11 @@
 import type {
-  SearchHistoryVO,
-  CommentVO,
-  Course,
-  TeacherVO
+  DtoSearchHistoryVO,
+  DtoCommentVO,
+  DtoCourseVO,
+  DtoTeacherVO
 } from "@/api/data-contracts";
+import { http } from "@/config";
+import { useCourseStore } from "@/config";
 
 export const useFind = () => {
   return useInput();
@@ -13,7 +15,7 @@ export const useInput = () => {
   const searchText = ref("");
   const placeHolder = shallowRef("搜索课程类别、名称、院系或任课教师");
   const list = shallowRef<any[]>([]);
-  const searchHistory = shallowRef<SearchHistoryVO[]>([]);
+  const searchHistory = shallowRef<DtoSearchHistoryVO[]>([]);
   const isSearch = ref(false);
 
   if (searchText) {
@@ -40,9 +42,9 @@ export const useInput = () => {
 };
 
 type choose = {
-  course?: Course[];
-  teacher?: TeacherVO[];
-  comment?: CommentVO[];
+  course?: DtoCourseVO[];
+  teacher?: DtoTeacherVO[];
+  comment?: DtoCommentVO[];
   post?: any[];
 };
 const map = {
@@ -52,8 +54,9 @@ const map = {
   post: useCourseStore()
 };
 
-export function useSuggest() {
-  const keyword = shallowRef("");
+export function useSuggest(externalKeyword?: Ref<string>) {
+  const internalKeyword = shallowRef("");
+  const keyword = externalKeyword || internalKeyword;
   const type = shallowRef<"course" | "teacher" | "comment" | "post">("course");
   const rows = ref<choose>({
     course: [],
@@ -71,46 +74,27 @@ export function useSuggest() {
     });
   }
 
-  // function search(page: number) {
-  //     if (keyword.value.length > 0) {
-  //         http.SearchController.search({
-  //             keyword: keyword.value,
-  //             type: type.value,
-  //             page,
-  //             size: 15
-  //         }).then((res) => {
-  //             rows.value[type.value] = [...rows.value[type.value]!, ...res.data.payload.rows!];
-  //         });
-  //     }
-  // }
+  function suggestContent(pageNum: number) {
+    if (!keyword.value) {
+      suggestList.value = [];
+      return;
+    }
 
-  function suggestContent(page: number) {
-    if (!keyword.value) return;
-
-    http.SearchController.suggest({
-      keyword: keyword.value,
-      pageNum: page,
-      pageSize: 15
-    }).then((res) => {
-      const suggestions = res.data.data.suggestions || [];
-
-      // 合并旧数据和新数据
-      const merged = [...suggestList.value, ...suggestions.map((item: any) => ({
-        data: item.name,
-        type: item.type,
-        id: `${item.type}-${item.name}` // 用 type+name 拼接做唯一 id
-      }))];
-
-      // 去重：type+name 一起判断
-      const unique = merged.filter(
-        (item, index, self) =>
-          index === self.findIndex(
-            (t) => t.type === item.type && t.data === item.data
-          )
-      );
-
-      suggestList.value = unique;
-    });
+    http.SearchController.searchSuggestList({ keyword: keyword.value })
+      .then((res: any) => {
+        console.log('[useSuggest] success:', JSON.stringify(res.data).substring(0, 200));
+        const data = res.data;
+        const suggestions = data?.data?.suggestions || data?.suggestions || [];
+        suggestList.value = suggestions.map((item: any) => ({
+          name: item.name,
+          type: item.type,
+          id: `${item.type}-${item.name}`
+        }));
+      })
+      .catch((err: any) => {
+        console.error('[useSuggest] error:', err);
+        suggestList.value = [];
+      });
   }
 
   watch([page], () => {
@@ -127,7 +111,8 @@ export function useSuggest() {
     rows,
     page,
     jump,
-    suggestList
+    suggestList,
+    suggestContent
   };
 }
 

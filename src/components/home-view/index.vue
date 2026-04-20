@@ -63,31 +63,35 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
+import { waitForLogin } from '@/utils/init';
+import { http } from '@/config';
 
 // 状态定义
 const totalComment = ref(0);
 const showNewIcon = ref(true);
-const userName = ref('同学'); // 默认显示
+const userName = ref('同学');
 
 // 生命周期
-onMounted(() => {
-  // 调试专用：强制重置 NEW 状态，方便预览效果
-  // uni.removeStorageSync('hasReadLetter'); 
-  
-  // 模拟数据加载
-  totalComment.value = 12580; 
-  
-  // 获取用户信息
-  // 简单模拟，后续可以接入 userStore
+onMounted(async () => {
+  await waitForLogin();
+  fetchTotalComment();
+
   const storedUser = uni.getStorageSync('userInfo');
   if (storedUser && storedUser.nickName) {
       userName.value = storedUser.nickName;
   }
-  
+
   const hasReadLetter = uni.getStorageSync('hasReadLetter');
-  // 如果想强制显示 NEW，可以直接把这里改为 showNewIcon.value = true;
   showNewIcon.value = !hasReadLetter;
 });
+
+const fetchTotalComment = () => {
+  http.CommentController.searchTotalList().then((res: any) => {
+    totalComment.value = res?.data?.data?.count || res?.data?.count || 0;
+  }).catch((err: any) => {
+    console.error('[home-view] fetchTotalComment error:', err);
+  });
+};
 
 // 路由跳转
 const goToSearch = () => {

@@ -1,21 +1,27 @@
-import type { CommentVO } from "@/api/data-contracts";
+import type { DtoCommentVO } from "@/api/data-contracts";
+import { ref, shallowRef, watch } from 'vue';
+import { http } from "@/config";
+
 export function useCourseComment() {
   const page = shallowRef(0);
-  const list = ref<CommentVO[]>([]);
+  const list = ref<DtoCommentVO[]>([]);
   let query = true;
 
-  function fetch(page: number) {
-    if (page === 0) {
+  function fetch(pageNum: number) {
+    if (pageNum === 0) {
       query = true;
       list.value = [];
     }
 
     if (query) {
-      http.CommentController.history({ page, pageSize: 5 }).then((res) => {
-        res.data.data.comments?.forEach((comment) => {
+      http.CommentController.commentHistoryCreate({ page: pageNum, pageSize: 5 }).then((res) => {
+        const data = res.data as any;
+        const comments = data?.data?.comments || data?.comments || [];
+        const total = data?.data?.total || data?.total || 0;
+        comments.forEach((comment: any) => {
           list.value.push(comment);
         });
-        query = list.value.length < res.data.data.total!;
+        query = list.value.length < total;
       });
     }
   }
@@ -25,9 +31,9 @@ export function useCourseComment() {
     if (!comment) return;
 
     comment.like = !comment.like;
-    comment.likeCnt += comment.like ? 1 : -1;
+    comment.likeCnt = (comment.likeCnt || 0) + (comment.like ? 1 : -1);
 
-    http.ActionController.like(target, {});
+    http.ActionController.likeCreate(target, { targetType: '2' });
   }
 
   function next() {

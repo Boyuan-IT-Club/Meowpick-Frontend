@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+import { http } from '@/config';
+
 type Props = {
   id: string;
 };

@@ -51,106 +51,48 @@
 import { reactive, onMounted, ref } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
 import CourseCard from '@/components/business/course/CourseCard.vue';
+import { useTokenStore, http } from '@/config';
 
-// 投票提案数据结构
 interface Proposal {
-  id: string; // 唯一标识
+  id: string;
   courseName: string;
   campus: string;
   teachers: string;
   category: string;
   reason: string;
   agreeCount: number;
-  isAgreed: boolean; // 当前用户是否已同意
-  creatorId: string; // 创建者ID
-  agreeUserIds?: string[]; // 同意用户ID列表
+  isAgreed: boolean;
+  creatorId: string;
+  agreeUserIds?: string[];
 }
 
-// 提案列表数据
+const tokenStore = useTokenStore();
 const proposals = reactive<Proposal[]>([]);
-// 加载状态
 const loading = ref(true);
-// 错误状态
 const error = ref(false);
-// 当前用户ID（实际项目中从登录状态获取）
-const currentUserId = ref('user_123456'); // 本地调试用固定用户ID
+const currentUserId = ref(tokenStore.userId);
 
-// 本地模拟获取提案列表数据
-const mockGetProposals = (): Promise<Proposal[]> => {
-  return new Promise((resolve) => {
-    // 模拟网络延迟
-    setTimeout(() => {
-      resolve([
-        {
-          id: '1',
-          courseName: '【提议新增】深度学习进阶实战',
-          campus: '普陀校区',
-          teachers: '建议邀请：张教授团队',
-          category: '计算机科学',
-          reason: '目前的基础AI课程内容较浅，希望能开设进阶课程，重点讲解Transformer、扩散模型等前沿技术，并增加项目实战环节。',
-          agreeCount: 128,
-          isAgreed: false,
-          creatorId: 'user_654321',
-          agreeUserIds: ['user_654321', 'user_789012']
-        },
-        {
-          id: '2',
-          courseName: '【提议新增】咖啡鉴赏与制作',
-          campus: '闵行校区',
-          teachers: '暂无指定',
-          category: '生活美学',
-          reason: '希望能有一门放松身心的通识课，学习咖啡豆产地知识、品鉴方法以及基础拉花技巧，丰富校园文化生活。',
-          agreeCount: 256,
-          isAgreed: true,
-          creatorId: 'user_987654',
-          agreeUserIds: ['user_123456', 'user_987654']
-        },
-        {
-          id: '3',
-          courseName: '【提议新增】短视频创作与运营',
-          campus: '两校区通用',
-          teachers: '建议邀请：传播学院老师',
-          category: '新媒体',
-          reason: '大家平时都拍视频，想系统学习脚本撰写、剪辑运镜以及账号运营策略，提升个人媒体素养。',
-          agreeCount: 89,
-          isAgreed: false,
-          creatorId: 'user_112233',
-          agreeUserIds: ['user_112233']
-        }
-      ]);
-    }, 800);
-  });
-};
-
-// 本地模拟同意/取消同意提案接口
-const mockToggleAgreeProposal = (id: string, isAgree: boolean): Promise<{ success: boolean }> => {
-  return new Promise((resolve) => {
-    // 模拟网络延迟
-    setTimeout(() => {
-      resolve({ success: true });
-    }, 500);
-  });
-};
-
-// 获取提案列表数据
 const fetchProposals = async () => {
-  // 重置状态
   loading.value = true;
   error.value = false;
-  
+
   try {
-    // 本地调试使用模拟数据
-    const response = await mockGetProposals();
-    
-    // 处理返回数据，判断当前用户是否已同意
-    const formattedData: Proposal[] = response.map((item) => ({
-      ...item,
-      isAgreed: item.agreeUserIds?.includes(currentUserId.value) || false
-    }));
-    
-    // 清空并添加新数据
+    const res = await http.ProposalController.proposalListList({ page: 1, pageSize: 20 });
+    const data = res.data?.data?.proposals || res.data?.proposals || [];
+
     proposals.length = 0;
-    proposals.push(...formattedData);
+    proposals.push(...data.map((item: any) => ({
+      id: item.id,
+      courseName: item.title || item.courseName,
+      campus: item.campus || '',
+      teachers: item.teacherName || item.teachers || '',
+      category: item.category || '',
+      reason: item.content || item.reason || '',
+      agreeCount: item.agreeCount || 0,
+      isAgreed: item.agreeUserIds?.includes(currentUserId.value) || false,
+      creatorId: item.creatorId || item.userId || '',
+      agreeUserIds: item.agreeUserIds || []
+    })));
     loading.value = false;
   } catch (err) {
     console.error('获取提案失败:', err);
@@ -159,59 +101,36 @@ const fetchProposals = async () => {
   }
 };
 
-// 同意/取消同意投票
 const handleAgree = async (index: number) => {
   const currentProposal = proposals[index];
-  // 确定当前操作是同意还是取消同意
   const isAgree = !currentProposal.isAgreed;
-  
+
   try {
-    // 调用模拟接口，传入当前操作类型
-    await mockToggleAgreeProposal(currentProposal.id, isAgree);
-    
-    // 接口成功后更新UI
+    await http.ActionController.likeCreate(currentProposal.id, { targetType: '1' });
+
     if (isAgree) {
-      // 同意操作
       currentProposal.agreeCount++;
       currentProposal.isAgreed = true;
-      if (!currentProposal.agreeUserIds) {
-        currentProposal.agreeUserIds = [];
-      }
+      if (!currentProposal.agreeUserIds) currentProposal.agreeUserIds = [];
       currentProposal.agreeUserIds.push(currentUserId.value);
       uni.showToast({ title: '已同意', icon: 'success' });
     } else {
-      // 取消同意操作
       currentProposal.agreeCount--;
       currentProposal.isAgreed = false;
       if (currentProposal.agreeUserIds) {
         const userIdIndex = currentProposal.agreeUserIds.indexOf(currentUserId.value);
-        if (userIdIndex > -1) {
-          currentProposal.agreeUserIds.splice(userIdIndex, 1);
-        }
+        if (userIdIndex > -1) currentProposal.agreeUserIds.splice(userIdIndex, 1);
       }
       uni.showToast({ title: '已取消同意', icon: 'success' });
     }
   } catch (err) {
-    // 接口失败时不更新UI
     console.error('操作失败:', err);
     uni.showToast({ title: '操作失败', icon: 'none' });
   }
 };
 
-// 页面挂载时获取数据
-onMounted(() => {
-  fetchProposals();
-});
-
-// 页面显示时重新获取数据（处理从发布页返回的场景）
-onShow(() => {
-  fetchProposals();
-});
-
-// 页面隐藏时的处理逻辑
-onHide(() => {
-  // 页面隐藏时可以执行的清理操作
-});
+onMounted(() => { fetchProposals(); });
+onShow(() => { fetchProposals(); });
 const goToPropose = () => uni.navigateTo({ url: "/pages/proposal/propose/propose" });
 </script>
 

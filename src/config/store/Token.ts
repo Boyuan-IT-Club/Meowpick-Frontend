@@ -2,16 +2,21 @@ export default defineStore("token-store", {
   unistorage: true,
   state() {
     return {
-      token: "mock_token_for_bypass_login", // 这里默认给一个 mock string
-      userId: "mock_user_id_123456" // 默认给一个 mock ID
+      token: "",
+      userId: ""
     };
   },
   actions: {
     store(token: string) {
       this.token = token;
+      console.log('[Token store] Token set to:', token?.substring(0, 20) + '...');
     },
     setUserId(userId: string) {
       this.userId = userId;
+      console.log('[Token store] UserId set to:', userId);
     }
+  },
+  getters: {
+    isLoggedIn: (state) => !!state.token
   }
 });

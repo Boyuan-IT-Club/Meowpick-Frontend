@@ -280,9 +280,9 @@
 <script setup lang="ts">
 // @ts-nocheck
 import BackBtn from "@/components/common/BackBtn.vue";
-import { onMounted, ref, watch, computed, reactive } from "vue"; 
+import { onMounted, ref, watch, computed, reactive } from "vue";
 import { onLoad, onShow } from "@dcloudio/uni-app";
-import { mockSearch, mockFuzzySearch, getHotKeywords } from "./mockApi"; 
+import { http } from "@/config"; 
 
 const props = defineProps<{
     initialMode?: string
@@ -331,6 +331,10 @@ const showProposalsList = ref(false); // New state to toggle proposals
 
 // Import searchText and placeHolder from useInput
 const { searchText, placeHolder } = useInput();
+
+// Import useSuggest
+import { useSuggest } from "./index";
+const { suggestList, suggestContent } = useSuggest(searchText);
 
 // Merge logic from useChoose
 import { useChoose } from "@/pages/find/choose/index";
@@ -495,8 +499,8 @@ const onScroll = (e: any) => {
     }
 };
 
-// 模拟 Hook，实际项目中可能从外部文件导入
-const historyList = ref(['计算机网络', '张老师', '马克思主义基本原理']);
+// 获取搜索历史
+const historyList = ref<string[]>([]);
 const hotList = ref([
     { keyword: '西方哲学智慧', tag: '高分课程' },
     { keyword: '王老师', tag: '热门老师' },
@@ -505,20 +509,18 @@ const hotList = ref([
     { keyword: '微积分I', tag: '必修课' },
 ]);
 
-// 模拟建议列表数据 (虚拟数据)
-const suggestList = computed(() => {
-    // Only show suggestions if not in result mode and text exists
-    if (!searchText.value) return [];
-    
-    // 返回一些模糊搜索的占位结果
-    // 模拟类似 Google/Baidu 的搜索联想，不区分类型，就是文本
-    return [
-        { name: searchText.value, data: { id: -1, isDirect: true } }, // 首个结果始终是输入的词条本身
-        { name: searchText.value + ' 老师', data: { id: 0 } },
-        { name: searchText.value + ' 课程', data: { id: 0 } },
-        { name: searchText.value + ' 怎么样', data: { id: 0 } },
-        { name: searchText.value + ' 评价', data: { id: 0 } },
-    ];
+function fetchSearchHistory() {
+    http.SearchController.searchRecentList().then((res: any) => {
+        const data = res.data;
+        const histories = data?.data?.histories || data?.histories || [];
+        historyList.value = histories.map((h: any) => h.query || h);
+    }).catch((err: any) => {
+        console.error('[find] fetchSearchHistory error:', err);
+    });
+}
+
+onMounted(() => {
+    fetchSearchHistory();
 });
 
 // 方法定义

@@ -124,7 +124,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { onShow } from '@dcloudio/uni-app';
+import { waitForLogin } from '@/utils/init';
+import { http } from '@/config';
 
 // System Info Logic for Header Alignment
 const sysInfo = uni.getSystemInfoSync();
@@ -159,45 +162,45 @@ interface ListItem {
     status?: 'pending' | 'accepted'; // for proposal
 }
 
-// Mock Data
-const mockData = ref<ListItem[]>([
-    {
-        id: '1',
-        type: 'comment',
-        time: '2023-10-24',
-        courseName: '高等数学 (A)',
-        content: '老师讲得很好，但是作业量确实有点大，希望能调整一下。',
-        likes: 12
-    },
-    {
-        id: '2',
-        type: 'proposal',
-        time: '2023-11-01',
-        courseName: '大学物理',
-        reason: '建议增加一些实验演示环节，现在的理论课太枯燥了。',
-        voteCount: 45,
-        status: 'pending'
-    },
-    {
-        id: '3',
-        type: 'comment',
-        time: '2023-11-05',
-        courseName: '数据结构',
-        content: '非常硬核的一门课，期末考试难度很大，大家要做好心理准备。',
-        likes: 5
-    },
-    {
-        id: '4',
-        type: 'proposal',
-        time: '2023-09-15',
-        courseName: '食堂服务',
-        reason: '建议河东食堂延长晚餐供应时间至晚上7点半。',
-        voteCount: 128,
-        status: 'accepted'
-    }
-]);
+const listData = ref<ListItem[]>([]);
+const loading = ref(false);
 
-// Filter Logic
+const loadData = async () => {
+    loading.value = true;
+    try {
+        const [commentRes, proposalRes] = await Promise.all([
+            http.CommentController.commentHistoryCreate({ page: 0, pageSize: 50 }),
+            http.ProposalController.proposalHistoryList({ page: 0, pageSize: 50 })
+        ]);
+
+        const comments = (commentRes.data?.data?.comments || commentRes.data?.comments || []).map((c: any) => ({
+            id: c.id || c.courseId,
+            type: 'comment' as ItemType,
+            time: c.createdAt ? new Date(c.createdAt).toISOString().split('T')[0] : '',
+            courseName: c.name || c.courseName || '未知课程',
+            content: c.content || c.text || '',
+            likes: c.likeCnt || 0
+        }));
+
+        const proposals = (proposalRes.data?.data?.proposals || proposalRes.data?.proposals || []).map((p: any) => ({
+            id: p.id,
+            type: 'proposal' as ItemType,
+            time: p.createdAt ? new Date(p.createdAt).toISOString().split('T')[0] : '',
+            courseName: p.title || p.courseName || '未知提议',
+            reason: p.content || p.reason || '',
+            voteCount: p.agreeCount || 0,
+            status: p.status || 'pending'
+        }));
+
+        listData.value = [...comments, ...proposals];
+    } catch (err) {
+        console.error('Failed to load profile data:', err);
+        uni.showToast({ title: '加载失败，请重试', icon: 'none' });
+    } finally {
+        loading.value = false;
+    }
+};
+
 const currentFilter = ref<'all' | 'comment' | 'proposal'>('all');
 
 const setFilter = (filter: 'all' | 'comment' | 'proposal') => {
@@ -205,12 +208,11 @@ const setFilter = (filter: 'all' | 'comment' | 'proposal') => {
 };
 
 const filteredList = computed(() => {
-    if (currentFilter.value === 'all') {
-        return mockData.value.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+    let result = [...listData.value];
+    if (currentFilter.value !== 'all') {
+        result = result.filter(item => item.type === currentFilter.value);
     }
-    return mockData.value
-        .filter(item => item.type === currentFilter.value)
-        .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+    return result.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
 });
 
 // Actions
@@ -272,7 +274,7 @@ const onLongPress = (item: ListItem) => {
         success: (res) => {
             const action = itemList[res.tapIndex || 0];
             if (action.includes('删除')) {
-                deleteItem(item.id);
+                deleteItem(item);
             } else if (action.includes('修改')) {
                 uni.showToast({ title: '即将跳转修改...', icon: 'none' });
                 // TODO: Implement navigation to edit page
@@ -285,23 +287,35 @@ const onLongPress = (item: ListItem) => {
 
 const onItemClick = (item: ListItem) => {
     if (item.type === 'comment') {
-         // Maybe navigate to course detail?
-         uni.navigateTo({
-             url: `/pages/course/index/index?id=${item.id}` // 假设 item.id 是课程 ID，或者需要调整为实际的课程 ID
-         });
+        uni.navigateTo({
+            url: `/pages/course/index/index?id=${item.id}`
+        });
     } else {
-         // Maybe open proposal detail modal
-         uni.navigateTo({
-             url: `/pages/course/proposal-detail/index?id=${item.id}` // 假设 item.id 是提议 ID
-         });
+        uni.navigateTo({
+            url: `/pages/proposal/detail/index?id=${item.id}`
+        });
     }
 };
 
-const deleteItem = (id: string) => {
-    mockData.value = mockData.value.filter(i => i.id !== id);
-    uni.showToast({ title: '已删除', icon: 'success' });
+const deleteItem = async (item: ListItem) => {
+    try {
+        if (item.type === 'proposal') {
+            await http.ProposalController.proposalDeleteCreate(item.id);
+        } else {
+            // Comment deletion not available in API
+            uni.showToast({ title: '评论暂不支持删除', icon: 'none' });
+            return;
+        }
+        listData.value = listData.value.filter(i => i.id !== item.id);
+        uni.showToast({ title: '已删除', icon: 'success' });
+    } catch (err) {
+        console.error('Delete failed:', err);
+        uni.showToast({ title: '删除失败', icon: 'none' });
+    }
 };
 
+onMounted(async () => { await waitForLogin(); loadData(); });
+onShow(async () => { await waitForLogin(); loadData(); });
 </script>
 
 <style scoped lang="scss">

@@ -1,3 +1,6 @@
+import { ref, shallowRef, watch } from 'vue';
+import { http } from "@/config";
+
 export function useChoose() {
   const keyword = shallowRef("");
   const rows = ref<object[]>([]);
@@ -6,18 +9,19 @@ export function useChoose() {
 
   function search(page: number) {
     if (keyword.value.length > 0) {
-      http.SearchController.search({
+      http.CoursesController.searchCreate({
         keyword: keyword.value,
         type: "teacher",
         page,
         pageSize: 5
       }).then((res) => {
-        const courses = res.data.data.courses!.map(course => ({
+        const data = res.data as any;
+        const courses = data?.data?.courses || data?.courses || [];
+        rows.value = [...rows.value, ...courses.map((course: any) => ({
           ...course,
-          teacherList: course.teachers || [], // 给模板的 teacherList 字段
-          tagCount: course.tagCount || {}     // 保证 tagCount 不为 null
-        }));
-        rows.value = [...rows.value, { courses }];
+          teacherList: course.teachers || [],
+          tagCount: course.tagCount || {}
+        }))];
       });
     }
   }
