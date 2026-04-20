@@ -61,23 +61,25 @@ export function useChoose() {
       type: "course" as "course" | "teacher"
     };
 
-    console.log('[useChoose] doSearch called, keyword:', keyword.value);
+    console.log('[useChoose] doSearch called, keyword:', keyword.value, 'page:', page.value, 'sortType:', sortType);
 
     Promise.all([
       http.CoursesController.searchCreate({ ...param, type: "course" }),
       http.CoursesController.searchCreate({ ...param, type: "teacher" }),
-      http.ProposalController.proposalSuggestCreate({ keyword: keyword.value, page: 0, pageSize: 10 })
+      http.ProposalController.proposalSuggestCreate({ keyword: keyword.value, page: page.value - 1, pageSize: 10 })
     ]).then(([courseRes, teacherRes, proposalRes]) => {
-      console.log('[useChoose] Course response:', JSON.stringify(courseRes.data).substring(0, 200));
-      console.log('[useChoose] Teacher response:', JSON.stringify(teacherRes.data).substring(0, 200));
-      console.log('[useChoose] Proposal response:', JSON.stringify(proposalRes.data).substring(0, 200));
+      console.log('[useChoose] Course response:', JSON.stringify(courseRes.data).substring(0, 300));
+      console.log('[useChoose] Teacher response:', JSON.stringify(teacherRes.data).substring(0, 300));
+      console.log('[useChoose] Proposal response:', JSON.stringify(proposalRes.data).substring(0, 300));
 
       const courseData = courseRes.data as any;
       const teacherData = teacherRes.data as any;
       const proposalData = proposalRes.data as any;
+
       const courseContent = (courseData?.data?.courses || courseData?.courses || []) as any[];
       const apiCourses = courseContent.map((c: any) => ({ ...c, resultType: 'course' }));
 
+      // 教师搜索返回的是 courses 数组（后端统一用 courses 返回）
       const teacherContent = (teacherData?.data?.courses || teacherData?.courses || []) as any[];
       const apiTeachers = teacherContent.map((t: any) => ({ ...t, resultType: 'teacher' }));
 

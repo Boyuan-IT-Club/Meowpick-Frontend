@@ -40,8 +40,8 @@
            <view class="info-content">
              <text class="label">任课教师</text>
              <view class="value-list">
-                <text v-for="(t, i) in (data.teachers || [])" :key="i" class="teacher-name">{{ t }}</text>
-                <text v-if="!data.teachers?.length">待定</text>
+                <text v-for="(t, i) in teacherNames" :key="i" class="teacher-name">{{ t }}</text>
+                <text v-if="!teacherNames?.length">待定</text>
              </view>
            </view>
         </view>
@@ -75,7 +75,15 @@ import type { CourseVO } from "@/api/data-contracts";
 type Props = {
   data: CourseVO;
 };
-defineProps<Props>();
+const props = defineProps<Props>();
+
+// 教师名称列表（处理 DtoTeacherVO 对象数组）
+const teacherNames = computed(() => {
+  if (!props.data?.teachers?.length) return [];
+  return props.data.teachers
+    .map((t: any) => t?.name || '')
+    .filter((name: string) => name !== '');
+});
 </script>
 
 <style scoped lang="scss">

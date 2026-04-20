@@ -501,26 +501,68 @@ const onScroll = (e: any) => {
 
 // 获取搜索历史
 const historyList = ref<string[]>([]);
-const hotList = ref([
-    { keyword: '西方哲学智慧', tag: '高分课程' },
-    { keyword: '王老师', tag: '热门老师' },
-    { keyword: '大学物理', tag: '挂科重灾区' },
-    { keyword: '二食堂', tag: '生活吐槽' },
-    { keyword: '微积分I', tag: '必修课' },
-]);
+const hotList = ref<{ keyword: string; tag: string }[]>([]);
 
 function fetchSearchHistory() {
     http.SearchController.searchRecentList().then((res: any) => {
         const data = res.data;
         const histories = data?.data?.histories || data?.histories || [];
-        historyList.value = histories.map((h: any) => h.query || h);
+        historyList.value = histories.map((h: any) => {
+            if (typeof h === 'string') return h;
+            return h?.query;
+        }).filter((h: any) => h && typeof h === 'string');
+        console.log('[find] historyList updated:', historyList.value);
     }).catch((err: any) => {
         console.error('[find] fetchSearchHistory error:', err);
     });
 }
 
+// 获取猜你想搜的推荐（从搜索建议 API 获取）
+function fetchHotRecommendations() {
+    // 使用默认热门关键词获取推荐
+    const defaultKeywords = ['课程', '老师', '必修', '选修'];
+    const recommendations: { keyword: string; tag: string }[] = [];
+
+    Promise.all(defaultKeywords.map(keyword =>
+        http.SearchController.searchSuggestList({ keyword })
+            .then((res: any) => res?.data?.data?.suggestions || [])
+            .catch(() => [])
+    )).then(results => {
+        results.forEach((suggestions: any[]) => {
+            if (Array.isArray(suggestions)) {
+                suggestions.slice(0, 2).forEach((item: any) => {
+                    if (item?.name && !recommendations.find(r => r.keyword === item.name)) {
+                        recommendations.push({ keyword: item.name, tag: item.type === 'course' ? '课程' : '教师' });
+                    }
+                });
+            }
+        });
+        // 如果 API 没有返回足够推荐，使用后备数据
+        if (recommendations.length < 3) {
+            hotList.value = [
+                { keyword: '西方哲学智慧', tag: '高分课程' },
+                { keyword: '王老师', tag: '热门老师' },
+                { keyword: '大学物理', tag: '挂科重灾区' },
+                { keyword: '微积分I', tag: '必修课' },
+            ];
+        } else {
+            hotList.value = recommendations;
+        }
+        console.log('[find] hotList updated:', hotList.value);
+    }).catch(() => {
+        // 如果所有 API 都失败，使用后备数据
+        hotList.value = [
+            { keyword: '西方哲学智慧', tag: '高分课程' },
+            { keyword: '王老师', tag: '热门老师' },
+            { keyword: '大学物理', tag: '挂科重灾区' },
+            { keyword: '微积分I', tag: '必修课' },
+        ];
+    });
+}
+
 onMounted(() => {
     fetchSearchHistory();
+    fetchHotRecommendations();
 });
 
 // 方法定义
