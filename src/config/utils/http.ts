@@ -91,15 +91,27 @@ class HttpRequest<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
   public TeacherController = new Teacher(this);
   public AuthController = new Auth(this);
 
-  async sign_in(data: any) {
-    const resp = await this.request({
-      path: `/api/auth/sign_in`,
-      method: "POST",
-      body: data,
-      type: ContentType.Json,
-      baseURL: import.meta.env.VITE_SERVER_HOST_PORT
+  // 绕过 adapter 直接用 uni.request，避免与 waitForLogin 死锁
+  async sign_in(data: any): Promise<void> {
+    return new Promise((resolve, reject) => {
+      uni.request({
+        url: import.meta.env.VITE_SERVER_HOST_PORT + '/api/auth/sign_in',
+        method: 'POST',
+        header: {
+          'Content-Type': 'application/json',
+          'X-Xh-Env': uni.getStorageSync('backendEnv') || 'test'
+        },
+        data,
+        success: (res: any) => {
+          if (res.data?.data?.accessToken) {
+            useTokenStore().store(res.data.data.accessToken);
+            uni.setStorageSync('token', res.data.data.accessToken);
+          }
+          resolve();
+        },
+        fail: (res: any) => reject(new Error(res.errMsg || 'sign_in failed'))
+      });
     });
-    useTokenStore().store(resp.data.data.accessToken);
   }
 }
 
