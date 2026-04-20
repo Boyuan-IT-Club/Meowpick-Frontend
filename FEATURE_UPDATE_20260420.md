@@ -103,11 +103,20 @@
 
 ---
 
+### 1.6 全项目检查 ✅
+
+**检查范围**: 全项目搜索 `// TODO` 和 `// FIXME` 注释
+
+**结果**:
+- 仅剩 1 个 TODO: `profile-view/index.vue:297` - 编辑页面跳转（需创建新页面）
+
+---
+
 ## 二、待完成工作
 
 ### 2.1 编辑页面跳转 (profile-view)
 
-**位置**: `src/components/profile-view/index.vue:280`
+**位置**: `src/components/profile-view/index.vue:297`
 
 **问题**: 长按提议卡片选择"修改"时，显示"即将跳转修改..."但未实现跳转逻辑
 
