@@ -64,6 +64,26 @@
 
 ---
 
+### 1.4 提议详情页 API 对接 ✅
+
+**问题**: `proposal/detail.vue` 使用 JSON.parse decodeURIComponent 解析传入数据，未对接真实 API
+
+**修复**:
+
+| 文件 | 修改内容 |
+|------|----------|
+| `src/pages/proposal/detail/index.vue` | 使用 `http.ProposalController.proposalDetail` 获取详情，添加 loading/error 状态 |
+
+**新增功能**:
+- `loading` 状态：显示 spinner + "加载中..."
+- `error` 状态：显示错误提示 + "重试"按钮
+- `fetchProposal()` 函数：从 API 获取提议详情并映射到组件数据格式
+- 数据映射：`title→name`, `content→reason`, `likeCnt→voteCount`
+
+**Commit**: `3dc1eac` - `feat(proposal-detail): 对接真实 API 并添加加载/错误状态`
+
+---
+
 ## 二、待完成工作
 
 ### 2.1 编辑页面跳转 (profile-view)
