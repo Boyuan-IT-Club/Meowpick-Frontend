@@ -48,7 +48,21 @@ const uniRequestAdapter: AxiosAdapter = async (config: AxiosRequestConfig): Prom
         [tokenHeader]: `Bearer ${token}`,
         "X-Xh-Env": backendEnv,
       },
+      timeout: 30000,
       success: (res: any) => {
+        if (res.statusCode === 0 || (res.errMsg && res.errMsg.includes('fail'))) {
+          const error: any = new Error(res.errMsg || 'Network request failed');
+          error.response = {
+            data: res.data,
+            status: res.statusCode,
+            statusText: res.errMsg,
+            headers: res.header || {},
+            config: config,
+            request: null,
+          };
+          reject(error);
+          return;
+        }
         const response: AxiosResponse = {
           data: res.data,
           status: res.statusCode,
