@@ -5,6 +5,8 @@ import { http } from "@/config";
 export function useCourseComment() {
   const page = shallowRef(0);
   const list = ref<DtoCommentVO[]>([]);
+  const loading = ref(false);
+  const error = ref(false);
   let query = true;
 
   function fetch(pageNum: number) {
@@ -12,6 +14,9 @@ export function useCourseComment() {
       query = true;
       list.value = [];
     }
+
+    loading.value = true;
+    error.value = false;
 
     if (query) {
       http.CommentController.commentHistoryCreate({ page: pageNum, pageSize: 5 }).then((res) => {
@@ -22,7 +27,14 @@ export function useCourseComment() {
           list.value.push(comment);
         });
         query = list.value.length < total;
+        loading.value = false;
+      }).catch((err: any) => {
+        console.error('[useCourseComment] fetch error:', err);
+        loading.value = false;
+        error.value = true;
       });
+    } else {
+      loading.value = false;
     }
   }
 
@@ -57,6 +69,8 @@ export function useCourseComment() {
   return {
     list,
     page,
+    loading,
+    error,
     like,
     next,
     fetch,
