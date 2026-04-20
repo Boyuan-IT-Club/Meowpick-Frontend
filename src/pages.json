@@ -64,15 +64,22 @@
       "path": "pages/web-frame/web-frame"
     },
     {
-      "path": "pages/proposal/list/list", 
+      "path": "pages/proposal/list/list",
       "style": {
-        "navigationStyle": "custom"  
+        "navigationStyle": "custom"
       }
     },
     {
-      "path": "pages/proposal/propose/propose",  
+      "path": "pages/proposal/detail/index",
       "style": {
-        "navigationStyle": "custom"  
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "提议详情"
+      }
+    },
+    {
+      "path": "pages/proposal/propose/propose",
+      "style": {
+        "navigationStyle": "custom"
       }
     },
     {
