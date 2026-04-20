@@ -1,10 +1,10 @@
 <template>
   <view class="proposal-detail-page">
-    
+
     <!-- 1. 新的头部 Header (与课程详情一致) -->
     <!-- 背景改为渐变色以区分 Proposal -->
-    <view class="detail-header" 
-      :style="{ 
+    <view class="detail-header"
+      :style="{
           height: (menuButtonInfo.bottom + 12) + 'px',
           paddingTop: menuButtonInfo.top + 'px'
       }"
@@ -22,16 +22,29 @@
 
     <!-- 2. 内容滚动区域 -->
     <scroll-view scroll-y class="content-scroll" :style="{ paddingTop: (menuButtonInfo.bottom + 20) + 'px' }">
-      
+
+      <!-- 加载状态 -->
+      <view class="loading-state" v-if="loading">
+        <view class="loading-spinner"></view>
+        <text class="loading-text">加载中...</text>
+      </view>
+
+      <!-- 错误状态 -->
+      <view class="error-state" v-else-if="error">
+        <text class="error-text">加载失败</text>
+        <button class="retry-btn" @click="handleRetry">重试</button>
+      </view>
+
       <!-- 提议详情卡片 -->
+      <template v-else>
       <view class="proposal-card">
           <view class="card-header">
               <view class="proposal-badge">新课提议</view>
               <text class="proposal-date">{{ proposalData.date || '刚刚' }}</text>
           </view>
-          
+
           <view class="proposal-title">{{ proposalData.name || '未命名提议' }}</view>
-          
+
           <view class="proposal-info-row">
               <view class="info-item">
                   <text class="info-label">提议教师：</text>
@@ -42,20 +55,20 @@
                   <text class="info-value">{{ proposalData.campus || '全校' }}</text>
               </view>
           </view>
-          
+
           <view class="proposal-reason-box">
               <text class="reason-label">提议理由：</text>
               <text class="reason-content">{{ proposalData.reason || '这是用户提交的新课提议，希望学校能开设这门课程。' }}</text>
           </view>
-          
+
           <!-- 投票互动区 -->
           <view class="vote-area">
               <view class="vote-stats">
                   <text class="vote-num">{{ proposalData.voteCount || 0 }}</text>
                   <text class="vote-desc">人已支持</text>
               </view>
-              <button 
-                class="vote-btn" 
+              <button
+                class="vote-btn"
                 :class="{ 'is-voted': isVoted }"
                 @click="handleVote"
               >
@@ -63,20 +76,21 @@
               </button>
           </view>
       </view>
-      
+
       <!-- 讨论区 (模拟评论区) -->
       <view class="discussion-section">
         <view class="section-header">
            <text class="section-title">讨论区</text>
            <text class="section-count">(0)</text>
         </view>
-        
+
         <view class="empty-discussion">
             <image src="@/images/cat.png" mode="aspectFit" class="empty-icon" />
             <text>暂时还没有讨论，快来抢沙发~</text>
         </view>
       </view>
-      
+      </template>
+
       <view class="bottom-spacer"></view>
     </scroll-view>
 
@@ -91,10 +105,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { onLoad } from "@dcloudio/uni-app";
+import { http } from "@/config";
 
 // 1. 获取胶囊位置
 const sysInfo = uni.getSystemInfoSync();
-let menuButtonInfo = { 
+let menuButtonInfo = {
     top: sysInfo.statusBarHeight ? sysInfo.statusBarHeight + 4 : 48,
     height: 32,
     bottom: (sysInfo.statusBarHeight ? sysInfo.statusBarHeight + 4 : 48) + 32
@@ -112,17 +127,55 @@ try {
 
 const proposalData = ref<any>({});
 const isVoted = ref(false);
+const loading = ref(true);
+const error = ref(false);
 
-onLoad((options: any) => {
-    if (options.data) {
-        try {
-            proposalData.value = JSON.parse(decodeURIComponent(options.data));
-            // 如果传入的数据里有点赞状态，初始化
-            if (proposalData.value.isVoted) isVoted.value = true;
-        } catch (e) {
-            console.error("Failed to parse proposal data", e);
-        }
+const fetchProposal = (id: string) => {
+  loading.value = true;
+  error.value = false;
+
+  http.ProposalController.proposalDetail('', id).then((res: any) => {
+    const data = res.data?.data?.proposal || res.data?.proposal || {};
+    proposalData.value = {
+      name: data.title || data.course?.name || '未命名提议',
+      campus: (data.course?.campuses || []).join('、') || '全校',
+      teacher: data.course?.teachers?.map((t: any) => t.name).join('、') || '待定',
+      reason: data.content || '',
+      voteCount: data.likeCnt || data.agreeCount || 0,
+      date: data.createdAt ? new Date(data.createdAt).toISOString().split('T')[0] : '刚刚',
+      status: data.status || 'pending'
+    };
+    isVoted.value = data.like || false;
+    loading.value = false;
+  }).catch((err: any) => {
+    console.error('[proposal detail] fetch error:', err);
+    loading.value = false;
+    error.value = true;
+    // 如果传入的是 JSON 数据，尝试解析作为后备
+    if (options?.data) {
+      try {
+        proposalData.value = JSON.parse(decodeURIComponent(options.data));
+        if (proposalData.value.isVoted) isVoted.value = true;
+        loading.value = false;
+        error.value = false;
+      } catch (e) {}
     }
+  });
+};
+
+let options: any = {};
+onLoad((opts: any) => {
+  options = opts;
+  if (opts.id) {
+    fetchProposal(opts.id);
+  } else if (opts.data) {
+    try {
+      proposalData.value = JSON.parse(decodeURIComponent(opts.data));
+      if (proposalData.value.isVoted) isVoted.value = true;
+    } catch (e) {
+      console.error("Failed to parse proposal data", e);
+    }
+  }
 });
 
 const goBack = () => {
@@ -130,7 +183,7 @@ const goBack = () => {
 };
 
 const handleVote = () => {
-    if (isVoted.value) return; // 简易逻辑，不支持取消
+    if (isVoted.value) return;
     isVoted.value = true;
     proposalData.value.voteCount = (proposalData.value.voteCount || 0) + 1;
     uni.showToast({ title: '支持成功', icon: 'success' });
@@ -138,6 +191,12 @@ const handleVote = () => {
 
 const handleComment = () => {
     uni.showToast({ title: '功能开发中', icon: 'none' });
+};
+
+const handleRetry = () => {
+  if (options?.id) {
+    fetchProposal(options.id);
+  }
 };
 </script>
 
@@ -378,6 +437,57 @@ $proposal-bg-end: #f8f9fa;
     height: 120rpx; /* Space for FAB */
 }
 
+// 加载状态
+.loading-state {
+    width: 100%;
+    padding: 200rpx 0;
+    text-align: center;
+
+    .loading-spinner {
+        width: 80rpx;
+        height: 80rpx;
+        margin: 0 auto 24rpx;
+        border: 4rpx solid #ddd;
+        border-top-color: #c8102e;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    .loading-text {
+        font-size: 28rpx;
+        color: #666;
+    }
+}
+
+// 错误状态
+.error-state {
+    width: 100%;
+    padding: 200rpx 0;
+    text-align: center;
+
+    .error-text {
+        font-size: 28rpx;
+        color: #f43f30;
+        display: block;
+        margin-bottom: 32rpx;
+    }
+
+    .retry-btn {
+        background-color: #c8102e;
+        color: white;
+        border-radius: 24rpx;
+        font-size: 28rpx;
+        padding: 16rpx 48rpx;
+        border: none;
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 .fab-btn {
     position: fixed;
     right: 40rpx;
@@ -391,7 +501,7 @@ $proposal-bg-end: #f8f9fa;
     align-items: center;
     box-shadow: 0 8rpx 20rpx rgba(200, 16, 46, 0.4);
     z-index: 99;
-    
+
     .fab-text {
         font-size: 40rpx;
         color: #fff;
