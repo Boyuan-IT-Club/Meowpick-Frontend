@@ -36,6 +36,16 @@ export function useCourseComment() {
     http.ActionController.likeCreate(target, { targetType: '2' });
   }
 
+  function remove(id: string) {
+    return http.CommentController.commentDelete(id).then((res: any) => {
+      if (res.data?.code === 200 || res.data?.success) {
+        list.value = list.value.filter(c => c.id !== id);
+        return true;
+      }
+      return false;
+    });
+  }
+
   function next() {
     page.value++;
   }
@@ -49,6 +59,7 @@ export function useCourseComment() {
     page,
     like,
     next,
-    fetch
+    fetch,
+    remove
   };
 }

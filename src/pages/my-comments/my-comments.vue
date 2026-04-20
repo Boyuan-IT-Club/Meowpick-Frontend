@@ -28,7 +28,7 @@ onShow(() => {
 
 const value = ref("2");
 
-const { list, like, next, fetch, page } = useCourseComment();
+const { list, like, next, fetch, remove } = useCourseComment();
 
 const currentPage = ref("");
 const goToSearch = () => {
@@ -64,14 +64,17 @@ function handleCardLongPress(item: CommentVO) {
     itemList: ['删除该评价'],
     success: (res) => {
       if (res.tapIndex === 0) {
-        // 这里可以调用删除 API
         uni.showModal({
           title: '提示',
           content: '确定要删除这条评价吗？',
-          success: function (res) {
+          success: async function (res) {
             if (res.confirm) {
-              // TODO: 调用删除接口
-              uni.showToast({ title: '功能开发中', icon: 'none' });
+              const success = await remove(item.id || '');
+              if (success) {
+                uni.showToast({ title: '删除成功', icon: 'success' });
+              } else {
+                uni.showToast({ title: '删除失败', icon: 'none' });
+              }
             }
           }
         });
