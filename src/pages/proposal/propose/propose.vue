@@ -224,7 +224,10 @@ const submit = async () => {
       }
     };
 
+    console.log('[propose] submitting with data:', JSON.stringify(reqData));
+
     http.ProposalController.proposalAddCreate(reqData).then((res: any) => {
+      console.log('[propose] response:', JSON.stringify(res.data));
       submitting.value = false;
       if (res.data?.code === 200 || res.data?.code === 0) {
         uni.showToast({ title: '提交成功', icon: 'success' });
