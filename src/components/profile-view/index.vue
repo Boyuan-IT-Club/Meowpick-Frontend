@@ -1,35 +1,33 @@
 <template>
   <view class="profile-container" :style="{ paddingTop: menuButtonInfo.top + 'px' }">
-    
+
     <!-- 1. Header Area: Large & Breathable -->
-    <!-- Removed fixed positioning to let it flow naturally with the page, feeling more 'native' -->
     <view class="header-section" :style="{ marginTop: '20rpx', marginBottom: '40rpx' }">
       <view class="title-wrapper">
          <text class="page-title">我的发布</text>
-         <text class="sub-title">{{ filteredList.length }} 条记录</text>
+         <text class="sub-title">{{ loading ? '加载中...' : (filteredList.length + ' 条记录') }}</text>
       </view>
     </view>
 
     <!-- 2. Filter Bar: Minimalist Text Tabs -->
-    <!-- Sticky positioning: Sticks to top when scrolling, but sits naturally below title initially -->
     <view class="sticky-bar" :style="{ top: (menuButtonInfo.top) + 'px' }">
        <view class="filter-row">
-            <view 
-                class="filter-pill" 
+            <view
+                class="filter-pill"
                 :class="{ active: currentFilter === 'all' }"
                 @click="setFilter('all')"
             >
                 <text>全部</text>
             </view>
-            <view 
-                class="filter-pill" 
+            <view
+                class="filter-pill"
                 :class="{ active: currentFilter === 'comment' }"
                 @click="setFilter('comment')"
             >
                 <text>吐槽</text>
             </view>
-            <view 
-                class="filter-pill" 
+            <view
+                class="filter-pill"
                 :class="{ active: currentFilter === 'proposal' }"
                 @click="setFilter('proposal')"
             >
@@ -40,12 +38,26 @@
 
     <!-- 3. List Content -->
     <view class="list-container">
-       <view v-if="filteredList.length === 0" class="empty-tip">
+       <!-- 加载状态 -->
+       <view class="loading-state" v-if="loading">
+         <view class="loading-spinner"></view>
+         <text class="loading-text">加载中...</text>
+       </view>
+
+       <!-- 错误状态 -->
+       <view class="error-state" v-else-if="error">
+         <text class="error-text">加载失败</text>
+         <button class="retry-btn" @click="loadData">重试</button>
+       </view>
+
+       <!-- 空状态 -->
+       <view class="empty-tip" v-else-if="filteredList.length === 0">
           <text>这里空空如也~</text>
        </view>
 
-       <view 
-         v-for="(item, index) in filteredList" 
+       <view
+         v-else
+         v-for="(item, index) in filteredList"
          :key="item.id"
          class="list-item"
          @click="onItemClick(item)"
@@ -110,7 +122,8 @@
               </view>
           </view>
        </view>
-       
+       </view>
+
        <!-- Bottom Spacer for FAB -->
        <view style="height: 160rpx;"></view>
     </view>
@@ -164,9 +177,11 @@ interface ListItem {
 
 const listData = ref<ListItem[]>([]);
 const loading = ref(false);
+const error = ref(false);
 
 const loadData = async () => {
     loading.value = true;
+    error.value = false;
     try {
         const [commentRes, proposalRes] = await Promise.all([
             http.CommentController.commentHistoryCreate({ page: 0, pageSize: 50 }),
@@ -194,6 +209,8 @@ const loadData = async () => {
 
         listData.value = [...comments, ...proposals];
     } catch (err) {
+        console.error('[profile-view] loadData error:', err);
+        error.value = true;
         console.error('Failed to load profile data:', err);
         uni.showToast({ title: '加载失败，请重试', icon: 'none' });
     } finally {
@@ -604,6 +621,57 @@ onShow(async () => { await waitForLogin(); loadData(); });
         font-size: 60rpx;
         font-weight: 300;
         margin-top: -8rpx;
+    }
+}
+
+// 加载状态
+.loading-state {
+    width: 100%;
+    padding: 200rpx 0;
+    text-align: center;
+
+    .loading-spinner {
+        width: 80rpx;
+        height: 80rpx;
+        margin: 0 auto 24rpx;
+        border: 4rpx solid #ddd;
+        border-top-color: #c8102e;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    .loading-text {
+        font-size: 28rpx;
+        color: #666;
+    }
+}
+
+// 错误状态
+.error-state {
+    width: 100%;
+    padding: 200rpx 0;
+    text-align: center;
+
+    .error-text {
+        font-size: 28rpx;
+        color: #f43f30;
+        display: block;
+        margin-bottom: 32rpx;
+    }
+
+    .retry-btn {
+        background-color: #c8102e;
+        color: white;
+        border-radius: 24rpx;
+        font-size: 28rpx;
+        padding: 16rpx 48rpx;
+        border: none;
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
     }
 }
 </style>
