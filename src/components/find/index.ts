@@ -82,7 +82,6 @@ export function useSuggest(externalKeyword?: Ref<string>) {
 
     http.SearchController.searchSuggestList({ keyword: keyword.value })
       .then((res: any) => {
-        console.log('[useSuggest] success:', JSON.stringify(res.data).substring(0, 200));
         const data = res.data;
         const suggestions = data?.data?.suggestions || data?.suggestions || [];
         suggestList.value = suggestions.map((item: any) => ({
