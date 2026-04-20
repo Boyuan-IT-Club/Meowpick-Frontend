@@ -132,8 +132,6 @@
     <view class="fab-btn" @click="onAddClick">
       <view class="plus-icon">+</view>
     </view>
-
-  </view>
 </template>
 
 <script setup lang="ts">

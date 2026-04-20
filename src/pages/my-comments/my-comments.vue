@@ -40,9 +40,6 @@ import MyCommentBox from "@/pages/my-comments/MyCommentBox.vue";
 import { onShow } from "@dcloudio/uni-app";
 import type { CommentVO } from "@/api/data-contracts";
 
-const loading = ref(true);
-const error = ref(false);
-
 onShow(() => {
   loading.value = true;
   error.value = false;
