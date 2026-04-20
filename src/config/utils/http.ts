@@ -23,7 +23,9 @@ const buildQueryString = (params?: Record<string, any>): string => {
   return parts.join('&');
 };
 
-const uniRequestAdapter: AxiosAdapter = (config: AxiosRequestConfig): Promise<AxiosResponse> => {
+const uniRequestAdapter: AxiosAdapter = async (config: AxiosRequestConfig): Promise<AxiosResponse> => {
+  await waitForLogin();
+
   return new Promise((resolve, reject) => {
     const { baseURL = '', url = '', method = 'GET', headers = {}, data, params } = config;
 
