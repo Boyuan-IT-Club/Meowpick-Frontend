@@ -23,7 +23,7 @@ export function useCourseComment(p: Props) {
       query = true;
     }
     if (query) {
-      http.CommentController.commentQueryList({ courseId: id as unknown as number, page: pageNum, pageSize: 20 }).then((res) => {
+      http.CommentController.commentQueryList({ id: id, page: pageNum, pageSize: 20 }).then((res) => {
         const data = res.data as any;
         const comments = data?.data?.comments || data?.comments || [];
         const total = data?.data?.total || data?.total || 0;
