@@ -3,7 +3,7 @@
 > **作者**: Claude (AI Assistant)
 > **日期**: 2026-04-20
 > **分支**: HAppy
-> **范围**: 删除评论功能、提议提交 API 对接、加载/空状态优化
+> **范围**: 删除评论功能、提议提交 API 对接、加载/空状态优化、提议详情 API
 
 ---
 
@@ -44,7 +44,7 @@
 
 ---
 
-### 1.3 加载/错误/空状态优化 ✅
+### 1.3 加载/错误/空状态优化 (my-comments) ✅
 
 **问题**: `my-comments.vue` 缺少加载中、错误、空状态的 UI 反馈
 
@@ -84,6 +84,25 @@
 
 ---
 
+### 1.5 profile-view 加载/错误状态优化 ✅
+
+**问题**: `profile-view` 组件缺少加载状态和错误状态 UI
+
+**修复**:
+
+| 文件 | 修改内容 |
+|------|----------|
+| `src/components/profile-view/index.vue` | 新增 loading/error 状态和对应 UI，添加错误处理 |
+
+**新增状态**:
+- **加载状态**: 显示在列表区域，spinner + "加载中..."
+- **错误状态**: "加载失败" + "重试"按钮
+- 头部显示"加载中..."直到加载完成
+
+**Commit**: `e9fd069` - `feat(profile-view): 添加加载/错误状态优化`
+
+---
+
 ## 二、待完成工作
 
 ### 2.1 编辑页面跳转 (profile-view)
@@ -101,7 +120,7 @@
 | 功能 | 接口 | 状态 |
 |------|------|------|
 | 提议列表 | `GET /api/proposal/list` | 后端待开发 |
-| 提议详情 | `GET /api/proposal/{id}` | 后端待开发 |
+| 提议详情 | `GET /api/proposal/{id}` | ✅ 前端已完成 |
 | 提议投票 | `POST /api/proposal/{id}/vote` | 后端待开发 |
 | 搜索提议 | `GET /api/search?type=proposal` | 后端待开发 |
 | 删除评论 | `DELETE /api/comment/{id}` | ✅ 前端已完成，待后端确认 |
@@ -116,9 +135,10 @@
 | P0 | 删除评论功能 | `my-comments.vue` | ✅ 已完成 |
 | P0 | 提议提交 API | `propose.vue` | ✅ 已完成 |
 | P1 | 加载/错误/空状态 | `my-comments.vue` | ✅ 已完成 |
+| P1 | 提议详情页 API | `proposal/detail/index.vue` | ✅ 已完成 |
+| P1 | profile-view 加载/错误状态 | `profile-view/index.vue` | ✅ 已完成 |
 | P1 | 编辑页面跳转 | `profile-view/index.vue` | ⏳ 需新建页面 |
-| P2 | 加载状态优化 | `proposal/list.vue` | ⏳ 待开发 |
-| P2 | 空状态优化 | - | ⏳ 待开发 |
+| P2 | CourseCard 组件检查 | `CourseCard.vue` | ✅ 已完成 |
 
 ---
 
@@ -129,7 +149,9 @@
 | `0e36dc5` | feat(my-comments): 实现删除评论功能 |
 | `9dcc86f` | feat(propose): 对接真实提议提交 API |
 | `b0e0f6e` | feat(my-comments): 添加加载/错误/空状态优化 |
-| `e57fc8a` | docs: 添加前端功能修复记录文档 |
+| `3dc1eac` | feat(proposal-detail): 对接真实 API 并添加加载/错误状态 |
+| `e9fd069` | feat(profile-view): 添加加载/错误状态优化 |
+| `8229794` | docs: 更新功能修复记录 |
 
 ---
 
