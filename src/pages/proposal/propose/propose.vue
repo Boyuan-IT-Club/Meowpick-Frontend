@@ -229,16 +229,20 @@ const submit = async () => {
     http.ProposalController.proposalAddCreate(reqData).then((res: any) => {
       console.log('[propose] response:', JSON.stringify(res.data));
       submitting.value = false;
-      if (res.data?.code === 200 || res.data?.code === 0) {
+      const code = res.data?.code;
+      const msg = res.data?.msg;
+      console.log('[propose] code:', code, 'msg:', msg);
+      if (code === 200 || code === 0) {
         uni.showToast({ title: '提交成功', icon: 'success' });
         setTimeout(() => uni.navigateBack(), 1500);
       } else {
-        uni.showToast({ title: res.data?.message || '提交失败', icon: 'none' });
+        uni.showToast({ title: msg || `提交失败(code:${code})`, icon: 'none' });
       }
     }).catch((err: any) => {
       submitting.value = false;
-      uni.showToast({ title: '提交失败', icon: 'none' });
-      console.error('[propose] submit error:', err);
+      const errMsg = err?.message || err?.response?.data?.msg || JSON.stringify(err);
+      console.error('[propose] submit error:', errMsg, err);
+      uni.showToast({ title: `提交失败:${errMsg}`, icon: 'none' });
     });
 };
 
