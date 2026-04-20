@@ -511,7 +511,6 @@ function fetchSearchHistory() {
             if (typeof h === 'string') return h;
             return h?.query;
         }).filter((h: any) => h && typeof h === 'string');
-        console.log('[find] historyList updated:', historyList.value);
     }).catch((err: any) => {
         console.error('[find] fetchSearchHistory error:', err);
     });
@@ -548,7 +547,6 @@ function fetchHotRecommendations() {
         } else {
             hotList.value = recommendations;
         }
-        console.log('[find] hotList updated:', hotList.value);
     }).catch(() => {
         // 如果所有 API 都失败，使用后备数据
         hotList.value = [

@@ -61,17 +61,11 @@ export function useChoose() {
       type: "course" as "course" | "teacher"
     };
 
-    console.log('[useChoose] doSearch called, keyword:', keyword.value, 'page:', page.value, 'sortType:', sortType);
-
     Promise.all([
       http.CoursesController.searchCreate({ ...param, type: "course" }),
       http.CoursesController.searchCreate({ ...param, type: "teacher" }),
       http.ProposalController.proposalSuggestCreate({ keyword: keyword.value, page: page.value - 1, pageSize: 10 })
     ]).then(([courseRes, teacherRes, proposalRes]) => {
-      console.log('[useChoose] Course response:', JSON.stringify(courseRes.data).substring(0, 300));
-      console.log('[useChoose] Teacher response:', JSON.stringify(teacherRes.data).substring(0, 300));
-      console.log('[useChoose] Proposal response:', JSON.stringify(proposalRes.data).substring(0, 300));
-
       const courseData = courseRes.data as any;
       const teacherData = teacherRes.data as any;
       const proposalData = proposalRes.data as any;
@@ -85,8 +79,6 @@ export function useChoose() {
 
       const proposalContent = (proposalData?.data?.proposals || proposalData?.proposals || []) as any[];
       const apiProposals = proposalContent.map((p: any) => ({ ...p, resultType: 'proposal', name: p.title }));
-
-      console.log('[useChoose] Parsed courses:', apiCourses.length, 'teachers:', apiTeachers.length, 'proposals:', apiProposals.length);
 
       let combined = [...apiCourses, ...apiProposals, ...apiTeachers];
 
