@@ -3,7 +3,7 @@
 > **作者**: Claude (AI Assistant)
 > **日期**: 2026-04-20
 > **分支**: HAppy
-> **范围**: 删除评论功能、提议提交 API 对接、加载/空状态优化、提议详情 API
+> **范围**: 删除评论功能、提议提交 API 对接、加载/空状态优化、提议详情 API、pages.json 修复
 
 ---
 
@@ -26,7 +26,7 @@
 2. 点击"删除该评价" → 确认弹窗
 3. 确认后调用 `remove()` → 成功后 toast 提示并从列表移除
 
-**Commit**: `0e36dc5` - `feat(my-comments): 实现删除评论功能`
+**Commit**: `0e36dc5`
 
 ---
 
@@ -40,7 +40,7 @@
 |------|----------|
 | `src/pages/proposal/propose/propose.vue` | 替换 setTimeout 模拟提交为真实 API 调用 |
 
-**Commit**: `9dcc86f` - `feat(propose): 对接真实提议提交 API`
+**Commit**: `9dcc86f`
 
 ---
 
@@ -60,7 +60,7 @@
 - **错误状态**: 错误提示 + "重试" 按钮
 - **空状态**: 空提示 + "去吐槽" 按钮跳转到搜索页
 
-**Commit**: `b0e0f6e` - `feat(my-comments): 添加加载/错误/空状态优化`
+**Commit**: `b0e0f6e`
 
 ---
 
@@ -80,7 +80,7 @@
 - `fetchProposal()` 函数：从 API 获取提议详情并映射到组件数据格式
 - 数据映射：`title→name`, `content→reason`, `likeCnt→voteCount`
 
-**Commit**: `3dc1eac` - `feat(proposal-detail): 对接真实 API 并添加加载/错误状态`
+**Commit**: `3dc1eac`
 
 ---
 
@@ -94,16 +94,25 @@
 |------|----------|
 | `src/components/profile-view/index.vue` | 新增 loading/error 状态和对应 UI，添加错误处理 |
 
-**新增状态**:
-- **加载状态**: 显示在列表区域，spinner + "加载中..."
-- **错误状态**: "加载失败" + "重试"按钮
-- 头部显示"加载中..."直到加载完成
-
-**Commit**: `e9fd069` - `feat(profile-view): 添加加载/错误状态优化`
+**Commit**: `e9fd069`
 
 ---
 
-### 1.6 全项目检查 ✅
+### 1.6 pages.json 路由修复 ✅
+
+**问题**: `pages/proposal/detail/index` 路由未注册，导致页面无法访问
+
+**修复**:
+
+| 文件 | 修改内容 |
+|------|----------|
+| `src/pages.json` | 新增 `pages/proposal/detail/index` 路由注册 |
+
+**Commit**: `f394300`
+
+---
+
+### 1.7 全项目检查 ✅
 
 **检查范围**: 全项目搜索 `// TODO` 和 `// FIXME` 注释
 
@@ -146,8 +155,8 @@
 | P1 | 加载/错误/空状态 | `my-comments.vue` | ✅ 已完成 |
 | P1 | 提议详情页 API | `proposal/detail/index.vue` | ✅ 已完成 |
 | P1 | profile-view 加载/错误状态 | `profile-view/index.vue` | ✅ 已完成 |
+| P1 | pages.json 路由修复 | `pages.json` | ✅ 已完成 |
 | P1 | 编辑页面跳转 | `profile-view/index.vue` | ⏳ 需新建页面 |
-| P2 | CourseCard 组件检查 | `CourseCard.vue` | ✅ 已完成 |
 
 ---
 
@@ -160,7 +169,9 @@
 | `b0e0f6e` | feat(my-comments): 添加加载/错误/空状态优化 |
 | `3dc1eac` | feat(proposal-detail): 对接真实 API 并添加加载/错误状态 |
 | `e9fd069` | feat(profile-view): 添加加载/错误状态优化 |
-| `8229794` | docs: 更新功能修复记录 |
+| `5b40d59` | docs: 更新功能修复记录 |
+| `def698f` | docs: 更新功能修复记录 - 添加全项目检查结果 |
+| `f394300` | fix(pages.json): 添加缺失的 proposal/detail 路由 |
 
 ---
 
