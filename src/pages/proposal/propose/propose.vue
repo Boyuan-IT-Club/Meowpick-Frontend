@@ -95,6 +95,7 @@
 // @ts-nocheck
 import { ref, reactive, computed } from 'vue';
 import BackBtn from "@/components/common/BackBtn.vue";
+import { http } from "@/config";
 
 // System Info
 const sysInfo = uni.getSystemInfoSync();
@@ -210,13 +211,32 @@ const submit = async () => {
     if (!formData.reason.trim()) return uni.showToast({ title: '请填写提议理由', icon: 'none' });
 
     submitting.value = true;
-    
-    // Simulate API call
-    setTimeout(() => {
+
+    // 构建请求数据
+    const reqData = {
+      title: formData.courseName,
+      content: formData.reason,
+      course: {
+        name: formData.courseName,
+        code: formData.courseCode,
+        department: formData.department,
+        campuses: formData.campuses,
+      }
+    };
+
+    http.ProposalController.proposalAddCreate(reqData).then((res: any) => {
+      submitting.value = false;
+      if (res.data?.code === 200) {
         uni.showToast({ title: '提交成功', icon: 'success' });
         setTimeout(() => uni.navigateBack(), 1500);
-        submitting.value = false;
-    }, 1000);
+      } else {
+        uni.showToast({ title: res.data?.message || '提交失败', icon: 'none' });
+      }
+    }).catch((err: any) => {
+      submitting.value = false;
+      uni.showToast({ title: '提交失败', icon: 'none' });
+      console.error('[propose] submit error:', err);
+    });
 };
 
 </script>
