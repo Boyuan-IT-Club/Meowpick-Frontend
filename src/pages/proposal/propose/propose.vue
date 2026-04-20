@@ -226,7 +226,7 @@ const submit = async () => {
 
     http.ProposalController.proposalAddCreate(reqData).then((res: any) => {
       submitting.value = false;
-      if (res.data?.code === 200) {
+      if (res.data?.code === 200 || res.data?.code === 0) {
         uni.showToast({ title: '提交成功', icon: 'success' });
         setTimeout(() => uni.navigateBack(), 1500);
       } else {
