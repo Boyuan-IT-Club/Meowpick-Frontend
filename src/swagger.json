@@ -139,7 +139,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "ChangeLog"
+                    "ProposalLogs"
                 ],
                 "summary": "按提案聚合的日志列表",
                 "parameters": [
@@ -178,7 +178,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "ChangeLog"
+                    "ProposalLogs"
                 ],
                 "summary": "扁平化时间线日志",
                 "parameters": [
