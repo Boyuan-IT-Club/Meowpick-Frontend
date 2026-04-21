@@ -134,7 +134,7 @@ const fetchProposal = (id: string) => {
   loading.value = true;
   error.value = false;
 
-  http.ProposalController.proposalDetail('', id).then((res: any) => {
+  http.ProposalController.proposalDetail(id).then((res: any) => {
     const data = res.data?.data?.proposal || res.data?.proposal || {};
     proposalData.value = {
       name: data.title || data.course?.name || '未命名提议',
