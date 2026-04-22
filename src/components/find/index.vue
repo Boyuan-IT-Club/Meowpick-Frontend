@@ -615,6 +615,8 @@ const onInputFocus = () => {
 
 // 提取通用搜索逻辑，允许传入特定关键词而不改变输入框内容
 const performSearch = (keyword: string) => {
+    console.log('[performSearch] called with keyword:', keyword);
+    console.log('[performSearch] resultKeyword.value BEFORE:', resultKeyword.value);
     if (!keyword) return;
     
     // Close toggles from previous search
@@ -640,9 +642,11 @@ const performSearch = (keyword: string) => {
     // 这里调用的是 useChoose 里的 doSearch，它是真实 API 调用
     // 确保把关键词传进去
     if(resultKeyword && resultKeyword.value !== undefined) {
-         resultKeyword.value = keyword; 
+         resultKeyword.value = keyword;
+         console.log('[performSearch] resultKeyword.value AFTER:', resultKeyword.value);
     }
     if (typeof doSearch === 'function') {
+        console.log('[performSearch] calling doSearch');
         doSearch(true); // true means refresh/reset
     } else {
         console.error("doSearch is not a function");

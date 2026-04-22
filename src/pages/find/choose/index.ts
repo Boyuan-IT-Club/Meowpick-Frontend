@@ -61,11 +61,16 @@ export function useChoose() {
       type: "course" as "course" | "teacher"
     };
 
+    console.log('[useChoose] doSearch called, keyword:', keyword.value, 'param:', JSON.stringify(param));
+
     Promise.all([
       http.CoursesController.searchCreate({ ...param, type: "course" }),
       http.CoursesController.searchCreate({ ...param, type: "teacher" }),
       http.ProposalController.proposalSuggestCreate({ keyword: keyword.value, page: page.value - 1, pageSize: 10 })
     ]).then(([courseRes, teacherRes, proposalRes]) => {
+      console.log('[useChoose] courseRes:', JSON.stringify(courseRes?.data));
+      console.log('[useChoose] teacherRes:', JSON.stringify(teacherRes?.data));
+      console.log('[useChoose] proposalRes:', JSON.stringify(proposalRes?.data));
       const courseData = courseRes.data as any;
       const teacherData = teacherRes.data as any;
       const proposalData = proposalRes.data as any;
