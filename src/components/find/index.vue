@@ -48,6 +48,9 @@
 <script setup lang="ts">
 import { useInput, useSuggest, SearchTypeMap } from "./index";
 import { useRoute } from "vue-router";
+import { ref, watch } from "vue";
+import { onLoad } from "@dcloudio/uni-app";
+import PubSub from "@/config/utils/pubsub";
 
 const props = defineProps<{
   keyword: string;

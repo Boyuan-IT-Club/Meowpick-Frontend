@@ -207,6 +207,17 @@ export default defineComponent({
   padding: 40rpx;
   display: flex;
   flex-direction: column;
+  transform: translateY(100%);
+  animation: modalSlideUp 0.3s ease-out forwards;
+}
+
+@keyframes modalSlideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 
 .modal-header {

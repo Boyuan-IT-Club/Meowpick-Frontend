@@ -4,6 +4,10 @@ import type {
   Course,
   TeacherVO
 } from "@/api/data-contracts";
+import { ref, computed, shallowRef, watch, watchEffect } from "vue";
+import { useCourseStore } from "@/config";
+import { http } from "@/config";
+import PubSub from "@/config/utils/pubsub";
 
 export const useInput = () => {
   const searchText = ref("");

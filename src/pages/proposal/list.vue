@@ -13,6 +13,9 @@
         @input="handleSearch"
       />
     </div>
+    <button class="filter-btn" :class="{ active: isFiltered }" @click="showFilterModal = true">
+      <text class="filter-icon">筛选</text>
+    </button>
   </div>
 
   <!-- 正文内容区域 -->
@@ -66,19 +69,28 @@
         <div v-else class="admin-action" @click.stop>
           <span class="agree-count">{{ item.agreeCount }}人同意</span>
           <div class="admin-btns">
+            <!-- 待审核状态显示通过和下架按钮 -->
+            <template v-if="item.status === 'pending'">
+              <button 
+                class="admin-btn approve" 
+                @click="handleApprove(index)"
+              >
+                通过
+              </button>
+              <button 
+                class="admin-btn reject" 
+                @click="handleReject(index)"
+              >
+                下架
+              </button>
+            </template>
+            <!-- 已通过或已下架状态只显示撤回按钮 -->
             <button 
-              v-if="item.status !== 'approved'"
-              class="admin-btn approve" 
-              @click="handleApprove(index)"
+              v-else
+              class="admin-btn withdraw" 
+              @click="handleWithdraw(index)"
             >
-              通过
-            </button>
-            <button 
-              v-if="item.status !== 'rejected'"
-              class="admin-btn reject" 
-              @click="handleReject(index)"
-            >
-              下架
+              撤回
             </button>
           </div>
         </div>
@@ -103,12 +115,91 @@
       <span class="plus">+</span>
     </button>
   </div>
+
+  <!-- 筛选模态框 -->
+  <div class="modal-mask" v-if="showFilterModal" @click="showFilterModal = false">
+    <div class="modal-content" @click.stop :class="{ 'modal-content-enter': showFilterModal }">
+      <div class="modal-header">
+        <div class="modal-title">筛选条件</div>
+        <div class="close-btn" @click="showFilterModal = false">×</div>
+      </div>
+      <div class="filter-content">
+        <!-- 提案状态 -->
+        <div class="filter-section">
+          <div class="filter-label">提案状态 <span class="required-mark">(必选)</span></div>
+          <div class="tags-group">
+            <div 
+              class="tag-item" 
+              v-for="status in statusOptions" 
+              :key="status.value"
+              :class="{ active: filterForm.status.includes(status.value) }"
+              @click="toggleStatus(status.value)"
+            >
+              {{ status.label }}
+            </div>
+          </div>
+          <div class="divider"></div>
+        </div>
+
+        <!-- 校区 -->
+        <div class="filter-section">
+          <div class="filter-label">校区 <span class="required-mark">(必选)</span></div>
+          <div class="tags-group">
+            <div 
+              class="tag-item" 
+              v-for="campus in campusOptions" 
+              :key="campus"
+              :class="{ active: filterForm.campus.includes(campus) }"
+              @click="toggleCampus(campus)"
+            >
+              {{ campus }}
+            </div>
+          </div>
+          <div class="divider"></div>
+        </div>
+
+        <!-- 开课院系 -->
+        <div class="filter-section">
+          <div class="filter-label">开课院系</div>
+          <div class="form-row" @click="openSearchModal('department')">
+            <div class="input-display">{{ filterForm.department || '请输入开课院系' }}</div>
+            <text class="arrow">›</text>
+          </div>
+          <div class="divider"></div>
+        </div>
+
+        <!-- 课程分类 -->
+        <div class="filter-section">
+          <div class="filter-label">课程分类</div>
+          <div class="form-row" @click="openSearchModal('category')">
+            <div class="input-display">{{ filterForm.category || '请输入课程分类' }}</div>
+            <text class="arrow">›</text>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="reset-btn" @click="resetFilter">重置</button>
+        <button class="confirm-btn" @click="applyFilter">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 搜索模态框 -->
+  <SearchModal
+    v-model:visible="showSearchModal"
+    :title="modalTitle"
+    :placeholder="searchPlaceholder"
+    :dataSource="currentDataSource"
+    @select="handleSearchSelect"
+  />
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
 import { http } from '@/config';
+import { campusesData, categoriesData, departmentsData } from '@/data/mappingData';
+import SearchModal from '@/components/proposal-components/SearchModal.vue';
 
 // 投票提案数据结构
 interface Proposal {
@@ -252,17 +343,183 @@ const loading = ref(true);
 // 搜索关键词
 const searchKeyword = ref('');
 
+// 筛选模态框显示状态
+const showFilterModal = ref(false);
+
+// 搜索模态框显示状态
+const showSearchModal = ref(false);
+
+// 当前编辑的字段
+const currentField = ref('');
+
+// 筛选表单数据
+const filterForm = ref({
+  status: [] as string[],
+  campus: [] as string[],
+  department: '',
+  category: ''
+});
+
+// 提案状态选项
+const statusOptions = [
+  { label: '待审核', value: 'pending' },
+  { label: '已通过', value: 'approved' },
+  { label: '已下架', value: 'rejected' }
+];
+
+// 校区选项
+const campusOptions = campusesData;
+
+// 模态框标题
+const modalTitle = computed(() => {
+  const titles: Record<string, string> = {
+    department: '开课院系',
+    category: '课程分类'
+  };
+  return titles[currentField.value] || '搜索';
+});
+
+// 搜索占位符
+const searchPlaceholder = computed(() => {
+  const placeholders: Record<string, string> = {
+    department: '请输入开课院系进行搜索',
+    category: '请输入课程分类进行搜索'
+  };
+  return placeholders[currentField.value] || '请输入关键词';
+});
+
+// 当前数据源
+const currentDataSource = computed(() => {
+  switch (currentField.value) {
+    case 'department':
+      return departmentsData;
+    case 'category':
+      return categoriesData;
+    default:
+      return [];
+  }
+});
+
+// 切换提案状态选择
+const toggleStatus = (status: string) => {
+  const index = filterForm.value.status.indexOf(status);
+  if (index > -1) {
+    filterForm.value.status.splice(index, 1);
+  } else {
+    filterForm.value.status.push(status);
+  }
+};
+
+// 切换校区选择
+const toggleCampus = (campus: string) => {
+  const index = filterForm.value.campus.indexOf(campus);
+  if (index > -1) {
+    filterForm.value.campus.splice(index, 1);
+  } else {
+    filterForm.value.campus.push(campus);
+  }
+};
+
+// 打开搜索模态框
+const openSearchModal = (field: string) => {
+  currentField.value = field;
+  showSearchModal.value = true;
+};
+
+// 处理搜索选择
+const handleSearchSelect = (item: string) => {
+  switch (currentField.value) {
+    case 'department':
+      filterForm.value.department = item;
+      break;
+    case 'category':
+      filterForm.value.category = item;
+      break;
+  }
+};
+
+// 重置筛选
+const resetFilter = () => {
+  filterForm.value = {
+    status: [],
+    campus: [],
+    department: '',
+    category: ''
+  };
+};
+
+// 应用筛选
+const applyFilter = () => {
+  // 验证必填项
+  if (filterForm.value.status.length === 0) {
+    uni.showToast({ title: '请选择提案状态', icon: 'none' });
+    return;
+  }
+  if (filterForm.value.campus.length === 0) {
+    uni.showToast({ title: '请选择校区', icon: 'none' });
+    return;
+  }
+  showFilterModal.value = false;
+};
+
 // 过滤后的提案列表
 const filteredProposals = computed(() => {
-  if (!searchKeyword.value.trim()) {
-    return proposals.value;
+  let result = proposals.value;
+  
+  // 应用搜索关键词
+  if (searchKeyword.value.trim()) {
+    const keyword = searchKeyword.value.toLowerCase();
+    result = result.filter(item => 
+      item.courseName.toLowerCase().includes(keyword) ||
+      item.teachers.toLowerCase().includes(keyword) ||
+      item.category.toLowerCase().includes(keyword)
+    );
   }
-  const keyword = searchKeyword.value.toLowerCase();
-  return proposals.value.filter(item => 
-    item.courseName.toLowerCase().includes(keyword) ||
-    item.teachers.toLowerCase().includes(keyword) ||
-    item.category.toLowerCase().includes(keyword)
-  );
+  
+  // 应用筛选条件
+  // 状态筛选
+  if (filterForm.value.status.length > 0) {
+    result = result.filter(item => 
+      filterForm.value.status.includes(item.status || '')
+    );
+  }
+  
+  // 校区筛选
+  if (filterForm.value.campus.length > 0) {
+    result = result.filter(item => {
+      // 处理校区可能是数组或字符串的情况
+      const itemCampus = item.campus || '';
+      return filterForm.value.campus.some(campus => 
+        itemCampus.includes(campus)
+      );
+    });
+  }
+  
+  // 开课院系筛选
+  if (filterForm.value.department) {
+    const department = filterForm.value.department.toLowerCase();
+    result = result.filter(item => 
+      (item.department || '').toLowerCase().includes(department)
+    );
+  }
+  
+  // 课程分类筛选
+  if (filterForm.value.category) {
+    const category = filterForm.value.category.toLowerCase();
+    result = result.filter(item => 
+      (item.category || '').toLowerCase().includes(category)
+    );
+  }
+  
+  return result;
+});
+
+// 判断是否已经应用了筛选条件
+const isFiltered = computed(() => {
+  return filterForm.value.status.length > 0 ||
+         filterForm.value.campus.length > 0 ||
+         filterForm.value.department ||
+         filterForm.value.category;
 });
 
 // 获取状态文本
@@ -493,6 +750,35 @@ const handleReject = async (index: number) => {
   }
 };
 
+// 管理员撤回提议（等待后端接口）
+const handleWithdraw = async (index: number) => {
+  const originalIndex = proposals.value.findIndex(p => p.id === filteredProposals.value[index].id);
+  if (originalIndex === -1) return;
+  
+  const proposal = proposals.value[originalIndex];
+  
+  try {
+    // 这里应该调用后端撤回提议的接口
+    // 暂时使用本地逻辑
+    proposal.status = 'pending';
+    
+    // 添加到日志
+    mockLogs.unshift({
+      id: Date.now().toString(),
+      proposalId: proposal.id,
+      courseName: proposal.courseName,
+      action: 'withdraw',
+      actionTime: new Date().toLocaleString(),
+      operator: '管理员'
+    });
+    
+    uni.showToast({ title: '已撤回', icon: 'success' });
+  } catch (error) {
+    console.error('撤回提议失败:', error);
+    uni.showToast({ title: '操作失败', icon: 'error' });
+  }
+};
+
 // 页面挂载时获取数据
 onMounted(() => {
   fetchProposals();
@@ -513,22 +799,32 @@ onShow(() => {
   right: 0;
   padding: 2vw 5vw;
   background-color: #fff;
-  z-index: 10;
+  z-index: 100;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 2vw;
+  height: 15vw;
+  box-sizing: border-box;
 }
 
 .search-input {
+  flex: 1;
   display: flex;
   align-items: center;
-  background-color: #f5f5f5;
-  border-radius: 4vw;
-  padding: 2vw 3vw;
+  background-color: #ffffff;
+  border-radius: 40rpx;
+  height: 11vw;
+  padding: 0 3vw;
+  border: 1px solid #E8E8E8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .search-icon {
   width: 4vw;
   height: 4vw;
   margin-right: 2vw;
+  opacity: 0.6;
 }
 
 .search-input input {
@@ -537,13 +833,60 @@ onShow(() => {
   background: transparent;
   font-size: 3.5vw;
   color: #333;
+  outline: none;
+  
+  &::placeholder {
+    color: #999;
+  }
+}
+
+.filter-btn {
+  background-color: #ffffff;
+  color: #333;
+  border: 1px solid #E8E8E8;
+  border-radius: 40rpx;
+  height: 11vw;
+  padding: 0 4vw;
+  font-size: 3.5vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s;
+  flex-shrink: 0;
+  
+  &:active {
+    background-color: #F5F5F5;
+    transform: scale(0.98);
+  }
+  
+  &.active {
+    background-color: #b70030;
+    color: white;
+    border-color: #b70030;
+    box-shadow: 0 2px 8px rgba(183, 0, 48, 0.2);
+    
+    &:active {
+      background-color: #9a0028;
+    }
+  }
+}
+
+.filter-icon {
+  font-size: 3.5vw;
 }
 
 .content {
-  padding-top: calc(38vw + 44px);
-  padding-bottom: 25vw;
+  position: fixed;
+  top: calc(20vw + 44px + 15vw);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0;
   width: 100%;
   box-sizing: border-box;
+  overflow-y: auto;
+  z-index: 1;
 }
 
 // 加载状态样式
@@ -687,6 +1030,11 @@ onShow(() => {
     background-color: #ff4d4f;
     color: white;
   }
+  
+  &.withdraw {
+    background-color: #fa8c16;
+    color: white;
+  }
 }
 
 // 状态标签样式
@@ -805,6 +1153,210 @@ onShow(() => {
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* 筛选模态框样式 */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+}
+
+.modal-content {
+  width: 100%;
+  height: 85vh;
+  background: #FAFAFA;
+  border-radius: 40rpx 40rpx 0 0;
+  padding: 30rpx;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  animation: modalSlideUp 0.3s ease-out forwards;
+}
+
+@keyframes modalSlideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30rpx;
+  flex-shrink: 0;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid #F5F5F5;
+}
+
+.modal-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.close-btn {
+  font-size: 60rpx;
+  color: #999;
+  line-height: 1;
+  padding: 0 20rpx;
+}
+
+.filter-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 10rpx;
+}
+
+.filter-section {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.02);
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.filter-label {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 30rpx;
+  position: relative;
+  padding-left: 20rpx;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 6rpx;
+    bottom: 6rpx;
+    width: 8rpx;
+    background: #FF4D6A;
+    border-radius: 4rpx;
+  }
+  
+  .required-mark {
+    color: #333;
+    font-size: 24rpx;
+    margin-left: 4rpx;
+    font-weight: 500;
+  }
+}
+
+.tags-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+.tag-item {
+  padding: 12rpx 30rpx;
+  background: #F5F5F5;
+  border-radius: 30rpx;
+  font-size: 26rpx;
+  color: #666;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+  
+  &.active {
+    background: #FFF0F6;
+    color: #b70030;
+    border-color: #ffadd2;
+  }
+  
+  &:active {
+    background: #E8E8E8;
+  }
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #F5F5F5;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .input-display {
+    flex: 1;
+    text-align: left;
+    font-size: 28rpx;
+    color: #333;
+    margin-right: 20rpx;
+    
+    &:empty::before {
+      content: attr(data-placeholder);
+      color: #ccc;
+    }
+  }
+  
+  .arrow {
+    color: #ccc;
+    font-size: 40rpx;
+  }
+}
+
+.modal-footer {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 30rpx;
+  padding-top: 30rpx;
+  border-top: 1rpx solid #F5F5F5;
+  flex-shrink: 0;
+}
+
+.reset-btn {
+  flex: 1;
+  height: 90rpx;
+  line-height: 90rpx;
+  border-radius: 45rpx;
+  background: #F5F5F5;
+  color: #333;
+  font-size: 32rpx;
+  text-align: center;
+  border: none;
+  transition: all 0.2s;
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.confirm-btn {
+  flex: 1;
+  height: 90rpx;
+  line-height: 90rpx;
+  border-radius: 45rpx;
+  background: linear-gradient(90deg, #b70030, #ff4d6a);
+  color: white;
+  font-size: 32rpx;
+  font-weight: bold;
+  text-align: center;
+  border: none;
+  box-shadow: 0 8rpx 24rpx rgba(183, 0, 48, 0.25);
+  transition: all 0.2s;
+  
+  &:active {
+    transform: scale(0.98);
+    box-shadow: 0 4rpx 12rpx rgba(183, 0, 48, 0.2);
   }
 }
 </style>

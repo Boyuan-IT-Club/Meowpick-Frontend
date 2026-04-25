@@ -123,9 +123,9 @@
 import { ref, reactive, computed } from 'vue';
 import { http } from '@/config';
 import { campusesData, categoriesData, departmentsData } from '@/data/mappingData';
-import SearchModal from '@/components/SearchModal.vue';
-import TeacherListModal from '@/components/TeacherListModal.vue';
-import AddTeacherModal from '@/components/AddTeacherModal.vue';
+import SearchModal from '@/components/proposal-components/SearchModal.vue';
+import TeacherListModal from '@/components/proposal-components/TeacherListModal.vue';
+import AddTeacherModal from '@/components/proposal-components/AddTeacherModal.vue';
 
 interface Teacher {
   name: string;

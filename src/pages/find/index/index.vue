@@ -42,6 +42,11 @@
 <script setup lang="ts">
 import type { SearchHistoryVO } from "@/api/data-contracts";
 import { useTokenStore } from "@/config";
+import { ref } from "vue";
+import { onShow } from "@dcloudio/uni-app";
+import { http } from "@/config";
+import PubSub from "@/config/utils/pubsub";
+import find from "@/components/find/index.vue";
 
 const tokenStore = useTokenStore();
 const recentText = ref("");
