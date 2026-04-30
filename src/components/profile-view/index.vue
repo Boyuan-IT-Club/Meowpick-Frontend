@@ -112,11 +112,15 @@
                         <text class="vote-num">{{ item.voteCount || 0 }}</text>
                         <text class="vote-label">票</text>
                      </view>
-                     <text 
+                     <text
                         class="status-badge"
-                        :class="item.status === 'accepted' ? 'status-accepted' : 'status-pending'"
+                        :class="{
+                          'status-approved': item.status === 'approved',
+                          'status-rejected': item.status === 'rejected',
+                          'status-pending': item.status === 'pending'
+                        }"
                      >
-                        {{ item.status === 'accepted' ? '已采纳' : '投票中' }}
+                        {{ item.status === 'approved' ? '已采纳' : item.status === 'rejected' ? '已拒绝' : '投票中' }}
                      </text>
                   </view>
               </view>
@@ -182,8 +186,8 @@ const loadData = async () => {
     error.value = false;
     try {
         const [commentRes, proposalRes] = await Promise.all([
-            http.CommentController.commentHistoryCreate({ page: 0, pageSize: 50 }),
-            http.ProposalController.proposalHistoryList({ page: 0, pageSize: 50 })
+            http.CommentController.commentHistoryCreate({ page: 1, pageSize: 50 }),
+            http.ProposalController.proposalHistoryList({ page: 1, pageSize: 50 })
         ]);
 
         const comments = (commentRes.data?.data?.comments || commentRes.data?.comments || []).map((c: any) => ({
@@ -201,8 +205,8 @@ const loadData = async () => {
             time: p.createdAt ? new Date(p.createdAt).toISOString().split('T')[0] : '',
             courseName: p.title || p.courseName || '未知提议',
             reason: p.content || p.reason || '',
-            voteCount: p.agreeCount || 0,
-            status: p.status || 'pending'
+            voteCount: p.likeCnt || p.agreeCount || 0,
+            status: p.status === 'approved' ? 'approved' : p.status === 'rejected' ? 'rejected' : 'pending'
         }));
 
         listData.value = [...comments, ...proposals];
@@ -586,10 +590,15 @@ onShow(async () => { await waitForLogin(); loadData(); });
                 color: #0066cc;
                 border: 1px solid rgba(0, 102, 204, 0.05);
             }
-            &.status-accepted {
+            &.status-approved {
                 background: linear-gradient(90deg, rgba(56, 142, 60, 0.08), rgba(56, 142, 60, 0.04));
                 color: #388E3C;
                 border: 1px solid rgba(56, 142, 60, 0.05);
+            }
+            &.status-rejected {
+                background: linear-gradient(90deg, rgba(200, 16, 46, 0.08), rgba(200, 16, 46, 0.04));
+                color: #c8102e;
+                border: 1px solid rgba(200, 16, 46, 0.05);
             }
         }
     }

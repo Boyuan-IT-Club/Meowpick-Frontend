@@ -541,24 +541,23 @@ function fetchHotRecommendations() {
                 });
             }
         });
-        // 如果 API 没有返回足够推荐，使用后备数据
-        if (recommendations.length < 3) {
+        // Use API results if available, even if less than 3
+        if (recommendations.length > 0) {
+            hotList.value = recommendations;
+        } else {
+            // Only use fallback if API returned nothing
             hotList.value = [
                 { keyword: '西方哲学智慧', tag: '高分课程' },
                 { keyword: '王老师', tag: '热门老师' },
                 { keyword: '大学物理', tag: '挂科重灾区' },
-                { keyword: '微积分I', tag: '必修课' },
             ];
-        } else {
-            hotList.value = recommendations;
         }
     }).catch(() => {
-        // 如果所有 API 都失败，使用后备数据
+        // Only use fallback if API call failed
         hotList.value = [
             { keyword: '西方哲学智慧', tag: '高分课程' },
             { keyword: '王老师', tag: '热门老师' },
             { keyword: '大学物理', tag: '挂科重灾区' },
-            { keyword: '微积分I', tag: '必修课' },
         ];
     });
 }

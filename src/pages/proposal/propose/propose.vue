@@ -43,6 +43,16 @@
                 </view>
              </picker>
          </view>
+
+         <view class="form-row">
+            <view class="label">课程类别</view>
+             <picker mode="selector" :range="categoryOptions" @change="onCategoryChange">
+                <view class="picker-display" :class="{ empty: !formData.category }">
+                    {{ formData.category || '请选择类别' }}
+                    <text class="arrow">></text>
+                </view>
+             </picker>
+         </view>
       </view>
 
 
@@ -174,7 +184,9 @@ const formData = reactive({
     courseName: '',
     courseCode: '',
     department: '',
+    category: '',
     teacher: '',
+    teachers: [] as string[],
     campuses: [] as string[],
     reason: ''
 });
@@ -182,8 +194,8 @@ const formData = reactive({
 // Options
 const campusOptions = ['普陀校区', '闵行校区', '临港校区'];
 const departmentOptions = [
-  '心理与认知科学学院', '社会发展学院', '化学与分子工程学院', '空间人工智能学院', 
-  '数据科学与工程学院', '美术学院', '软件工程学院', '教育学部', '国际教育中心', 
+  '心理与认知科学学院', '社会发展学院', '化学与分子工程学院', '空间人工智能学院',
+  '数据科学与工程学院', '美术学院', '软件工程学院', '教育学部', '国际教育中心',
   '外语学院', '英语系', '日语系', '大学英语教学部', '法语系', '中文系', '德语系',
   '历史学系', '哲学系', '法学院', '马克思主义学院', '经管学院', '商学院', '体育与健康学院',
   '数学科学学院', '物理学院', '政治与国际关系学院', '公共管理学院', '统计学院',
@@ -191,9 +203,15 @@ const departmentOptions = [
   '传播学院', '设计学院', '其他'
 ];
 
+const categoryOptions = ['必修课', '选修课', '通识课', '体育课', '其他'];
+
 // Logic
 const onDepartmentChange = (e: any) => {
     formData.department = departmentOptions[e.detail.value];
+};
+
+const onCategoryChange = (e: any) => {
+    formData.category = categoryOptions[e.detail.value];
 };
 
 const toggleCampus = (campus: string) => {
@@ -220,7 +238,9 @@ const submit = async () => {
         name: formData.courseName,
         code: formData.courseCode,
         department: formData.department,
+        category: formData.category || undefined,
         campuses: formData.campuses,
+        teachers: formData.teacher ? [{ name: formData.teacher }] : []
       }
     };
 
