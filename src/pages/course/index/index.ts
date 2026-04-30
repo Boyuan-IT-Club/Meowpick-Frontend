@@ -15,8 +15,8 @@ export function useCourse() {
     id.value = courseId;
 
     http.CourseController.courseDetail(courseId).then((res) => {
-      if (res.data && res.data.data) {
-        const courseData = res.data.data as DtoCourseVO;
+      if (res.data && res.data.data && res.data.data.course) {
+        const courseData = res.data.data.course as DtoCourseVO;
         course.value = { data: courseData };
         if (courseData.teachers) {
           teachers.value = courseData.teachers.map((t: DtoTeacherVO) => t.name || '');
