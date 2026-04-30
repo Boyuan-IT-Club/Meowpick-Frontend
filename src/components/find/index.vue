@@ -29,8 +29,9 @@
                 class="search-input"
                 :placeholder="placeHolder"
                 :focus="!isResultMode"
-                @focus="onInputFocus" 
+                @focus="onInputFocus"
                 @blur="isFocused = false"
+                @input="onInputChange"
                 confirm-type="search"
                 @confirm="handleSearch"
                 placeholder-class="placeholder-style"
@@ -280,9 +281,13 @@
 <script setup lang="ts">
 // @ts-nocheck
 import BackBtn from "@/components/common/BackBtn.vue";
-import { onMounted, ref, watch, computed, reactive } from "vue";
+import { onMounted, ref, watch, computed, reactive, shallowRef, type Ref } from "vue";
 import { onLoad, onShow } from "@dcloudio/uni-app";
-import { http } from "@/config"; 
+import { http } from "@/config";
+
+// 防抖定时器
+let suggestDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+const SUGGEST_DEBOUNCE_MS = 300; 
 
 const props = defineProps<{
     initialMode?: string
@@ -611,6 +616,21 @@ const onInputFocus = () => {
         isResultMode.value = false;
         // The text remains in the box so suggestList will likely show
     }
+};
+
+// 用户输入时触发模糊搜索建议（带防抖）
+const onInputChange = () => {
+    if (suggestDebounceTimer) {
+        clearTimeout(suggestDebounceTimer);
+    }
+    suggestDebounceTimer = setTimeout(() => {
+        if (searchText.value && searchText.value.length > 0) {
+            if (isResultMode.value) {
+                isResultMode.value = false;
+            }
+            suggestContent(0);
+        }
+    }, SUGGEST_DEBOUNCE_MS);
 };
 
 // 提取通用搜索逻辑，允许传入特定关键词而不改变输入框内容

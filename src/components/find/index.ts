@@ -1,3 +1,4 @@
+import { ref, shallowRef, computed, watch, type Ref } from 'vue';
 import type {
   DtoSearchHistoryVO,
   DtoCommentVO,
@@ -5,7 +6,6 @@ import type {
   DtoTeacherVO
 } from "@/api/data-contracts";
 import { http } from "@/config";
-import { useCourseStore } from "@/config";
 
 export const useFind = () => {
   return useInput();
@@ -47,12 +47,6 @@ type choose = {
   comment?: DtoCommentVO[];
   post?: any[];
 };
-const map = {
-  course: useCourseStore(),
-  teacher: useCourseStore(),
-  comment: useCourseStore(),
-  post: useCourseStore()
-};
 
 export function useSuggest(externalKeyword?: Ref<string>) {
   const internalKeyword = shallowRef("");
@@ -68,7 +62,6 @@ export function useSuggest(externalKeyword?: Ref<string>) {
   const page = ref(0);
 
   function jump(id: string) {
-    // map[type.value].setData(item)
     uni.navigateTo({
       url: `/pages/${type.value}/index/index?id=${id}`
     });

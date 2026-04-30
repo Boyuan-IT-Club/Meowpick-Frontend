@@ -1,3 +1,4 @@
+import { ref, shallowRef, watchEffect } from 'vue';
 import type { DtoCommentVO } from "@/api/data-contracts";
 import { http } from "@/config";
 
@@ -15,7 +16,7 @@ export function useCourseComment(p: Props) {
       query = true;
     }
     if (query) {
-      http.CommentController.commentQueryList({ courseId: Number(id), page: pageNum, pageSize: 20 }).then((res) => {
+      http.CommentController.commentQueryList({ id, page: pageNum, pageSize: 20 }).then((res) => {
         const data = res.data as any;
         const comments = data?.data?.comments || data?.comments || [];
         const total = data?.data?.total || data?.total || 0;
