@@ -234,8 +234,8 @@ const changeSort = (sortType: string) => {
         // Sort by comment count
         rows.value.sort((a, b) => (b.commentCount || 0) - (a.commentCount || 0));
     } else {
-        // Default sort
-        doSearch(true, 'default');
+        // Default sort - re-search with current sort type
+        doSearch(true, currentSort.value);
     }
 };
 
