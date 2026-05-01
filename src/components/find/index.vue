@@ -283,10 +283,11 @@ import BackBtn from "@/components/common/BackBtn.vue";
 import { onMounted, ref, watch, computed, shallowRef } from "vue";
 import { onShow } from "@dcloudio/uni-app";
 import { http } from "@/config";
+import { DEBOUNCE_DELAY_MS } from "@/utils/constants";
 
 // 防抖定时器
 let suggestDebounceTimer: ReturnType<typeof setTimeout> | null = null;
-const SUGGEST_DEBOUNCE_MS = 300; 
+const SUGGEST_DEBOUNCE_MS = DEBOUNCE_DELAY_MS; 
 
 const props = defineProps<{
     initialMode?: string

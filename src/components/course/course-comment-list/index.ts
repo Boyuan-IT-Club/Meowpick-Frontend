@@ -1,6 +1,7 @@
 import { ref, shallowRef, watchEffect } from 'vue';
 import type { DtoCommentVO } from "@/api/data-contracts";
 import { http } from "@/config";
+import { DEFAULT_PAGE_SIZE, TARGET_TYPE_COMMENT } from "@/utils/constants";
 
 type Props = {
   id: string;
@@ -22,7 +23,7 @@ export function useCourseComment(p: Props) {
       query.value = true;
     }
     if (query.value) {
-      http.CommentController.commentQueryList({ id, page: pageNum, pageSize: 20 }).then((res) => {
+      http.CommentController.commentQueryList({ id, page: pageNum, pageSize: DEFAULT_PAGE_SIZE }).then((res) => {
         const data = res.data as any;
         const comments = data?.data?.comments || data?.comments || [];
         const total = data?.data?.total || data?.total || 0;
@@ -44,7 +45,7 @@ export function useCourseComment(p: Props) {
     if (list.value[target]) {
       list.value[target].like = !list.value[target].like;
       list.value[target].likeCnt = (list.value[target].likeCnt || 0) + (list.value[target].like ? 1 : -1);
-      http.ActionController.likeCreate(target, { targetType: '2' });
+      http.ActionController.likeCreate(target, { targetType: TARGET_TYPE_COMMENT });
     }
   }
 
