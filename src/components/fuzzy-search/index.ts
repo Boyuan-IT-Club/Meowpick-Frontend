@@ -1,34 +1,37 @@
-import { ref, computed, watch } from 'vue';
+import { ref, watch } from 'vue';
 
-export function useFuzzySearch(options: string[] = []) {
+interface FuzzySearchReturn {
+  keyword: typeof keyword;
+  filteredOptions: typeof filteredOptions;
+  isVisible: typeof isVisible;
+  setKeyword: (value: string) => void;
+  toggleVisible: () => void;
+  hide: () => void;
+  updateOptions: (newOptions: string[]) => void;
+}
+
+export function useFuzzySearch(options: string[] = []): FuzzySearchReturn {
   const keyword = ref('');
-  const filteredOptions = ref<string[]>([]);
+  const filteredOptions = ref<string[]>([...options]);
   const isVisible = ref(false);
 
-  // 过滤选项
   const filterOptions = () => {
     if (!keyword.value) {
-      filteredOptions.value = options;
+      filteredOptions.value = [...options];
       return;
     }
-    
+
     const lowerKeyword = keyword.value.toLowerCase();
-    filteredOptions.value = options.filter(option => 
+    filteredOptions.value = options.filter(option =>
       option.toLowerCase().includes(lowerKeyword)
     );
   };
 
-  // 监听关键词变化
   watch(keyword, () => {
     filterOptions();
-    if (keyword.value) {
-      isVisible.value = true;
-    } else {
-      isVisible.value = false;
-    }
+    isVisible.value = !!keyword.value;
   });
 
-  // 初始化过滤
   filterOptions();
 
   return {

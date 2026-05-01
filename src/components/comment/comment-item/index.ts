@@ -1,4 +1,4 @@
-export function caculateTimeago(dateTimeStamp: any) {
+export function caculateTimeago(dateTimeStamp: string | number | Date): string {
   const date = new Date(dateTimeStamp);
   const now = new Date();
   const diff = now.getTime() - date.getTime();
