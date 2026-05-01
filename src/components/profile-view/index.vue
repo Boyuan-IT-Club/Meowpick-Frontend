@@ -170,11 +170,11 @@ interface ListItem {
     type: ItemType;
     time: string;
     courseName: string;
-    content?: string; // for comment
-    likes?: number; // for comment
-    reason?: string; // for proposal
-    voteCount?: number; // for proposal
-    status?: 'pending' | 'accepted'; // for proposal
+    content?: string;
+    likes?: number;
+    reason?: string;
+    voteCount?: number;
+    status?: 'pending' | 'approved' | 'rejected';
 }
 
 const listData = ref<ListItem[]>([]);
