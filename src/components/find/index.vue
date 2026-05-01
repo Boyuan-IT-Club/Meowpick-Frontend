@@ -470,17 +470,17 @@ const navBackBtnStyle = computed(() => {
 });
 
 // 计算 input box 的宽度和位置
-const refinedSearchInputBoxStyle = computed((): any => {
+const refinedSearchInputBoxStyle = computed((): Record<string, string> => {
     return {
         height: menuButtonInfo.height + 'px',
-        flex: 1,
+        flex: '1',
         borderRadius: (menuButtonInfo.height / 2) + 'px',
         backgroundColor: '#f5f5f5',
         display: 'flex',
         alignItems: 'center',
         padding: '0 24rpx',
-        border: isFocused.value ? `2rpx solid #c8102e` : `2rpx solid #e0e0e0`, // 恢复：聚焦红，失焦灰
-        boxShadow: isFocused.value ? `0 4rpx 12rpx rgba(200, 16, 46, 0.1)` : 'none', // 恢复：聚焦阴影
+        border: isFocused.value ? '2rpx solid #c8102e' : '2rpx solid #e0e0e0',
+        boxShadow: isFocused.value ? '0 4rpx 12rpx rgba(200, 16, 46, 0.1)' : 'none',
         transition: 'all 0.3s ease',
         boxSizing: 'border-box'
     }
