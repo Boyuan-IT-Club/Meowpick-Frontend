@@ -1,18 +1,25 @@
 import { ref, shallowRef, watch } from 'vue';
 import { http } from "@/config";
 
+interface TeacherCourse {
+  id: string;
+  name: string;
+  department?: string;
+  teacherList: any[];
+  tagCount: Record<string, number>;
+}
+
 export function useChoose() {
   const keyword = shallowRef("");
-  const rows = ref<object[]>([]);
-
+  const rows = ref<TeacherCourse[]>([]);
   const page = ref(0);
 
-  function search(page: number) {
+  function search(pageNum: number) {
     if (keyword.value.length > 0) {
       http.CoursesController.searchCreate({
         keyword: keyword.value,
         type: "teacher",
-        page,
+        page: pageNum,
         pageSize: 5
       }).then((res) => {
         const data = res.data as any;
@@ -25,8 +32,8 @@ export function useChoose() {
       });
     }
   }
+
   function jump(id: string) {
-    // map[type.value].setData(item)
     uni.navigateTo({
       url: `/pages/course/index/index?id=${id}`
     });
@@ -37,7 +44,7 @@ export function useChoose() {
   });
   watch([keyword], () => {
     rows.value = [];
-    search(page.value);
+    search(0);
   });
 
   return {
