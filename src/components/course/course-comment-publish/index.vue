@@ -33,7 +33,7 @@ function commit() {
           type="success"
           size="mini"
           color="#67C23A"
-          :disabled="text.length == 0"
+          :disabled="text.length === 0"
           @click="commit"
           >发布</nut-button
         >
