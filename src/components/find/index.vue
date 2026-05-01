@@ -280,8 +280,8 @@
 
 <script setup lang="ts">
 import BackBtn from "@/components/common/BackBtn.vue";
-import { onMounted, ref, watch, computed, reactive, shallowRef, type Ref } from "vue";
-import { onLoad, onShow } from "@dcloudio/uni-app";
+import { onMounted, ref, watch, computed, shallowRef } from "vue";
+import { onShow } from "@dcloudio/uni-app";
 import { http } from "@/config";
 
 // 防抖定时器

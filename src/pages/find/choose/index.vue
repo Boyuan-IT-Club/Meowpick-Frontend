@@ -182,7 +182,6 @@ import { onShow, onLoad } from "@dcloudio/uni-app";
 import { ref, onMounted, computed, type StyleValue } from "vue";
 import { useChoose } from "./index";
 import ChooseCourse from "@/components/choose/choose-course/index.vue";
-import { type Ref } from 'vue';
 
 const { keyword, jump, rows, page, loading, doSearch } = useChoose();
 
