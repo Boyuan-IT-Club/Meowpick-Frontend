@@ -192,7 +192,7 @@ const commit = async () => {
           uni.navigateBack();
       }, 1500);
   } catch (e) {
-      console.error(e);
+      console.error('[course/comment] publish error:', e);
       uni.showToast({ title: "发布失败", icon: "none" });
       isClicked.value = false;
   }

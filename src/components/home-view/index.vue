@@ -105,7 +105,7 @@ const goToLetter = () => {
   try {
       uni.setStorageSync('hasReadLetter', true);
   } catch (e) {
-      console.error(e);
+      console.error('[home-view] setStorageSync error:', e);
   }
   
   // 2. 然后立即跳转，不等待 storage 写入
