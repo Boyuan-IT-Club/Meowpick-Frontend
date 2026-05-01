@@ -213,7 +213,6 @@ const loadData = async () => {
     } catch (err) {
         console.error('[profile-view] loadData error:', err);
         error.value = true;
-        console.error('Failed to load profile data:', err);
         uni.showToast({ title: '加载失败，请重试', icon: 'none' });
     } finally {
         loading.value = false;
