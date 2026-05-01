@@ -105,6 +105,7 @@
 import { reactive, computed } from 'vue';
 import BackBtn from "@/components/common/BackBtn.vue";
 import { http } from "@/config";
+import { TOAST_DURATION_MS } from "@/utils/constants";
 
 // System Info
 const sysInfo = uni.getSystemInfoSync();
@@ -249,7 +250,7 @@ const submit = async () => {
       const msg = res.data?.msg;
       if (code === 200 || code === 0) {
         uni.showToast({ title: '提交成功', icon: 'success' });
-        setTimeout(() => uni.navigateBack(), 1500);
+        setTimeout(() => uni.navigateBack(), TOAST_DURATION_MS);
       } else {
         uni.showToast({ title: msg || `提交失败(code:${code})`, icon: 'none' });
       }

@@ -61,10 +61,11 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
 import { onLoad, onShow } from "@dcloudio/uni-app";
-import BackBtn from "@/components/common/BackBtn.vue"; // Restore BackBtn import
+import BackBtn from "@/components/common/BackBtn.vue";
 import { useCourse } from "@/pages/course/index/index";
 import { Tags, TotalTags, InitTags } from "@/utils/tags";
-import { http } from "@/config/index"; // Corrected import based on workspace scan assumption or previous knowledge
+import { http } from "@/config/index";
+import { TOAST_DURATION_MS } from "@/utils/constants";
 
 // Menu Button Info for Custom Navbar
 const sysInfo = uni.getSystemInfoSync();
@@ -190,7 +191,7 @@ const commit = async () => {
       uni.showToast({ title: "发布成功", icon: "success" });
       setTimeout(() => {
           uni.navigateBack();
-      }, 1500);
+      }, TOAST_DURATION_MS);
   } catch (e) {
       console.error('[course/comment] publish error:', e);
       uni.showToast({ title: "发布失败", icon: "none" });
