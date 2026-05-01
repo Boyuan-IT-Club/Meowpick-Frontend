@@ -52,6 +52,7 @@ import { reactive, onMounted, ref } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
 import CourseCard from '@/components/business/course/CourseCard.vue';
 import { useTokenStore, http } from '@/config';
+import { DEFAULT_PAGE_SIZE } from '@/utils/constants';
 
 interface Proposal {
   id: string;
@@ -77,7 +78,7 @@ const fetchProposals = async () => {
   error.value = false;
 
   try {
-    const res = await http.ProposalController.proposalListList({ page: 1, pageSize: 20 });
+    const res = await http.ProposalController.proposalListList({ page: 1, pageSize: DEFAULT_PAGE_SIZE });
     const data = res.data?.data?.proposals || res.data?.proposals || [];
 
     proposals.length = 0;
