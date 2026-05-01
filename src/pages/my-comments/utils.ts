@@ -1,7 +1,7 @@
 import type { DtoCommentVO } from "@/api/data-contracts";
 import { ref, shallowRef, watch } from 'vue';
 import { http } from "@/config";
-import { DEFAULT_PAGE_SIZE, TARGET_TYPE_COMMENT } from "@/utils/constants";
+import { MY_COMMENTS_PAGE_SIZE, TARGET_TYPE_COMMENT } from "@/utils/constants";
 
 export function useCourseComment() {
   const page = shallowRef(0);
@@ -20,7 +20,7 @@ export function useCourseComment() {
     error.value = false;
 
     if (query.value) {
-      http.CommentController.commentHistoryCreate({ page: pageNum, pageSize: 5 }).then((res) => {
+      http.CommentController.commentHistoryCreate({ page: pageNum, pageSize: MY_COMMENTS_PAGE_SIZE }).then((res) => {
         const data = res.data as any;
         const comments = data?.data?.comments || data?.comments || [];
         const total = data?.data?.total || data?.total || 0;

@@ -143,6 +143,7 @@ import { ref, computed, onMounted } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
 import { waitForLogin } from '@/utils/init';
 import { http } from '@/config';
+import { HISTORY_PAGE_SIZE } from '@/utils/constants';
 
 // System Info Logic for Header Alignment
 const sysInfo = uni.getSystemInfoSync();
@@ -186,8 +187,8 @@ const loadData = async () => {
     error.value = false;
     try {
         const [commentRes, proposalRes] = await Promise.all([
-            http.CommentController.commentHistoryCreate({ page: 1, pageSize: 50 }),
-            http.ProposalController.proposalHistoryList({ page: 1, pageSize: 50 })
+            http.CommentController.commentHistoryCreate({ page: 1, pageSize: HISTORY_PAGE_SIZE }),
+            http.ProposalController.proposalHistoryList({ page: 1, pageSize: HISTORY_PAGE_SIZE })
         ]);
 
         const comments = (commentRes.data?.data?.comments || commentRes.data?.comments || []).map((c: any) => ({

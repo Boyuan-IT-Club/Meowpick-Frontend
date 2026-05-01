@@ -2,6 +2,7 @@
 export const DEFAULT_PAGE_SIZE = 20;
 export const SEARCH_PAGE_SIZE = 10;
 export const TEACHER_SEARCH_PAGE_SIZE = 5;
+export const MY_COMMENTS_PAGE_SIZE = 5;
 export const HISTORY_PAGE_SIZE = 50;
 
 // UI Constants

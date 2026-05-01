@@ -1,5 +1,6 @@
 import { ref, shallowRef, watch } from 'vue';
 import { http } from "@/config";
+import { TEACHER_SEARCH_PAGE_SIZE } from "@/utils/constants";
 
 interface TeacherCourse {
   id: string;
@@ -20,7 +21,7 @@ export function useChoose() {
         keyword: keyword.value,
         type: "teacher",
         page: pageNum,
-        pageSize: 5
+        pageSize: TEACHER_SEARCH_PAGE_SIZE
       }).then((res) => {
         const data = res.data as any;
         const courses = data?.data?.courses || data?.courses || [];
