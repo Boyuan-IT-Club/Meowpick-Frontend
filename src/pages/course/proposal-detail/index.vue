@@ -105,7 +105,13 @@ try {
     }
 } catch (e) {}
 
-const proposalData = ref<any>({});
+interface PassedProposalData {
+  voteCount?: number;
+  isVoted?: boolean;
+  [key: string]: any;
+}
+
+const proposalData = ref<PassedProposalData>({});
 const isVoted = ref(false);
 
 onLoad((options: any) => {

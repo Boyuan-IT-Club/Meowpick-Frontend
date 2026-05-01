@@ -125,7 +125,25 @@ try {
     }
 } catch (e) {}
 
-const proposalData = ref<any>({});
+interface ProposalDetailData {
+  name: string;
+  campus: string;
+  teacher: string;
+  reason: string;
+  voteCount: number;
+  date: string;
+  status: string;
+}
+
+const proposalData = ref<ProposalDetailData>({
+  name: '',
+  campus: '',
+  teacher: '',
+  reason: '',
+  voteCount: 0,
+  date: '',
+  status: 'pending'
+});
 const isVoted = ref(false);
 const loading = ref(true);
 const error = ref(false);
