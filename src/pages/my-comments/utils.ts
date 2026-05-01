@@ -1,24 +1,25 @@
 import type { DtoCommentVO } from "@/api/data-contracts";
 import { ref, shallowRef, watch } from 'vue';
 import { http } from "@/config";
+import { DEFAULT_PAGE_SIZE, TARGET_TYPE_COMMENT } from "@/utils/constants";
 
 export function useCourseComment() {
   const page = shallowRef(0);
   const list = ref<DtoCommentVO[]>([]);
   const loading = ref(false);
   const error = ref(false);
-  let query = true;
+  const query = ref(true);
 
   function fetch(pageNum: number) {
     if (pageNum === 0) {
-      query = true;
+      query.value = true;
       list.value = [];
     }
 
     loading.value = true;
     error.value = false;
 
-    if (query) {
+    if (query.value) {
       http.CommentController.commentHistoryCreate({ page: pageNum, pageSize: 5 }).then((res) => {
         const data = res.data as any;
         const comments = data?.data?.comments || data?.comments || [];
@@ -26,7 +27,7 @@ export function useCourseComment() {
         comments.forEach((comment: any) => {
           list.value.push(comment);
         });
-        query = list.value.length < total;
+        query.value = list.value.length < total;
         loading.value = false;
       }).catch((err: any) => {
         console.error('[useCourseComment] fetch error:', err);
@@ -45,7 +46,7 @@ export function useCourseComment() {
     comment.like = !comment.like;
     comment.likeCnt = (comment.likeCnt || 0) + (comment.like ? 1 : -1);
 
-    http.ActionController.likeCreate(target, { targetType: '2' });
+    http.ActionController.likeCreate(target, { targetType: TARGET_TYPE_COMMENT });
   }
 
   function remove(id: string) {

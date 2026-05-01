@@ -179,7 +179,7 @@
 <script setup lang="ts">
 import BackBtn from "@/components/common/BackBtn.vue";
 import { onShow, onLoad } from "@dcloudio/uni-app";
-import { ref, onMounted, computed, type StyleValue } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useChoose } from "./index";
 import ChooseCourse from "@/components/choose/choose-course/index.vue";
 

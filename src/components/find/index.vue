@@ -280,7 +280,7 @@
 
 <script setup lang="ts">
 import BackBtn from "@/components/common/BackBtn.vue";
-import { onMounted, ref, watch, computed, shallowRef } from "vue";
+import { onMounted, ref, watch, computed } from "vue";
 import { onShow } from "@dcloudio/uni-app";
 import { http } from "@/config";
 import { DEBOUNCE_DELAY_MS } from "@/utils/constants";
