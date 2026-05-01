@@ -59,7 +59,6 @@
 </template>
 
 <script setup lang="ts">
-// @ts-nocheck
 import { ref, onMounted, computed } from "vue";
 import { onLoad, onShow } from "@dcloudio/uni-app";
 import BackBtn from "@/components/common/BackBtn.vue"; // Restore BackBtn import

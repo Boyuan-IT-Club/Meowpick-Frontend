@@ -1,4 +1,3 @@
-// @ts-nocheck
 <template>
   <view class="search-result-box"> <!-- Removed dynamic class binding to prevent double styles -->
     <!-- Proposal Card Style -->
@@ -8,7 +7,7 @@
               <view class="proposal-row-top">
                   <text class="proposal-name">{{ props.data?.name }}</text>
               </view>
-              
+
               <view class="proposal-row-middle">
                    <view class="proposal-info-item">
                         <image src="@/images/teacher-icon.png" class="info-icon" />
@@ -29,7 +28,7 @@
                   </view>
               </view>
           </view>
-      </view> 
+      </view>
     </template>
 
     <!-- Original Course Card Style -->
@@ -39,7 +38,7 @@
               <text class="course-name">{{ props.data?.name }}</text>
               <text class="course-category" v-if="props.data?.category">{{ props.data?.category }}</text>
           </view>
-          
+
           <view class="course-row-middle">
                <view class="course-info-item" v-if="props.data?.teacherList?.length">
                     <image src="@/images/teacher-icon.png" class="info-icon" />
@@ -86,7 +85,7 @@ import { computed, defineProps } from "vue"; // Import computed
 import type { CourseVO, TeacherVO } from "@/api/data-contracts";
 import { Emoji, getTop3List } from "@/utils/tags";
 
-// Extend type locally 
+// Extend type locally
 type MixedResult = CourseVO & {
   resultType?: string;
   matchScore?: number;
@@ -110,13 +109,13 @@ const isProposal = computed(() => {
 <style lang="scss" scoped>
 .search-result-box {
   margin-top: 20rpx;
-  background-color: transparent; 
+  background-color: transparent;
 }
 
 .proposal-card {
   background: linear-gradient(135deg, #fff5f6 0%, #ffffff 100%);
   border-radius: 24rpx;
-  box-shadow: 0 8rpx 24rpx rgba(200, 16, 46, 0.06); 
+  box-shadow: 0 8rpx 24rpx rgba(200, 16, 46, 0.06);
   padding: 32rpx;
   border: 1px solid rgba(200, 16, 46, 0.15);
   position: relative;
@@ -141,7 +140,7 @@ const isProposal = computed(() => {
           .proposal-name {
                font-size: 36rpx;
                font-weight: 700;
-               color: #1a1a1a; 
+               color: #1a1a1a;
                line-height: 1.4;
                flex: 1;
                margin-right: 20rpx;
@@ -151,8 +150,8 @@ const isProposal = computed(() => {
 
       .proposal-row-middle {
           display: flex;
-          flex-direction: row; 
-          flex-wrap: wrap; 
+          flex-direction: row;
+          flex-wrap: wrap;
           align-items: center;
           margin-bottom: 32rpx;
           background: rgba(255, 255, 255, 0.8);
@@ -160,20 +159,20 @@ const isProposal = computed(() => {
           border-radius: 16rpx;
           border: 1px solid rgba(200, 16, 46, 0.08);
           box-shadow: inset 0 2rpx 8rpx rgba(0,0,0,0.01);
-          
+
           .proposal-info-item {
                display: flex;
                align-items: center;
                font-size: 26rpx;
                color: #555;
-               margin-right: 40rpx; 
+               margin-right: 40rpx;
                font-weight: 500;
 
                .info-icon {
                     width: 30rpx;
                     height: 30rpx;
                     margin-right: 12rpx;
-                    opacity: 0.8; 
+                    opacity: 0.8;
                }
           }
       }
@@ -184,7 +183,7 @@ const isProposal = computed(() => {
           align-items: center;
           border-top: 1px dashed rgba(200, 16, 46, 0.15);
           padding-top: 24rpx;
-          
+
            .proposal-badge {
              font-size: 24rpx;
              color: #c8102e;
@@ -202,7 +201,7 @@ const isProposal = computed(() => {
                padding: 10rpx 24rpx;
                border-radius: 30rpx;
                border: 1px solid rgba(200, 16, 46, 0.05);
-               
+
                .vote-icon {
                     width: 30rpx;
                     height: 30rpx;
@@ -227,10 +226,10 @@ const isProposal = computed(() => {
 
 .search-result {
   background-color: #ffffff;
-  width: 100%; 
+  width: 100%;
   box-sizing: border-box;
   border-radius: 24rpx;
-  box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.05); 
+  box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.05);
   padding: 32rpx;
   display: flex;
   flex-direction: column;
@@ -255,11 +254,11 @@ const isProposal = computed(() => {
           .course-name {
                font-size: 34rpx;
                font-weight: 600;
-               color: #2c3e50; 
+               color: #2c3e50;
                line-height: 1.5;
                flex: 1;
                margin-right: 20rpx;
-               
+
                display: -webkit-box;
                -webkit-line-clamp: 2;
                -webkit-box-orient: vertical;
@@ -278,25 +277,25 @@ const isProposal = computed(() => {
 
       .course-row-middle {
           display: flex;
-          flex-direction: row; 
-          flex-wrap: wrap; 
+          flex-direction: row;
+          flex-wrap: wrap;
           align-items: center;
-          margin-bottom: 28rpx; 
-          
+          margin-bottom: 28rpx;
+
           .course-info-item {
                display: flex;
                align-items: center;
-               font-size: 26rpx; 
-               color: #666; 
-               margin-right: 40rpx; 
+               font-size: 26rpx;
+               color: #666;
+               margin-right: 40rpx;
 
                .info-icon {
-                    width: 28rpx; 
+                    width: 28rpx;
                     height: 28rpx;
                     margin-right: 12rpx;
-                    opacity: 0.7; 
+                    opacity: 0.7;
                }
-               
+
                .teacher-name-list {
                     max-width: 300rpx;
                     overflow: hidden;
@@ -343,7 +342,7 @@ const isProposal = computed(() => {
           }
         }
       }
-      
+
       .desc {
         width: 100%;
         margin-top: 20rpx;
@@ -352,7 +351,7 @@ const isProposal = computed(() => {
         line-height: 1.6;
         display: -webkit-box;
         -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2; 
+        -webkit-line-clamp: 2;
         line-clamp: 2;
         overflow: hidden;
         background: #fcfcfc;

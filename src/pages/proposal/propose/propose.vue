@@ -102,7 +102,6 @@
 </template>
 
 <script setup lang="ts">
-// @ts-nocheck
 import { ref, reactive, computed } from 'vue';
 import BackBtn from "@/components/common/BackBtn.vue";
 import { http } from "@/config";

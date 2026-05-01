@@ -69,7 +69,6 @@
 </template>
 
 <script setup lang="ts">
-// @ts-nocheck
 import type { CourseVO } from "@/api/data-contracts";
 
 type Props = {

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// @ts-nocheck
 import type { CommentVO } from "@/api/data-contracts";
 import { useTokenStore } from "@/config";
 import Like from "@/images/like-icon.png";
@@ -12,7 +11,7 @@ type CommentBoxProps = {
     data: CommentVO;
 }
 const props = defineProps<CommentBoxProps>();
-const emit = defineEmits(["like"]);
+const emit = defineEmits<{ like: [id: string] }>();
 
 // 处理表情展示
 // 假设评论数据里有一个字段 score（或者其他字段）存储了用户选择的表情等级 1-5

@@ -7,7 +7,6 @@
 </template>
 
 <script setup lang="ts">
-// @ts-nocheck
 import { useCourseComment } from "@/pages/course/index/utils";
 import CommentBox from "@/pages/course/index/CommentBox.vue";
 import { onUnmounted } from "vue";

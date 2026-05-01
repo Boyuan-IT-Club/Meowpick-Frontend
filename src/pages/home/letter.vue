@@ -36,9 +36,7 @@
 </template>
 
 <script setup lang="ts">
-// @ts-nocheck
 import { onLoad } from "@dcloudio/uni-app";
-import { ref } from "vue";
 import BackBtn from "@/components/common/BackBtn.vue";
 
 const sysInfo = uni.getSystemInfoSync();

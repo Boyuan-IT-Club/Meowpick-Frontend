@@ -28,11 +28,10 @@
 </template>
 
 <script setup lang="ts">
-// @ts-nocheck
 type Props = {
   data: string[][]; // Receive full array of arrays
 };
-const props = defineProps<Props>();
+withDefaults(defineProps<Props>(), {});
 </script>
 
 <style scoped lang="scss">

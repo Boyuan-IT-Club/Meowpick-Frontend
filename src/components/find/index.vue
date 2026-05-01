@@ -279,7 +279,6 @@
 </template>
 
 <script setup lang="ts">
-// @ts-nocheck
 import BackBtn from "@/components/common/BackBtn.vue";
 import { onMounted, ref, watch, computed, reactive, shallowRef, type Ref } from "vue";
 import { onLoad, onShow } from "@dcloudio/uni-app";

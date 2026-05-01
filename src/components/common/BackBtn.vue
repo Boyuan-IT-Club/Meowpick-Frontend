@@ -5,15 +5,17 @@
 </template>
 
 <script setup lang="ts">
-// @ts-nocheck
 import { computed } from 'vue';
 
 const props = defineProps<{
-  customStyle?: string | object;
+  customStyle?: string | Record<string, string>;
   color?: string; // allow color override
 }>();
 
-const emit = defineEmits(['click', 'back']); // Add click event
+const emit = defineEmits<{
+  click: [];
+  back: [];
+}>();
 
 const handleBack = () => {
   // Try navigateBack, catch failure

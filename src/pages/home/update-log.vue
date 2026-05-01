@@ -31,7 +31,6 @@
 </template>
 
 <script setup lang="ts">
-// @ts-nocheck
 import InformationBox from "@/pages/home/InformationBox.vue";
 import { UpdateLog } from "./information";
 import BackBtn from "@/components/common/BackBtn.vue";
