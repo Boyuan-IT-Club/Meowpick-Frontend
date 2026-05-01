@@ -1,6 +1,7 @@
 import type { DtoCommentVO } from "@/api/data-contracts";
 import { ref, shallowRef, watch } from 'vue';
 import { http } from "@/config";
+import { DEFAULT_PAGE_SIZE, TARGET_TYPE_COMMENT } from "@/utils/constants";
 
 type Props = {
   id: string;
@@ -15,15 +16,15 @@ interface ExtendedCommentVO extends DtoCommentVO {
 export function useCourseComment(p: Props) {
   const page = shallowRef(0);
   const list = ref<{ [key: string]: ExtendedCommentVO }>({});
-  let query = true;
+  const query = ref(true);
 
   function fetch(id: string, pageNum: number) {
     if (!id || id === "") return;
-    if (pageNum == 0) {
-      query = true;
+    if (pageNum === 0) {
+      query.value = true;
     }
-    if (query) {
-      http.CommentController.commentQueryList({ id: id, page: pageNum, pageSize: 20 }).then((res) => {
+    if (query.value) {
+      http.CommentController.commentQueryList({ id, page: pageNum, pageSize: DEFAULT_PAGE_SIZE }).then((res) => {
         const data = res.data as any;
         const comments = data?.data?.comments || data?.comments || [];
         const total = data?.data?.total || data?.total || 0;
@@ -36,7 +37,7 @@ export function useCourseComment(p: Props) {
             likeCnt: comment.likeCnt ?? comment.relation?.likeCnt ?? comment.relation?.like_cnt ?? 0
           };
         });
-        query = Object.values(list.value).length < total;
+        query.value = Object.values(list.value).length < total;
       });
     }
   }
@@ -45,7 +46,7 @@ export function useCourseComment(p: Props) {
     if (list.value[target]) {
       list.value[target].like = !list.value[target].like;
       list.value[target].likeCnt = (list.value[target].likeCnt || 0) + (list.value[target].like ? 1 : -1);
-      http.ActionController.likeCreate(target, { targetType: '2' });
+      http.ActionController.likeCreate(target, { targetType: TARGET_TYPE_COMMENT });
     }
   }
 
