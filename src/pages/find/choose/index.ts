@@ -1,6 +1,7 @@
 import type { DtoCourseVO, DtoTeacherVO } from "@/api/data-contracts";
 import { ref } from 'vue';
 import { http } from "@/config";
+import { SEARCH_PAGE_SIZE } from "@/utils/constants";
 
 type MixedResult = DtoCourseVO & {
   resultType?: 'course' | 'teacher' | 'proposal';
@@ -57,14 +58,14 @@ export function useChoose() {
     const param = {
       keyword: keyword.value,
       page: page.value,
-      pageSize: 10,
+      pageSize: SEARCH_PAGE_SIZE,
       type: "course" as "course" | "teacher"
     };
 
     Promise.all([
       http.CoursesController.searchCreate({ ...param, type: "course" }),
       http.CoursesController.searchCreate({ ...param, type: "teacher" }),
-      http.ProposalController.proposalSuggestCreate({ keyword: keyword.value, page: page.value - 1, pageSize: 10 })
+      http.ProposalController.proposalSuggestCreate({ keyword: keyword.value, page: page.value - 1, pageSize: SEARCH_PAGE_SIZE })
     ]).then(([courseRes, teacherRes, proposalRes]) => {
       const courseData = courseRes.data as any;
       const teacherData = teacherRes.data as any;
