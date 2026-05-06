@@ -1,4 +1,4 @@
-import { ref, shallowRef } from 'vue';
+import { ref } from 'vue';
 import type { DtoCourseVO, DtoTeacherVO } from "@/api/data-contracts";
 import { useCourseStore, http } from "@/config";
 
@@ -6,9 +6,9 @@ export function useCourse() {
   const id = ref("");
   const store = useCourseStore();
 
-  const course = shallowRef<{ data?: DtoCourseVO }>({});
-  const teachers = shallowRef<string[]>([]);
-  const trends = shallowRef<DtoCourseVO[]>([]);
+  const course = ref<{ data?: DtoCourseVO }>({});
+  const teachers = ref<string[]>([]);
+  const trends = ref<DtoCourseVO[]>([]);
 
   function fetch(courseId: string) {
     if (!courseId || courseId === "") return;

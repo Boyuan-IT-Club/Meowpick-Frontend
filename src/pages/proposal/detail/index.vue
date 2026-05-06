@@ -176,7 +176,10 @@ const fetchProposal = (id: string) => {
         if (proposalData.value.isVoted) isVoted.value = true;
         loading.value = false;
         error.value = false;
-      } catch (e) {}
+      } catch (e) {
+        console.error('[proposal detail] decode options error:', e);
+        uni.showToast({ title: '提案数据解析失败', icon: 'none' });
+      }
     }
   });
 };

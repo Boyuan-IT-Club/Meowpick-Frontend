@@ -1,5 +1,5 @@
 import type { DtoCommentVO } from "@/api/data-contracts";
-import { ref, shallowRef, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { http } from "@/config";
 import { DEFAULT_PAGE_SIZE, TARGET_TYPE_COMMENT } from "@/utils/constants";
 
@@ -14,7 +14,7 @@ interface ExtendedCommentVO extends DtoCommentVO {
 }
 
 export function useCourseComment(p: Props) {
-  const page = shallowRef(0);
+  const page = ref(0);
   const list = ref<{ [key: string]: ExtendedCommentVO }>({});
   const query = ref(true);
 

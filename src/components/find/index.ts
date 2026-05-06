@@ -1,4 +1,4 @@
-import { ref, shallowRef, computed, watch, type Ref } from 'vue';
+import { ref, computed, watch, type Ref } from 'vue';
 import type {
   DtoSearchHistoryVO,
   DtoCommentVO,
@@ -13,9 +13,9 @@ export const useFind = () => {
 
 export const useInput = () => {
   const searchText = ref("");
-  const placeHolder = shallowRef("搜索课程类别、名称、院系或任课教师");
-  const list = shallowRef<any[]>([]);
-  const searchHistory = shallowRef<DtoSearchHistoryVO[]>([]);
+  const placeHolder = ref("搜索课程类别、名称、院系或任课教师");
+  const list = ref<any[]>([]);
+  const searchHistory = ref<DtoSearchHistoryVO[]>([]);
   const isSearch = ref(false);
 
   if (searchText) {
@@ -49,9 +49,9 @@ type choose = {
 };
 
 export function useSuggest(externalKeyword?: Ref<string>) {
-  const internalKeyword = shallowRef("");
+  const internalKeyword = ref("");
   const keyword = externalKeyword || internalKeyword;
-  const type = shallowRef<"course" | "teacher" | "comment" | "post">("course");
+  const type = ref<"course" | "teacher" | "comment" | "post">("course");
   const rows = ref<choose>({
     course: [],
     teacher: [],

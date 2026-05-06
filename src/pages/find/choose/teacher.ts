@@ -1,4 +1,4 @@
-import { ref, shallowRef, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { http } from "@/config";
 import { TEACHER_SEARCH_PAGE_SIZE } from "@/utils/constants";
 
@@ -11,7 +11,7 @@ interface TeacherCourse {
 }
 
 export function useChoose() {
-  const keyword = shallowRef("");
+  const keyword = ref("");
   const rows = ref<TeacherCourse[]>([]);
   const page = ref(0);
 
