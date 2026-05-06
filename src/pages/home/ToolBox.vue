@@ -35,7 +35,7 @@ const showNewIcon = ref(true);
 
 onShow(() => {
   http.CommentController.searchTotalList().then((res) => {
-    totalComment.value = res.data.data.count;
+    totalComment.value = res?.data?.data?.count || res?.data?.count || 0;
   });
   
   // 检查用户是否已经查看过信件
