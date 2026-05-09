@@ -8,6 +8,9 @@ export const HISTORY_PAGE_SIZE = 50;
 // UI Constants
 export const DEBOUNCE_DELAY_MS = 300;
 export const TOAST_DURATION_MS = 1500;
+export const COLLAPSE_SCROLL_THRESHOLD = 30;
+export const EXPAND_SCROLL_THRESHOLD = 10;
+export const MAX_HISTORY_SIZE = 50;
 
 // Sort Types
 export const SORT_DEFAULT = 'default';

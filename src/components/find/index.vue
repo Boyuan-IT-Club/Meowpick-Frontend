@@ -283,7 +283,7 @@ import BackBtn from "@/components/common/BackBtn.vue";
 import { onMounted, ref, watch, computed } from "vue";
 import { onShow } from "@dcloudio/uni-app";
 import { http } from "@/config";
-import { DEBOUNCE_DELAY_MS } from "@/utils/constants";
+import { DEBOUNCE_DELAY_MS, COLLAPSE_SCROLL_THRESHOLD, EXPAND_SCROLL_THRESHOLD, MAX_HISTORY_SIZE } from "@/utils/constants";
 
 // 防抖定时器
 let suggestDebounceTimer: ReturnType<typeof setTimeout> | null = null;
@@ -333,6 +333,7 @@ const isResultMode = ref(false); // New State: Toggle between Search/Explore and
 const _resumeGuard = ref(false); // 从详情页返回时的保护标记，防止 onInputFocus 误切模式
 const currentSort = ref('default'); // From Result Page
 const showProposalsList = ref(false); // New state to toggle proposals
+const fetchError = ref(false); // Error state for user feedback
 
 // Import searchText and placeHolder from useInput
 const { searchText, placeHolder } = useInput();
@@ -496,9 +497,9 @@ const onScroll = (e: any) => {
     scrollTop.value = top;
     
     // 防抖或节流可以优化性能，这里简化直接判断
-    if (top > 30 && !isCollapsed.value) {
+    if (top > COLLAPSE_SCROLL_THRESHOLD && !isCollapsed.value) {
         isCollapsed.value = true;
-    } else if (top < 10 && isCollapsed.value) {
+    } else if (top < EXPAND_SCROLL_THRESHOLD && isCollapsed.value) {
         // 只有回到顶部才展开
         isCollapsed.value = false;
     }
@@ -520,6 +521,12 @@ function fetchSearchHistory() {
         console.error('[find] fetchSearchHistory error:', err);
     });
 }
+
+const DEFAULT_HOT_RECOMMENDATIONS = [
+    { keyword: '西方哲学智慧', tag: '高分课程' },
+    { keyword: '王老师', tag: '热门老师' },
+    { keyword: '大学物理', tag: '挂科重灾区' },
+];
 
 // 获取猜你想搜的推荐（从搜索建议 API 获取）
 function fetchHotRecommendations() {
@@ -546,19 +553,12 @@ function fetchHotRecommendations() {
             hotList.value = recommendations;
         } else {
             // Only use fallback if API returned nothing
-            hotList.value = [
-                { keyword: '西方哲学智慧', tag: '高分课程' },
-                { keyword: '王老师', tag: '热门老师' },
-                { keyword: '大学物理', tag: '挂科重灾区' },
-            ];
+            hotList.value = recommendations.length > 0 ? recommendations : DEFAULT_HOT_RECOMMENDATIONS;
         }
     }).catch(() => {
         // Only use fallback if API call failed
-        hotList.value = [
-            { keyword: '西方哲学智慧', tag: '高分课程' },
-            { keyword: '王老师', tag: '热门老师' },
-            { keyword: '大学物理', tag: '挂科重灾区' },
-        ];
+        fetchError.value = true;
+        hotList.value = DEFAULT_HOT_RECOMMENDATIONS;
     });
 }
 
@@ -640,8 +640,12 @@ const performSearch = (keyword: string) => {
     showProposalsList.value = false;
     
     // 1. Add History
-    if (!historyList.value.includes(keyword)) {
+    const historySet = new Set(historyList.value);
+    if (!historySet.has(keyword)) {
         historyList.value.unshift(keyword);
+        if (historyList.value.length > MAX_HISTORY_SIZE) {
+            historyList.value.pop();
+        }
     }
     
     // 2. Switch to Result Mode
