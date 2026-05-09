@@ -280,7 +280,7 @@
 
 <script setup lang="ts">
 import BackBtn from "@/components/common/BackBtn.vue";
-import { onMounted, ref, watch, computed } from "vue";
+import { onMounted, onUnmounted, ref, watch, computed } from "vue";
 import { onShow } from "@dcloudio/uni-app";
 import { http } from "@/config";
 import { DEBOUNCE_DELAY_MS, COLLAPSE_SCROLL_THRESHOLD, EXPAND_SCROLL_THRESHOLD, MAX_HISTORY_SIZE } from "@/utils/constants";
@@ -326,14 +326,12 @@ const EXPANDED_ROW_HEIGHT = 44; // 下方搜索栏的高度
 const HEADER_EXPANDED_HEIGHT = NAV_BAR_HEIGHT + EXPANDED_ROW_HEIGHT + 10; // 展开态总高度
 
 // 3. 状态管理
-const scrollTop = ref(0);
 const isCollapsed = ref(false); // 是否收起
 const isFocused = ref(false); // 新增：是否聚焦
 const isResultMode = ref(false); // New State: Toggle between Search/Explore and Results
 const _resumeGuard = ref(false); // 从详情页返回时的保护标记，防止 onInputFocus 误切模式
 const currentSort = ref('default'); // From Result Page
-const showProposalsList = ref(false); // New state to toggle proposals
-const fetchError = ref(false); // Error state for user feedback
+const showProposalsList = ref(false);
 
 // Import searchText and placeHolder from useInput
 const { searchText, placeHolder } = useInput();
@@ -373,10 +371,16 @@ defineExpose({
 
 const groupedRows = computed(() => {
     const list = rows.value || [];
-    return {
-        courses: list.filter(item => item.resultType !== 'proposal'),
-        proposals: list.filter(item => item.resultType === 'proposal')
-    };
+    const courses: MixedResult[] = [];
+    const proposals: MixedResult[] = [];
+    for (const item of list) {
+        if (item.resultType === 'proposal') {
+            proposals.push(item);
+        } else {
+            courses.push(item);
+        }
+    }
+    return { courses, proposals };
 });
 
 const toggleProposalsList = () => {
@@ -387,8 +391,7 @@ const toggleProposalsList = () => {
 const showFilterPanel = ref(false)
 const filterState = reactive({
     campuses: [] as string[],
-    types: [] as string[],
-    applyMode: 'once'
+    types: [] as string[]
 })
 
 const toggleFilterPanel = () => {
@@ -407,14 +410,9 @@ const toggleType = (t: string) => {
     else filterState.types.push(t)
 }
 
-const setApplyMode = (m: string) => {
-    filterState.applyMode = m
-}
-
 const resetFilters = () => {
     filterState.campuses = []
     filterState.types = []
-    filterState.applyMode = 'once'
 }
 
 const applyFilters = () => {
@@ -494,7 +492,6 @@ const searchInputBoxStyle = refinedSearchInputBoxStyle;
 const onScroll = (e: any) => {
     // 简单的阈值判定：下滑超过 20px 即收起
     const top = e.detail.scrollTop;
-    scrollTop.value = top;
     
     // 防抖或节流可以优化性能，这里简化直接判断
     if (top > COLLAPSE_SCROLL_THRESHOLD && !isCollapsed.value) {
@@ -549,15 +546,9 @@ function fetchHotRecommendations() {
             }
         });
         // Use API results if available, even if less than 3
-        if (recommendations.length > 0) {
-            hotList.value = recommendations;
-        } else {
-            // Only use fallback if API returned nothing
-            hotList.value = recommendations.length > 0 ? recommendations : DEFAULT_HOT_RECOMMENDATIONS;
-        }
+        hotList.value = recommendations.length > 0 ? recommendations : DEFAULT_HOT_RECOMMENDATIONS;
     }).catch(() => {
         // Only use fallback if API call failed
-        fetchError.value = true;
         hotList.value = DEFAULT_HOT_RECOMMENDATIONS;
     });
 }
@@ -565,6 +556,10 @@ function fetchHotRecommendations() {
 onMounted(() => {
     fetchSearchHistory();
     fetchHotRecommendations();
+});
+
+onUnmounted(() => {
+    if (suggestDebounceTimer) clearTimeout(suggestDebounceTimer);
 });
 
 // 方法定义
@@ -663,13 +658,9 @@ const performSearch = (keyword: string) => {
     // 这里调用的是 useChoose 里的 doSearch，它是真实 API 调用
     // 确保把关键词传进去
     if(resultKeyword && resultKeyword.value !== undefined) {
-         resultKeyword.value = keyword; 
+         resultKeyword.value = keyword;
     }
-    if (typeof doSearch === 'function') {
-        doSearch(true); // true means refresh/reset
-    } else {
-        console.error("doSearch is not a function");
-    }
+    doSearch(true); // true means refresh/reset
 };
 
 // 清空历史记录
