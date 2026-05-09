@@ -49,6 +49,10 @@ export function useChoose() {
   }
 
   function doSearch(reload: boolean, sortType: string = 'default') {
+    if (!keyword.value.trim()) {
+      loading.value = false;
+      return;
+    }
     if (reload) {
       page.value = 1;
       resultList.value = [];
@@ -59,7 +63,9 @@ export function useChoose() {
       keyword: keyword.value,
       page: page.value,
       pageSize: SEARCH_PAGE_SIZE,
-      type: "course" as "course" | "teacher"
+      type: "course" as "course" | "teacher",
+      // TODO: 后端如支持 campus/depart 过滤，需改为: campus: filterCampus.value, depart: filterDepart.value
+      sort: sortType
     };
 
     Promise.all([
