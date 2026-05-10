@@ -223,18 +223,7 @@ const filteredRows = computed(() => {
 // Sort logic (Mock)
 const changeSort = (sortType: string) => {
     currentSort.value = sortType;
-    // In real app, call API with sort param
-    // Here we just re-sort the local list for demo or assume API handles it
-    if (sortType === 'time') {
-        // Sort by time (latest comment?)
-        rows.value.sort((a, b) => (b.updateTime || 0) - (a.updateTime || 0));
-    } else if (sortType === 'hot') {
-        // Sort by comment count
-        rows.value.sort((a, b) => (b.commentCount || 0) - (a.commentCount || 0));
-    } else {
-        // Default sort - re-search with current sort type
-        doSearch(true, currentSort.value);
-    }
+    uni.showToast({ title: '功能正在开发中', icon: 'none' });
 };
 
 const toggleMoreFilter = () => {

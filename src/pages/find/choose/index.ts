@@ -48,7 +48,9 @@ export function useChoose() {
 
   function jump(item: MixedResult) {
     if (item.resultType === 'teacher') {
-      uni.showToast({ title: '功能正在开发中', icon: 'none' });
+      // 搜索该教师的课程
+      keyword.value = item.name || '';
+      doSearch(true, 'default');
     } else if (item.resultType === 'proposal') {
       uni.navigateTo({
         url: `/pages/proposal/list/list`
