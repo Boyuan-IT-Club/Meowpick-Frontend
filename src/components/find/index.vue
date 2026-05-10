@@ -668,9 +668,7 @@ const clearHistory = () => {
 // 排序方式切换
 const changeSort = (sortType: string) => {
     if (currentSort.value === sortType) return;
-    currentSort.value = sortType;
-    page.value = 1;
-    doSearch(true, sortType);
+    uni.showToast({ title: '功能正在开发中', icon: 'none' });
 };
 
 // 滚动到底部加载更多
