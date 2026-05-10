@@ -283,7 +283,9 @@ import BackBtn from "@/components/common/BackBtn.vue";
 import { onMounted, onUnmounted, ref, watch, computed } from "vue";
 import { onShow } from "@dcloudio/uni-app";
 import { http } from "@/config";
+import type { DtoSearchHistoryVO, DtoSearchSuggestionsVO } from "@/api/data-contracts";
 import { DEBOUNCE_DELAY_MS, COLLAPSE_SCROLL_THRESHOLD, EXPAND_SCROLL_THRESHOLD, MAX_HISTORY_SIZE, DEFAULT_HOT_RECOMMENDATIONS, EXPANDED_ROW_HEIGHT, HEADER_EXPANDED_PADDING } from "@/utils/constants";
+import type { MixedResult, SuggestItem } from "@/utils/types/search";
 
 // 防抖定时器
 let suggestDebounceTimer: ReturnType<typeof setTimeout> | null = null;
@@ -488,7 +490,8 @@ const searchBarWrapperStyle = refinedSearchBarWrapperStyle;
 const searchInputBoxStyle = refinedSearchInputBoxStyle;
 
 // 5. 滚动监听
-const onScroll = (e: any) => {
+interface ScrollDetail { detail?: { scrollTop?: number } }
+const onScroll = (e: ScrollDetail) => {
     // 简单的阈值判定：下滑超过 20px 即收起
     const top = e.detail.scrollTop;
     
@@ -506,14 +509,13 @@ const historyList = ref<string[]>([]);
 const hotList = ref<{ keyword: string; tag: string }[]>([]);
 
 function fetchSearchHistory() {
-    http.SearchController.searchRecentList().then((res: any) => {
-        const data = res.data;
-        const histories = data?.data?.histories || data?.histories || [];
-        historyList.value = histories.map((h: any) => {
+    http.SearchController.searchRecentList().then((res) => {
+        const histories = res.data?.data?.histories || [];
+        historyList.value = histories.map((h: DtoSearchHistoryVO) => {
             if (typeof h === 'string') return h;
             return h?.query;
-        }).filter((h: any) => h && typeof h === 'string');
-    }).catch((err: any) => {
+        }).filter((h: string | undefined) => h && typeof h === 'string');
+    }).catch((err) => {
         console.error('[find] fetchSearchHistory error:', err);
     });
 }
@@ -526,12 +528,12 @@ function fetchHotRecommendations() {
 
     Promise.all(defaultKeywords.map(keyword =>
         http.SearchController.searchSuggestList({ keyword })
-            .then((res: any) => res?.data?.data?.suggestions || [])
+            .then((res) => res?.data?.data?.suggestions || [])
             .catch(() => [])
     )).then(results => {
-        results.forEach((suggestions: any[]) => {
+        results.forEach((suggestions: DtoSearchSuggestionsVO[]) => {
             if (Array.isArray(suggestions)) {
-                suggestions.slice(0, 2).forEach((item: any) => {
+                suggestions.slice(0, 2).forEach((item: DtoSearchSuggestionsVO) => {
                     if (item?.name && !recommendations.find(r => r.keyword === item.name)) {
                         recommendations.push({ keyword: item.name, tag: item.type === 'course' ? '课程' : '教师' });
                     }
@@ -685,7 +687,7 @@ const goToProposal = () => {
 };
 
 // 提议卡片点击
-const clickProposal = (proposal: any) => {
+const clickProposal = (proposal: Record<string, unknown>) => {
     const dataStr = encodeURIComponent(JSON.stringify(proposal));
     // 强制跳转到 course/proposal-detail
     uni.navigateTo({
@@ -696,13 +698,13 @@ const clickProposal = (proposal: any) => {
     });
 };
 
-/* 
+/*
   Debug: onResultClick 里的 item 结构是什么样的？
   如果 item 是 { type: 'proposal', ... } 那就能跳对。
   如果 item 是 { resultType: 'proposal', ... } 呢？
   之前代码写的是 item.type === 'proposal'
 */
-const onResultClick = (item: any) => {
+const onResultClick = (item: MixedResult) => {
     // 兼容多种可能的字段名
     if (item.type === 'proposal' || item.resultType === 'proposal' || item.voteCount !== undefined) {
          clickProposal(item);
@@ -712,7 +714,7 @@ const onResultClick = (item: any) => {
 };
 
 // 课程卡片点击
-const clickCourse = (course: any) => {
+const clickCourse = (course: MixedResult) => {
     // 保存当前状态
     uni.setStorageSync('find_page_state', {
          searchText: searchText.value,
@@ -764,9 +766,9 @@ const clickRecommend = (keyword: string) => {
 }
 
 // 处理建议项点击
-const handleSuggestClick = (item: any) => {
-    searchText.value = item.name;
-    performSearch(item.name);
+const handleSuggestClick = (item: SuggestItem) => {
+    searchText.value = item.name || '';
+    performSearch(item.name || '');
 };
 </script>
 
