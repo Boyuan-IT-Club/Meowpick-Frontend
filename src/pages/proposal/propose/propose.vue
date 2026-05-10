@@ -102,7 +102,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, computed } from 'vue';
+import { reactive, computed, ref } from 'vue';
 import BackBtn from "@/components/common/BackBtn.vue";
 import { http } from "@/config";
 import { TOAST_DURATION_MS } from "@/utils/constants";
@@ -236,10 +236,10 @@ const submit = async () => {
       content: formData.reason,
       course: {
         name: formData.courseName,
-        code: formData.courseCode,
+        code: formData.courseCode || undefined,
         department: formData.department,
         category: formData.category || undefined,
-        campuses: formData.campuses,
+        campuses: formData.campuses.length > 0 ? formData.campuses : undefined,
         teachers: formData.teacher ? [{ name: formData.teacher }] : []
       }
     };
@@ -248,7 +248,8 @@ const submit = async () => {
       submitting.value = false;
       const code = res.data?.code;
       const msg = res.data?.msg;
-      if (code === 200 || code === 0) {
+      console.log('[propose] submit response:', res.data);
+      if (code === 200 || code === 0 || code === 201) {
         uni.showToast({ title: '提交成功', icon: 'success' });
         setTimeout(() => uni.navigateBack(), TOAST_DURATION_MS);
       } else {
@@ -257,7 +258,7 @@ const submit = async () => {
     }).catch((err: any) => {
       submitting.value = false;
       const errMsg = err?.message || err?.response?.data?.msg || JSON.stringify(err);
-      console.error('[propose] submit error:', errMsg);
+      console.error('[propose] submit error:', err);
       uni.showToast({ title: `提交失败:${errMsg}`, icon: 'none' });
     });
 };

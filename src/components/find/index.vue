@@ -200,7 +200,7 @@
                 </view>
 
                 <!-- New Card Section -->
-                <view v-if="showProposalsList || (!groupedRows.courses.length && !groupedRows.proposals.length)" class="group-section new-section">
+                <view v-if="(showProposalsList && groupedRows.proposals.length) || (!groupedRows.courses.length && !groupedRows.proposals.length)" class="group-section new-section">
                     <!-- If we are showing proposals, we show the "Still nothing?" message -->
                     <view v-if="showProposalsList || groupedRows.courses.length" class="still-nothing-tip">
                          <text>还是没找到你想找的？</text>
@@ -388,6 +388,13 @@ const toggleProposalsList = () => {
     showProposalsList.value = true;
 };
 
+// Auto-show proposals when they load and no courses exist
+watch(() => groupedRows.value.proposals.length, (proposalCount) => {
+    if (proposalCount > 0 && groupedRows.value.courses.length === 0) {
+        showProposalsList.value = true;
+    }
+});
+
 // Local filter panel state
 const showFilterPanel = ref(false)
 const filterState = reactive({
@@ -505,7 +512,7 @@ const onScroll = (e: ScrollDetail) => {
 };
 
 // 获取搜索历史
-const historyList = ref<string[]>([]);
+const historyList = ref<string[]>(uni.getStorageSync('searchHistory') || []);
 const hotList = ref<{ keyword: string; tag: string }[]>([]);
 
 function fetchSearchHistory() {
@@ -522,7 +529,6 @@ function fetchSearchHistory() {
 
 // 获取猜你想搜的推荐（从搜索建议 API 获取）
 function fetchHotRecommendations() {
-    // 使用默认热门关键词获取推荐
     const defaultKeywords = ['课程', '老师', '必修', '选修'];
     const recommendations: { keyword: string; tag: string }[] = [];
 
@@ -533,15 +539,19 @@ function fetchHotRecommendations() {
     )).then(results => {
         results.forEach((suggestions: DtoSearchSuggestionsVO[]) => {
             if (Array.isArray(suggestions)) {
-                suggestions.slice(0, 2).forEach((item: DtoSearchSuggestionsVO) => {
-                    if (item?.name && !recommendations.find(r => r.keyword === item.name)) {
+                suggestions.slice(0, 3).forEach((item: DtoSearchSuggestionsVO) => {
+                    if (item?.name) {
                         recommendations.push({ keyword: item.name, tag: item.type === 'course' ? '课程' : '教师' });
                     }
                 });
             }
         });
-        // Use API results if available, even if less than 3
-        hotList.value = recommendations.length > 0 ? recommendations : DEFAULT_HOT_RECOMMENDATIONS;
+        // Use API results if available, even if fewer than expected
+        if (recommendations.length > 0) {
+            hotList.value = recommendations.slice(0, 6);
+        } else {
+            hotList.value = DEFAULT_HOT_RECOMMENDATIONS;
+        }
     }).catch(() => {
         // Only use fallback if API call failed
         hotList.value = DEFAULT_HOT_RECOMMENDATIONS;
@@ -625,42 +635,39 @@ const onInputChange = () => {
 // 提取通用搜索逻辑，允许传入特定关键词而不改变输入框内容
 const performSearch = (keyword: string) => {
     if (!keyword) return;
-    
+
     // Close toggles from previous search
     showProposalsList.value = false;
-    
-    // 1. Add History
+
+    // 1. Add History (persist to storage)
     const historySet = new Set(historyList.value);
     if (!historySet.has(keyword)) {
         historyList.value.unshift(keyword);
         if (historyList.value.length > MAX_HISTORY_SIZE) {
             historyList.value.pop();
         }
+        uni.setStorageSync('searchHistory', historyList.value);
     }
-    
+
     // 2. Switch to Result Mode
     isResultMode.value = true;
     searchText.value = keyword; // Sync input
-    
+
     // 3. Reset Pagination & List
     page.value = 1;
-    // rows.value = []; // Clear previous results to trigger loading state or avoid ghostly items
-    // If rows is from useChoose, it might be readonly or we might need to reset via store or method if rows is ref.
-    // Assuming rows is ref from useChoose.
-    if (rows && rows.value) rows.value = []; 
-    
+    if (rows && rows.value) rows.value = [];
+
     // 4. Trigger Search Logic
-    // 这里调用的是 useChoose 里的 doSearch，它是真实 API 调用
-    // 确保把关键词传进去
     if(resultKeyword && resultKeyword.value !== undefined) {
          resultKeyword.value = keyword;
     }
-    doSearch(true); // true means refresh/reset
+    doSearch(true);
 };
 
 // 清空历史记录
 const clearHistory = () => {
     historyList.value = [];
+    uni.removeStorageSync('searchHistory');
 };
 
 // 排序方式切换

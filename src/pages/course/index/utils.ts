@@ -1,4 +1,4 @@
-import type { DtoCommentVO } from "@/api/data-contracts";
+import type { DtoCommentVO, HandlerResponseDtoListCourseCommentsResp } from "@/api/data-contracts";
 import { ref, watch } from 'vue';
 import { http } from "@/config";
 import { DEFAULT_PAGE_SIZE, TARGET_TYPE_COMMENT } from "@/utils/constants";
@@ -25,10 +25,10 @@ export function useCourseComment(p: Props) {
     }
     if (query.value) {
       http.CommentController.commentQueryList({ id, page: pageNum, pageSize: DEFAULT_PAGE_SIZE }).then((res) => {
-        const data = res.data as any;
-        const comments = data?.data?.comments || data?.comments || [];
-        const total = data?.data?.total || data?.total || 0;
-        comments.forEach((comment: any) => {
+        const data = res.data as HandlerResponseDtoListCourseCommentsResp;
+        const comments = data?.data?.comments || [];
+        const total = data?.data?.total || 0;
+        comments.forEach((comment) => {
           list.value[comment.id!] = {
             ...comment,
             tags: comment.tags && comment.tags.length > 0 ? comment.tags : ['硬核', '推荐'],
@@ -60,7 +60,7 @@ export function useCourseComment(p: Props) {
       list.value = {};
       fetch(newId, 0);
     }
-  }, { immediate: false });
+  }, { immediate: true });
 
   return { list, page, like, next, fetch };
 }
