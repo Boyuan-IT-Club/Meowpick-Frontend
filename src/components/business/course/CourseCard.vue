@@ -43,7 +43,7 @@
                <view class="course-info-item" v-if="props.data?.teacherList?.length">
                     <image src="@/images/teacher-icon.png" class="info-icon" />
                     <text class="teacher-name-list">
-                      {{ props.data.teacherList.map((t: any) => t.name).join(' / ') }}
+                      {{ teacherNames.join(' / ') }}
                     </text>
                </view>
                <view class="course-info-item">
@@ -73,29 +73,34 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue"; // Import computed
-import type { CourseVO, TeacherVO } from "@/api/data-contracts";
+import { computed } from "vue";
+import type { DtoCourseVO, DtoTeacherVO } from "@/api/data-contracts";
 import { getTop3List } from "@/utils/tags";
 
-// Extend type locally 
-type MixedResult = CourseVO & {
+// Extend type locally
+type MixedResult = DtoCourseVO & {
   resultType?: string;
   matchScore?: number;
   tagCount?: object;
-  teacherList?: TeacherVO[];
+  teacherList?: DtoTeacherVO[];
   describe?: string;
   reason?: string;
   proposalReason?: string;
-  teacherName?: string; // Add teacherName
-  voteCount?: number; // Add voteCount
+  teacherName?: string;
+  voteCount?: number;
   agreeCount?: number;
 };
 
-// Define props with default values or use defineProps directly
-const props = defineProps<{ data: MixedResult }>(); // Use MixedResult 
+const props = defineProps<{ data: MixedResult }>();
 
 const isProposal = computed(() => {
     return props.data?.resultType === 'proposal';
+});
+
+const teacherNames = computed(() => {
+    return (props.data.teacherList || [])
+        .map((t: DtoTeacherVO) => t?.name || '')
+        .filter((name: string) => name !== '');
 });
 </script>
 

@@ -199,7 +199,7 @@
                 </view>
 
                 <!-- New Card Section -->
-                <view v-if="showProposalsList || (!groupedRows.courses.length && !groupedRows.proposals.length)" class="group-section new-section">
+                <view v-if="(showProposalsList && groupedRows.proposals.length) || (!groupedRows.courses.length && !groupedRows.proposals.length)" class="group-section new-section">
                     <!-- If we are showing proposals, we show the "Still nothing?" message -->
                     <view v-if="showProposalsList || groupedRows.courses.length" class="still-nothing-tip">
                          <text>还是没找到你想找的？</text>
@@ -377,6 +377,13 @@ const toggleProposalsList = () => {
     showProposalsList.value = true;
 };
 
+// Auto-show proposals when they load and no courses exist
+watch(() => groupedRows.value.proposals.length, (proposalCount) => {
+    if (proposalCount > 0 && groupedRows.value.courses.length === 0) {
+        showProposalsList.value = true;
+    }
+});
+
 // Local filter panel state
 const showFilterPanel = ref(false)
 const filterState = reactive({
@@ -500,7 +507,7 @@ const onScroll = (e: any) => {
 };
 
 // 获取搜索历史
-const historyList = ref<string[]>([]);
+const historyList = ref<string[]>(uni.getStorageSync('searchHistory') || []);
 const hotList = ref<{ keyword: string; tag: string }[]>([]);
 
 function fetchSearchHistory() {
@@ -529,23 +536,22 @@ function fetchHotRecommendations() {
     )).then(results => {
         results.forEach((suggestions: any[]) => {
             if (Array.isArray(suggestions)) {
-                suggestions.slice(0, 2).forEach((item: any) => {
-                    if (item?.name && !recommendations.find(r => r.keyword === item.name)) {
+                suggestions.slice(0, 3).forEach((item: any) => {
+                    if (item?.name) {
                         recommendations.push({ keyword: item.name, tag: item.type === 'course' ? '课程' : '教师' });
                     }
                 });
             }
         });
-        // 如果 API 没有返回足够推荐，使用后备数据
-        if (recommendations.length < 3) {
+        // Use API results if available, even if fewer than expected
+        if (recommendations.length > 0) {
+            hotList.value = recommendations.slice(0, 6);
+        } else {
             hotList.value = [
                 { keyword: '西方哲学智慧', tag: '高分课程' },
                 { keyword: '王老师', tag: '热门老师' },
                 { keyword: '大学物理', tag: '挂科重灾区' },
-                { keyword: '微积分I', tag: '必修课' },
             ];
-        } else {
-            hotList.value = recommendations;
         }
     }).catch(() => {
         // 如果所有 API 都失败，使用后备数据
@@ -553,7 +559,6 @@ function fetchHotRecommendations() {
             { keyword: '西方哲学智慧', tag: '高分课程' },
             { keyword: '王老师', tag: '热门老师' },
             { keyword: '大学物理', tag: '挂科重灾区' },
-            { keyword: '微积分I', tag: '必修课' },
         ];
     });
 }
@@ -622,9 +627,10 @@ const performSearch = (keyword: string) => {
     // Close toggles from previous search
     showProposalsList.value = false;
     
-    // 1. Add History
+    // 1. Add History (persist to storage)
     if (!historyList.value.includes(keyword)) {
         historyList.value.unshift(keyword);
+        uni.setStorageSync('searchHistory', historyList.value);
     }
     
     // 2. Switch to Result Mode
@@ -656,6 +662,7 @@ const performSearch = (keyword: string) => {
 // 清空历史记录
 const clearHistory = () => {
     historyList.value = [];
+    uni.removeStorageSync('searchHistory');
 };
 
 // 排序方式切换

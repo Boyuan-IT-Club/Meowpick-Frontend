@@ -96,12 +96,8 @@ export function useSuggest(externalKeyword?: Ref<string>) {
       });
   }
 
-  watch([page], () => {
-    suggestContent(page.value);
-  });
   watch([keyword, type], () => {
     suggestList.value = [];
-    suggestContent(page.value);
   });
 
   return {

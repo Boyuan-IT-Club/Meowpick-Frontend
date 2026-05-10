@@ -59,7 +59,7 @@ export function useCourseComment(p: Props) {
       list.value = {};
       fetch(newId, 0);
     }
-  }, { immediate: false });
+  }, { immediate: true });
 
   return { list, page, like, next, fetch };
 }

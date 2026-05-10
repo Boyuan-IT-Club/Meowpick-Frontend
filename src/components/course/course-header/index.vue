@@ -79,8 +79,10 @@ const props = defineProps<Props>();
 
 // 教师名称列表（处理 DtoTeacherVO 对象数组）
 const teacherNames = computed(() => {
-  if (!props.data?.teachers?.length) return [];
-  return props.data.teachers
+  if (!props.data) return [];
+  // Fallback: try teachers first, then teacherList (as used in search results)
+  const list = props.data.teachers || props.data.teacherList || [];
+  return list
     .map((t: any) => t?.name || '')
     .filter((name: string) => name !== '');
 });

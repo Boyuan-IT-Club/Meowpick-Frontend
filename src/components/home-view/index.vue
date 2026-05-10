@@ -65,6 +65,7 @@ import { ref, onMounted } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
 import { waitForLogin } from '@/utils/init';
 import { http } from '@/config';
+import type { HandlerResponseDtoGetTotalCourseCommentsCountResp } from '@/api/data-contracts';
 
 // 状态定义
 const totalComment = ref(0);
@@ -86,9 +87,10 @@ onMounted(async () => {
 });
 
 const fetchTotalComment = () => {
-  http.CommentController.searchTotalList().then((res: any) => {
-    totalComment.value = res?.data?.data?.count || res?.data?.count || 0;
-  }).catch((err: any) => {
+  http.CommentController.searchTotalList().then((res) => {
+    const data = res.data as HandlerResponseDtoGetTotalCourseCommentsCountResp;
+    totalComment.value = data?.data?.count || 0;
+  }).catch((err) => {
     console.error('[home-view] fetchTotalComment error:', err);
   });
 };
