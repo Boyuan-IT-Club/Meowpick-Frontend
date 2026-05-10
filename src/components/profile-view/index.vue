@@ -291,8 +291,7 @@ const onLongPress = (item: ListItem) => {
             if (action.includes('删除')) {
                 deleteItem(item);
             } else if (action.includes('修改')) {
-                uni.showToast({ title: '即将跳转修改...', icon: 'none' });
-                // TODO: Implement navigation to edit page
+                uni.showToast({ title: '功能正在开发中', icon: 'none' });
             } else if (action.includes('查看')) {
                 onItemClick(item);
             }

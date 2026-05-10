@@ -36,6 +36,7 @@ export function useChoose() {
 
   function jump(item: MixedResult) {
     if (item.resultType === 'teacher') {
+      uni.showToast({ title: '功能正在开发中', icon: 'none' });
     } else if (item.resultType === 'proposal') {
       uni.navigateTo({
         url: `/pages/proposal/list/list`
