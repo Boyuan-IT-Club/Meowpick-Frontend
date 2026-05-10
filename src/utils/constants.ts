@@ -20,3 +20,8 @@ export const SORT_TIME = 'time';
 // Comment Target Type
 export const TARGET_TYPE_COMMENT = '2';
 export const TARGET_TYPE_PROPOSAL = '1';
+
+// API Default Constants
+export const PROPOSAL_PAGE_SIZE_DEFAULT = 10;
+export const PROPOSAL_FIELD_PAGE_SIZE_DEFAULT = 10;
+export const ADMIN_LOG_PAGE_SIZE_DEFAULT = 20;
