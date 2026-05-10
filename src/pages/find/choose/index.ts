@@ -48,9 +48,7 @@ export function useChoose() {
 
   function jump(item: MixedResult) {
     if (item.resultType === 'teacher') {
-      // TODO: 缺少教师详情页，跳转到搜索并筛选教师类型
-      console.warn('[useChoose] teacher jump not implemented, no teacher detail page');
-      uni.showToast({ title: '教师功能即将上线', icon: 'none' });
+      uni.showToast({ title: '功能正在开发中', icon: 'none' });
     } else if (item.resultType === 'proposal') {
       uni.navigateTo({
         url: `/pages/proposal/list/list`

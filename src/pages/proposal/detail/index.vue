@@ -211,7 +211,7 @@ const handleVote = () => {
 };
 
 const handleComment = () => {
-    uni.showToast({ title: '功能开发中', icon: 'none' });
+    uni.showToast({ title: '功能正在开发中', icon: 'none' });
 };
 
 const handleRetry = () => {
