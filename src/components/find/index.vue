@@ -283,7 +283,7 @@ import BackBtn from "@/components/common/BackBtn.vue";
 import { onMounted, onUnmounted, ref, watch, computed } from "vue";
 import { onShow } from "@dcloudio/uni-app";
 import { http } from "@/config";
-import { DEBOUNCE_DELAY_MS, COLLAPSE_SCROLL_THRESHOLD, EXPAND_SCROLL_THRESHOLD, MAX_HISTORY_SIZE } from "@/utils/constants";
+import { DEBOUNCE_DELAY_MS, COLLAPSE_SCROLL_THRESHOLD, EXPAND_SCROLL_THRESHOLD, MAX_HISTORY_SIZE, DEFAULT_HOT_RECOMMENDATIONS, EXPANDED_ROW_HEIGHT, HEADER_EXPANDED_PADDING } from "@/utils/constants";
 
 // 防抖定时器
 let suggestDebounceTimer: ReturnType<typeof setTimeout> | null = null;
@@ -322,8 +322,7 @@ try {
 
 // 2. 布局常量计算
 const NAV_BAR_HEIGHT = menuButtonInfo.bottom + 12; // 胶囊底部 + 间距 = 导航栏高度 (收起态高度)
-const EXPANDED_ROW_HEIGHT = 44; // 下方搜索栏的高度
-const HEADER_EXPANDED_HEIGHT = NAV_BAR_HEIGHT + EXPANDED_ROW_HEIGHT + 10; // 展开态总高度
+const HEADER_EXPANDED_HEIGHT = NAV_BAR_HEIGHT + EXPANDED_ROW_HEIGHT + HEADER_EXPANDED_PADDING; // 展开态总高度
 
 // 3. 状态管理
 const isCollapsed = ref(false); // 是否收起
@@ -518,12 +517,6 @@ function fetchSearchHistory() {
         console.error('[find] fetchSearchHistory error:', err);
     });
 }
-
-const DEFAULT_HOT_RECOMMENDATIONS = [
-    { keyword: '西方哲学智慧', tag: '高分课程' },
-    { keyword: '王老师', tag: '热门老师' },
-    { keyword: '大学物理', tag: '挂科重灾区' },
-];
 
 // 获取猜你想搜的推荐（从搜索建议 API 获取）
 function fetchHotRecommendations() {
