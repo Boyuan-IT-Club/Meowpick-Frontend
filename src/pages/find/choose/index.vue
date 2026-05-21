@@ -24,21 +24,25 @@
           
           <!-- Filter Bar -->
           <view class="filter-bar">
-              <view 
-                class="filter-item" 
+              <view class="refresh-btn" @click="refreshSearch">
+                  <image src="@/images/go-back2.png" class="refresh-icon" :class="{ spinning: loading }" />
+              </view>
+
+              <view
+                class="filter-item"
                 :class="{ active: currentSort === 'time' }"
                 @click="changeSort('time')"
               >最新评论</view>
-              <view 
-                class="filter-item" 
+              <view
+                class="filter-item"
                 :class="{ active: currentSort === 'hot' }"
                 @click="changeSort('hot')"
               >评论数</view>
-              
+
               <!-- Filter Button -->
                <view class="filter-btn" @click="toggleMoreFilter">
                   <text class="filter-btn-text">筛选</text>
-                  <image src="@/images/search_black.png" class="filter-btn-icon" /> <!-- Use search_black as placeholder for filter icon if not available, or just text -->
+                  <image src="@/images/search_black.png" class="filter-btn-icon" />
                </view>
           </view>
           
@@ -92,15 +96,21 @@
 
       <!-- 2. Result Scroll Area -->
       <!-- margin-top = headerTotalHeight + filterBarHeight (approx 80rpx) -->
-      <scroll-view 
-        class="result-scroll" 
-        :style="{ paddingTop: realHeaderTotalHeight + 'px' }" 
+      <scroll-view
+        class="result-scroll"
+        :style="{ paddingTop: realHeaderTotalHeight + 'px' }"
         scroll-y
         @scrolltolower="handleScrollBottom"
       >
-        <view class="list-content" v-if="filteredRows.length > 0">
-            <!-- Group 1: Courses -->
-            <view v-if="groupedRows.course.length > 0" class="group-section">
+        <!-- Loading State -->
+        <view class="loading-state" v-if="loading">
+            <view class="loading-spinner"></view>
+            <text class="loading-text">加载中...</text>
+        </view>
+
+        <!-- Course Results -->
+        <view class="list-content" v-if="!loading && groupedRows.course.length > 0">
+            <view class="group-section">
                 <view class="group-title">课程</view>
                 <view
                     v-for="(item, index) in groupedRows.course"
@@ -112,16 +122,31 @@
                 </view>
             </view>
 
-            <!-- Guide to show proposals if hidden -->
-            <view v-if="!showProposalsList && groupedRows.proposal.length > 0" class="show-proposals-tip" @click="toggleProposalsList">
+            <view class="bottom">--- 到底了哟 ---</view>
+
+            <!-- 查看其他同学提议按钮 -->
+            <view class="show-proposals-tip" @click="onShowProposals">
                 <text>没找到你想找的课程？看看其他同学的建课提议吧</text>
                 <image src="@/images/go-back.png" class="tip-arrow" />
             </view>
+        </view>
 
-            <!-- Group 2: Proposals -->
-            <view v-if="showProposalsList && groupedRows.proposal.length > 0" class="group-section">
-                 <view class="group-title">提议</view>
-                 <view
+        <!-- No courses but has keyword - show proposals directly -->
+        <view class="list-content" v-if="!loading && groupedRows.course.length === 0 && keyword">
+            <view class="empty-hint">--- 暂无相关课程 ---</view>
+
+            <!-- 查看其他同学提议按钮 -->
+            <view class="show-proposals-tip" @click="onShowProposals">
+                <text>没找到你想找的课程？看看其他同学的建课提议吧</text>
+                <image src="@/images/go-back.png" class="tip-arrow" />
+            </view>
+        </view>
+
+        <!-- Proposal Results (after clicking button) -->
+        <view class="list-content" v-if="showProposalsList && groupedRows.proposal.length > 0">
+            <view class="group-section">
+                <view class="group-title">提议</view>
+                <view
                     v-for="(item, index) in groupedRows.proposal"
                     :key="'p_'+index"
                     class="course-li"
@@ -131,45 +156,41 @@
                 </view>
             </view>
 
-            <!-- Group 3: New (Add Guide) -->
-             <view v-if="showProposalsList || (!groupedRows.course.length && !groupedRows.proposal.length)" class="group-section">
-                 <view v-if="showProposalsList" class="still-nothing-tip">
-                     <text>还是没找到你想找的？</text>
-                 </view>
+            <!-- Proposal loading -->
+            <view class="loading-state" v-if="proposalLoading">
+                <view class="loading-spinner"></view>
+                <text class="loading-text">加载提议中...</text>
+            </view>
 
-                 <view class="group-title" v-if="!showProposalsList && !groupedRows.course.length">新增</view>
-                 <!-- New Card Style -->
-                 <view class="new-card" @click="goToProposal">
-                     <view class="new-card-content" style="flex-direction: row; align-items: center; justify-content: center; background: linear-gradient(135deg, #c8102e 0%, #ff4d6a 100%); padding: 30rpx 40rpx; border-radius: 20rpx;">
-                         <view class="new-card-title" style="margin-bottom: 0; color: #fff; font-size: 32rpx; font-weight: 600;">那就亲自建个课吧！</view>
-                     </view>
-                     <!-- <image src="@/images/add_black.png" class="new-card-icon" /> -->
-                 </view>
-             </view>
+            <view class="bottom">--- 到底了哟 ---</view>
 
-             <view class="bottom">--- 到底了哟 ---</view>
-        </view>
-        
-        <!-- Empty State with Add Guide -->
-        <view class="empty-state" v-else-if="!loading">
-            <image src="@/images/cat.png" class="empty-img" mode="aspectFit" />
-            <text class="empty-text">这里空空如也...</text>
-            <view class="new-card" @click="goToProposal" style="margin-top: 40rpx; width: 680rpx;">
-                 <view class="new-card-content">
-                     <view class="new-card-title">找不到你想要的课程？</view>
-                     <view class="new-card-sub">快来提议吧！</view>
+            <!-- 发起新课程提议按钮 -->
+            <view class="add-proposal-bar">
+                 <view class="add-proposal-btn" @click="goToProposal">
+                    +  没找到想要的？发起新课程提议
                  </view>
-                 <image src="@/images/add_black.png" class="new-card-icon" />
-             </view>
+            </view>
         </view>
 
-        <!-- ADDED HERE: Always show at bottom of content if not loading -->
-        <view class="add-proposal-bar" v-if="!loading">
-             <view class="add-proposal-btn" @click="goToProposal">
-                +  没找到想要的？发起新课程提议
-             </view>
+        <!-- Proposal section opened but no proposals -->
+        <view class="list-content" v-if="showProposalsList && groupedRows.proposal.length === 0 && !proposalLoading">
+            <view class="empty-hint">--- 暂无相关提议 ---</view>
+
+            <!-- 发起新课程提议按钮 -->
+            <view class="add-proposal-bar">
+                 <view class="add-proposal-btn" @click="goToProposal">
+                    +  没找到想要的？发起新课程提议
+                 </view>
+            </view>
         </view>
-        
+
+        <!-- Initial state - empty search -->
+        <view class="list-content" v-if="!loading && !keyword">
+            <view class="empty-state">
+                <text class="empty-text">搜索课程或老师</text>
+            </view>
+        </view>
+
         <!-- Add a padding block to ensure scroll view can scroll enough -->
         <view style="height: 40rpx;"></view>
 
@@ -183,12 +204,12 @@ import { ref, onMounted, computed } from "vue";
 import { useChoose } from "./index";
 import ChooseCourse from "@/components/choose/choose-course/index.vue";
 
-const { keyword, jump, rows, page, loading, doSearch } = useChoose();
+const { keyword, jump, rows, proposalRows, page, loading, proposalLoading, loadProposals, loadMoreProposals, doSearch } = useChoose();
 
 // Filter States
 const currentSort = ref('default'); // default, comment_count, latest_comment
 const showMoreFilter = ref(false);
-const showProposalsList = ref(false); // New state to toggle proposals
+const showProposalsList = ref(false); // 是否显示提议列表
 
 const filterState = ref({
     campus: ['普陀校区', '闵行校区', '两校区通用'], // Default select all
@@ -202,22 +223,21 @@ const groupedRows = computed(() => {
         // Filter by Campus
         const itemCampus = item.campus || '';
         const campusMatch = filterState.value.campus.some(c => itemCampus.includes(c) || c === '两校区通用'); // Simple loose match
-        
+
         // Filter by Type
         const itemType = item.resultType || 'course';
         const typeMatch = filterState.value.type.includes(itemType);
-        
+
         return campusMatch && typeMatch;
     });
 
+    // proposals from proposalRows (loaded on demand)
+    const proposals = proposalRows.value || [];
+
     return {
         course: filtered.filter(item => item.resultType !== 'proposal'),
-        proposal: filtered.filter(item => item.resultType === 'proposal')
+        proposal: proposals
     };
-});
-
-const filteredRows = computed(() => {
-    return [...groupedRows.value.course, ...groupedRows.value.proposal];
 });
 
 // Sort logic (Mock)
@@ -266,6 +286,19 @@ const toggleProposalsList = () => {
     showProposalsList.value = true;
 };
 
+// 点击"查看其他同学提议"按钮
+const onShowProposals = () => {
+    showProposalsList.value = true;
+    loadProposals(true); // 加载提议
+};
+
+// 跳转到新增提议页面
+const goToProposal = () => {
+    uni.navigateTo({
+        url: '/pages/proposal/propose/propose'
+    });
+};
+
 // System Info
 const sysInfo = uni.getSystemInfoSync();
 const statusBarHeight = sysInfo.statusBarHeight || 0;
@@ -285,9 +318,12 @@ watchEffect(() => {
     onMounted(updateHeaderHeight);
 });
 
-// Load initial data
-onLoad(() => {
-    doSearch(true, '');
+// Load initial data - wait for keyword to be set
+onMounted(() => {
+    // keyword should be set from find page before navigating here
+    if (keyword.value) {
+        doSearch(true, '');
+    }
 });
 
 // Pull down to refresh
@@ -297,11 +333,21 @@ const onPullDownRefresh = () => {
     doSearch(true, '');
 };
 
+const refreshSearch = () => {
+    if (loading.value) return;
+    doSearch(true, '');
+};
+
 // Infinite scroll / Load more
 const handleScrollBottom = () => {
     if (loading.value) return;
-    // Load more data
-    doSearch(false, '');
+    if (showProposalsList.value) {
+        // 加载更多提议
+        loadMoreProposals();
+    } else {
+        // 加载更多课程
+        doSearch(false, '');
+    }
 };
 
 // Expose to template
@@ -408,6 +454,28 @@ const clearKeyword = () => {
 .filter-item.active {
     color: #007aff;
     font-weight: bold;
+}
+
+.refresh-btn {
+    width: 60rpx;
+    height: 60rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.refresh-icon {
+    width: 36rpx;
+    height: 36rpx;
+    transition: transform 0.3s;
+}
+
+.refresh-icon.spinning {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
 .filter-btn {
@@ -519,6 +587,20 @@ const clearKeyword = () => {
     padding: 20rpx;
 }
 
+.bottom {
+    text-align: center;
+    font-size: 24rpx;
+    color: #999;
+    margin: 20rpx 0;
+}
+
+.empty-hint {
+    text-align: center;
+    font-size: 28rpx;
+    color: #999;
+    margin: 40rpx 0;
+}
+
 .group-section {
     margin-bottom: 40rpx;
 }
@@ -538,7 +620,7 @@ const clearKeyword = () => {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
+    min-height: 500rpx;
     text-align: center;
 }
 
@@ -552,6 +634,29 @@ const clearKeyword = () => {
     font-size: 28rpx;
     color: #999;
     margin-bottom: 20rpx;
+}
+
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 200rpx 0;
+}
+
+.loading-spinner {
+    width: 60rpx;
+    height: 60rpx;
+    border: 4rpx solid #ddd;
+    border-top-color: #c8102e;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20rpx;
+}
+
+.loading-text {
+    font-size: 28rpx;
+    color: #666;
 }
 
 .new-card {

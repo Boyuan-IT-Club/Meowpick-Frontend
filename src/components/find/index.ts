@@ -77,15 +77,34 @@ export function useSuggest(externalKeyword?: Ref<string>) {
       .then((res: any) => {
         const data = res.data;
         const suggestions = data?.data?.suggestions || data?.suggestions || [];
-        suggestList.value = suggestions.map((item: any) => ({
-          name: item.name,
-          type: item.type,
-          id: `${item.type}-${item.name}`
-        }));
+
+        // 始终将输入内容作为第一条
+        const inputItem = {
+          name: keyword.value,
+          type: 'input',
+          id: `input-${keyword.value}`
+        };
+
+        // 过滤掉与输入完全相同的项，避免重复
+        const filteredSuggestions = suggestions
+          .filter((item: any) => item.name !== keyword.value)
+          .map((item: any) => ({
+            name: item.name,
+            type: item.type,
+            id: `${item.type}-${item.name}`
+          }));
+
+        // 合并：输入内容 + 过滤后的建议
+        suggestList.value = [inputItem, ...filteredSuggestions];
       })
       .catch((err: any) => {
         console.error('[useSuggest] error:', err);
-        suggestList.value = [];
+        // 即使出错，也应该显示输入内容作为第一条
+        suggestList.value = [{
+          name: keyword.value,
+          type: 'input',
+          id: `input-${keyword.value}`
+        }];
       });
   }
 

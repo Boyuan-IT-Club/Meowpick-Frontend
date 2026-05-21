@@ -141,25 +141,26 @@
       <!-- 场景 A: 有搜索词且不在结果模式 -> 显示建议列表 -->
       <view v-if="searchText && !isResultMode" class="suggest-section">
           <!-- 这里使用真实的模糊搜索列表展示 -->
-        <view 
-          v-for="(item, index) in suggestList" 
+        <view
+          v-for="(item, index) in suggestList"
           :key="index"
           class="suggest-item"
+          :class="{ 'suggest-item-input': item.type === 'input' }"
           @click="handleSuggestClick(item)"
         >
           <!-- 左侧图标/类型 -->
-          <!-- 模糊搜索通常不显示具体类型颜色，或者统一一种颜色 -->
           <view class="item-icon-wrapper">
              <image src="@/images/search-icon.png" class="mini-search-icon" style="width:24rpx;height:24rpx;opacity:0.5;" />
           </view>
-          
+
           <!-- 右侧内容 -->
           <view class="item-content">
              <!-- 渲染内容 -->
              <text class="item-name">{{ item.name }}</text>
-             <!-- 模糊搜索通常没有 subInfo，或者 subInfo 是“搜索” -->
+             <!-- 模糊搜索通常没有 subInfo，或者 subInfo 是"搜索" -->
+             <text v-if="item.type === 'input'" class="item-sub">直接搜索</text>
           </view>
-          
+
           <!-- 箭头 -->
           <view class="item-arrow">
               <image src="@/images/go-back.png" style="width:24rpx;height:24rpx;transform:rotate(180deg);opacity:0.3;" />
@@ -1033,6 +1034,16 @@ $brand-red: #c8102e;
             color: #ccc;
             font-size: 28rpx;
         }
+    }
+
+    .suggest-item-input {
+        background-color: #fff5f5;
+    }
+
+    .item-input-label {
+        font-size: 22rpx;
+        color: #c8102e;
+        margin-left: 10rpx;
     }
 }
 

@@ -15,9 +15,13 @@ export function useCourse() {
     id.value = courseId;
 
     http.CourseController.courseDetail(courseId).then((res) => {
-      if (res.data && res.data.data && res.data.data.course) {
-        const courseData = res.data.data.course as DtoCourseVO;
+      console.log('[useCourse] raw response:', JSON.stringify(res));
+      console.log('[useCourse] res.data:', JSON.stringify(res.data));
+      console.log('[useCourse] res.data.data:', JSON.stringify(res.data?.data));
+      if (res.data && res.data.data) {
+        const courseData = res.data.data as DtoCourseVO;
         course.value = { data: courseData };
+        console.log('[useCourse] courseData:', JSON.stringify(courseData));
         if (courseData.teachers) {
           teachers.value = courseData.teachers.map((t: DtoTeacherVO) => t.name || '');
         }
