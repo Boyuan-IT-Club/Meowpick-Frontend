@@ -125,15 +125,17 @@ $card-bg: #ffffff;
 $text-main: #2c2c2c;
 
 .home-view-container {
-  height: 100vh;
+  min-height: 100vh; 
+  // 减少顶部 padding (160 -> 120)，把整体内容提上去
   padding: 120rpx 40rpx 100rpx 40rpx;
   box-sizing: border-box;
-  background-color: #f7f8fa;
-  overflow: hidden;
-
+  background-color: #f7f8fa; 
+  
   display: flex;
   flex-direction: column;
+  justify-content: flex-start; // 从上往下排
   position: relative;
+  overflow: hidden;
 
   // 顶部大色块：圆弧底边的微光背景
   &::before {
