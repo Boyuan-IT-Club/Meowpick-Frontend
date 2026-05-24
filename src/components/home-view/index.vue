@@ -125,15 +125,13 @@ $card-bg: #ffffff;
 $text-main: #2c2c2c;
 
 .home-view-container {
-  min-height: 100vh; 
-  // 减少顶部 padding (160 -> 120)，把整体内容提上去
+  height: 100vh;
   padding: 120rpx 40rpx 100rpx 40rpx;
   box-sizing: border-box;
-  background-color: #f7f8fa; 
-  
+  background-color: #f7f8fa;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; // 从上往下排
+  justify-content: space-between;
   position: relative;
   overflow: hidden;
 
@@ -144,7 +142,7 @@ $text-main: #2c2c2c;
     top: 0;
     left: 0;
     width: 100%;
-    height: 50vh; // 加高背景色块
+    height: 50vh;
     background: linear-gradient(180deg, #fffcfc 0%, #f7f8fa 100%);
     border-bottom-left-radius: 60rpx;
     border-bottom-right-radius: 60rpx;
@@ -152,30 +150,27 @@ $text-main: #2c2c2c;
   }
 }
 
-// 新增：顶部欢迎语样式
 .header-welcome {
   position: relative;
   z-index: 2;
   display: flex;
   flex-direction: column;
-  flex-shrink: 0;
-  
+  align-items: center;
+  flex: 1;
+
   .welcome-Line {
-    margin-bottom: 32rpx; 
     display: flex;
-    flex-direction: column; // 改为上下结构，更显大气
-    align-items: flex-start; 
-    justify-content: flex-start; 
-    padding-left: 20rpx; 
-    opacity: 1; // 移除透明度，颜色更实
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
   }
 
   .hello-text {
-    font-size: 48rpx; // 根据屏幕比例调整
-    font-weight: 300; // 纤细现代
-    color: #999;      // 浅灰色
-    font-family: sans-serif; 
-    font-style: normal; 
+    font-size: 48rpx;
+    font-weight: 300;
+    color: #999;
+    font-family: sans-serif;
+    font-style: normal;
   }
 
   .name-text {
@@ -188,12 +183,11 @@ $text-main: #2c2c2c;
   }
 
   .brand-logo {
-    height: 260rpx;
-    width: auto;
-    max-width: 70vw;
+    margin-top: 16rpx;
+    height: auto;
+    width: 80vw;
     object-fit: contain;
     display: block;
-    align-self: center;
     filter: drop-shadow(0 20rpx 40rpx rgba(178, 0, 53, 0.2));
     transform: scale(1.05);
   }
@@ -222,7 +216,6 @@ $text-main: #2c2c2c;
   z-index: 2;
   width: 100%;
   box-sizing: border-box;
-  padding: 0 10rpx;
   flex-shrink: 0;
 
   .search-box {
@@ -234,7 +227,7 @@ $text-main: #2c2c2c;
     padding: 0 36rpx;
     box-sizing: border-box;
     width: 100%;
-    box-shadow: 
+    box-shadow:
       0 10rpx 30rpx -10rpx rgba(178, 0, 53, 0.15),
       0 4rpx 10rpx rgba(0,0,0,0.02);
     border: 2rpx solid #fff;
