@@ -7,7 +7,7 @@
         <text class="name-text">{{ userName }}</text>
       </view>
       <!-- Logo 图片超级放大，居中 -->
-      <image src="../../images/logo.png" mode="heightFix" class="brand-logo" />
+      <image src="/src/images/logo.png" mode="heightFix" class="brand-logo" />
     </view>
     
     <!-- 搜索区域 -->
@@ -78,7 +78,7 @@ onMounted(async () => {
 
   const storedUser = uni.getStorageSync('userInfo');
   if (storedUser && storedUser.nickName) {
-      userName.value = `${storedUser.nickName} 同学`;
+      userName.value = storedUser.nickName;
   }
 
   const hasReadLetter = uni.getStorageSync('hasReadLetter');
@@ -119,19 +119,21 @@ const goToUpdate = () => {
 
 <style scoped lang="scss">
 // 变量定义
-$brand-red: #b20035; // 更加通透的亮红色
+$brand-red: #c8102e; // 更加通透的亮红色
 $brand-light-bg: #fff1f1; // 极淡的粉红背景
 $card-bg: #ffffff;
 $text-main: #2c2c2c;
 
 .home-view-container {
-  height: 100vh;
-  padding: 120rpx 40rpx 80rpx 40rpx;
+  min-height: 100vh; 
+  // 减少顶部 padding (160 -> 120)，把整体内容提上去
+  padding: 120rpx 40rpx 100rpx 40rpx;
   box-sizing: border-box;
-  background-color: #f7f8fa;
+  background-color: #f7f8fa; 
+  
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start; // 从上往下排
   position: relative;
   overflow: hidden;
 
@@ -142,7 +144,7 @@ $text-main: #2c2c2c;
     top: 0;
     left: 0;
     width: 100%;
-    height: 50vh;
+    height: 50vh; // 加高背景色块
     background: linear-gradient(180deg, #fffcfc 0%, #f7f8fa 100%);
     border-bottom-left-radius: 60rpx;
     border-bottom-right-radius: 60rpx;
@@ -150,48 +152,54 @@ $text-main: #2c2c2c;
   }
 }
 
+// 新增：顶部欢迎语样式
 .header-welcome {
+  margin-bottom: 60rpx; // 减少与下方的间距 (100 -> 60)
   position: relative;
   z-index: 2;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-  width: 100%;
-
+  
   .welcome-Line {
+    margin-bottom: 40rpx; 
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    width: 100%;
+    flex-direction: column; // 改为上下结构，更显大气
+    align-items: flex-start; 
+    justify-content: flex-start; 
+    padding-left: 20rpx; 
+    opacity: 1; // 移除透明度，颜色更实
   }
 
   .hello-text {
-    font-size: 56rpx;
-    font-weight: 300;
-    color: #999;
-    font-family: sans-serif;
-    font-style: normal;
+    font-size: 56rpx; // 再次加大，增加顶部份量
+    font-weight: 300; // 纤细现代
+    color: #999;      // 浅灰色
+    font-family: sans-serif; 
+    font-style: normal; 
+    margin-bottom: 10rpx; // 上下间距
   }
 
   .name-text {
-    font-size: 72rpx;
-    font-weight: 700;
-    color: #1a1a1a;
-    font-family: sans-serif;
-    letter-spacing: 1rpx;
-    line-height: 1.1;
+    font-size: 72rpx; // 再次加大，撑起顶部视觉
+    font-weight: 900; 
+    color: #333;      
+    letter-spacing: -2rpx; 
   }
-
+  
   .brand-logo {
-    margin-top: 20rpx;
-    height: auto;
-    width: 80vw;
+    margin-top: 40rpx; 
+    height: 360rpx;   // Logo 继续加大，撑满上半场
+    width: auto;
+    // 最大宽度限制，防止在窄屏手机上溢出
+    max-width: 80%;
     object-fit: contain;
+
     display: block;
-    filter: drop-shadow(0 20rpx 40rpx rgba(178, 0, 53, 0.2));
-    transform: scale(1.05);
+    align-self: center; 
+    // 投影加重，让它浮起来
+    filter: drop-shadow(0 20rpx 40rpx rgba(183, 0, 48, 0.2)); 
+    // 增加一点缩放动画，吸引眼球
+    transform: scale(1.05); 
   }
 }
 
@@ -214,32 +222,31 @@ $text-main: #2c2c2c;
 
 // 2. 搜索框区域 - 悬浮胶囊
 .search-section {
+  margin-bottom: 50rpx;
   position: relative;
   z-index: 2;
-  width: 100%;
-  box-sizing: border-box;
-  flex-shrink: 0;
-  margin-bottom: 24rpx;
+  padding: 0 10rpx;
 
   .search-box {
     display: flex;
     align-items: center;
     background-color: #ffffff;
-    height: 96rpx;
-    border-radius: 48rpx;
-    padding: 0 36rpx;
-    box-sizing: border-box;
-    width: 100%;
-    box-shadow:
-      0 10rpx 30rpx -10rpx rgba(178, 0, 53, 0.15),
+    height: 110rpx; // 高度增加
+    border-radius: 40rpx; // 更加圆润
+    padding: 0 30rpx;
+    
+    // 阴影升级：多层混合阴影，打造“浮起”质感
+    box-shadow: 
+      0 10rpx 30rpx -10rpx rgba(200, 16, 46, 0.15),
       0 4rpx 10rpx rgba(0,0,0,0.02);
-    border: 2rpx solid #fff;
+    border: 2rpx solid #fff; // 内描边提亮
 
     .search-icon {
       width: 44rpx;
       height: 44rpx;
       margin-right: 24rpx;
       opacity: 0.8;
+      // 让图标带一点点红色调
       filter: sepia(1) saturate(5) hue-rotate(320deg);
     }
 
@@ -251,35 +258,37 @@ $text-main: #2c2c2c;
       font-weight: 400;
     }
   }
-
+  
+  // 悬浮态：轻微下沉
   &:active {
-    transform: scale(0.99);
+      transform: scale(0.99);
   }
 }
 
 // 3. 功能区域 - Bento Grid (便当盒 layout)
+// 优化：右侧统计卡片不再是简单的色块，而是精细的数据面板
 .toolbox-section {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto;
+  grid-template-columns: 1fr 1fr; // 左右等宽
+  grid-template-rows: auto auto; 
   gap: 24rpx;
+  
   position: relative;
   z-index: 2;
-  flex-shrink: 0;
 
   // 左侧两个功能按钮
   .left-group {
       grid-column: 1 / 2;
-      grid-row: 1 / 3;
+      grid-row: 1 / 3; // 占据两行高度
       display: flex;
       flex-direction: column;
       gap: 24rpx;
   }
-
+  
   // 右侧统计展示
   .right-group {
       grid-column: 2 / 3;
-      grid-row: 1 / 3;
+      grid-row: 1 / 3; // 占据两行高度
   }
 }
 
