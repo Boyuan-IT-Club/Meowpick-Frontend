@@ -214,7 +214,7 @@ function handleCardLongPress(item: CommentVO) {
 
   .empty-text {
     font-size: 28rpx;
-    color: #999;
+    color: #999999;
     display: block;
     margin-bottom: 32rpx;
   }

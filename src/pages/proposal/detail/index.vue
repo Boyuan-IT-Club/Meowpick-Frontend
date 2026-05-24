@@ -448,8 +448,8 @@ $proposal-bg-end: #f8f9fa;
         }
         
         text {
-            color: #999;
-            font-size: 26rpx;
+            color: #999999;
+            font-size: 28rpx;
         }
     }
 }

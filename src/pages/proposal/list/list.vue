@@ -285,7 +285,7 @@ const goToPropose = () => uni.navigateTo({ url: "/pages/proposal/propose/propose
     }
 
     text {
-      font-size: 4vw;
+      font-size: 28rpx;
       color: #999999;
       display: block;
       margin-bottom: 5vw;

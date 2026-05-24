@@ -335,8 +335,8 @@ $bg-gradient-top: #fff5f5;
     .empty-discussion {
         text-align: center;
         padding: 40rpx 0;
-        color: #999;
-        font-size: 26rpx;
+        color: #999999;
+        font-size: 28rpx;
     }
 }
 

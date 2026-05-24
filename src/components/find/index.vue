@@ -779,6 +779,47 @@ const handleSuggestClick = (item: SuggestItem) => {
 </script>
 
 <style scoped lang="scss">
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    
+    .empty-img {
+        width: 240rpx;
+        height: 240rpx;
+        opacity: 0.8;
+        margin-bottom: 20rpx;
+    }
+    
+    .empty-text {
+        font-size: 28rpx;
+        color: #999999;
+        margin-bottom: 12rpx;
+    }
+    
+    .empty-sub {
+        font-size: 26rpx;
+        color: #bbbbbb;
+        margin-bottom: 30rpx;
+    }
+    
+    .proposal-btn {
+        background-color: rgba(200, 16, 46, 0.1);
+        color: #c8102e;
+        font-size: 26rpx;
+        padding: 12rpx 32rpx;
+        border-radius: 30rpx;
+        font-weight: 500;
+        
+        &:active {
+            background-color: rgba(200, 16, 46, 0.2);
+        }
+    }
+}
+
 $brand-red: #c8102e;
 
 .find-container {
@@ -944,8 +985,8 @@ $brand-red: #c8102e;
     }
     
     .no-history {
-        color: #999;
-        font-size: 26rpx;
+        color: #999999;
+        font-size: 28rpx;
         width: 100%;
         text-align: center;
         padding: 40rpx 0;

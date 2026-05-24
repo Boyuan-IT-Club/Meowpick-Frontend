@@ -597,7 +597,7 @@ const clearKeyword = () => {
 .empty-hint {
     text-align: center;
     font-size: 28rpx;
-    color: #999;
+    color: #999999;
     margin: 40rpx 0;
 }
 
