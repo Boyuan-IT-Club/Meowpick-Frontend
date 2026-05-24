@@ -78,7 +78,7 @@ onMounted(async () => {
 
   const storedUser = uni.getStorageSync('userInfo');
   if (storedUser && storedUser.nickName) {
-      userName.value = storedUser.nickName;
+      userName.value = `${storedUser.nickName} 同学`;
   }
 
   const hasReadLetter = uni.getStorageSync('hasReadLetter');
