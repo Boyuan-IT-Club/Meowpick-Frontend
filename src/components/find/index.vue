@@ -185,14 +185,14 @@
                 <template v-if="!showProposalsList">
                     <view class="bottom">--- 到底了哟 ---</view>
                     <view class="show-proposals-tip" @click="toggleProposalsList">
-                        <text>没有找到你的目标课程？点击查看其他同学的建课提议 👇</text>
+                        <text>查看其他同学的建课提议</text>
                         <image src="@/images/go-back.png" class="tip-arrow" />
                     </view>
                 </template>
 
                 <!-- Proposals Section (点击后，始终显示底部按钮) -->
                 <template v-if="showProposalsList">
-                    <view class="group-section">
+                    <view class="group-section" v-if="groupedRows.proposals.length">
                         <view class="group-title">提议</view>
                         <view v-for="(item, idx) in groupedRows.proposals" :key="item.id" class="result-card" @click="onResultClick(item)">
                             <view class="result-card-wrapper proposal-card">
@@ -202,7 +202,7 @@
                     </view>
                     <view class="bottom">--- 到底了哟 ---</view>
                     <view class="new-card" @click="goToProposal">
-                        <view class="new-card-content">那就亲自提议吧！</view>
+                        <text class="new-card-text">亲自提议新课程</text>
                     </view>
                 </template>
 
@@ -1191,43 +1191,28 @@ $brand-red: #c8102e;
 }
 
 /* New Card Style */
-.new-card-wrapper {
-   /* ... */
-   height: 100%;
-}
-.new-card-content {
+.new-card {
+    margin: 20rpx 40rpx 60rpx;
+    height: 90rpx;
+    border-radius: 45rpx;
+    background: linear-gradient(90deg, #b70030, #ff4d6a);
     display: flex;
+    justify-content: center;
     align-items: center;
-    
-    .new-card-icon {
-        width: 80rpx;
-        height: 80rpx;
-        background-color: $brand-red;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 24rpx;
-        box-shadow: 0 8rpx 16rpx rgba(200, 16, 46, 0.2);
+    box-shadow: 0 8rpx 24rpx rgba(183, 0, 48, 0.25);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:active {
+        transform: scale(0.98);
+        box-shadow: 0 4rpx 12rpx rgba(183, 0, 48, 0.2);
     }
-    
-    .new-card-text {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        
-        .new-title {
-            font-size: 30rpx;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 8rpx;
-        }
-        
-        .new-sub {
-            font-size: 24rpx;
-            color: #999;
-        }
-    }
+}
+
+.new-card-text {
+    font-size: 32rpx;
+    color: #ffffff;
+    font-weight: bold;
 }
 
 .bottom {
@@ -1374,37 +1359,36 @@ $brand-red: #c8102e;
 }
 
 .show-proposals-tip {
-    margin: 30rpx 24rpx;
-    padding: 30rpx;
-    background: linear-gradient(135deg, #fff5f5 0%, #fff 100%);
-    border-radius: 16rpx;
+    margin: 20rpx auto 40rpx;
+    width: fit-content;
+    padding: 16rpx 40rpx;
+    background: #fff5f5;
+    border: 2rpx solid #ffe3e3;
+    border-radius: 40rpx;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    box-shadow: 0 4rpx 16rpx rgba(200, 16, 46, 0.08); /* 微微得红色阴影 */
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: all 0.2s ease;
     
     &:active {
+        background: #ffebeb;
         transform: scale(0.98);
-        box-shadow: 0 2rpx 8rpx rgba(200, 16, 46, 0.05);
     }
 }
 
 .show-proposals-tip text {
-    font-size: 28rpx;
-    color: #c8102e; /* 配合背景变为主色调字体 */
+    font-size: 26rpx;
+    color: #c8102e;
     font-weight: 500;
-    line-height: 1.4;
-    flex: 1;
 }
 
 .show-proposals-tip .tip-arrow {
-    width: 32rpx;
-    height: 32rpx;
-    transform: rotate(180deg); /* 因为go-back 是向左的，所以转180度指向右 */
-    margin-left: 20rpx;
-    opacity: 0.6;
+    width: 24rpx;
+    height: 24rpx;
+    transform: rotate(180deg);
+    margin-left: 12rpx;
+    opacity: 0.8;
 }
 
 .still-nothing-tip {
