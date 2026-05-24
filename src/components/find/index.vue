@@ -847,20 +847,20 @@ $brand-red: #b20035;
                 height: 18rpx;
                 border: 4rpx solid #bbb;
                 border-radius: 50%;
-                top: 2rpx;
-                left: 2rpx;
+                top: 4rpx;
+                left: 4rpx;
                 box-sizing: border-box;
             }
             &::after {
                 content: '';
                 position: absolute;
-                width: 4rpx;
+                width: 5rpx;
                 height: 14rpx;
                 background: #bbb;
                 border-radius: 2rpx;
-                bottom: 0;
-                right: 4rpx;
-                transform: rotate(-45deg);
+                bottom: 2rpx;
+                right: 2rpx;
+                transform: rotate(45deg);
                 transform-origin: top center;
             }
         }
@@ -1007,21 +1007,21 @@ $brand-red: #b20035;
                     height: 18rpx;
                     border: 4rpx solid #bbb;
                     border-radius: 50%;
-                    top: 2rpx;
-                    left: 2rpx;
+                    top: 4rpx;
+                    left: 4rpx;
                     box-sizing: border-box;
                     opacity: 0.4;
                 }
                 &::after {
                     content: '';
                     position: absolute;
-                    width: 4rpx;
+                    width: 5rpx;
                     height: 14rpx;
                     background: #bbb;
                     border-radius: 2rpx;
-                    bottom: 0;
-                    right: 4rpx;
-                    transform: rotate(-45deg);
+                    bottom: 2rpx;
+                    right: 2rpx;
+                    transform: rotate(45deg);
                     transform-origin: top center;
                     opacity: 0.4;
                 }
@@ -1040,21 +1040,21 @@ $brand-red: #b20035;
                     height: 14rpx;
                     border: 3rpx solid #bbb;
                     border-radius: 50%;
-                    top: 1rpx;
-                    left: 1rpx;
+                    top: 3rpx;
+                    left: 3rpx;
                     box-sizing: border-box;
                     opacity: 0.5;
                 }
                 &::after {
                     content: '';
                     position: absolute;
-                    width: 3rpx;
+                    width: 4rpx;
                     height: 10rpx;
                     background: #bbb;
                     border-radius: 2rpx;
-                    bottom: 0;
+                    bottom: 2rpx;
                     right: 2rpx;
-                    transform: rotate(-45deg);
+                    transform: rotate(45deg);
                     transform-origin: top center;
                     opacity: 0.5;
                 }

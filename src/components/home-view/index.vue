@@ -357,14 +357,16 @@ $text-main: #2c2c2c;
       height: 0;
       border-left: 35rpx solid transparent;
       border-right: 35rpx solid transparent;
-      border-bottom: 30rpx solid #b20035;
-      top: 50%;
+      border-top: 30rpx solid #b20035;
+      top: 68%;
       left: 50%;
-      transform: translate(-50%, -15%);
+      transform: translate(-50%, -50%);
     }
   }
 
   .icon-clock {
+    position: relative;
+
     &::before {
       content: '';
       position: absolute;
@@ -380,96 +382,14 @@ $text-main: #2c2c2c;
       content: '';
       position: absolute;
       width: 6rpx;
-      height: 18rpx;
+      height: 16rpx;
       background: #b20035;
       top: 50%;
       left: 50%;
       transform-origin: center bottom;
       transform: translate(-50%, -100%) rotate(0deg);
-      box-shadow: 18rpx 0 0 #b20035;
+      box-shadow: 20rpx 0 0 #b20035;
     }
-  }
-
-  // 交互态
-  &:active {
-      transform: scale(0.97);
-  }
-
-  // “信件”卡片特殊化：带一点红晕背景，更显温馨
-  &.letter-card {
-      background: linear-gradient(135deg, #fff 0%, $brand-light-bg 100%);
-      .card-title { color: $brand-red; }
-  }
-}
-
-// 统计卡片：纵向大卡片
-.stat-card {
-  height: 100% !important; 
-  
-  // 修改：由深红底改为白底，解决视觉不平衡
-  background-color: #ffffff; 
-  
-  // 加回边框，保持统一感
-  border: 1rpx solid rgba(0,0,0,0.03);
-  
-  color: $text-main; // 文字变回深色
-  
-  border-radius: 36rpx;
-  padding: 40rpx;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; 
-  position: relative;
-  
-  // 阴影改为普通阴影，不再发红光
-  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.02); 
-
-  // 顶部标题
-  .stat-title {
-      font-size: 30rpx;
-      font-weight: 700; // 加粗
-      opacity: 1;
-      color: #999; // 灰色副标题
-  }
-
-  // 中间巨大数字
-  .stat-number {
-      font-size: 80rpx;
-      font-weight: 900;
-      line-height: 1;
-      margin: 20rpx 0;
-      letter-spacing: -2rpx;
-      
-      // 数字改为品牌红，作为点睛之笔，而不是大面积色块
-      color: $brand-red; 
-      // 移除原来的文字阴影
-      text-shadow: none;
-  }
-  
-  // 底部单位
-  .stat-unit {
-      font-size: 24rpx;
-      opacity: 0.5;
-      color: #999;
-      align-self: flex-end; 
-  }
-
-  // 移除原来的圆圈装饰，改为底部装饰条或者简约背景
-  &::before {
-      display: none;
-  }
-  
-  // 新增：底部红色装饰条，呼应品牌
-  &::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 12rpx;
-      background: linear-gradient(90deg, #fff 0%, $brand-light-bg 100%);
-      // 或者干脆不要装饰，保持极简
-      display: none; 
   }
 }
 </style>
