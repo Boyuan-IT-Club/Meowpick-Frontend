@@ -1,5 +1,8 @@
 import { ref, watchEffect } from 'vue';
-import type { DtoCommentVO } from "@/api/data-contracts";
+import type {
+  DtoCommentVO,
+  HandlerResponseDtoListCourseCommentsResp
+} from "@/api/data-contracts";
 import { http } from "@/config";
 import { DEFAULT_PAGE_SIZE, TARGET_TYPE_COMMENT } from "@/utils/constants";
 
@@ -23,17 +26,17 @@ export function useCourseComment(p: Props) {
       query.value = true;
     }
     if (query.value) {
-      http.CommentController.commentQueryList({ id, page: pageNum, pageSize: DEFAULT_PAGE_SIZE }).then((res) => {
-        const data = res.data as any;
-        const comments = data?.data?.comments || data?.comments || [];
-        const total = data?.data?.total || data?.total || 0;
-        comments.forEach((comment: any) => {
+      http.CommentController.commentQueryList({ courseId: id, page: pageNum, pageSize: DEFAULT_PAGE_SIZE }).then((res) => {
+        const resp = res.data as HandlerResponseDtoListCourseCommentsResp;
+        const comments = resp.data?.comments || [];
+        const total = resp.data?.total || 0;
+        comments.forEach((comment: DtoCommentVO) => {
           list.value[comment.id!] = {
             ...comment,
             tags: comment.tags && comment.tags.length > 0 ? comment.tags : ['硬核', '推荐'],
-            score: comment.score || 4,
-            like: comment.like ?? comment.relation?.like ?? false,
-            likeCnt: comment.likeCnt ?? comment.relation?.likeCnt ?? 0
+            score: (comment as any).score || 4,
+            like: comment.relation?.like ?? false,
+            likeCnt: comment.relation?.likeCnt ?? 0
           };
         });
         query.value = Object.values(list.value).length < total;

@@ -23,6 +23,17 @@ const buildQueryString = (params?: Record<string, any>): string => {
   return parts.join('&');
 };
 
+const logRequestError = (context: string, error: any, config?: any) => {
+  console.error(`[HTTP Error] ${context}`, {
+    message: error?.message || 'Unknown error',
+    path: config?.url || config?.path || 'N/A',
+    method: config?.method || 'N/A',
+    status: error?.response?.status || 'N/A',
+    statusText: error?.response?.statusText || error?.errMsg || 'N/A',
+    timestamp: new Date().toISOString()
+  });
+};
+
 const uniRequestAdapter: AxiosAdapter = async (config: AxiosRequestConfig): Promise<AxiosResponse> => {
   await waitForLogin();
 
@@ -60,6 +71,7 @@ const uniRequestAdapter: AxiosAdapter = async (config: AxiosRequestConfig): Prom
             config: config,
             request: null,
           };
+          logRequestError('Request failed', error, config);
           reject(error);
           return;
         }
@@ -83,6 +95,7 @@ const uniRequestAdapter: AxiosAdapter = async (config: AxiosRequestConfig): Prom
           config: config,
           request: null,
         };
+        logRequestError('Request failed', error, config);
         reject(error);
       }
     };

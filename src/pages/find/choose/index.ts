@@ -56,8 +56,9 @@ export function useChoose() {
       keyword.value = item.name || '';
       doSearch(true, 'default');
     } else if (item.resultType === 'proposal') {
+      const dataStr = encodeURIComponent(JSON.stringify(item));
       uni.navigateTo({
-        url: `/pages/proposal/list/list`
+        url: `/pages/course/proposal-detail/index?data=${dataStr}`
       });
     } else {
       uni.navigateTo({
