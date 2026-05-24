@@ -7,7 +7,7 @@
         <text class="name-text">{{ userName }}</text>
       </view>
       <!-- Logo 图片超级放大，居中 -->
-      <image src="/src/images/logo.png" mode="heightFix" class="brand-logo" />
+      <image src="../../images/logo.png" mode="heightFix" class="brand-logo" />
     </view>
     
     <!-- 搜索区域 -->
