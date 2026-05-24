@@ -123,7 +123,7 @@ const isProposal = computed(() => {
   transition: all 0.3s ease;
 
   &:active {
-    transform: scale(0.93);
+    transform: scale(0.98);
     box-shadow: 0 4rpx 12rpx rgba(178, 0, 53, 0.04);
   }
 
@@ -237,7 +237,7 @@ const isProposal = computed(() => {
   transition: all 0.3s ease;
 
   &:active {
-    transform: scale(0.93);
+    transform: scale(0.98);
     box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.03);
   }
 

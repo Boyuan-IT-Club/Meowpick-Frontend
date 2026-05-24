@@ -439,7 +439,7 @@ const submit = async () => {
     box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.25);
     
     &:active {
-        transform: scale(0.93);
+        transform: scale(0.98);
         box-shadow: 0 4rpx 12rpx rgba(178, 0, 53, 0.15);
     }
 

@@ -1098,7 +1098,7 @@ $brand-red: #b20035;
     transition: all 0.2s;
     
     &:active {
-        transform: scale(0.90);
+        transform: scale(0.95);
         box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.02);
     }
 
@@ -1174,7 +1174,7 @@ $brand-red: #b20035;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 
     &:active {
-        transform: scale(0.93);
+        transform: scale(0.98);
         box-shadow: 0 4rpx 12rpx rgba(178, 0, 53, 0.15);
     }
 }
@@ -1344,7 +1344,7 @@ $brand-red: #b20035;
     
     &:active {
         background: #fdf2f5;
-        transform: scale(0.93);
+        transform: scale(0.98);
     }
 }
 
