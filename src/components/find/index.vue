@@ -208,7 +208,6 @@
 
                 <!-- 空状态 -->
                 <view class="empty-state" v-if="rows.length === 0 && !loading">
-                    <text class="empty-text">这里空空如也...</text>
                     <text class="empty-sub">没有找到你想要的？</text>
                 </view>
             </view>
