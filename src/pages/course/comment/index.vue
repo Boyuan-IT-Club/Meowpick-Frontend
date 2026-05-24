@@ -182,7 +182,7 @@ const commit = async () => {
   isClicked.value = true;
   try {
       const tagTexts = SelectedTags.value.map(t => t.text);
-      await http.CommentController.add({
+      await http.CommentController.commentAddCreate({
           courseId: course_id || id.value,
           content: text.value,
           tags: tagTexts
