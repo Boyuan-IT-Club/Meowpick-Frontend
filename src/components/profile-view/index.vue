@@ -419,7 +419,7 @@ onShow(async () => { await waitForLogin(); loadData(); });
         
         &.active {
             /* Replace black bg with gradient from layout/main.vue */
-            background: #b20035; 
+            background: linear-gradient(135deg, #b20035, #ff4d6a); 
             color: #fff;
             font-weight: 600;
             box-shadow: 0 6rpx 16rpx rgba(183, 0, 48, 0.3); /* Colored shadow matching brand */
@@ -610,7 +610,7 @@ onShow(async () => { await waitForLogin(); loadData(); });
     bottom: 200rpx; /* Above bottom tab bar */
     width: 110rpx;
     height: 110rpx;
-    background-color: #b20035;
+    background: linear-gradient(135deg, #b20035, #ff4d6a);
     border-radius: 50%;
     box-shadow: 0 8rpx 30rpx rgba(178, 0, 53, 0.35);
     display: flex;
@@ -677,7 +677,7 @@ onShow(async () => { await waitForLogin(); loadData(); });
     }
 
     .retry-btn {
-        background-color: #b20035;
+        background: linear-gradient(135deg, #b20035, #ff4d6a);
         color: white;
         border-radius: 24rpx;
         font-size: 28rpx;

@@ -207,7 +207,7 @@ const goBack = () => {
   bottom: 80rpx;
   width: 112rpx;
   height: 112rpx;
-  background-color: #b20035;
+  background: linear-gradient(135deg, #b20035, #ff4d6a);
   border-radius: 50%;
   box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.4);
   display: flex;

@@ -431,7 +431,7 @@ const submit = async () => {
     height: 90rpx;
     line-height: 90rpx;
     border-radius: 45rpx;
-    background: #b20035;
+    background: linear-gradient(135deg, #b20035, #ff4d6a);
     color: #fff;
     font-size: 32rpx;
     font-weight: bold;

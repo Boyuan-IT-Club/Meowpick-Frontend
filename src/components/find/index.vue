@@ -1165,7 +1165,7 @@ $brand-red: #b20035;
     margin: 20rpx 0 60rpx;
     height: 90rpx;
     border-radius: 45rpx;
-    background: #b20035;
+    background: linear-gradient(135deg, #b20035, #ff4d6a);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1322,7 +1322,7 @@ $brand-red: #b20035;
     }
     
     .btn-confirm {
-        background-color: #b20035; /* Brand Red */
+        background: linear-gradient(135deg, #b20035, #ff4d6a);
         color: #fff;
         box-shadow: 0 6rpx 16rpx rgba(178, 0, 53, 0.25); /* Styled shadow */
     }
