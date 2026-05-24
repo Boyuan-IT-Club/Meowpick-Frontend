@@ -632,6 +632,16 @@ onShow(async () => { await waitForLogin(); loadData(); });
 }
 
 // 加载状态
+.empty-tip {
+    padding: 200rpx 0;
+    text-align: center;
+
+    text {
+        font-size: 28rpx;
+        color: #999999;
+    }
+}
+
 .loading-state {
     width: 100%;
     padding: 200rpx 0;

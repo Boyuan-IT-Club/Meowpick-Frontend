@@ -222,7 +222,6 @@
             
             <!-- Empty State -->
             <view class="empty-state" v-else-if="!loading">
-                <image src="@/images/cat.png" class="empty-img" mode="aspectFit" />
                 <text class="empty-text">这里空空如也...</text>
                 <text class="empty-sub">没有找到你想要的？</text>
                 <view class="proposal-btn" @click="goToProposal">
@@ -787,13 +786,6 @@ const handleSuggestClick = (item: SuggestItem) => {
     justify-content: center;
     min-height: 50vh;
     
-    .empty-img {
-        width: 240rpx;
-        height: 240rpx;
-        opacity: 0.8;
-        margin-bottom: 20rpx;
-    }
-    
     .empty-text {
         font-size: 28rpx;
         color: #999999;
@@ -803,7 +795,7 @@ const handleSuggestClick = (item: SuggestItem) => {
     .empty-sub {
         font-size: 26rpx;
         color: #bbbbbb;
-        margin-bottom: 30rpx;
+        margin-bottom: 40rpx;
     }
     
     .proposal-btn {
