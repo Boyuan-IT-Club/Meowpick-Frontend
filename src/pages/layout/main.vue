@@ -189,7 +189,7 @@ function onSwiperAnimationFinish(e: any) {
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     
     &:active {
-      transform: scale(0.95);
+      transform: scale(0.90);
     }
 
     &.active {

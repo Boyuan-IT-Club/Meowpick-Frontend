@@ -261,7 +261,7 @@ $text-main: #2c2c2c;
   
   // 悬浮态：轻微下沉
   &:active {
-      transform: scale(0.99);
+      transform: scale(0.90);
   }
 }
 
@@ -340,7 +340,7 @@ $text-main: #2c2c2c;
 
   // 交互态
   &:active {
-      transform: scale(0.97);
+      transform: scale(0.92);
   }
 
   // “信件”卡片特殊化：带一点红晕背景，更显温馨
