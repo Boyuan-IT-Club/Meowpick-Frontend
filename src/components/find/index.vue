@@ -170,7 +170,11 @@
 
       <!-- 场景 C: 结果模式 -> 显示 Result List -->
       <view v-else-if="isResultMode" class="result-section">
-        <view class="list-content" style="padding-top: 15rpx;">
+        <view v-if="loading" class="loading-section">
+          <view class="loading-spinner" />
+          <text class="loading-text">搜索中...</text>
+        </view>
+        <view v-else class="list-content" style="padding-top: 15rpx;">
                 <!-- Courses Section -->
                 <view class="group-section" v-if="groupedRows.courses.length">
                     <view class="group-title">课程</view>
@@ -207,7 +211,7 @@
                         <text class="new-card-text">亲自提议新课程</text>
                     </view>
                 </template>
-            </view>
+        </view>
       </view>
 
       <!-- 场景 B: 无搜索词 -> 显示历史记录 & 热门推荐 (Default) -->
@@ -1416,5 +1420,32 @@ $brand-red: #b20035;
         transform: scale(0.94);
         opacity: 0.8;
     }
+}
+
+.loading-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+
+    .loading-spinner {
+        width: 56rpx;
+        height: 56rpx;
+        border: 3rpx solid rgba(178, 0, 53, 0.15);
+        border-top-color: #b20035;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin-bottom: 20rpx;
+    }
+
+    .loading-text {
+        font-size: 28rpx;
+        color: #999;
+    }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 </style>
