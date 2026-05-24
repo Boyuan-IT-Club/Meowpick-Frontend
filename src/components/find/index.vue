@@ -1162,7 +1162,7 @@ $brand-red: #b20035;
 }
 
 .new-card {
-    margin: 20rpx 40rpx 60rpx;
+    margin: 20rpx 0 60rpx;
     height: 90rpx;
     border-radius: 45rpx;
     background: #b20035;
@@ -1329,12 +1329,13 @@ $brand-red: #b20035;
 }
 
 .show-proposals-tip {
-    margin: 20rpx auto 40rpx;
-    width: fit-content;
-    padding: 16rpx 40rpx;
+    margin: 20rpx 0 40rpx;
+    height: 90rpx;
+    width: auto;
+    box-sizing: border-box;
     background: #ffffff;
     border: 2rpx solid rgba(178, 0, 53, 0.3);
-    border-radius: 40rpx;
+    border-radius: 45rpx;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1348,9 +1349,9 @@ $brand-red: #b20035;
 }
 
 .show-proposals-tip text {
-    font-size: 26rpx;
+    font-size: 32rpx;
     color: #b20035;
-    font-weight: 500;
+    font-weight: bold;
 }
 
 .show-proposals-tip .tip-arrow {
