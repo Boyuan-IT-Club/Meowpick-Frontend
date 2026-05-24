@@ -13,7 +13,7 @@ export const useFind = () => {
 
 export const useInput = () => {
   const searchText = ref("");
-  const placeHolder = ref("搜索课程类别、名称、院系或任课教师");
+  const placeHolder = ref("搜索课程、老师或吐槽...");
   const list = ref<any[]>([]);
   const searchHistory = ref<DtoSearchHistoryVO[]>([]);
   const isSearch = ref(false);
