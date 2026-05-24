@@ -181,8 +181,8 @@
                     </view>
                 </view>
 
-                <!-- 课程列表底部（始终显示） -->
-                <template v-if="!showProposalsList">
+                <!-- 课程列表底部（有课程时才显示到底了 + 按钮） -->
+                <template v-if="!showProposalsList && groupedRows.courses.length">
                     <view class="bottom">--- 到底了哟 ---</view>
                     <view class="show-proposals-tip" @click="toggleProposalsList">
                         <text>没有找到你的目标课程？点击查看其他同学的建课提议 👇</text>
