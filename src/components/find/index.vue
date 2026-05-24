@@ -23,7 +23,7 @@
 
             <!-- 中间：搜索框 (上移同时控制右边距) -->
             <view class="search-input-box" :style="searchInputBoxStyle">
-                <image src="@/images/search-icon.png" class="search-icon" />
+                <text class="search-icon">🔍</text>
                 <input
                 v-model="searchText"
                 class="search-input"
@@ -150,7 +150,7 @@
         >
           <!-- 左侧图标/类型 -->
           <view class="item-icon-wrapper">
-             <image src="@/images/search-icon.png" class="mini-search-icon" style="width:24rpx;height:24rpx;opacity:0.5;" />
+             <text class="mini-search-icon">🔍</text>
           </view>
 
           <!-- 右侧内容 -->
@@ -170,12 +170,7 @@
 
       <!-- 场景 C: 结果模式 -> 显示 Result List -->
       <view v-else-if="isResultMode" class="result-section">
-        <!-- 加载中状态 -->
-        <view v-if="loading" class="loading-section">
-          <view class="loading-spinner"></view>
-          <text class="loading-text">搜索中...</text>
-        </view>
-        <view v-else class="list-content" style="padding-top: 15rpx;">
+        <view class="list-content" style="padding-top: 15rpx;">
                 <!-- Courses Section -->
                 <view class="group-section" v-if="groupedRows.courses.length">
                     <view class="group-title">课程</view>
@@ -250,7 +245,7 @@
               @click="clickRecommend(item.keyword)"
             >
               <view class="recommend-icon">
-                 <image src="@/images/search-icon.png" class="mini-icon" />
+                 <text class="mini-icon">🔍</text>
               </view>
               <text class="recommend-word">{{ item.keyword }}</text>
               <text class="recommend-tag" v-if="item.tag">{{ item.tag }}</text>
@@ -834,10 +829,10 @@ $brand-red: #b20035;
         box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.03); 
         
         .search-icon {
-            width: 32rpx;
-            height: 32rpx;
+            font-size: 28rpx;
             margin-right: 16rpx;
-            opacity: 0.5;
+            opacity: 0.4;
+            line-height: 1;
         }
         
         .search-input {
@@ -970,10 +965,16 @@ $brand-red: #b20035;
             align-items: center;
             
             .mini-icon {
-                width: 32rpx;
-                height: 32rpx;
+                font-size: 22rpx;
                 opacity: 0.4;
+                line-height: 1;
             }
+        }
+
+        .mini-search-icon {
+            font-size: 20rpx;
+            opacity: 0.4;
+            line-height: 1;
         }
         
         .recommend-word {
@@ -1415,32 +1416,5 @@ $brand-red: #b20035;
         transform: scale(0.94);
         opacity: 0.8;
     }
-}
-
-.loading-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 50vh;
-
-    .loading-spinner {
-        width: 56rpx;
-        height: 56rpx;
-        border: 3rpx solid rgba(178, 0, 53, 0.15);
-        border-top-color: #b20035;
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-        margin-bottom: 20rpx;
-    }
-
-    .loading-text {
-        font-size: 28rpx;
-        color: #999;
-    }
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
 }
 </style>

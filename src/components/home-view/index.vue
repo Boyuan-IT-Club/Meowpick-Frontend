@@ -30,20 +30,20 @@
           <view class="card-content">
             <text class="card-title">致用户的一封信</text>
             <text class="card-subtitle">To Users</text>
-            <image src="../../images/to-users.png" class="card-bg-icon" />
+            <text class="card-bg-icon">✉️</text>
           </view>
           <view v-if="showNewIcon" class="new-tag">NEW</view>
         </view>
 
-        <view 
-          class="card-item log-card" 
+        <view
+          class="card-item log-card"
           hover-class="card-hover"
           @click="goToUpdate"
         >
           <view class="card-content">
             <text class="card-title">更新日志</text>
             <text class="card-subtitle">Update Log</text>
-            <image src="../../images/update-log.png" class="card-bg-icon" />
+            <text class="card-bg-icon">📋</text>
           </view>
         </view>
       </view>
@@ -329,11 +329,11 @@ $text-main: #2c2c2c;
 
   .card-bg-icon {
     position: absolute;
-    right: -20rpx;
-    bottom: -20rpx;
-    width: 120rpx; 
-    height: 120rpx;
-    opacity: 0.08;
+    right: -10rpx;
+    bottom: -10rpx;
+    font-size: 90rpx;
+    line-height: 1;
+    opacity: 0.15;
     z-index: 1;
     transform: rotate(15deg);
   }
