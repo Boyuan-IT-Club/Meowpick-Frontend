@@ -181,8 +181,8 @@
                     </view>
                 </view>
 
-                <!-- 课程列表底部（有课程时才显示到底了 + 按钮） -->
-                <template v-if="!showProposalsList && groupedRows.courses.length">
+                <!-- 课程列表底部（无课程时也显示到底了） -->
+                <template v-if="!showProposalsList">
                     <view class="bottom">--- 到底了哟 ---</view>
                     <view class="show-proposals-tip" @click="toggleProposalsList">
                         <text>没有找到你的目标课程？点击查看其他同学的建课提议 👇</text>
@@ -206,16 +206,10 @@
                     </view>
                 </template>
 
-                <!-- 无课程结果时：空状态 + 查看他人提议 -->
-                <view v-if="rows.length === 0 && !loading && !showProposalsList">
-                    <view class="empty-state">
-                        <text class="empty-text">这里空空如也...</text>
-                        <text class="empty-sub">没有找到你想要的？</text>
-                    </view>
-                    <view class="show-proposals-tip" @click="toggleProposalsList">
-                        <text>没有找到你的目标课程？点击查看其他同学的建课提议 👇</text>
-                        <image src="@/images/go-back.png" class="tip-arrow" />
-                    </view>
+                <!-- 空状态 -->
+                <view class="empty-state" v-if="rows.length === 0 && !loading">
+                    <text class="empty-text">这里空空如也...</text>
+                    <text class="empty-sub">没有找到你想要的？</text>
                 </view>
             </view>
       </view>
