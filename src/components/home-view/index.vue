@@ -154,14 +154,14 @@ $text-main: #2c2c2c;
 
 // 新增：顶部欢迎语样式
 .header-welcome {
-  margin-bottom: 60rpx; // 减少与下方的间距 (100 -> 60)
   position: relative;
   z-index: 2;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
   
   .welcome-Line {
-    margin-bottom: 40rpx; 
+    margin-bottom: 32rpx; 
     display: flex;
     flex-direction: column; // 改为上下结构，更显大气
     align-items: flex-start; 
@@ -171,35 +171,31 @@ $text-main: #2c2c2c;
   }
 
   .hello-text {
-    font-size: 56rpx; // 再次加大，增加顶部份量
+    font-size: 48rpx; // 根据屏幕比例调整
     font-weight: 300; // 纤细现代
     color: #999;      // 浅灰色
     font-family: sans-serif; 
     font-style: normal; 
-    margin-bottom: 10rpx; // 上下间距
   }
 
   .name-text {
-    font-size: 72rpx; // 再次加大，撑起顶部视觉
-    font-weight: 900; 
-    color: #333;      
-    letter-spacing: -2rpx; 
+    font-size: 60rpx;
+    font-weight: 700;
+    color: #1a1a1a;
+    font-family: sans-serif;
+    letter-spacing: 1rpx;
+    line-height: 1.1;
   }
-  
-  .brand-logo {
-    margin-top: 40rpx; 
-    height: 360rpx;   // Logo 继续加大，撑满上半场
-    width: auto;
-    // 最大宽度限制，防止在窄屏手机上溢出
-    max-width: 80%;
-    object-fit: contain;
 
+  .brand-logo {
+    height: 260rpx;
+    width: auto;
+    max-width: 70vw;
+    object-fit: contain;
     display: block;
-    align-self: center; 
-    // 投影加重，让它浮起来
-    filter: drop-shadow(0 20rpx 40rpx rgba(183, 0, 48, 0.2)); 
-    // 增加一点缩放动画，吸引眼球
-    transform: scale(1.05); 
+    align-self: center;
+    filter: drop-shadow(0 20rpx 40rpx rgba(178, 0, 53, 0.2));
+    transform: scale(1.05);
   }
 }
 
@@ -222,24 +218,26 @@ $text-main: #2c2c2c;
 
 // 2. 搜索框区域 - 悬浮胶囊
 .search-section {
-  margin-bottom: 50rpx;
   position: relative;
   z-index: 2;
+  width: 100%;
+  box-sizing: border-box;
   padding: 0 10rpx;
+  flex-shrink: 0;
 
   .search-box {
     display: flex;
     align-items: center;
     background-color: #ffffff;
-    height: 110rpx; // 高度增加
-    border-radius: 40rpx; // 更加圆润
-    padding: 0 30rpx;
-    
-    // 阴影升级：多层混合阴影，打造“浮起”质感
+    height: 96rpx;
+    border-radius: 48rpx;
+    padding: 0 36rpx;
+    box-sizing: border-box;
+    width: 100%;
     box-shadow: 
       0 10rpx 30rpx -10rpx rgba(178, 0, 53, 0.15),
       0 4rpx 10rpx rgba(0,0,0,0.02);
-    border: 2rpx solid #fff; // 内描边提亮
+    border: 2rpx solid #fff;
 
     .search-icon {
       width: 44rpx;
