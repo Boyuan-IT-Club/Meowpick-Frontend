@@ -13,7 +13,7 @@
     <!-- 搜索区域 -->
     <view class="search-section" hover-class="search-hover" @click="goToSearch">
       <view class="search-box">
-        <image src="../../images/search-icon.png" class="search-icon" />
+        <text class="search-icon">🔍</text>
         <text class="search-placeholder">搜索课程、老师或吐槽...</text>
       </view>
     </view>
@@ -242,12 +242,10 @@ $text-main: #2c2c2c;
     border: 2rpx solid #fff; // 内描边提亮
 
     .search-icon {
-      width: 44rpx;
-      height: 44rpx;
+      font-size: 36rpx;
       margin-right: 24rpx;
-      opacity: 0.8;
-      // 让图标带一点点红色调
-      filter: sepia(1) saturate(5) hue-rotate(320deg);
+      opacity: 0.4;
+      line-height: 1;
     }
 
     .search-placeholder {
@@ -335,7 +333,7 @@ $text-main: #2c2c2c;
     line-height: 1;
     opacity: 0.15;
     z-index: 1;
-    transform: rotate(15deg);
+    transform: rotate(-15deg);
   }
 
   // 交互态
