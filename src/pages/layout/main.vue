@@ -194,9 +194,8 @@ function onSwiperAnimationFinish(e: any) {
 
     &.active {
       font-weight: 700; 
-      color: #b20035; 
+      color: #1a1a1a; 
       font-size: 36rpx; 
-      text-shadow: 0 2rpx 10rpx rgba(178,0,53,0.1);
     }
   }
 
@@ -213,7 +212,7 @@ function onSwiperAnimationFinish(e: any) {
     
     width: 48rpx; 
     height: 8rpx; 
-    background: #b20035; 
+    background: linear-gradient(90deg, #b70030, #ff4d6a); 
     border-radius: 10rpx;
     
     transform: translateX(-50%); 
