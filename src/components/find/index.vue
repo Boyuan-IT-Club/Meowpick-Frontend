@@ -181,43 +181,30 @@
                     </view>
                 </view>
 
-                <view class="bottom" v-if="!showProposalsList">--- 到底了哟 ---</view>
-
-                <!-- Guide to show proposals if hidden -->
-                <view v-if="!showProposalsList && groupedRows.proposals.length > 0" class="show-proposals-tip" @click="toggleProposalsList">
-                    <text>没有找到你的目标课程？点击查看其他同学的建课提议 👇</text>
-                    <image src="@/images/go-back.png" class="tip-arrow" />
-                </view>
-
-                <!-- Proposals Section -->
-                <view class="group-section" v-if="showProposalsList && groupedRows.proposals.length">
-                    <view class="group-title">提议</view>
-                    <view v-for="(item, idx) in groupedRows.proposals" :key="item.id" class="result-card" @click="onResultClick(item)">
-                        <view class="result-card-wrapper proposal-card">
-                            <!-- ensure passing variant proposal -->
-                            <choose-course :data="item" variant="proposal" />
-                        </view>
+                <!-- 未点击查看他人提议时：课程列表底部 -->
+                <template v-if="!showProposalsList">
+                    <view class="bottom" v-if="groupedRows.courses.length">--- 到底了哟 ---</view>
+                    <view class="show-proposals-tip" v-if="groupedRows.courses.length" @click="toggleProposalsList">
+                        <text>没有找到你的目标课程？点击查看其他同学的建课提议 👇</text>
+                        <image src="@/images/go-back.png" class="tip-arrow" />
                     </view>
-                </view>
+                </template>
 
-                <!-- New Card Section -->
-                <view v-if="(showProposalsList && groupedRows.proposals.length) || (!groupedRows.courses.length && !groupedRows.proposals.length)" class="group-section new-section">
-                    <!-- If we are showing proposals, we show the "Still nothing?" message -->
-                    <view v-if="showProposalsList || groupedRows.courses.length" class="still-nothing-tip">
-                         <text>还是没找到你想找的？</text>
-                    </view>
-
-                    <view class="group-title" style="margin-top: -10rpx;" v-if="!showProposalsList && !groupedRows.courses.length">新增</view>
-                    <view class="result-card new-card" @click="goToProposal">
-                        <view class="result-card-wrapper" style="padding: 0; background: transparent; box-shadow: none;">
-                            <view class="new-card-content" style="flex-direction: row; align-items: center; justify-content: center; background: linear-gradient(135deg, #c8102e 0%, #ff4d6a 100%); padding: 30rpx 40rpx; border-radius: 20rpx; box-shadow: 0 8rpx 20rpx rgba(200, 16, 46, 0.15);">
-                                <view class="new-card-title" style="margin-bottom: 0; color: #fff; font-size: 32rpx; font-weight: 600;">那就亲自提议吧！</view>
+                <!-- Proposals Section (点击后) -->
+                <template v-if="showProposalsList">
+                    <view class="group-section" v-if="groupedRows.proposals.length">
+                        <view class="group-title">提议</view>
+                        <view v-for="(item, idx) in groupedRows.proposals" :key="item.id" class="result-card" @click="onResultClick(item)">
+                            <view class="result-card-wrapper proposal-card">
+                                <choose-course :data="item" variant="proposal" />
                             </view>
                         </view>
                     </view>
-                </view>
-
-                <view class="bottom" v-if="showProposalsList">--- 到底了哟 ---</view>
+                    <view class="bottom">--- 到底了哟 ---</view>
+                    <view class="new-card" @click="goToProposal">
+                        <view class="new-card-content">那就亲自提议吧！</view>
+                    </view>
+                </template>
             </view>
             
             <!-- Empty State -->
@@ -343,7 +330,7 @@ const { suggestList, suggestContent } = useSuggest(searchText);
 
 // Merge logic from useChoose
 import { useChoose } from "@/pages/find/choose/index";
-const { keyword: resultKeyword, jump, rows, page, loading, doSearch, filterCampus, filterDepart } = useChoose();
+const { keyword: resultKeyword, jump, rows, page, loading, doSearch, loadProposals, loadMoreProposals, proposalLoading, proposalsLoaded, filterCampus, filterDepart, proposalRows } = useChoose();
 
 // Add exposed method for parent page to call onShow
 const resumeState = () => {
@@ -381,10 +368,16 @@ const groupedRows = computed(() => {
             courses.push(item);
         }
     }
+    if (showProposalsList.value && proposalRows.value.length > 0) {
+        proposals.push(...proposalRows.value);
+    }
     return { courses, proposals };
 });
 
 const toggleProposalsList = () => {
+    if (!proposalsLoaded.value) {
+        loadProposals(true);
+    }
     showProposalsList.value = true;
 };
 
@@ -679,8 +672,12 @@ const changeSort = (sortType: string) => {
 // 滚动到底部加载更多
 const handleScrollBottom = () => {
     if (isResultMode.value) {
-        page.value++;
-        doSearch(false, currentSort.value);
+        if (showProposalsList.value) {
+            loadMoreProposals();
+        } else {
+            page.value++;
+            doSearch(false, currentSort.value);
+        }
     }
 };
 
