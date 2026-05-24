@@ -126,7 +126,7 @@ $text-main: #2c2c2c;
 
 .home-view-container {
   height: 100vh;
-  padding: 120rpx 40rpx 100rpx 40rpx;
+  padding: 120rpx 40rpx 80rpx 40rpx;
   box-sizing: border-box;
   background-color: #f7f8fa;
   display: flex;
@@ -156,7 +156,9 @@ $text-main: #2c2c2c;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   flex: 1;
+  width: 100%;
 
   .welcome-Line {
     display: flex;
@@ -166,7 +168,7 @@ $text-main: #2c2c2c;
   }
 
   .hello-text {
-    font-size: 48rpx;
+    font-size: 56rpx;
     font-weight: 300;
     color: #999;
     font-family: sans-serif;
@@ -174,7 +176,7 @@ $text-main: #2c2c2c;
   }
 
   .name-text {
-    font-size: 60rpx;
+    font-size: 72rpx;
     font-weight: 700;
     color: #1a1a1a;
     font-family: sans-serif;
@@ -183,7 +185,7 @@ $text-main: #2c2c2c;
   }
 
   .brand-logo {
-    margin-top: 16rpx;
+    margin-top: 20rpx;
     height: auto;
     width: 80vw;
     object-fit: contain;
@@ -217,6 +219,7 @@ $text-main: #2c2c2c;
   width: 100%;
   box-sizing: border-box;
   flex-shrink: 0;
+  margin-bottom: 24rpx;
 
   .search-box {
     display: flex;
@@ -237,7 +240,6 @@ $text-main: #2c2c2c;
       height: 44rpx;
       margin-right: 24rpx;
       opacity: 0.8;
-      // 让图标带一点点红色调
       filter: sepia(1) saturate(5) hue-rotate(320deg);
     }
 
@@ -249,37 +251,35 @@ $text-main: #2c2c2c;
       font-weight: 400;
     }
   }
-  
-  // 悬浮态：轻微下沉
+
   &:active {
-      transform: scale(0.99);
+    transform: scale(0.99);
   }
 }
 
 // 3. 功能区域 - Bento Grid (便当盒 layout)
-// 优化：右侧统计卡片不再是简单的色块，而是精细的数据面板
 .toolbox-section {
   display: grid;
-  grid-template-columns: 1fr 1fr; // 左右等宽
-  grid-template-rows: auto auto; 
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
   gap: 24rpx;
-  
   position: relative;
   z-index: 2;
+  flex-shrink: 0;
 
   // 左侧两个功能按钮
   .left-group {
       grid-column: 1 / 2;
-      grid-row: 1 / 3; // 占据两行高度
+      grid-row: 1 / 3;
       display: flex;
       flex-direction: column;
       gap: 24rpx;
   }
-  
+
   // 右侧统计展示
   .right-group {
       grid-column: 2 / 3;
-      grid-row: 1 / 3; // 占据两行高度
+      grid-row: 1 / 3;
   }
 }
 
