@@ -164,8 +164,8 @@ const isProposal = computed(() => {
           
            .proposal-badge {
              font-size: 22rpx;
-             color: #c8102e;
-             background: rgba(200, 16, 46, 0.08);
+             color: #b20035;
+             background: rgba(178, 0, 53, 0.08);
              padding: 6rpx 12rpx;
              border-radius: 8rpx;
              white-space: nowrap;
@@ -176,7 +176,7 @@ const isProposal = computed(() => {
                display: flex;
                align-items: center;
                /* Removed background for cleaner look or keep if desired, let's keep it minimal */
-               /* background: rgba(200, 16, 46, 0.05); */
+               /* background: rgba(178, 0, 53, 0.05); */
                
                .vote-icon {
                     width: 28rpx;
@@ -186,7 +186,7 @@ const isProposal = computed(() => {
                .vote-num {
                     font-size: 28rpx;
                     font-weight: 600;
-                    color: #c8102e;
+                    color: #b20035;
                     margin-right: 4rpx;
                }
                .vote-label {
@@ -300,7 +300,7 @@ const isProposal = computed(() => {
 
           .tag-count {
             font-size: 22rpx;
-            color: #c8102e;
+            color: #b20035;
             font-weight: 500;
           }
         }

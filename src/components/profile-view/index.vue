@@ -419,7 +419,7 @@ onShow(async () => { await waitForLogin(); loadData(); });
         
         &.active {
             /* Replace black bg with gradient from layout/main.vue */
-            background: linear-gradient(90deg, #b70030, #ff4d6a); 
+            background: #b20035; 
             color: #fff;
             font-weight: 600;
             box-shadow: 0 6rpx 16rpx rgba(183, 0, 48, 0.3); /* Colored shadow matching brand */
@@ -450,12 +450,12 @@ onShow(async () => { await waitForLogin(); loadData(); });
 
     &.proposal-card {
         background: linear-gradient(135deg, #fff5f6 0%, #ffffff 100%);
-        box-shadow: 0 8rpx 24rpx rgba(200, 16, 46, 0.06); 
-        border: 1px solid rgba(200, 16, 46, 0.15);
+        box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.06); 
+        border: 1px solid rgba(178, 0, 53, 0.15);
 
         .course-row-middle {
             background: rgba(255, 255, 255, 0.8);
-            border: 1px solid rgba(200, 16, 46, 0.08);
+            border: 1px solid rgba(178, 0, 53, 0.08);
             box-shadow: inset 0 2rpx 8rpx rgba(0,0,0,0.01);
         }
     }
@@ -558,7 +558,7 @@ onShow(async () => { await waitForLogin(); loadData(); });
              background: linear-gradient(90deg, #fff0f2, #fff5f6);
              padding: 10rpx 24rpx;
              border-radius: 30rpx;
-             border: 1px solid rgba(200, 16, 46, 0.05);
+             border: 1px solid rgba(178, 0, 53, 0.05);
              
              .vote-icon {
                   width: 30rpx;
@@ -568,12 +568,12 @@ onShow(async () => { await waitForLogin(); loadData(); });
              .vote-num {
                   font-size: 32rpx;
                   font-weight: 800;
-                  color: #c8102e;
+                  color: #b20035;
                   margin-right: 6rpx;
              }
              .vote-label {
                   font-size: 24rpx;
-                  color: #c8102e;
+                  color: #b20035;
                   opacity: 0.9;
                   font-weight: 500;
              }
@@ -596,9 +596,9 @@ onShow(async () => { await waitForLogin(); loadData(); });
                 border: 1px solid rgba(56, 142, 60, 0.05);
             }
             &.status-rejected {
-                background: linear-gradient(90deg, rgba(200, 16, 46, 0.08), rgba(200, 16, 46, 0.04));
-                color: #c8102e;
-                border: 1px solid rgba(200, 16, 46, 0.05);
+                background: linear-gradient(90deg, rgba(178, 0, 53, 0.08), rgba(178, 0, 53, 0.04));
+                color: #b20035;
+                border: 1px solid rgba(178, 0, 53, 0.05);
             }
         }
     }
@@ -610,9 +610,9 @@ onShow(async () => { await waitForLogin(); loadData(); });
     bottom: 200rpx; /* Above bottom tab bar */
     width: 110rpx;
     height: 110rpx;
-    background-color: #c8102e;
+    background-color: #b20035;
     border-radius: 50%;
-    box-shadow: 0 8rpx 30rpx rgba(200, 16, 46, 0.4);
+    box-shadow: 0 8rpx 30rpx rgba(178, 0, 53, 0.35);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -652,7 +652,7 @@ onShow(async () => { await waitForLogin(); loadData(); });
         height: 80rpx;
         margin: 0 auto 24rpx;
         border: 4rpx solid #ddd;
-        border-top-color: #c8102e;
+        border-top-color: #b20035;
         border-radius: 50%;
         animation: spin 1s linear infinite;
     }
@@ -677,7 +677,7 @@ onShow(async () => { await waitForLogin(); loadData(); });
     }
 
     .retry-btn {
-        background-color: #c8102e;
+        background-color: #b20035;
         color: white;
         border-radius: 24rpx;
         font-size: 28rpx;

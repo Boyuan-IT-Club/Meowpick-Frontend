@@ -60,10 +60,10 @@ withDefaults(defineProps<Props>(), {});
 .dot {
     width: 20rpx;
     height: 20rpx;
-    background-color: #c8102e; /* Brand Red */
+    background-color: #b20035; /* Brand Red */
     border-radius: 50%;
     margin-top: 36rpx; /* Align with card title */
-    box-shadow: 0 0 0 6rpx rgba(200, 16, 46, 0.15); 
+    box-shadow: 0 0 0 6rpx rgba(178, 0, 53, 0.15); 
     z-index: 2;
     position: relative;
 }

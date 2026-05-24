@@ -406,7 +406,7 @@ const submit = async () => {
     
     &.active {
         background: #FFF0F6;
-        color: #b70030;
+        color: #b20035;
         border-color: #ffadd2;
     }
 }

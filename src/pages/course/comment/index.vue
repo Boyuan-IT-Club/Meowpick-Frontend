@@ -349,7 +349,7 @@ const commit = async () => {
     line-height: 90rpx;
     border-radius: 45rpx;
     /* Restore Theme Color Gradient */
-    background: linear-gradient(90deg, #b70030, #ff4d6a);
+    background: #b20035;
     color: #fff;
     font-size: 32rpx;
     font-weight: bold;

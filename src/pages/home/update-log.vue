@@ -82,7 +82,7 @@ const goBack = () => {
   .page-header {
     margin-bottom: 40rpx;
     padding-left: 24rpx; /* Increased padding */
-    border-left: 8rpx solid #c8102e;
+    border-left: 8rpx solid #b20035;
 
     .title {
       font-size: 40rpx;

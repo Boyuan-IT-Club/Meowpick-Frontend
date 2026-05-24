@@ -207,9 +207,9 @@ const goBack = () => {
   bottom: 80rpx;
   width: 112rpx;
   height: 112rpx;
-  background-color: #c8102e;
+  background-color: #b20035;
   border-radius: 50%;
-  box-shadow: 0 8rpx 24rpx rgba(200, 16, 46, 0.4);
+  box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;

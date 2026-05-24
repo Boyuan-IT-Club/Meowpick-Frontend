@@ -119,7 +119,7 @@ const goToUpdate = () => {
 
 <style scoped lang="scss">
 // 变量定义
-$brand-red: #c8102e; // 更加通透的亮红色
+$brand-red: #b20035; // 更加通透的亮红色
 $brand-light-bg: #fff1f1; // 极淡的粉红背景
 $card-bg: #ffffff;
 $text-main: #2c2c2c;
@@ -237,7 +237,7 @@ $text-main: #2c2c2c;
     
     // 阴影升级：多层混合阴影，打造“浮起”质感
     box-shadow: 
-      0 10rpx 30rpx -10rpx rgba(200, 16, 46, 0.15),
+      0 10rpx 30rpx -10rpx rgba(178, 0, 53, 0.15),
       0 4rpx 10rpx rgba(0,0,0,0.02);
     border: 2rpx solid #fff; // 内描边提亮
 

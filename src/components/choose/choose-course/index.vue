@@ -115,16 +115,16 @@ const isProposal = computed(() => {
 .proposal-card {
   background: linear-gradient(135deg, #fff5f6 0%, #ffffff 100%);
   border-radius: 24rpx;
-  box-shadow: 0 8rpx 24rpx rgba(200, 16, 46, 0.06);
+  box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.06);
   padding: 32rpx;
-  border: 1px solid rgba(200, 16, 46, 0.15);
+  border: 1px solid rgba(178, 0, 53, 0.15);
   position: relative;
   overflow: hidden;
   transition: all 0.3s ease;
 
   &:active {
     transform: scale(0.98);
-    box-shadow: 0 4rpx 12rpx rgba(200, 16, 46, 0.04);
+    box-shadow: 0 4rpx 12rpx rgba(178, 0, 53, 0.04);
   }
 
   .proposal-content {
@@ -157,7 +157,7 @@ const isProposal = computed(() => {
           background: rgba(255, 255, 255, 0.8);
           padding: 20rpx 24rpx;
           border-radius: 16rpx;
-          border: 1px solid rgba(200, 16, 46, 0.08);
+          border: 1px solid rgba(178, 0, 53, 0.08);
           box-shadow: inset 0 2rpx 8rpx rgba(0,0,0,0.01);
 
           .proposal-info-item {
@@ -181,17 +181,17 @@ const isProposal = computed(() => {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          border-top: 1px dashed rgba(200, 16, 46, 0.15);
+          border-top: 1px dashed rgba(178, 0, 53, 0.15);
           padding-top: 24rpx;
 
            .proposal-badge {
              font-size: 24rpx;
-             color: #c8102e;
-             background: linear-gradient(90deg, rgba(200, 16, 46, 0.1), rgba(255, 77, 106, 0.1));
+             color: #b20035;
+             background: linear-gradient(90deg, rgba(178, 0, 53, 0.1), rgba(178, 0, 53, 0.1));
              padding: 10rpx 20rpx;
              border-radius: 30rpx;
              font-weight: 600;
-             border: 1px solid rgba(200, 16, 46, 0.05);
+             border: 1px solid rgba(178, 0, 53, 0.05);
          }
 
           .vote-count-box {
@@ -200,7 +200,7 @@ const isProposal = computed(() => {
                background: linear-gradient(90deg, #fff0f2, #fff5f6);
                padding: 10rpx 24rpx;
                border-radius: 30rpx;
-               border: 1px solid rgba(200, 16, 46, 0.05);
+               border: 1px solid rgba(178, 0, 53, 0.05);
 
                .vote-icon {
                     width: 30rpx;
@@ -210,12 +210,12 @@ const isProposal = computed(() => {
                .vote-num {
                     font-size: 32rpx;
                     font-weight: 800;
-                    color: #c8102e;
+                    color: #b20035;
                     margin-right: 6rpx;
                }
                .vote-label {
                     font-size: 24rpx;
-                    color: #c8102e;
+                    color: #b20035;
                     opacity: 0.9;
                     font-weight: 500;
                }
@@ -337,7 +337,7 @@ const isProposal = computed(() => {
 
           .tag-count {
             font-size: 24rpx;
-            color: #c8102e;
+            color: #b20035;
             font-weight: 600;
           }
         }

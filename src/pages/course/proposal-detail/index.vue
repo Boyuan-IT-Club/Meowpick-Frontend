@@ -138,7 +138,7 @@ const handleVote = () => {
 </script>
 
 <style scoped lang="scss">
-$brand-red: #c8102e;
+$brand-red: #b20035;
 $bg-gradient-top: #fff5f5;
 
 .proposal-detail-page {
@@ -299,14 +299,14 @@ $bg-gradient-top: #fff5f5;
         
         .vote-btn {
             margin: 0;
-            background: linear-gradient(90deg, #ff4d4f 0%, #c8102e 100%);
+            background: #b20035;
             color: #fff;
             border-radius: 40rpx;
             padding: 0 48rpx;
             font-size: 28rpx;
             height: 72rpx;
             line-height: 72rpx;
-            box-shadow: 0 4rpx 12rpx rgba(200, 16, 46, 0.3);
+            box-shadow: 0 4rpx 12rpx rgba(178, 0, 53, 0.3);
             
             &.is-voted {
                 background: #f0f0f0;

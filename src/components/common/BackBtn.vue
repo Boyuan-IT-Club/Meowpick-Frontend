@@ -48,8 +48,8 @@ const handleBack = () => {
     height: 22rpx;
     transform: rotate(45deg);
     margin-left: 2rpx; /* Shifted left by reducing left margin */
-    border-bottom: 4.5rpx solid #c8102e; /* Thicker solid theme color */
-    border-left: 4.5rpx solid #c8102e;   /* Thicker solid theme color */
+    border-bottom: 4.5rpx solid #b20035; /* Thicker solid theme color */
+    border-left: 4.5rpx solid #b20035;   /* Thicker solid theme color */
     border-radius: 4rpx; 
 }
 </style>

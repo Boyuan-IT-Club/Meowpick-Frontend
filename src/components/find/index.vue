@@ -476,8 +476,8 @@ const refinedSearchInputBoxStyle = computed((): Record<string, string> => {
         display: 'flex',
         alignItems: 'center',
         padding: '0 24rpx',
-        border: isFocused.value ? '2rpx solid #c8102e' : '2rpx solid #e0e0e0',
-        boxShadow: isFocused.value ? '0 4rpx 12rpx rgba(200, 16, 46, 0.1)' : 'none',
+        border: isFocused.value ? '2rpx solid #b20035' : '2rpx solid #e0e0e0',
+        boxShadow: isFocused.value ? '0 4rpx 12rpx rgba(178, 0, 53, 0.1)' : 'none',
         transition: 'all 0.3s ease',
         boxSizing: 'border-box'
     }
@@ -793,20 +793,20 @@ const handleSuggestClick = (item: SuggestItem) => {
     }
     
     .proposal-btn {
-        background-color: rgba(200, 16, 46, 0.1);
-        color: #c8102e;
+        background-color: rgba(178, 0, 53, 0.1);
+        color: #b20035;
         font-size: 26rpx;
         padding: 12rpx 32rpx;
         border-radius: 30rpx;
         font-weight: 500;
         
         &:active {
-            background-color: rgba(200, 16, 46, 0.2);
+            background-color: rgba(178, 0, 53, 0.2);
         }
     }
 }
 
-$brand-red: #c8102e;
+$brand-red: #b20035;
 
 .find-container {
   height: 100vh;
@@ -959,9 +959,9 @@ $brand-red: #c8102e;
         transition: all 0.2s;
         
         &.active {
-            background-color: #fff0f0; /* 浅红背景 */
-            color: #ff4d4f; /* 品牌红字 */
-            border-color: #ff4d4f;
+            background-color: #fdf2f5;
+            color: #b20035; 
+            border-color: rgba(178,0,53,0.3);
             font-weight: 500;
         }
         
@@ -1069,7 +1069,7 @@ $brand-red: #c8102e;
 
     .item-input-label {
         font-size: 22rpx;
-        color: #c8102e;
+        color: #b20035;
         margin-left: 10rpx;
     }
 }
@@ -1145,12 +1145,12 @@ $brand-red: #c8102e;
     }
     
     &.proposal-card {
-        background: linear-gradient(135deg, #ffffff 0%, #fff7f7 100%);
-        border: 1rpx solid rgba(255, 77, 79, 0.1);
+        background: linear-gradient(135deg, #ffffff 0%, #fdf2f5 100%);
+        border: 1rpx solid rgba(178, 0, 53, 0.1);
         
         .result-type-tag.proposal {
-            background-color: rgba(255, 77, 79, 0.1);
-            color: #ff4d4f;
+            background-color: rgba(178, 0, 53, 0.1);
+            color: #b20035;
         }
     }
     
@@ -1174,8 +1174,8 @@ $brand-red: #c8102e;
         }
         
         &.proposal {
-            background-color: #fff0f0;
-            color: #ff4d4f;
+            background-color: #fdf2f5;
+            color: #b20035;
             right: 24rpx;
             top: 24rpx;
         }
@@ -1352,9 +1352,9 @@ $brand-red: #c8102e;
     }
     
     .btn-confirm {
-        background-color: #c8102e; /* Brand Red */
+        background-color: #b20035; /* Brand Red */
         color: #fff;
-        box-shadow: 0 6rpx 16rpx rgba(200, 16, 46, 0.25); /* Styled shadow */
+        box-shadow: 0 6rpx 16rpx rgba(178, 0, 53, 0.25); /* Styled shadow */
     }
 }
 
@@ -1428,7 +1428,7 @@ $brand-red: #c8102e;
     transition: all 0.2s;
     
     &.active {
-        background-color: rgba(200, 16, 46, 0.08); /* light red tint */
+        background-color: rgba(178, 0, 53, 0.08); /* light red tint */
         color: $brand-red;
         border: 1px solid $brand-red;
         font-weight: 500;

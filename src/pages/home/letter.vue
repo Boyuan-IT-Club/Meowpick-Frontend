@@ -163,7 +163,7 @@ const text12 = `选课猫团队 2025年10月13日`;
         text-align: justify;
         
         &.highlight {
-            color: #c8102e;
+            color: #b20035;
             font-weight: 500;
         }
     }
