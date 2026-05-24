@@ -309,8 +309,9 @@ const onItemClick = (item: ListItem) => {
             url: `/pages/course/index/index?id=${item.id}`
         });
     } else {
+        const dataStr = encodeURIComponent(JSON.stringify(item));
         uni.navigateTo({
-            url: `/pages/proposal/detail/index?id=${item.id}`
+            url: `/pages/course/proposal-detail/index?data=${dataStr}`
         });
     }
 };

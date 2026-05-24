@@ -45,13 +45,6 @@
       }
     },
     {
-      "path": "pages/proposal/detail/index",
-      "style": {
-        "navigationStyle": "custom",
-        "navigationBarTitleText": "提议详情"
-      }
-    },
-    {
       "path": "pages/proposal/propose/propose",
       "style": {
         "navigationStyle": "custom"
