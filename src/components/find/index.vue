@@ -184,6 +184,7 @@
                 <!-- 课程列表底部（无课程时也显示到底了） -->
                 <template v-if="!showProposalsList">
                     <view class="bottom">--- 到底了哟 ---</view>
+                    <view class="transition-text">没有找到心仪的课程？</view>
                     <view class="show-proposals-tip" @click="toggleProposalsList">
                         <text>查看其他同学的建课提议</text>
                         <image src="@/images/go-back.png" class="tip-arrow" />
@@ -201,6 +202,7 @@
                         </view>
                     </view>
                     <view class="bottom">--- 到底了哟 ---</view>
+                    <view class="transition-text">以上提议都不是你想要的？</view>
                     <view class="new-card" @click="goToProposal">
                         <text class="new-card-text">亲自提议新课程</text>
                     </view>
@@ -1152,6 +1154,13 @@ $brand-red: #b20035;
 }
 
 /* New Card Style */
+.transition-text {
+    text-align: center;
+    font-size: 26rpx;
+    color: #999999;
+    margin: 10rpx 0 20rpx;
+}
+
 .new-card {
     margin: 20rpx 40rpx 60rpx;
     height: 90rpx;
