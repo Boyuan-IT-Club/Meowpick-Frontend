@@ -205,11 +205,6 @@
                         <text class="new-card-text">亲自提议新课程</text>
                     </view>
                 </template>
-
-                <!-- 空状态 -->
-                <view class="empty-state" v-if="rows.length === 0 && !loading">
-                    <text class="empty-sub">没有找到你想要的？</text>
-                </view>
             </view>
       </view>
 
@@ -771,39 +766,6 @@ const handleSuggestClick = (item: SuggestItem) => {
 </script>
 
 <style scoped lang="scss">
-
-.empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 50vh;
-    
-    .empty-text {
-        font-size: 28rpx;
-        color: #999999;
-        margin-bottom: 12rpx;
-    }
-    
-    .empty-sub {
-        font-size: 26rpx;
-        color: #bbbbbb;
-        margin-bottom: 40rpx;
-    }
-    
-    .proposal-btn {
-        background-color: rgba(178, 0, 53, 0.1);
-        color: #b20035;
-        font-size: 26rpx;
-        padding: 12rpx 32rpx;
-        border-radius: 30rpx;
-        font-weight: 500;
-        
-        &:active {
-            background-color: rgba(178, 0, 53, 0.2);
-        }
-    }
-}
 
 $brand-red: #b20035;
 
