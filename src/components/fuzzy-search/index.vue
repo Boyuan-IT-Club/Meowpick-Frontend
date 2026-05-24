@@ -127,7 +127,7 @@ const handleSelect = (option: string) => {
   transform: translateY(-50%);
   width: 4vw;
   height: 4vw;
-  transition: transform 0.3s ease;
+  transition: transform 0.12s ease;
 }
 
 .arrow-icon.rotate {
@@ -153,7 +153,7 @@ const handleSelect = (option: string) => {
   padding: 2vw 3vw;
   font-size: 3.5vw;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.1s ease;
 
   &:hover {
     background-color: #f5f5f5;

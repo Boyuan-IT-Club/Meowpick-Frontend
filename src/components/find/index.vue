@@ -474,7 +474,7 @@ const refinedSearchInputBoxStyle = computed((): Record<string, string> => {
         padding: '0 24rpx',
         border: isFocused.value ? '2rpx solid #b20035' : '2rpx solid #e0e0e0',
         boxShadow: isFocused.value ? '0 4rpx 12rpx rgba(178, 0, 53, 0.1)' : 'none',
-        transition: 'all 0.3s ease',
+        transition: 'all 0.12s ease',
         boxSizing: 'border-box'
     }
 });
@@ -787,7 +787,7 @@ $brand-red: #b20035;
     z-index: 100;
     background-color: #fff;
     box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
+    transition: 'all 0.12s ease';
     
     &.is-collapsed {
         background-color: rgba(247, 248, 250, 0.98);
@@ -805,7 +805,7 @@ $brand-red: #b20035;
     align-items: center;
     padding-left: 32rpx;
     box-sizing: border-box;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+    transition: all 0.12s cubic-bezier(0.25, 0.8, 0.25, 1);
     z-index: 101; /* Ensure above filter bar */
     
     .nav-back-btn {
@@ -825,7 +825,7 @@ $brand-red: #b20035;
         align-items: center;
         padding: 0 20rpx;
         border: 1rpx solid #eee;
-        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+        transition: all 0.12s cubic-bezier(0.25, 0.8, 0.25, 1);
         box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.03); 
         
         .search-icon {
@@ -919,7 +919,7 @@ $brand-red: #b20035;
         font-size: 26rpx;
         color: #555;
         border: 1rpx solid transparent;
-        transition: all 0.2s;
+        transition: all 0.1s;
         
         &.active {
             background-color: #fdf2f5;
@@ -1095,7 +1095,7 @@ $brand-red: #b20035;
     padding: 24rpx;
     position: relative;
     box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.04);
-    transition: all 0.2s;
+    transition: all 0.1s;
     
     &:active {
         transform: scale(0.95);
@@ -1171,7 +1171,7 @@ $brand-red: #b20035;
     align-items: center;
     box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.25);
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.05s ease, box-shadow 0.1s ease;
 
     &:active {
         transform: scale(0.98);
@@ -1309,7 +1309,7 @@ $brand-red: #b20035;
         line-height: 84rpx;
         border-radius: 42rpx; /* Fully rounded */
         margin: 0;
-        transition: opacity 0.2s;
+        transition: opacity 0.1s;
         
         &::after { border: none; }
         
@@ -1340,7 +1340,7 @@ $brand-red: #b20035;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.1s ease;
     
     &:active {
         background: #fdf2f5;
@@ -1396,7 +1396,7 @@ $brand-red: #b20035;
     border-radius: 12rpx; /* Rounded rectangles instead of capsules */
     font-size: 26rpx;
     border: 1px solid transparent;
-    transition: all 0.2s;
+    transition: all 0.1s;
     
     &.active {
         background-color: rgba(178, 0, 53, 0.08); /* light red tint */

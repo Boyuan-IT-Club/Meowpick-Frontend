@@ -306,7 +306,7 @@ $text-main: #2c2c2c;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  transition: all 0.2s;
+  transition: all 0.1s;
 
   .card-title {
     font-size: 30rpx;

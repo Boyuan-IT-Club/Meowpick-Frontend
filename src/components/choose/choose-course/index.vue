@@ -120,7 +120,7 @@ const isProposal = computed(() => {
   border: 1px solid rgba(178, 0, 53, 0.15);
   position: relative;
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: all 0.12s ease;
 
   &:active {
     transform: scale(0.98);
@@ -234,7 +234,7 @@ const isProposal = computed(() => {
   display: flex;
   flex-direction: column;
   border: 1px solid #f0f0f0;
-  transition: all 0.3s ease;
+  transition: all 0.12s ease;
 
   &:active {
     transform: scale(0.98);

@@ -294,7 +294,7 @@ const commit = async () => {
     background: #FAFAFA;
     border-radius: 16rpx;
     border: 2rpx solid transparent;
-    transition: all 0.3s;
+    transition: all 0.12s;
     
     .tag-icon {
         width: 64rpx;

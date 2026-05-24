@@ -186,7 +186,7 @@ function onSwiperAnimationFinish(e: any) {
     font-size: 34rpx; 
     color: #9ea1a6; 
     font-weight: 500;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transition: all 0.12s cubic-bezier(0.25, 0.8, 0.25, 1);
     
     &:active {
       transform: scale(0.95);

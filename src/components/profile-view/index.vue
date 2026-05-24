@@ -415,7 +415,7 @@ onShow(async () => { await waitForLogin(); loadData(); });
         font-size: 28rpx;
         font-weight: 500;
         color: #666;
-        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+        transition: all 0.12s cubic-bezier(0.25, 0.8, 0.25, 1);
         
         &.active {
             /* Replace black bg with gradient from layout/main.vue */
@@ -441,7 +441,7 @@ onShow(async () => { await waitForLogin(); loadData(); });
     position: relative;
     margin-bottom: 24rpx; 
     border: 1px solid #f0f0f0;
-    transition: all 0.3s ease;
+    transition: all 0.12s ease;
 
     &:active {
         transform: scale(0.98);
@@ -617,7 +617,7 @@ onShow(async () => { await waitForLogin(); loadData(); });
     align-items: center;
     justify-content: center;
     z-index: 100;
-    transition: transform 0.1s;
+    transition: transform 0.05s;
 
     &:active {
         transform: scale(0.95);

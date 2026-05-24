@@ -402,7 +402,7 @@ const submit = async () => {
     font-size: 26rpx;
     color: #666;
     border: 1px solid transparent;
-    transition: all 0.2s;
+    transition: all 0.1s;
     
     &.active {
         background: #FFF0F6;

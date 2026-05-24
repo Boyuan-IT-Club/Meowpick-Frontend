@@ -214,7 +214,7 @@ const goBack = () => {
   align-items: center;
   justify-content: center;
   z-index: 999;
-  transition: transform 0.2s;
+  transition: transform 0.05s;
   
   &:active {
     transform: scale(0.95);
