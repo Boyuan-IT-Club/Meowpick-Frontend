@@ -31,22 +31,6 @@
       "style": {}
     },
     {
-      "path": "pages/find/choose/index",
-      "style": {
-        "navigationStyle": "custom"
-      }
-    },
-    {
-      "path": "pages/find/choose/teacher",
-      "style": {}
-    },
-    {
-      "path": "pages/my-comments/my-comments",
-      "style": {
-        "enablePullDownRefresh": true
-      }
-    },
-    {
       "path": "pages/home/letter",
       "style": {
         "navigationBarTitleText": "给用户的一封信",
@@ -57,15 +41,6 @@
       "path": "pages/home/update-log",
       "style": {
         "navigationBarTitleText": "版本更新日志",
-        "navigationStyle": "custom"
-      }
-    },
-    {
-      "path": "pages/web-frame/web-frame"
-    },
-    {
-      "path": "pages/proposal/list/list",
-      "style": {
         "navigationStyle": "custom"
       }
     },
