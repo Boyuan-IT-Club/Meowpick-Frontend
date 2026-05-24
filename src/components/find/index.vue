@@ -170,7 +170,7 @@
 
       <!-- 场景 C: 结果模式 -> 显示 Result List -->
       <view v-else-if="isResultMode" class="result-section">
-        <view class="list-content" v-if="rows.length > 0" style="padding-top: 15rpx;">
+        <view class="list-content" style="padding-top: 15rpx;">
                 <!-- Courses Section -->
                 <view class="group-section" v-if="groupedRows.courses.length">
                     <view class="group-title">课程</view>
@@ -181,18 +181,18 @@
                     </view>
                 </view>
 
-                <!-- 未点击查看他人提议时：课程列表底部 -->
+                <!-- 课程列表底部（始终显示） -->
                 <template v-if="!showProposalsList">
-                    <view class="bottom" v-if="groupedRows.courses.length">--- 到底了哟 ---</view>
-                    <view class="show-proposals-tip" v-if="groupedRows.courses.length" @click="toggleProposalsList">
+                    <view class="bottom">--- 到底了哟 ---</view>
+                    <view class="show-proposals-tip" @click="toggleProposalsList">
                         <text>没有找到你的目标课程？点击查看其他同学的建课提议 👇</text>
                         <image src="@/images/go-back.png" class="tip-arrow" />
                     </view>
                 </template>
 
-                <!-- Proposals Section (点击后) -->
+                <!-- Proposals Section (点击后，始终显示底部按钮) -->
                 <template v-if="showProposalsList">
-                    <view class="group-section" v-if="groupedRows.proposals.length">
+                    <view class="group-section">
                         <view class="group-title">提议</view>
                         <view v-for="(item, idx) in groupedRows.proposals" :key="item.id" class="result-card" @click="onResultClick(item)">
                             <view class="result-card-wrapper proposal-card">
@@ -205,14 +205,17 @@
                         <view class="new-card-content">那就亲自提议吧！</view>
                     </view>
                 </template>
-            </view>
-            
-            <!-- Empty State -->
-            <view class="empty-state" v-else-if="!loading">
-                <text class="empty-text">这里空空如也...</text>
-                <text class="empty-sub">没有找到你想要的？</text>
-                <view class="proposal-btn" @click="goToProposal">
-                    去提议
+
+                <!-- 无课程结果时：空状态 + 查看他人提议 -->
+                <view v-if="rows.length === 0 && !loading && !showProposalsList">
+                    <view class="empty-state">
+                        <text class="empty-text">这里空空如也...</text>
+                        <text class="empty-sub">没有找到你想要的？</text>
+                    </view>
+                    <view class="show-proposals-tip" @click="toggleProposalsList">
+                        <text>没有找到你的目标课程？点击查看其他同学的建课提议 👇</text>
+                        <image src="@/images/go-back.png" class="tip-arrow" />
+                    </view>
                 </view>
             </view>
       </view>
