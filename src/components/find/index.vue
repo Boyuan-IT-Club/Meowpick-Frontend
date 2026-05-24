@@ -23,7 +23,7 @@
 
             <!-- 中间：搜索框 (上移同时控制右边距) -->
             <view class="search-input-box" :style="searchInputBoxStyle">
-                <image src="@/images/search-icon.png" class="search-icon" />
+                <view class="search-icon"></view>
                 <input
                 v-model="searchText"
                 class="search-input"
@@ -150,7 +150,7 @@
         >
           <!-- 左侧图标/类型 -->
           <view class="item-icon-wrapper">
-             <image src="@/images/search-icon.png" class="mini-search-icon" style="width:24rpx;height:24rpx;opacity:0.5;" />
+             <view class="mini-search-icon"></view>
           </view>
 
           <!-- 右侧内容 -->
@@ -250,7 +250,7 @@
               @click="clickRecommend(item.keyword)"
             >
               <view class="recommend-icon">
-                 <image src="@/images/search-icon.png" class="mini-icon" />
+                 <view class="mini-icon"></view>
               </view>
               <text class="recommend-word">{{ item.keyword }}</text>
               <text class="recommend-tag" v-if="item.tag">{{ item.tag }}</text>
@@ -837,9 +837,34 @@ $brand-red: #b20035;
             width: 32rpx;
             height: 32rpx;
             margin-right: 16rpx;
-            opacity: 0.5;
+            position: relative;
+            flex-shrink: 0;
+
+            &::before {
+                content: '';
+                position: absolute;
+                width: 18rpx;
+                height: 18rpx;
+                border: 4rpx solid #bbb;
+                border-radius: 50%;
+                top: 2rpx;
+                left: 2rpx;
+                box-sizing: border-box;
+            }
+            &::after {
+                content: '';
+                position: absolute;
+                width: 4rpx;
+                height: 14rpx;
+                background: #bbb;
+                border-radius: 2rpx;
+                bottom: 0;
+                right: 4rpx;
+                transform: rotate(-45deg);
+                transform-origin: top center;
+            }
         }
-        
+
         .search-input {
             flex: 1;
             font-size: 28rpx;
@@ -972,7 +997,67 @@ $brand-red: #b20035;
             .mini-icon {
                 width: 32rpx;
                 height: 32rpx;
-                opacity: 0.4;
+                position: relative;
+                flex-shrink: 0;
+
+                &::before {
+                    content: '';
+                    position: absolute;
+                    width: 18rpx;
+                    height: 18rpx;
+                    border: 4rpx solid #bbb;
+                    border-radius: 50%;
+                    top: 2rpx;
+                    left: 2rpx;
+                    box-sizing: border-box;
+                    opacity: 0.4;
+                }
+                &::after {
+                    content: '';
+                    position: absolute;
+                    width: 4rpx;
+                    height: 14rpx;
+                    background: #bbb;
+                    border-radius: 2rpx;
+                    bottom: 0;
+                    right: 4rpx;
+                    transform: rotate(-45deg);
+                    transform-origin: top center;
+                    opacity: 0.4;
+                }
+            }
+
+            .mini-search-icon {
+                width: 24rpx;
+                height: 24rpx;
+                position: relative;
+                flex-shrink: 0;
+
+                &::before {
+                    content: '';
+                    position: absolute;
+                    width: 14rpx;
+                    height: 14rpx;
+                    border: 3rpx solid #bbb;
+                    border-radius: 50%;
+                    top: 1rpx;
+                    left: 1rpx;
+                    box-sizing: border-box;
+                    opacity: 0.5;
+                }
+                &::after {
+                    content: '';
+                    position: absolute;
+                    width: 3rpx;
+                    height: 10rpx;
+                    background: #bbb;
+                    border-radius: 2rpx;
+                    bottom: 0;
+                    right: 2rpx;
+                    transform: rotate(-45deg);
+                    transform-origin: top center;
+                    opacity: 0.5;
+                }
             }
         }
         
