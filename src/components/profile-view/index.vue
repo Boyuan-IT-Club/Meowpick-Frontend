@@ -444,7 +444,7 @@ onShow(async () => { await waitForLogin(); loadData(); });
     transition: all 0.12s ease;
 
     &:active {
-        transform: scale(0.98);
+        transform: scale(0.96);
         box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.03);
     }
 
@@ -620,7 +620,7 @@ onShow(async () => { await waitForLogin(); loadData(); });
     transition: transform 0.05s;
 
     &:active {
-        transform: scale(0.95);
+        transform: scale(0.94);
     }
 
     .plus-icon {

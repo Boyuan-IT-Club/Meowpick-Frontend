@@ -356,7 +356,7 @@ const commit = async () => {
     box-shadow: 0 8rpx 24rpx rgba(183, 0, 48, 0.25);
     
     &:active {
-        transform: scale(0.98);
+        transform: scale(0.96);
         box-shadow: 0 4rpx 12rpx rgba(183, 0, 48, 0.2);
     }
     

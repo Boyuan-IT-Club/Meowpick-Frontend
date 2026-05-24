@@ -261,7 +261,7 @@ $text-main: #2c2c2c;
   
   // 悬浮态：轻微下沉
   &:active {
-      transform: scale(0.95);
+      transform: scale(0.94);
   }
 }
 

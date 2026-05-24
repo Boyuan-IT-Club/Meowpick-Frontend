@@ -1098,7 +1098,7 @@ $brand-red: #b20035;
     transition: all 0.1s;
     
     &:active {
-        transform: scale(0.95);
+        transform: scale(0.94);
         box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.02);
     }
 
@@ -1174,7 +1174,7 @@ $brand-red: #b20035;
     transition: transform 0.05s ease, box-shadow 0.1s ease;
 
     &:active {
-        transform: scale(0.98);
+        transform: scale(0.96);
         box-shadow: 0 4rpx 12rpx rgba(178, 0, 53, 0.15);
     }
 }
@@ -1344,7 +1344,7 @@ $brand-red: #b20035;
     
     &:active {
         background: #fdf2f5;
-        transform: scale(0.98);
+        transform: scale(0.96);
     }
 }
 
@@ -1397,12 +1397,18 @@ $brand-red: #b20035;
     font-size: 26rpx;
     border: 1px solid transparent;
     transition: all 0.1s;
+    user-select: none;
     
     &.active {
         background-color: rgba(178, 0, 53, 0.08); /* light red tint */
         color: $brand-red;
         border: 1px solid $brand-red;
         font-weight: 500;
+    }
+    
+    &:active {
+        transform: scale(0.94);
+        opacity: 0.8;
     }
 }
 </style>
