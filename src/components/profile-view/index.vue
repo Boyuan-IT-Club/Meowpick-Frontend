@@ -344,6 +344,7 @@ onShow(async () => { await waitForLogin(); loadData(); });
     min-height: 100vh;
     box-sizing: border-box;
     background-color: #f7f8fa; /* Global BG */
+    overflow: hidden;
 }
 
 /* 1. Header: Breathable & Bold */
