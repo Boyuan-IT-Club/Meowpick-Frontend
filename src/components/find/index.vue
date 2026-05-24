@@ -1195,17 +1195,17 @@ $brand-red: #c8102e;
     margin: 20rpx 40rpx 60rpx;
     height: 90rpx;
     border-radius: 45rpx;
-    background: linear-gradient(90deg, #b70030, #ff4d6a);
+    background: #b20035;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 8rpx 24rpx rgba(183, 0, 48, 0.25);
+    box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.25);
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 
     &:active {
         transform: scale(0.98);
-        box-shadow: 0 4rpx 12rpx rgba(183, 0, 48, 0.2);
+        box-shadow: 0 4rpx 12rpx rgba(178, 0, 53, 0.15);
     }
 }
 
@@ -1362,8 +1362,8 @@ $brand-red: #c8102e;
     margin: 20rpx auto 40rpx;
     width: fit-content;
     padding: 16rpx 40rpx;
-    background: #fff5f5;
-    border: 2rpx solid #ffe3e3;
+    background: #ffffff;
+    border: 2rpx solid rgba(178, 0, 53, 0.3);
     border-radius: 40rpx;
     display: flex;
     justify-content: center;
@@ -1372,14 +1372,14 @@ $brand-red: #c8102e;
     transition: all 0.2s ease;
     
     &:active {
-        background: #ffebeb;
+        background: #fdf2f5;
         transform: scale(0.98);
     }
 }
 
 .show-proposals-tip text {
     font-size: 26rpx;
-    color: #c8102e;
+    color: #b20035;
     font-weight: 500;
 }
 

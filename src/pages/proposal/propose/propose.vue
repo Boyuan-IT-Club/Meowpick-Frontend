@@ -431,16 +431,16 @@ const submit = async () => {
     height: 90rpx;
     line-height: 90rpx;
     border-radius: 45rpx;
-    background: linear-gradient(90deg, #b70030, #ff4d6a);
+    background: #b20035;
     color: #fff;
     font-size: 32rpx;
     font-weight: bold;
     margin-top: 20rpx;
-    box-shadow: 0 8rpx 24rpx rgba(183, 0, 48, 0.25);
+    box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.25);
     
     &:active {
         transform: scale(0.98);
-        box-shadow: 0 4rpx 12rpx rgba(183, 0, 48, 0.2);
+        box-shadow: 0 4rpx 12rpx rgba(178, 0, 53, 0.15);
     }
 
     &[disabled] {
