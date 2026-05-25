@@ -502,8 +502,7 @@ const hideGuide = () => {
 }
 
 .list-container {
-    padding: 0 32rpx;
-    padding-bottom: 40rpx;
+    padding: 80rpx 32rpx 40rpx;
 }
 
 .card {
