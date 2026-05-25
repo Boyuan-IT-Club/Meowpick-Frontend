@@ -24,7 +24,7 @@
                   <view class="vote-count-box">
                       <image src="@/images/like_active.png" class="vote-icon" />
                       <text class="vote-num">{{ props.data?.voteCount || props.data?.agreeCount || 0 }}</text>
-                      <text class="vote-label">票</text>
+                      <text class="vote-label">支持</text>
                   </view>
               </view>
           </view>

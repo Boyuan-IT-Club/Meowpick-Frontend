@@ -54,29 +54,19 @@
            <view class="vote-area">
               <view class="vote-info">
                   <text class="vote-count-big">{{ proposalData.voteCount || 0 }}</text>
-                  <text class="vote-text">人已想上</text>
+                  <text class="vote-text">人支持此提议</text>
               </view>
-              <button 
-                class="vote-btn" 
+              <button
+                class="vote-btn"
                 :class="{ 'is-voted': isVoted }"
                 @click="handleVote"
               >
-                  {{ isVoted ? '已支持' : '🙋 我想上' }}
+                  {{ isVoted ? '已支持' : '🙋 支持提议' }}
               </button>
-          </view>
-      </view>
-      
-      <!-- 讨论区 -->
-      <view class="discussion-section">
-        <view class="section-header">
-           <text class="section-title">讨论区</text>
-        </view>
-        <view class="empty-discussion">
-            <text>暂无讨论</text>
-        </view>
-      </view>
-      
-      <view class="bottom-spacer"></view>
+           </view>
+       </view>
+
+       <view class="bottom-spacer"></view>
     </scroll-view>
 
   </view>
@@ -314,29 +304,6 @@ $bg-gradient-top: #fff5f5;
                 box-shadow: none;
             }
         }
-    }
-}
-
-.discussion-section {
-    background: #fff;
-    border-radius: 20rpx;
-    padding: 30rpx;
-    min-height: 300rpx;
-    
-    .section-header {
-        margin-bottom: 20rpx;
-        .section-title {
-            font-size: 30rpx;
-            font-weight: 600;
-            color: #333;
-        }
-    }
-    
-    .empty-discussion {
-        text-align: center;
-        padding: 40rpx 0;
-        color: #999999;
-        font-size: 28rpx;
     }
 }
 

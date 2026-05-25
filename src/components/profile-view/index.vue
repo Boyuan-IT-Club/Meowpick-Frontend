@@ -142,12 +142,12 @@
 
                   <text class="content-text">{{ item.reason }}</text>
                   
-                  <view class="footer-row">
-                     <view class="vote-count-box">
-                        <image src="@/images/like_active.png" class="vote-icon" />
-                        <text class="vote-num">{{ item.voteCount || 0 }}</text>
-                        <text class="vote-label">票</text>
-                     </view>
+                   <view class="footer-row">
+                      <view class="vote-count-box">
+                         <image src="@/images/like_active.png" class="vote-icon" />
+                         <text class="vote-num">{{ item.voteCount || 0 }}</text>
+                         <text class="vote-label">支持</text>
+                      </view>
                      <text
                         class="status-badge"
                         :class="{
