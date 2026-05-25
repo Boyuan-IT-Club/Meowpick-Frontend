@@ -6,11 +6,6 @@
       :class="{ 'is-collapsed': isCollapsed }"
       :style="{ height: headerHeight + 'px' }"
     >
-        <!-- Add Comment Search Guide Banner -->
-        <view v-if="mode === 'add-comment'" class="search-guide-banner" :style="{ top: (headerHeight) + 'px' }">
-            <text>请搜索并选择一门课程进行吐槽</text>
-        </view>
-
         <!-- 搜索功能区容器 -->
         <view 
             class="search-bar-wrapper"
@@ -217,6 +212,11 @@
       <!-- 场景 B: 无搜索词 -> 显示历史记录 & 热门推荐 (Default) -->
       <view v-else class="empty-section">
         
+        <!-- Add Comment Search Guide Banner -->
+        <view v-if="mode === 'add-comment'" class="search-guide-banner">
+            <text>请搜索并选择你要吐槽的课程</text>
+        </view>
+
         <!-- 历史记录 -->
         <view class="section-header">
           <text class="section-title">历史搜索</text>
@@ -870,10 +870,8 @@ $brand-red: #b20035;
 }
 
 .search-guide-banner {
-    position: absolute;
-    left: 0; 
-    right: 0;
-    height: 60rpx;
+    margin: 0 32rpx 30rpx 32rpx;
+    padding: 20rpx 32rpx;
     background-color: #fffbe6;
     color: #d48806;
     display: flex;
@@ -881,7 +879,7 @@ $brand-red: #b20035;
     justify-content: center;
     font-size: 26rpx;
     font-weight: 500;
-    z-index: 90;
+    border-radius: 16rpx;
 }
 
 // 内容区域
