@@ -14,7 +14,7 @@
     </view>
 
     <!-- Content Area -->
-    <view class="content-body" :style="{ paddingTop: (menuButtonInfo.bottom + 12) + 'px' }">
+    <view class="content-body" :style="{ paddingTop: NAVBAR_HEIGHT + 'px' }">
         
         <!-- Section 1: Tags Selection (Emoji Tags) -->
         <view class="section-card">
@@ -69,13 +69,11 @@ import { TOAST_DURATION_MS } from "@/utils/constants";
 
 // Menu Button Info for Custom Navbar
 const sysInfo = uni.getSystemInfoSync();
-let menuButtonInfo = { 
-    width: 87, 
-    height: 32, 
-    left: sysInfo.windowWidth - 87 - 10, 
-    top: sysInfo.statusBarHeight ? sysInfo.statusBarHeight + 4 : 48, 
-    bottom: (sysInfo.statusBarHeight ? sysInfo.statusBarHeight + 4 : 48) + 32, 
-    right: sysInfo.windowWidth - 10 
+let menuButtonInfo = {
+    width: 87,
+    height: 32,
+    top: sysInfo.statusBarHeight || 20,
+    bottom: (sysInfo.statusBarHeight || 20) + 32
 };
 try {
     const res = uni.getMenuButtonBoundingClientRect();
@@ -83,20 +81,20 @@ try {
         menuButtonInfo = {
             width: res.width,
             height: res.height,
-            left: res.left,
             top: res.top,
-            bottom: res.bottom,
-            right: res.right
+            bottom: res.bottom
         };
     }
 } catch (e) {}
 
+// 导航栏总高度 = 胶囊底部 + 12px间距
+const NAVBAR_HEIGHT = menuButtonInfo.bottom + 12;
+
 const navBarStyle = computed(() => {
-    const headerHeight = menuButtonInfo.bottom + 12;
     return {
-        height: headerHeight + 'px',
+        height: NAVBAR_HEIGHT + 'px',
         paddingTop: menuButtonInfo.top + 'px',
-        paddingLeft: '32rpx', // Match search page
+        paddingLeft: '32rpx',
         paddingRight: '32rpx',
         boxSizing: 'border-box'
     };
@@ -114,11 +112,10 @@ const navContentStyle = computed(() => {
 const navLeftStyle = computed(() => {
     return {
         height: menuButtonInfo.height + 'px',
-        width: menuButtonInfo.height + 'px', // Square layout
+        width: menuButtonInfo.height + 'px',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
-        // No margin right here, handled by gap or title margin
+        justifyContent: 'center'
     };
 });
 
