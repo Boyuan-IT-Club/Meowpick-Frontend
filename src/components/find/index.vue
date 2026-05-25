@@ -279,7 +279,7 @@ const props = defineProps<{
     initialMode?: string
 }>();
 
-const mode = ref(props.initialMode || ''); // 'add-comment' or empty
+const mode = computed(() => props.initialMode || ''); // 'add-comment' or empty
 
 // 1. 获取胶囊信息 & 系统信息
 const sysInfo = uni.getSystemInfoSync();
