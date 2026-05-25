@@ -13,7 +13,7 @@
     </view>
 
     <!-- 内容区域 -->
-    <view class="content-body">
+    <view class="content-body" :style="{ paddingTop: (NAVBAR_HEIGHT + 8) + 'px' }">
       <!-- 标签选择 -->
       <view class="section-card">
         <view class="section-header">
@@ -210,7 +210,6 @@ const commit = async () => {
 
 .content-body {
   padding: 32rpx;
-  padding-top: calc(80rpx + env(safe-area-inset-top));
 }
 
 .section-card {
