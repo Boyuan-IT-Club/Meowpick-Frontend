@@ -200,8 +200,13 @@ try {
 const navBarHeight = menuButtonInfo.height;
 const paddingTotal = menuButtonInfo.top + menuButtonInfo.height + 10;
 
-// 胶囊底部 + 12rpx = FilterBar sticky top
-const stickyTop = computed(() => (menuButtonInfo.bottom + 12) + 'px');
+// 胶囊中心对齐：top = 胶囊顶部 + (胶囊高度 - 胶囊中心偏移)
+const stickyTop = computed(() => {
+    // 胶囊中心约在胶囊顶部 + height/2
+    // 胶囊内容区中心对准我们胶囊中心
+    const centerOffset = (menuButtonInfo.height - 32) / 2;
+    return (menuButtonInfo.top + centerOffset) + 'px';
+});
 
 // Types
 type ItemType = 'comment' | 'proposal';
