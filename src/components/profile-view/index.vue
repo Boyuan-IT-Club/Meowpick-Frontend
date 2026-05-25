@@ -1,8 +1,8 @@
 <template>
-  <view class="profile-container" :style="{ paddingTop: (menuButtonInfo.top + 16 + capsuleExtraOffset) + 'px' }">
+  <view class="profile-container" :style="{ paddingTop: (menuButtonInfo.top + 15) + 'px' }">
 
     <!-- 胶囊遮罩：挡住胶囊上方的内容 -->
-    <view class="capsule-mask" :style="{ height: (menuButtonInfo.top + menuButtonInfo.height + 16 + capsuleExtraOffset) + 'px' }" />
+    <view class="capsule-mask" :style="{ height: (menuButtonInfo.top + menuButtonInfo.height + 15) + 'px' }" />
 
     <!-- 1. Header Area: Large & Breathable -->
      <view class="header-section" :style="{ marginTop: '20rpx', marginBottom: '40rpx' }">
@@ -203,23 +203,7 @@ try {
 const navBarHeight = menuButtonInfo.height;
 const paddingTotal = menuButtonInfo.top + menuButtonInfo.height + 10;
 
-const capsuleExtraOffset = ref(0);
-
-onMounted(async () => {
-    await waitForLogin();
-    loadData();
-
-    await nextTick();
-    uni.createSelectorQuery().select('.header-section').boundingClientRect((headerRect) => {
-        uni.createSelectorQuery().select('.list-container').boundingClientRect((listRect) => {
-            if (headerRect && listRect) {
-                const titleBottom = headerRect.top + headerRect.height;
-                const firstCardTop = listRect.top;
-                capsuleExtraOffset.value = Math.round((titleBottom + firstCardTop) / 2 - (menuButtonInfo.top + menuButtonInfo.height));
-            }
-        }).exec();
-    }).exec();
-});
+onMounted(async () => { await waitForLogin(); loadData(); });
 
 // Types
 type ItemType = 'comment' | 'proposal';
