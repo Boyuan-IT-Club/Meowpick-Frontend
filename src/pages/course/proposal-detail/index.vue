@@ -125,7 +125,7 @@ const goBack = () => {
 const handleVote = async () => {
     if (isVoted.value || !proposalData.value.id) return;
     try {
-        const res = await http.Like.likeCreate(proposalData.value.id, { targetId: proposalData.value.id, targetType: 'proposal' });
+        const res = await http.ActionController.likeCreate(proposalData.value.id, { targetId: proposalData.value.id, targetType: 'proposal' });
         const result = res.data?.data;
         if (result !== undefined) {
             if (result.like !== undefined) {

@@ -107,7 +107,7 @@ const likeCount = ref(props.data?.likeCnt || props.data?.voteCount || props.data
 const handleLike = async () => {
     if (!props.data?.id) return;
     try {
-        const res = await http.Like.likeCreate(props.data.id, { targetId: props.data.id, targetType: 'proposal' });
+        const res = await http.ActionController.likeCreate(props.data.id, { targetId: props.data.id, targetType: 'proposal' });
         const result = res.data?.data;
         if (result !== undefined) {
             if (result.like !== undefined) {

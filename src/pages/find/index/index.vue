@@ -20,16 +20,9 @@ onLoad((options: any) => {
 });
 
 onShow(() => {
-  // 隐藏原生 TabBar，确保全屏体验
-  // 增加 try-catch 避免在非 TabBar 页面调用报错
-  try {
-      uni.hideTabBar();
-  } catch (e) {
-      console.warn('hideTabBar failed:', e);
-  }
-  
+  try { uni.hideTabBar(); } catch (e) {}
   if (findRef.value && findRef.value.resumeState) {
-      findRef.value.resumeState();
+    findRef.value.resumeState();
   }
 });
 </script>
