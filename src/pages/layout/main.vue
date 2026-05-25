@@ -76,7 +76,7 @@ onLoad(() => {
 });
 
 onShow(() => {
-  uni.hideTabBar();
+  try { uni.hideTabBar(); } catch (e) {}
 });
 
 function switchTab(index: number) {
