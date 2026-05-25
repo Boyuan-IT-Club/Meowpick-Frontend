@@ -47,10 +47,9 @@
 
     <!-- 2. Filter Bar: Minimalist Text Tabs -->
     <view class="sticky-bar" :style="{ top: (menuButtonInfo.top) + 'px', height: menuButtonInfo.height + 'px' }">
-       <view class="filter-row" :style="{ height: menuButtonInfo.height + 'px' }">
+       <view class="filter-row">
             <view
                 class="filter-pill"
-                :style="{ height: menuButtonInfo.height + 'px', lineHeight: menuButtonInfo.height + 'px' }"
                 :class="{ active: currentFilter === 'all' }"
                 @click="setFilter('all')"
             >
@@ -58,7 +57,6 @@
             </view>
             <view
                 class="filter-pill"
-                :style="{ height: menuButtonInfo.height + 'px', lineHeight: menuButtonInfo.height + 'px' }"
                 :class="{ active: currentFilter === 'comment' }"
                 @click="setFilter('comment')"
             >
@@ -66,7 +64,6 @@
             </view>
             <view
                 class="filter-pill"
-                :style="{ height: menuButtonInfo.height + 'px', lineHeight: menuButtonInfo.height + 'px' }"
                 :class="{ active: currentFilter === 'proposal' }"
                 @click="setFilter('proposal')"
             >
@@ -475,23 +472,25 @@ const hideGuide = () => {
     backdrop-filter: blur(20px);
 
     .filter-row {
-        display: flex;
+        display: inline-flex;
         align-items: center;
         background: #fff;
         border-radius: 100rpx;
         padding: 0 6rpx;
         box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.06);
-        overflow: hidden;
+        height: 100%;
     }
 
     .filter-pill {
-        padding: 0 32rpx;
+        padding: 0 24rpx;
         border-radius: 60rpx;
         font-size: 28rpx;
         font-weight: 500;
         color: #666;
         transition: all 0.12s cubic-bezier(0.25, 0.8, 0.25, 1);
         box-sizing: border-box;
+        height: 64rpx;
+        line-height: 64rpx;
 
         &.active {
             background: linear-gradient(135deg, #b20035, #ff4d6a);
