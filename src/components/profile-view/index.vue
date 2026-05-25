@@ -46,7 +46,7 @@
     </view>
 
     <!-- 2. Filter Bar: Minimalist Text Tabs -->
-    <view class="sticky-bar" :style="{ top: (menuButtonInfo.top) + 'px' }">
+    <view class="sticky-bar" :style="{ top: stickyTop }">
        <view class="filter-row">
             <view
                 class="filter-pill"
@@ -198,7 +198,10 @@ try {
 } catch (e) {}
 
 const navBarHeight = menuButtonInfo.height;
-const paddingTotal = menuButtonInfo.top + menuButtonInfo.height + 10; // 10rpx spacing
+const paddingTotal = menuButtonInfo.top + menuButtonInfo.height + 10;
+
+// 胶囊底部 + 12rpx = FilterBar sticky top
+const stickyTop = computed(() => (menuButtonInfo.bottom + 12) + 'px');
 
 // Types
 type ItemType = 'comment' | 'proposal';
@@ -405,10 +408,11 @@ const hideGuide = () => {
     align-items: flex-end; /* Align baseline */
     position: relative;
     z-index: 101; /* Ensure title is above the sticky bar mask */
-    
+    box-sizing: border-box;
+
     .title-wrapper {
         display: flex;
-        align-items: baseline; 
+        align-items: baseline;
     }
 
     .page-title {
@@ -463,36 +467,24 @@ const hideGuide = () => {
 
 /* 2. Filter Bar: Sticky & Clean */
 .sticky-bar {
-    position: sticky;
+    position: fixed;
+    left: 0;
+    right: 0;
     z-index: 100;
-    // background-color: rgba(247, 248, 250, 0.95); <--- Remove hardcoded bg color to let blur work better or keep it subtle
-    /* Use a very light blur background */
-    background-color: rgba(247, 248, 250, 0.85); 
-    backdrop-filter: blur(20px); 
+    background-color: rgba(247, 248, 250, 0.95);
+    backdrop-filter: blur(20px);
     padding: 20rpx 40rpx;
     margin-bottom: 20rpx;
-    display: flex; /* Changed from just flex to align items */
-    align-items: center; /* Center vertically */
-    
-    /* Add a top mask to prevent content from showing above the sticky bar when scrolling */
-    &::before {
-        content: '';
-        position: absolute;
-        bottom: 100%; /* Start exactly at the top of the sticky bar */
-        left: 0;
-        right: 0;
-        height: 100vh; /* Extend upwards enough to cover the entire screen above */
-        background-color: #f7f8fa; /* Match the global background color */
-        z-index: -1;
-    }
+    display: flex;
+    align-items: center;
 
     .filter-row {
         display: flex;
         align-items: center;
-        background: #fff; 
+        background: #fff;
         border-radius: 100rpx;
-        padding: 6rpx; /* Slightly reduced padding */
-        box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.06); /* Softer, deeper shadow */
+        padding: 6rpx;
+        box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.06);
     }
     
     .filter-pill {
