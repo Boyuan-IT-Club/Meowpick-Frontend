@@ -873,13 +873,14 @@ $brand-red: #b20035;
     position: absolute;
     left: 0; 
     right: 0;
-    height: 30px;
+    height: 60rpx;
     background-color: #fffbe6;
     color: #d48806;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24rpx;
+    font-size: 26rpx;
+    font-weight: 500;
     z-index: 90;
 }
 
