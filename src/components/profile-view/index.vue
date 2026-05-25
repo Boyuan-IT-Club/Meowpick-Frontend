@@ -49,7 +49,7 @@
     </view>
 
     <!-- 2. Filter Bar: Minimalist Text Tabs -->
-    <view class="sticky-bar" :style="{ top: (menuButtonInfo.top) + 'px', height: menuButtonInfo.height + 'px' }">
+    <view class="sticky-bar" :style="{ top: (menuButtonInfo.top + 20) + 'px', height: menuButtonInfo.height + 'px' }">
        <view class="filter-row">
             <view
                 class="filter-pill"
