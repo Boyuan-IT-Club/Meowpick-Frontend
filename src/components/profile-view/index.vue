@@ -1,8 +1,8 @@
 <template>
   <view class="profile-container" :style="{ paddingTop: menuButtonInfo.top + 'px' }">
 
-    <!-- 胶囊遮罩：只露出胶囊下方区域 -->
-    <view class="capsule-mask" :style="{ top: menuButtonInfo.bottom + 'px' }" />
+    <!-- 胶囊遮罩：挡住胶囊上方的内容 -->
+    <view class="capsule-mask" :style="{ height: menuButtonInfo.top + 'px' }" />
 
     <!-- 1. Header Area: Large & Breathable -->
      <view class="header-section" :style="{ marginTop: '20rpx', marginBottom: '40rpx' }">
@@ -405,7 +405,7 @@ const hideGuide = () => {
     position: fixed;
     left: 0;
     right: 0;
-    bottom: 0;
+    top: 0;
     background-color: #f7f8fa;
     z-index: 99;
     pointer-events: none;
