@@ -2,36 +2,46 @@
   <view class="profile-container" :style="{ paddingTop: menuButtonInfo.top + 'px' }">
 
     <!-- 1. Header Area: Large & Breathable -->
-    <view class="header-section" :style="{ marginTop: '20rpx', marginBottom: '40rpx' }">
+     <view class="header-section" :style="{ marginTop: '20rpx', marginBottom: '40rpx' }">
       <view class="title-wrapper">
          <text class="page-title">我的发布</text>
          <text class="sub-title">{{ loading ? '加载中...' : (filteredList.length + ' 条记录') }}</text>
       </view>
-      <view class="help-icon" @click="showHelpTip = true">?</view>
     </view>
 
-    <!-- 帮助提示弹窗 -->
-    <view v-if="showHelpTip" class="help-overlay" @click="showHelpTip = false">
-      <view class="help-content" @click.stop>
-        <view class="help-header">
-          <text class="help-title">我的发布 使用指南</text>
-          <view class="close-btn" @click="showHelpTip = false">×</view>
+    <!-- 首次使用引导弹窗 -->
+    <view v-if="showGuide" class="guide-overlay" @click="hideGuide">
+      <view class="guide-content" @click.stop>
+        <view class="guide-header">
+          <text class="guide-title">欢迎来到"我的发布" 🎉</text>
+          <text class="guide-subtitle">管理你的吐槽和提议</text>
         </view>
-        <view class="help-body">
-          <view class="help-item">
-            <text class="help-item-title">吐槽 & 提议</text>
-            <text class="help-item-desc">这里汇总了你的所有吐槽和提议记录，可按类型筛选查看。</text>
+        <view class="guide-sections">
+          <view class="guide-section">
+            <view class="section-icon">📝</view>
+            <view class="section-text">
+              <text class="section-title">吐槽 & 提议</text>
+              <text class="section-desc">这里汇总了你发布的所有吐槽和提议，可按类型筛选查看</text>
+            </view>
           </view>
-          <view class="help-item">
-            <text class="help-item-title">新增内容</text>
-            <text class="help-item-desc">点击右下角 "+" 按钮，新增吐槽或提议。</text>
+          <view class="guide-section">
+            <view class="section-icon">➕</view>
+            <view class="section-text">
+              <text class="section-title">新增内容</text>
+              <text class="section-desc">点击右下角 "+" 按钮，可以新增吐槽或发起新课程提议</text>
+            </view>
           </view>
-          <view class="help-item">
-            <text class="help-item-title">长按操作</text>
-            <text class="help-item-desc">长按任意记录可查看详情、修改或删除（提议有投票时修改会清空票数）。</text>
+          <view class="guide-section">
+            <view class="section-icon">✋</view>
+            <view class="section-text">
+              <text class="section-title">长按操作</text>
+              <text class="section-desc">长按任意记录可查看详情、修改或删除（提议有投票时修改会清空票数）</text>
+            </view>
           </view>
         </view>
-        <button class="help-confirm-btn" @click="showHelpTip = false">我知道了</button>
+        <view class="guide-footer">
+          <button class="start-btn" @click="hideGuide">我知道了</button>
+        </view>
       </view>
     </view>
 
@@ -207,7 +217,10 @@ interface ListItem {
 const listData = ref<ListItem[]>([]);
 const loading = ref(false);
 const error = ref(false);
-const showHelpTip = ref(false);
+
+// 首次使用引导弹窗
+const showGuide = ref(false);
+const GUIDE_KEY = 'meowpick_profile_guide_seen';
 
 const loadData = async () => {
     loading.value = true;
@@ -361,7 +374,19 @@ const deleteItem = async (item: ListItem) => {
 };
 
 onMounted(async () => { await waitForLogin(); loadData(); });
-onShow(async () => { await waitForLogin(); loadData(); });
+
+onShow(() => {
+  // 检查是否首次使用"我的"页面
+  const hasSeenGuide = uni.getStorageSync(GUIDE_KEY);
+  if (!hasSeenGuide) {
+    showGuide.value = true;
+  }
+});
+
+const hideGuide = () => {
+  showGuide.value = false;
+  uni.setStorageSync(GUIDE_KEY, true);
+};
 </script>
 
 <style scoped lang="scss">
@@ -402,6 +427,23 @@ onShow(async () => { await waitForLogin(); loadData(); });
     }
 
     .help-icon {
+        position: absolute;
+        right: 40rpx;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 48rpx;
+        height: 48rpx;
+        border-radius: 50%;
+        background-color: #f0f0f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28rpx;
+        color: #666;
+        font-weight: 600;
+    }
+
+    .guide-icon {
         position: absolute;
         right: 40rpx;
         top: 50%;
@@ -738,13 +780,13 @@ onShow(async () => { await waitForLogin(); loadData(); });
 </style>
 
 <style lang="scss">
-.help-overlay {
+.guide-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
   z-index: 9999;
   display: flex;
   align-items: center;
@@ -753,77 +795,97 @@ onShow(async () => { await waitForLogin(); loadData(); });
   box-sizing: border-box;
 }
 
-.help-content {
+.guide-content {
   width: 100%;
-  max-width: 560rpx;
+  max-width: 600rpx;
   background-color: #ffffff;
-  border-radius: 24rpx;
-  padding: 40rpx 32rpx;
-  box-shadow: 0 16rpx 48rpx rgba(0, 0, 0, 0.2);
+  border-radius: 32rpx;
+  padding: 48rpx 40rpx;
+  box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.3);
 }
 
-.help-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 32rpx;
+.guide-header {
+  text-align: center;
+  margin-bottom: 48rpx;
 
-  .help-title {
-    font-size: 36rpx;
-    font-weight: 700;
+  .guide-title {
+    display: block;
+    font-size: 44rpx;
+    font-weight: 800;
     color: #1a1a1a;
+    margin-bottom: 16rpx;
   }
 
-  .close-btn {
-    width: 48rpx;
-    height: 48rpx;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 40rpx;
+  .guide-subtitle {
+    display: block;
+    font-size: 26rpx;
     color: #999;
   }
 }
 
-.help-body {
-  margin-bottom: 32rpx;
+.guide-sections {
+  margin-bottom: 48rpx;
 }
 
-.help-item {
-  margin-bottom: 24rpx;
+.guide-section {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 36rpx;
 
   &:last-child {
     margin-bottom: 0;
   }
 
-  .help-item-title {
-    font-size: 28rpx;
+  .section-icon {
+    width: 80rpx;
+    height: 80rpx;
+    background-color: #fff5f7;
+    border-radius: 20rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40rpx;
+    margin-right: 24rpx;
+    flex-shrink: 0;
+  }
+
+  .section-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .section-title {
+    font-size: 30rpx;
     font-weight: 600;
     color: #333;
-    display: block;
     margin-bottom: 8rpx;
   }
 
-  .help-item-desc {
+  .section-desc {
     font-size: 24rpx;
-    color: #666;
+    color: #888;
     line-height: 1.5;
   }
 }
 
-.help-confirm-btn {
-  width: 100%;
-  height: 80rpx;
-  line-height: 80rpx;
-  background: linear-gradient(135deg, #b20035, #ff4d6a);
-  color: #fff;
-  font-size: 30rpx;
-  font-weight: 600;
-  border-radius: 40rpx;
-  border: none;
+.guide-footer {
+  .start-btn {
+    width: 100%;
+    height: 88rpx;
+    line-height: 88rpx;
+    background: linear-gradient(135deg, #b20035, #ff4d6a);
+    color: #fff;
+    font-size: 32rpx;
+    font-weight: 600;
+    border-radius: 44rpx;
+    border: none;
+    box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.3);
 
-  &:active {
-    opacity: 0.9;
+    &:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
   }
 }
 </style>

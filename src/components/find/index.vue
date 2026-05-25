@@ -215,32 +215,6 @@
         <!-- Add Comment Search Guide Banner -->
         <view v-if="mode === 'add-comment'" class="search-guide-banner">
             <text>请搜索并选择你要吐槽的课程</text>
-            <view class="help-tip-icon" @click.stop="showFindHelp = true">?</view>
-        </view>
-
-        <!-- 帮助提示弹窗 -->
-        <view v-if="showFindHelp" class="help-overlay" @click="showFindHelp = false">
-          <view class="help-content" @click.stop>
-            <view class="help-header">
-              <text class="help-title">搜索页使用指南</text>
-              <view class="close-btn" @click="showFindHelp = false">×</view>
-            </view>
-            <view class="help-body">
-              <view class="help-item">
-                <text class="help-item-title">搜索课程</text>
-                <text class="help-item-desc">输入课程名、老师名或关键词搜索已开设的课程评价。</text>
-              </view>
-              <view class="help-item">
-                <text class="help-item-title">筛选功能</text>
-                <text class="help-item-desc">搜索结果可按校区和内容类型筛选，快速找到目标课程。</text>
-              </view>
-              <view class="help-item">
-                <text class="help-item-title">发布吐槽</text>
-                <text class="help-item-desc">在"我的"页面点击 "+" 按钮，选择"新增吐槽"即可发表评价。</text>
-              </view>
-            </view>
-            <button class="help-confirm-btn" @click="showFindHelp = false">我知道了</button>
-          </view>
         </view>
 
         <!-- 历史记录 -->
@@ -343,7 +317,6 @@ const isResultMode = ref(false); // New State: Toggle between Search/Explore and
 const _resumeGuard = ref(false); // 从详情页返回时的保护标记，防止 onInputFocus 误切模式
 const currentSort = ref('default'); // From Result Page
 const showProposalsList = ref(false);
-const showFindHelp = ref(false);
 
 // Import searchText and placeHolder from useInput
 const { searchText, placeHolder } = useInput();
