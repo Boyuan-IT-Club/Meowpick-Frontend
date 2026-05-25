@@ -211,10 +211,36 @@
 
       <!-- 场景 B: 无搜索词 -> 显示历史记录 & 热门推荐 (Default) -->
       <view v-else class="empty-section">
-        
+
         <!-- Add Comment Search Guide Banner -->
         <view v-if="mode === 'add-comment'" class="search-guide-banner">
             <text>请搜索并选择你要吐槽的课程</text>
+            <view class="help-tip-icon" @click.stop="showFindHelp = true">?</view>
+        </view>
+
+        <!-- 帮助提示弹窗 -->
+        <view v-if="showFindHelp" class="help-overlay" @click="showFindHelp = false">
+          <view class="help-content" @click.stop>
+            <view class="help-header">
+              <text class="help-title">搜索页使用指南</text>
+              <view class="close-btn" @click="showFindHelp = false">×</view>
+            </view>
+            <view class="help-body">
+              <view class="help-item">
+                <text class="help-item-title">搜索课程</text>
+                <text class="help-item-desc">输入课程名、老师名或关键词搜索已开设的课程评价。</text>
+              </view>
+              <view class="help-item">
+                <text class="help-item-title">筛选功能</text>
+                <text class="help-item-desc">搜索结果可按校区和内容类型筛选，快速找到目标课程。</text>
+              </view>
+              <view class="help-item">
+                <text class="help-item-title">发布吐槽</text>
+                <text class="help-item-desc">在"我的"页面点击 "+" 按钮，选择"新增吐槽"即可发表评价。</text>
+              </view>
+            </view>
+            <button class="help-confirm-btn" @click="showFindHelp = false">我知道了</button>
+          </view>
         </view>
 
         <!-- 历史记录 -->
@@ -317,6 +343,7 @@ const isResultMode = ref(false); // New State: Toggle between Search/Explore and
 const _resumeGuard = ref(false); // 从详情页返回时的保护标记，防止 onInputFocus 误切模式
 const currentSort = ref('default'); // From Result Page
 const showProposalsList = ref(false);
+const showFindHelp = ref(false);
 
 // Import searchText and placeHolder from useInput
 const { searchText, placeHolder } = useInput();
@@ -1448,5 +1475,123 @@ $brand-red: #b20035;
 
 @keyframes spin {
     to { transform: rotate(360deg); }
+}
+</style>
+
+<style lang="scss">
+.search-guide-banner {
+    margin: 0 32rpx 30rpx 32rpx;
+    padding: 20rpx 32rpx;
+    background-color: #fffbe6;
+    color: #d48806;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 26rpx;
+    font-weight: 500;
+    border-radius: 16rpx;
+
+    .help-tip-icon {
+        width: 44rpx;
+        height: 44rpx;
+        border-radius: 50%;
+        background-color: rgba(212, 136, 6, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26rpx;
+        color: #d48806;
+        font-weight: 600;
+        flex-shrink: 0;
+    }
+}
+
+.help-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx;
+  box-sizing: border-box;
+}
+
+.help-content {
+  width: 100%;
+  max-width: 560rpx;
+  background-color: #ffffff;
+  border-radius: 24rpx;
+  padding: 40rpx 32rpx;
+  box-shadow: 0 16rpx 48rpx rgba(0, 0, 0, 0.2);
+}
+
+.help-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32rpx;
+
+  .help-title {
+    font-size: 36rpx;
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+
+  .close-btn {
+    width: 48rpx;
+    height: 48rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40rpx;
+    color: #999;
+  }
+}
+
+.help-body {
+  margin-bottom: 32rpx;
+}
+
+.help-item {
+  margin-bottom: 24rpx;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .help-item-title {
+    font-size: 28rpx;
+    font-weight: 600;
+    color: #333;
+    display: block;
+    margin-bottom: 8rpx;
+  }
+
+  .help-item-desc {
+    font-size: 24rpx;
+    color: #666;
+    line-height: 1.5;
+  }
+}
+
+.help-confirm-btn {
+  width: 100%;
+  height: 80rpx;
+  line-height: 80rpx;
+  background: linear-gradient(135deg, #b20035, #ff4d6a);
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 600;
+  border-radius: 40rpx;
+  border: none;
+
+  &:active {
+    opacity: 0.9;
+  }
 }
 </style>

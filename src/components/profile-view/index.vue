@@ -7,6 +7,32 @@
          <text class="page-title">我的发布</text>
          <text class="sub-title">{{ loading ? '加载中...' : (filteredList.length + ' 条记录') }}</text>
       </view>
+      <view class="help-icon" @click="showHelpTip = true">?</view>
+    </view>
+
+    <!-- 帮助提示弹窗 -->
+    <view v-if="showHelpTip" class="help-overlay" @click="showHelpTip = false">
+      <view class="help-content" @click.stop>
+        <view class="help-header">
+          <text class="help-title">我的发布 使用指南</text>
+          <view class="close-btn" @click="showHelpTip = false">×</view>
+        </view>
+        <view class="help-body">
+          <view class="help-item">
+            <text class="help-item-title">吐槽 & 提议</text>
+            <text class="help-item-desc">这里汇总了你的所有吐槽和提议记录，可按类型筛选查看。</text>
+          </view>
+          <view class="help-item">
+            <text class="help-item-title">新增内容</text>
+            <text class="help-item-desc">点击右下角 "+" 按钮，新增吐槽或提议。</text>
+          </view>
+          <view class="help-item">
+            <text class="help-item-title">长按操作</text>
+            <text class="help-item-desc">长按任意记录可查看详情、修改或删除（提议有投票时修改会清空票数）。</text>
+          </view>
+        </view>
+        <button class="help-confirm-btn" @click="showHelpTip = false">我知道了</button>
+      </view>
     </view>
 
     <!-- 2. Filter Bar: Minimalist Text Tabs -->
@@ -181,6 +207,7 @@ interface ListItem {
 const listData = ref<ListItem[]>([]);
 const loading = ref(false);
 const error = ref(false);
+const showHelpTip = ref(false);
 
 const loadData = async () => {
     loading.value = true;
@@ -372,6 +399,23 @@ onShow(async () => { await waitForLogin(); loadData(); });
         font-size: 26rpx;
         color: #999;
         font-weight: 400;
+    }
+
+    .help-icon {
+        position: absolute;
+        right: 40rpx;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 48rpx;
+        height: 48rpx;
+        border-radius: 50%;
+        background-color: #f0f0f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28rpx;
+        color: #666;
+        font-weight: 600;
     }
 }
 
@@ -690,5 +734,96 @@ onShow(async () => { await waitForLogin(); loadData(); });
     to {
         transform: rotate(360deg);
     }
+}
+</style>
+
+<style lang="scss">
+.help-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx;
+  box-sizing: border-box;
+}
+
+.help-content {
+  width: 100%;
+  max-width: 560rpx;
+  background-color: #ffffff;
+  border-radius: 24rpx;
+  padding: 40rpx 32rpx;
+  box-shadow: 0 16rpx 48rpx rgba(0, 0, 0, 0.2);
+}
+
+.help-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32rpx;
+
+  .help-title {
+    font-size: 36rpx;
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+
+  .close-btn {
+    width: 48rpx;
+    height: 48rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40rpx;
+    color: #999;
+  }
+}
+
+.help-body {
+  margin-bottom: 32rpx;
+}
+
+.help-item {
+  margin-bottom: 24rpx;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .help-item-title {
+    font-size: 28rpx;
+    font-weight: 600;
+    color: #333;
+    display: block;
+    margin-bottom: 8rpx;
+  }
+
+  .help-item-desc {
+    font-size: 24rpx;
+    color: #666;
+    line-height: 1.5;
+  }
+}
+
+.help-confirm-btn {
+  width: 100%;
+  height: 80rpx;
+  line-height: 80rpx;
+  background: linear-gradient(135deg, #b20035, #ff4d6a);
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 600;
+  border-radius: 40rpx;
+  border: none;
+
+  &:active {
+    opacity: 0.9;
+  }
 }
 </style>

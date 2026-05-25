@@ -57,6 +57,42 @@
         </view>
       </view>
     </view>
+
+    <!-- 首次使用引导弹窗 -->
+    <view v-if="showGuide" class="guide-overlay" @click="hideGuide">
+      <view class="guide-content" @click.stop>
+        <view class="guide-header">
+          <text class="guide-title">欢迎使用选课猫 🎉</text>
+          <text class="guide-subtitle">华东师范大学选课经验分享平台</text>
+        </view>
+        <view class="guide-sections">
+          <view class="guide-section">
+            <view class="section-icon">💬</view>
+            <view class="section-text">
+              <text class="section-title">吐槽课程</text>
+              <text class="section-desc">搜索已开设的课程，了解学长评价，选择心仪的选修课</text>
+            </view>
+          </view>
+          <view class="guide-section">
+            <view class="section-icon">📝</view>
+            <view class="section-text">
+              <text class="section-title">提议新课程</text>
+              <text class="section-desc">搜索不到想要的课？发起提议，让大家一起投票支持</text>
+            </view>
+          </view>
+          <view class="guide-section">
+            <view class="section-icon">🏫</view>
+            <view class="section-text">
+              <text class="section-title">闵行 & 普陀</text>
+              <text class="section-desc">两个校区的课程都有收录，搜索时可按校区筛选</text>
+            </view>
+          </view>
+        </view>
+        <view class="guide-footer">
+          <button class="start-btn" @click="hideGuide">我知道了</button>
+        </view>
+      </view>
+    </view>
   </view>
 </template>
 
@@ -71,6 +107,10 @@ const totalComment = ref(0);
 const showNewIcon = ref(true);
 const userName = ref('同学');
 
+// 首次使用引导弹窗
+const showGuide = ref(false);
+const GUIDE_KEY = 'meowpick_guide_seen';
+
 // 生命周期
 onMounted(async () => {
   await waitForLogin();
@@ -83,6 +123,12 @@ onMounted(async () => {
 
   const hasReadLetter = uni.getStorageSync('hasReadLetter');
   showNewIcon.value = !hasReadLetter;
+
+  // 检查是否首次使用
+  const hasSeenGuide = uni.getStorageSync(GUIDE_KEY);
+  if (!hasSeenGuide) {
+    showGuide.value = true;
+  }
 });
 
 const fetchTotalComment = () => {
@@ -94,6 +140,11 @@ const fetchTotalComment = () => {
 };
 
 // 路由跳转
+const hideGuide = () => {
+  showGuide.value = false;
+  uni.setStorageSync(GUIDE_KEY, true);
+};
+
 const goToSearch = () => {
   // 原有逻辑：导向搜索页面
   uni.navigateTo({ url: "/pages/find/index/index" });
@@ -415,7 +466,118 @@ $text-main: #2c2c2c;
       height: 12rpx;
       background: linear-gradient(90deg, #fff 0%, $brand-light-bg 100%);
       // 或者干脆不要装饰，保持极简
-      display: none; 
+      display: none;
+  }
+}
+</style>
+
+<style lang="scss">
+.guide-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx;
+  box-sizing: border-box;
+}
+
+.guide-content {
+  width: 100%;
+  max-width: 600rpx;
+  background-color: #ffffff;
+  border-radius: 32rpx;
+  padding: 48rpx 40rpx;
+  box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.3);
+}
+
+.guide-header {
+  text-align: center;
+  margin-bottom: 48rpx;
+
+  .guide-title {
+    display: block;
+    font-size: 44rpx;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin-bottom: 16rpx;
+  }
+
+  .guide-subtitle {
+    display: block;
+    font-size: 26rpx;
+    color: #999;
+  }
+}
+
+.guide-sections {
+  margin-bottom: 48rpx;
+}
+
+.guide-section {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 36rpx;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .section-icon {
+    width: 80rpx;
+    height: 80rpx;
+    background-color: #fff5f7;
+    border-radius: 20rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40rpx;
+    margin-right: 24rpx;
+    flex-shrink: 0;
+  }
+
+  .section-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .section-title {
+    font-size: 30rpx;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8rpx;
+  }
+
+  .section-desc {
+    font-size: 24rpx;
+    color: #888;
+    line-height: 1.5;
+  }
+}
+
+.guide-footer {
+  .start-btn {
+    width: 100%;
+    height: 88rpx;
+    line-height: 88rpx;
+    background: linear-gradient(135deg, #b20035, #ff4d6a);
+    color: #fff;
+    font-size: 32rpx;
+    font-weight: 600;
+    border-radius: 44rpx;
+    border: none;
+    box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.3);
+
+    &:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
   }
 }
 </style>

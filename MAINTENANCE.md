@@ -307,6 +307,23 @@ const navBarStyle = computed(() => ({
 }));
 ```
 
+### 5.4 组件内联原则 ⚠️ 重要
+
+**问题背景**：uni-app 编译时，`home-view` 组件内使用 `<GuideModal />` 会导致 `home-view/index.json` 生成 `usingComponents` 引用路径解析在微信小程序环境下存在兼容性问题（`component not found in the path`）。
+
+**解决原则**：将组件代码直接内联到父组件中，不作为子组件引用。
+
+**已内联的组件**：
+- 首次使用引导弹窗 → 代码直接内联到 `home-view/index.vue`
+- 帮助提示弹窗 → 代码直接内联到 `profile-view/index.vue` 和 `find/index.vue`
+
+**内联实现要点**：
+1. 模板部分直接写在父组件 `<template>` 中
+2. 样式使用独立的 `<style lang="scss">` 块（注意不是 `scoped`）
+3. 状态和方法均在父组件 `script setup` 中定义
+4. 弹窗使用 `v-if` + `ref<Boolean>` 控制显示/隐藏
+```
+
 **模板使用**：
 ```html
 <!-- 固定导航栏 -->
