@@ -1,5 +1,5 @@
 <template>
-  <view class="profile-container" :style="{ paddingTop: menuButtonInfo.top + 'px' }">
+  <view class="profile-container" :style="{ paddingTop: (menuButtonInfo.top + 6) + 'px' }">
 
     <!-- 胶囊遮罩：挡住胶囊上方的内容 -->
     <view class="capsule-mask" :style="{ height: (menuButtonInfo.top + menuButtonInfo.height + 8) + 'px' }" />
