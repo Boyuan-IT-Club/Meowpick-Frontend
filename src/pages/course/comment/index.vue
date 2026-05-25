@@ -156,10 +156,6 @@ onShow(() => {
   if(course_id) fetch(course_id);
 });
 
-onShow(() => {
-  if(course_id) fetch(course_id);
-});
-
 onMounted(() => {
   InitTags();
 });
