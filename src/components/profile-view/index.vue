@@ -46,10 +46,11 @@
     </view>
 
     <!-- 2. Filter Bar: Minimalist Text Tabs -->
-    <view class="sticky-bar" :style="{ top: (menuButtonInfo.top) + 'px' }">
-       <view class="filter-row">
+    <view class="sticky-bar" :style="{ top: (menuButtonInfo.top) + 'px', height: menuButtonInfo.height + 'px' }">
+       <view class="filter-row" :style="{ height: menuButtonInfo.height + 'px' }">
             <view
                 class="filter-pill"
+                :style="{ height: menuButtonInfo.height + 'px', lineHeight: menuButtonInfo.height + 'px' }"
                 :class="{ active: currentFilter === 'all' }"
                 @click="setFilter('all')"
             >
@@ -57,6 +58,7 @@
             </view>
             <view
                 class="filter-pill"
+                :style="{ height: menuButtonInfo.height + 'px', lineHeight: menuButtonInfo.height + 'px' }"
                 :class="{ active: currentFilter === 'comment' }"
                 @click="setFilter('comment')"
             >
@@ -64,6 +66,7 @@
             </view>
             <view
                 class="filter-pill"
+                :style="{ height: menuButtonInfo.height + 'px', lineHeight: menuButtonInfo.height + 'px' }"
                 :class="{ active: currentFilter === 'proposal' }"
                 @click="setFilter('proposal')"
             >
@@ -465,50 +468,36 @@ const hideGuide = () => {
 .sticky-bar {
     position: sticky;
     z-index: 100;
-    // background-color: rgba(247, 248, 250, 0.95); <--- Remove hardcoded bg color to let blur work better or keep it subtle
-    /* Use a very light blur background */
-    background-color: rgba(247, 248, 250, 0.85); 
-    backdrop-filter: blur(20px); 
-    padding: 20rpx 40rpx;
-    margin-bottom: 20rpx;
-    display: flex; /* Changed from just flex to align items */
-    align-items: center; /* Center vertically */
-    
-    /* Add a top mask to prevent content from showing above the sticky bar when scrolling */
-    &::before {
-        content: '';
-        position: absolute;
-        bottom: 100%; /* Start exactly at the top of the sticky bar */
-        left: 0;
-        right: 0;
-        height: 100vh; /* Extend upwards enough to cover the entire screen above */
-        background-color: #f7f8fa; /* Match the global background color */
-        z-index: -1;
-    }
+    left: 0;
+    right: 0;
+    padding: 0 40rpx;
+    background-color: rgba(247, 248, 250, 0.85);
+    backdrop-filter: blur(20px);
 
     .filter-row {
         display: flex;
         align-items: center;
-        background: #fff; 
+        background: #fff;
         border-radius: 100rpx;
-        padding: 6rpx; /* Slightly reduced padding */
-        box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.06); /* Softer, deeper shadow */
+        padding: 0 6rpx;
+        box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.06);
+        overflow: hidden;
     }
-    
+
     .filter-pill {
-        padding: 12rpx 40rpx;
+        padding: 0 32rpx;
         border-radius: 60rpx;
         font-size: 28rpx;
         font-weight: 500;
         color: #666;
         transition: all 0.12s cubic-bezier(0.25, 0.8, 0.25, 1);
-        
+        box-sizing: border-box;
+
         &.active {
-            /* Replace black bg with gradient from layout/main.vue */
-            background: linear-gradient(135deg, #b20035, #ff4d6a); 
+            background: linear-gradient(135deg, #b20035, #ff4d6a);
             color: #fff;
             font-weight: 600;
-            box-shadow: 0 6rpx 16rpx rgba(183, 0, 48, 0.3); /* Colored shadow matching brand */
+            box-shadow: 0 6rpx 16rpx rgba(183, 0, 48, 0.3);
         }
     }
 }
