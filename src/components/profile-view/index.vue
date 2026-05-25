@@ -2,7 +2,7 @@
   <view class="profile-container" :style="{ paddingTop: menuButtonInfo.top + 'px' }">
 
     <!-- 胶囊遮罩：挡住胶囊上方的内容 -->
-    <view class="capsule-mask" :style="{ height: menuButtonInfo.top + 'px' }" />
+    <view class="capsule-mask" :style="{ height: (menuButtonInfo.top + menuButtonInfo.height + 8) + 'px' }" />
 
     <!-- 1. Header Area: Large & Breathable -->
      <view class="header-section" :style="{ marginTop: '20rpx', marginBottom: '40rpx' }">
