@@ -21,9 +21,9 @@
 
               <view class="proposal-row-bottom">
                   <text class="proposal-badge">提议新增</text>
-                  <view class="vote-count-box">
+                  <view class="vote-count-box" :class="{ 'is-liked': isLiked }" @click.stop="handleLike">
                       <image src="@/images/like_active.png" class="vote-icon" />
-                      <text class="vote-num">{{ props.data?.voteCount || props.data?.agreeCount || 0 }}</text>
+                      <text class="vote-num">{{ likeCount }}</text>
                       <text class="vote-label">支持</text>
                   </view>
               </view>
@@ -76,8 +76,9 @@
 import { computed } from "vue"; // Import computed
 import type { CourseVO, TeacherVO } from "@/api/data-contracts";
 import { getTop3List } from "@/utils/tags";
+import { http } from "@/config";
 
-// Extend type locally 
+// Extend type locally
 type MixedResult = CourseVO & {
   resultType?: string;
   matchScore?: number;
@@ -89,14 +90,37 @@ type MixedResult = CourseVO & {
   teacherName?: string; // Add teacherName
   voteCount?: number; // Add voteCount
   agreeCount?: number;
+  isLiked?: boolean;
+  likeCnt?: number;
 };
 
 // Define props with default values or use defineProps directly
-const props = defineProps<{ data: MixedResult }>(); // Use MixedResult 
+const props = defineProps<{ data: MixedResult }>();
 
 const isProposal = computed(() => {
     return props.data?.resultType === 'proposal';
 });
+
+const isLiked = ref(props.data?.isLiked || false);
+const likeCount = ref(props.data?.likeCnt || props.data?.voteCount || props.data?.agreeCount || 0);
+
+const handleLike = async () => {
+    if (!props.data?.id) return;
+    try {
+        const res = await http.Like.likeCreate(props.data.id, { targetId: props.data.id, targetType: 'proposal' });
+        const result = res.data?.data;
+        if (result !== undefined) {
+            if (result.like !== undefined) {
+                isLiked.value = result.like;
+            }
+            if (result.likeCnt !== undefined) {
+                likeCount.value = result.likeCnt;
+            }
+        }
+    } catch (err) {
+        console.error('[CourseCard] like error:', err);
+    }
+};
 </script>
 
 <style lang="scss" scoped>
@@ -172,17 +196,24 @@ const isProposal = computed(() => {
              font-weight: 500;
          }
 
-          .vote-count-box {
-               display: flex;
-               align-items: center;
-               /* Removed background for cleaner look or keep if desired, let's keep it minimal */
-               /* background: rgba(178, 0, 53, 0.05); */
-               
-               .vote-icon {
-                    width: 28rpx;
-                    height: 28rpx;
-                    margin-right: 8rpx;
-               }
+           .vote-count-box {
+                display: flex;
+                align-items: center;
+                /* Removed background for cleaner look or keep if desired, let's keep it minimal */
+                /* background: rgba(178, 0, 53, 0.05); */
+
+                &.is-liked {
+                    .vote-icon { opacity: 1; }
+                    .vote-num { color: #b20035; }
+                    .vote-label { color: #b20035; }
+                }
+
+                .vote-icon {
+                     width: 28rpx;
+                     height: 28rpx;
+                     margin-right: 8rpx;
+                     opacity: 0.6;
+                }
                .vote-num {
                     font-size: 28rpx;
                     font-weight: 600;

@@ -76,10 +76,11 @@
 import { ref } from 'vue';
 import { onLoad } from "@dcloudio/uni-app";
 import BackBtn from "@/components/common/BackBtn.vue";
+import { http } from "@/config";
 
 // 胶囊位置处理
 const sysInfo = uni.getSystemInfoSync();
-let menuButtonInfo = { 
+let menuButtonInfo = {
     top: sysInfo.statusBarHeight ? sysInfo.statusBarHeight + 4 : 48,
     height: 32,
     bottom: (sysInfo.statusBarHeight ? sysInfo.statusBarHeight + 4 : 48) + 32
@@ -96,9 +97,11 @@ try {
 } catch (e) {}
 
 interface PassedProposalData {
-  voteCount?: number;
-  isVoted?: boolean;
-  [key: string]: any;
+    id?: string;
+    voteCount?: number;
+    isVoted?: boolean;
+    likeCnt?: number;
+    [key: string]: any;
 }
 
 const proposalData = ref<PassedProposalData>({});
@@ -119,11 +122,26 @@ const goBack = () => {
     uni.navigateBack();
 };
 
-const handleVote = () => {
-    if (isVoted.value) return;
-    isVoted.value = true;
-    proposalData.value.voteCount = (proposalData.value.voteCount || 0) + 1;
-    uni.showToast({ title: '支持成功', icon: 'success' });
+const handleVote = async () => {
+    if (isVoted.value || !proposalData.value.id) return;
+    try {
+        const res = await http.Like.likeCreate(proposalData.value.id, { targetId: proposalData.value.id, targetType: 'proposal' });
+        const result = res.data?.data;
+        if (result !== undefined) {
+            if (result.like !== undefined) {
+                isVoted.value = result.like;
+            }
+            if (result.likeCnt !== undefined) {
+                proposalData.value.voteCount = result.likeCnt;
+            }
+            if (result.like) {
+                uni.showToast({ title: '支持成功', icon: 'success' });
+            }
+        }
+    } catch (err) {
+        console.error('[proposal-detail] like error:', err);
+        uni.showToast({ title: '支持失败', icon: 'none' });
+    }
 };
 </script>
 
