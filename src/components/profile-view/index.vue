@@ -1,6 +1,9 @@
 <template>
   <view class="profile-container" :style="{ paddingTop: menuButtonInfo.top + 'px' }">
 
+    <!-- 胶囊遮罩：只露出胶囊下方区域 -->
+    <view class="capsule-mask" :style="{ top: menuButtonInfo.bottom + 'px' }" />
+
     <!-- 1. Header Area: Large & Breathable -->
      <view class="header-section" :style="{ marginTop: '20rpx', marginBottom: '40rpx' }">
       <view class="title-wrapper">
@@ -391,20 +394,31 @@ const hideGuide = () => {
 
 <style scoped lang="scss">
 .profile-container {
-    padding-left: 0;
+    position: relative;
     padding-right: 0;
     min-height: 100vh;
     box-sizing: border-box;
-    background-color: #f7f8fa; /* Global BG */
+    background-color: #f7f8fa;
+}
+
+.capsule-mask {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #f7f8fa;
+    z-index: 99;
+    pointer-events: none;
 }
 
 /* 1. Header: Breathable & Bold */
 .header-section {
-    padding: 0 40rpx; /* Matches list side padding */
-    display: flex;
-    align-items: flex-end; /* Align baseline */
     position: relative;
-    z-index: 101; /* Ensure title is above the sticky bar mask */
+    z-index: 100; /* Above capsule-mask (99) */
+    padding: 0 40rpx;
+    display: flex;
+    align-items: flex-end;
+    position: relative;
     
     .title-wrapper {
         display: flex;
