@@ -721,8 +721,10 @@ const clickCourse = (course: MixedResult) => {
     });
 
     if (mode.value === 'add-comment') {
+        // 直接把课程信息传递给吐槽页，不经过课程详情页
+        const dataStr = encodeURIComponent(JSON.stringify(course));
         uni.navigateTo({
-            url: `/pages/course/comment/index?id=${course.id}`
+            url: `/pages/course/comment/index?data=${dataStr}`
         });
         return;
     }

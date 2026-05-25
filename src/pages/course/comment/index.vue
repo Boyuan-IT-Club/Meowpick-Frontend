@@ -136,13 +136,24 @@ const navMiddleStyle = computed(() => {
 
 // State
 let course_id = "";
+let course_data = ref<any>(null);
 const { fetch, id } = useCourse();
-const text = ref("");
-const isClicked = ref(false);
-const SelectedTags = ref<Tags[]>([]);
 
 onLoad((options: any) => {
   course_id = options.id;
+  
+  if (options.data) {
+    try {
+      course_data.value = JSON.parse(decodeURIComponent(options.data));
+      course_id = course_data.value.id;
+    } catch (e) {
+      console.error('[comment] parse course data error:', e);
+    }
+  }
+});
+
+onShow(() => {
+  if(course_id) fetch(course_id);
 });
 
 onShow(() => {
