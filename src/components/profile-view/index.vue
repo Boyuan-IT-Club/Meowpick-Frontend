@@ -1,8 +1,8 @@
 <template>
-  <view class="profile-container" :style="{ paddingTop: (menuButtonInfo.top + 16) + 'px' }">
+  <view class="profile-container" :style="{ paddingTop: (menuButtonInfo.top + 16 + capsuleExtraOffset) + 'px' }">
 
     <!-- 胶囊遮罩：挡住胶囊上方的内容 -->
-    <view class="capsule-mask" :style="{ height: (menuButtonInfo.top + menuButtonInfo.height + 16) + 'px' }" />
+    <view class="capsule-mask" :style="{ height: (menuButtonInfo.top + menuButtonInfo.height + 16 + capsuleExtraOffset) + 'px' }" />
 
     <!-- 1. Header Area: Large & Breathable -->
      <view class="header-section" :style="{ marginTop: '20rpx', marginBottom: '40rpx' }">
@@ -186,9 +186,9 @@ import { HISTORY_PAGE_SIZE } from '@/utils/constants';
 
 // System Info Logic for Header Alignment
 const sysInfo = uni.getSystemInfoSync();
-let menuButtonInfo = { 
-    top: sysInfo.statusBarHeight ? sysInfo.statusBarHeight : 20, 
-    height: 32 
+let menuButtonInfo = {
+    top: sysInfo.statusBarHeight ? sysInfo.statusBarHeight : 20,
+    height: 32
 };
 try {
     const res = uni.getMenuButtonBoundingClientRect();
@@ -201,7 +201,25 @@ try {
 } catch (e) {}
 
 const navBarHeight = menuButtonInfo.height;
-const paddingTotal = menuButtonInfo.top + menuButtonInfo.height + 10; // 10rpx spacing
+const paddingTotal = menuButtonInfo.top + menuButtonInfo.height + 10;
+
+const capsuleExtraOffset = ref(0);
+
+onMounted(async () => {
+    await waitForLogin();
+    loadData();
+
+    await nextTick();
+    uni.createSelectorQuery().select('.header-section').boundingClientRect((headerRect) => {
+        uni.createSelectorQuery().select('.list-container').boundingClientRect((listRect) => {
+            if (headerRect && listRect) {
+                const titleBottom = headerRect.top + headerRect.height;
+                const firstCardTop = listRect.top;
+                capsuleExtraOffset.value = Math.round((titleBottom + firstCardTop) / 2 - (menuButtonInfo.top + menuButtonInfo.height));
+            }
+        }).exec();
+    }).exec();
+});
 
 // Types
 type ItemType = 'comment' | 'proposal';
