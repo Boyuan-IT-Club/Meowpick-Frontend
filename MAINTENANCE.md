@@ -1,52 +1,66 @@
-# Meowpick 前端开发维护指南
+# Meowpick 开发维护参考手册
 
-> 记录开发过程中容易踩的坑、最佳实践和关键架构决策，便于后续维护者快速上手。
+> 本文档随每次成功修改持续更新，记录已验证的最佳实践。
+> 代码即文档，文档即代码。
 
 ---
 
-## 一、常见踩坑记录
+## 一、页面间数据传递
 
-### 1. Props 响应式陷阱 ⚠️
+### 传递对象数据（完整示例）
 
-**问题描述**：
-使用 `ref(props.xxx)` 创建响应式变量时，`ref` 捕获的是创建时的快照值，之后父组件的 props 变化不会更新。
+发送端（From）：
+```ts
+// src/components/find/index.vue 或任意跳转发起处
+const course = { id: 'xxx', name: '课程名', ... };
+const dataStr = encodeURIComponent(JSON.stringify(course));
+uni.navigateTo({
+  url: `/pages/course/comment/index?data=${dataStr}`
+});
+```
 
-**错误写法**：
+接收端（To）：
+```ts
+// src/pages/course/comment/index.vue
+onLoad((options: any) => {
+  if (options.data) {
+    const data = JSON.parse(decodeURIComponent(options.data));
+    course_id = data.id;
+  }
+});
+```
+
+**规则**：
+- 任何非字符串数据（对象、数组）必须 JSON 序列化 + encodeURIComponent
+- 接收端必须用 decodeURIComponent + JSON.parse 解析
+- 简单值（如 id）可直接当 URL 参数传递
+
+---
+
+## 二、Props 响应式规范
+
+### 必须使用 computed 转发 props
+
+**错误**：
 ```ts
 const props = defineProps<{ initialMode?: string }>();
 const mode = ref(props.initialMode || ''); // ❌ 快照，不会响应变化
 ```
 
-**正确写法**：
+**正确**：
 ```ts
 const props = defineProps<{ initialMode?: string }>();
 const mode = computed(() => props.initialMode || ''); // ✅ 响应式
 ```
-**涉及页面**：`src/components/find/index.vue` - `mode` 属性修复
+
+**适用场景**：父组件通过 props 向子组件传递动态值，且子组件内部需要基于该值做条件渲染或逻辑判断。
 
 ---
 
-### 2. 微信小程序页面间数据传递
+## 三、自定义导航栏高度计算
 
-**问题描述**：
-页面间通过 URL 参数传递数据时，如果数据较复杂（如对象），需要序列化：
-- 发送端：`encodeURIComponent(JSON.stringify(data))`
-- 接收端：`JSON.parse(decodeURIComponent(options.data))`
+### 标准模板（复制使用）
 
-**错误**：直接传递对象或忽略编解码会导致数据解析失败。
-
-**涉及页面**：
-- `src/components/find/index.vue` - `clickCourse` 跳转到吐槽页
-- `src/pages/course/comment/index.vue` - 接收课程数据
-
----
-
-### 3. 导航栏高度计算
-
-**问题描述**：
-自定义导航栏需要精确适配微信胶囊按钮位置，否则内容会被遮挡或间距过大。
-
-**推荐写法**：
 ```ts
 const sysInfo = uni.getSystemInfoSync();
 let menuButtonTop = sysInfo.statusBarHeight ? sysInfo.statusBarHeight + 4 : 48;
@@ -59,168 +73,208 @@ try {
   }
 } catch (e) {}
 
-const NAVBAR_HEIGHT = menuButtonTop + menuButtonHeight + 12; // 底部留白
+const NAVBAR_HEIGHT = menuButtonTop + menuButtonHeight + 12;
+
+const navBarStyle = computed(() => ({
+  height: NAVBAR_HEIGHT + 'px',
+  paddingTop: menuButtonTop + 'px',
+  paddingLeft: '32rpx',
+  paddingRight: '32rpx',
+  boxSizing: 'border-box'
+}));
 ```
 
-**内容区域 padding**：
+**使用**：
 ```html
-<view :style="{ paddingTop: (NAVBAR_HEIGHT + 8) + 'px' }">
+<view class="nav-bar" :style="navBarStyle">...</view>
+<view class="content-body" :style="{ paddingTop: (NAVBAR_HEIGHT + 8) + 'px' }">...</view>
+```
+
+**说明**：
+- `NAVBAR_HEIGHT` = 胶囊顶部 + 胶囊高度 + 12px 底部间距
+- 内容区域 `paddingTop` 额外加 8px 避免紧贴
+
+---
+
+## 四、发布类页面的加载保护
+
+### 标准模板
+
+```ts
+// 状态
+const isClicked = ref(false);
+```
+
+```html
+<!-- 模板 -->
+<view :class="{ 'disabled': isClicked }">
+  <!-- 可交互区域 -->
+</view>
+
+<view v-if="isClicked" class="loading-overlay">
+  <view class="loading-spinner"></view>
+  <text class="loading-text">发布中...</text>
+</view>
+```
+
+```css
+.disabled {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.loading-spinner {
+  width: 80rpx; height: 80rpx;
+  border: 6rpx solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 24rpx;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+```
+
+```ts
+const commit = async () => {
+  if (isClicked.value) return;
+  isClicked.value = true;
+  try {
+    // ... 发布逻辑
+  } catch (e) {
+    isClicked.value = false; // 失败时解锁
+  }
+};
 ```
 
 ---
 
-### 4. 发布类页面的加载状态处理
+## 五、API 变更流程
 
-**问题描述**：
-用户点击发布按钮后，如果不做限制，用户仍可继续操作（如修改内容），导致数据不一致。
+### 唯一正确流程
 
-**解决方案**：
-1. 使用 `isClicked` 状态控制所有输入组件
-2. 显示全局遮罩层阻止交互
-3. 只保留返回操作可用
-
-**涉及页面**：`src/pages/course/comment/index.vue`
-
----
-
-### 5. API 代码生成流程
-
-**重要**：`src/swagger.json` 是 API 契约的真相来源（Source of Truth）。
-
-每次更新 swagger.json 后，**必须**执行：
-```bash
-cd Meowpick-Frontend && yarn api
+```
+1. 后端更新 swagger.json
+2. 前端执行: cd Meowpick-Frontend && yarn api
+3. 检查 src/api/data-contracts.ts 确认类型生成正确
+4. 使用生成的接口调用 API
 ```
 
-这会自动重新生成 `src/api/` 目录下的所有 TypeScript 类型定义和 API 客户端。
+**禁止**：
+- 手动编辑 `src/api/` 下的任何文件（会被 `yarn api` 覆盖）
+- 猜测 API 方法名，必须以 swagger.json 和生成文件为准
 
 ---
 
-### 6. 彩蛋实现注意事项（历史参考）
+## 六、条件渲染模式判断
 
-> 以下为历史记录，已回退。后续如需重新实现，请特别注意以下问题。
+### 搜索页的 add-comment 模式
 
-**实现彩蛋时的核心问题**：
-- 使用 `position: fixed` + `transform: scale()` 实现绽放效果
-- **禁止**直接修改原始元素的 CSS `transform` 属性用于动画，会导致页面布局重排
-- **正确做法**：复制一个替身元素（克隆 Logo）用于动画，原元素保持静止
-- Logo 放大比例使用非线性映射（如 `[1, 1.02, 1.08, 1.20, 1.45, 1.9, 3.0]`），前几次点击幅度极小
-- 连击窗口判定时间应短于回弹动画时长（约 300ms），建议 280ms 左右
-- **触摸事件**：`@touchstart`（按下）和 `@touchend`（松开）分离，按下时放大，松开时回弹
-- 替身 Logo 放大到约 **20 倍** 即可覆盖全屏
+搜索页支持两种模式：普通搜索 和 新增吐槽入口。
 
-**涉及文件**（已回退）：`src/components/home-view/index.vue`
+**父组件传参**：
+```html
+<!-- src/pages/find/index/index.vue -->
+<find :initial-mode="mode" ref="findRef" />
+```
 
----
+```ts
+// src/pages/find/index/index.vue
+const mode = ref('');
+onLoad((options: any) => {
+  if (options.mode) mode.value = options.mode;
+});
+```
 
-## 二、架构决策记录
+**子组件接收**（必须用 computed）：
+```ts
+const props = defineProps<{ initialMode?: string }>();
+const mode = computed(() => props.initialMode || '');
+```
 
-### 1. 路由策略模式
-
-卡片携带 `type` 字段（`complaint` / `proposal`），通过轻量级策略模式映射到路由地址，避免复杂的 if-else 链。
-
-### 2. 声明式过滤
-
-前端维护内存列表 + 选中标签，过滤和排序在渲染前客户端执行，减少 API 请求。
-
-### 3. 组件自动导入
-
-- **全局组件**：`src/components/` 和 NutUI 组件通过 `unplugin-vue-components` 自动导入，无需手动 import
-- **Vue/Pinia API**：`ref`, `computed`, `onLoad`, `onShow` 等通过 `unplugin-auto-import` 自动导入
-- **路径别名**：`@` 指向 `src/`
-
-### 4. 状态持久化
-
-Pinia store 使用 `pinia-plugin-unistorage` 持久化，刷新或重启后状态保留。
+**使用示例**：
+```html
+<view v-if="mode === 'add-comment'" class="search-guide-banner">
+  <text>请搜索并选择你要吐槽的课程</text>
+</view>
+```
 
 ---
 
-## 三、关键文件索引
+## 七、Git 规范
 
-| 文件路径 | 说明 |
-|---------|------|
-| `src/swagger.json` | API 契约源文件，修改后需运行 `yarn api` |
-| `src/api/http-client.ts` | Axios HTTP 客户端，含拦截器逻辑 |
-| `src/api/data-contracts.ts` | API 响应 TypeScript 接口 |
-| `src/config/store/` | Pinia stores |
-| `src/components/home-view/index.vue` | 首页（注意彩蛋回退状态） |
-| `src/components/find/index.vue` | 搜索组件（含新增吐槽入口逻辑） |
-| `src/pages/course/comment/index.vue` | 吐槽发布页 |
-| `src/pages/layout/main.vue` | 底部导航 TabBar 主布局 |
-| `src/utils/init.ts` | 初始化逻辑（登录等） |
+### 提交类型
 
----
+| 类型 | 使用场景 |
+|------|----------|
+| `feat:` | 新功能 |
+| `fix:` | Bug 修复 |
+| `style:` | 样式修改，不影响逻辑 |
+| `refactor:` | 重构，不影响功能 |
+| `docs:` | 文档更新 |
 
-## 四、Git 工作规范
+### Force Push 规则
 
-### 提交信息格式
-使用 Conventional Commits：
-- `feat:` 新功能
-- `fix:` Bug 修复
-- `style:` 样式修改（不影响功能）
-- `refactor:` 重构
-
-### 分支策略
-- `code-cleanup` - 主开发分支
-- `main` - 生产分支
-- 其他人通过 PR 合并
-
-### 强制更新（Force Push）
-**仅在以下情况可 force push**：
+**仅限以下情况**：
 - 修正自己的 commit message
-- 回退到自己创建的 commit
-- **禁止**在已推送的公共分支上使用
+- 回退自己创建的 commit（本地未合并）
+- **禁止**在已推送至其他分支的 commit 上使用
 
 ---
 
-## 五、常见问题排查
+## 八、目录结构速查
 
-### Q: 页面样式错乱，内容被遮挡或偏移
-**检查**：
-1. 导航栏高度计算是否正确（参考第一节）
-2. 是否有残留的 `position: fixed` 或 `z-index` 问题
-3. 微信开发者工具是否清缓存重编译
-
-### Q: API 请求报错 404 或方法名不存在
-**检查**：
-1. `swagger.json` 是否已更新
-2. 是否执行了 `yarn api`
-3. 查看 `src/api/` 下的生成文件确认方法名
-
-### Q: 组件不显示或数据不更新
-**检查**：
-1. Props 是否正确传递（参考第一节）
-2. `onLoad` / `onShow` 生命周期是否正确触发
-3. `ref` vs `reactive` 使用是否正确
-
-### Q: 编译报错但代码看起来没问题
-**检查**：
-1. 是否有未关闭的标签
-2. TypeScript 类型是否正确
-3. 尝试 `yarn install` 重新安装依赖
-
----
-
-## 六、开发命令速查
-
-```bash
-cd Meowpick-Frontend
-
-yarn install              # 安装依赖
-yarn api                  # 从 swagger.json 生成 API 代码 ⚠️必做
-yarn dev:mp-weixin        # 开发模式编译
-yarn build:mp-weixin      # 生产模式编译
-yarn type-check           # TypeScript 类型检查
-yarn release              # 版本发布（自动 CHANGELOG）
 ```
-
-**CI 流水线**：
-```bash
-yarn install && yarn api && yarn build:mp-weixin
+src/
+├── api/                    # ⚠️ 自动生成，禁止手动编辑
+│   ├── http-client.ts     # Axios 客户端
+│   └── data-contracts.ts  # 类型定义
+├── components/             # 全局组件（自动导入）
+│   ├── home-view/         # 首页
+│   ├── find/              # 搜索组件
+│   ├── profile-view/     # 我的页面
+│   └── common/            # 通用组件
+├── config/
+│   └── store/             # Pinia stores
+├── pages/
+│   ├── layout/main.vue    # TabBar 主布局
+│   ├── course/
+│   │   ├── index/         # 课程详情
+│   │   └── comment/       # 吐槽发布
+│   └── find/index/        # 搜索入口页
+├── utils/
+├── swagger.json           # ⚠️ API 契约源文件
+└── MAINTENANCE.md         # 本文档
 ```
 
 ---
 
-> 最后更新：2026-05-25
-> 当前分支：code-cleanup
-> 最新 commit：eec60c2 - feat: add loading overlay and disable interactions while publishing
+## 九、常见问题
+
+### Q: 页面内容被导航栏遮挡
+→ 检查 NAVBAR_HEIGHT 计算和 content-body 的 paddingTop
+
+### Q: API 404 或方法不存在
+→ 确认执行了 `yarn api`，检查 swagger.json 是否最新
+
+### Q: 组件不响应 props 变化
+→ 确认使用了 `computed(() => props.xxx)` 而非 `ref(props.xxx)`
+
+### Q: 编译报错但代码无误
+→ 尝试 `yarn install` 重装依赖
+
+---
+
+> 本文档随代码更新持续迭代
+> 上次更新：2026-05-25 (commit: 3a5746f)
