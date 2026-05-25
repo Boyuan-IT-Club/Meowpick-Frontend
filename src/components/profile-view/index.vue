@@ -1,8 +1,8 @@
 <template>
-  <view class="profile-container" :style="{ paddingTop: (menuButtonInfo.top + 6) + 'px' }">
+  <view class="profile-container" :style="{ paddingTop: (menuButtonInfo.top + 16) + 'px' }">
 
     <!-- 胶囊遮罩：挡住胶囊上方的内容 -->
-    <view class="capsule-mask" :style="{ height: (menuButtonInfo.top + menuButtonInfo.height + 8) + 'px' }" />
+    <view class="capsule-mask" :style="{ height: (menuButtonInfo.top + menuButtonInfo.height + 16) + 'px' }" />
 
     <!-- 1. Header Area: Large & Breathable -->
      <view class="header-section" :style="{ marginTop: '20rpx', marginBottom: '40rpx' }">
