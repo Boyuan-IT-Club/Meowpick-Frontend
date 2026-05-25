@@ -1,8 +1,8 @@
 <template>
-  <view class="profile-container" :style="{ paddingTop: (menuButtonInfo.top + 20) + 'px' }">
+  <view class="profile-container" :style="{ paddingTop: (menuButtonInfo.top + 15) + 'px' }">
 
     <!-- 胶囊遮罩：挡住胶囊上方的内容 -->
-    <view class="capsule-mask" :style="{ height: (menuButtonInfo.top + menuButtonInfo.height + 20) + 'px' }" />
+    <view class="capsule-mask" :style="{ height: (menuButtonInfo.top + menuButtonInfo.height + 15) + 'px' }" />
 
     <!-- 1. Header Area: Large & Breathable -->
      <view class="header-section" :style="{ marginTop: '20rpx', marginBottom: '40rpx' }">
@@ -49,7 +49,7 @@
     </view>
 
     <!-- 2. Filter Bar: Minimalist Text Tabs -->
-    <view class="sticky-bar" :style="{ top: (menuButtonInfo.top + 20) + 'px', height: menuButtonInfo.height + 'px' }">
+    <view class="sticky-bar" :style="{ top: (menuButtonInfo.top) + 'px', height: menuButtonInfo.height + 'px' }">
        <view class="filter-row">
             <view
                 class="filter-pill"
