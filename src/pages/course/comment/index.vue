@@ -15,7 +15,7 @@
     <!-- 内容区域 -->
     <view class="content-body" :style="{ paddingTop: (NAVBAR_HEIGHT + 8) + 'px' }">
       <!-- 标签选择 -->
-      <view class="section-card">
+      <view class="section-card" :class="{ 'disabled': isClicked }">
         <view class="section-header">
           <text class="title">选择标签</text>
           <text class="subtitle">最多选4个</text>
@@ -35,7 +35,7 @@
       </view>
 
       <!-- 吐槽输入 -->
-      <view class="section-card">
+      <view class="section-card" :class="{ 'disabled': isClicked }">
         <view class="section-header">
           <text class="title">吐槽内容</text>
         </view>
@@ -45,6 +45,7 @@
             class="comment-input"
             placeholder="请输入您的吐槽内容 (200字以内)..."
             maxlength="200"
+            :disabled="isClicked"
           />
           <view class="word-count">{{ text.length }}/200</view>
         </view>
@@ -52,6 +53,12 @@
 
       <!-- 发布按钮 -->
       <button class="publish-btn" @click="commit" :disabled="isClicked">发布</button>
+    </view>
+
+    <!-- 发布中遮罩 -->
+    <view v-if="isClicked" class="loading-overlay">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">发布中...</text>
     </view>
   </view>
 </template>
@@ -320,6 +327,47 @@ const commit = async () => {
     background: #ccc;
     color: #fff;
     box-shadow: none;
+  }
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+
+  .loading-spinner {
+    width: 80rpx;
+    height: 80rpx;
+    border: 6rpx solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 24rpx;
+  }
+
+  .loading-text {
+    color: #fff;
+    font-size: 30rpx;
+    font-weight: 500;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 </style>
