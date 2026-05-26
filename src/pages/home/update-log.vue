@@ -1,5 +1,5 @@
 <template>
-  <view class="background"> <!-- Content starts below header -->
+  <view class="background" :class="{ 'dark-mode': isDark }"> <!-- Content starts below header -->
     <image src="@/images/cat.png" class="background-image" mode="widthFix" />
     
     <!-- Custom Header -->
@@ -35,6 +35,10 @@ import InformationBox from "@/pages/home/InformationBox.vue";
 import { UpdateLog } from "./information";
 import BackBtn from "@/components/common/BackBtn.vue";
 import { onShow, onLoad } from "@dcloudio/uni-app";
+import { computed } from "vue";
+import { useThemeStore } from "@/config";
+const themeStore = useThemeStore();
+const isDark = computed(() => { if (themeStore.theme === 'dark') return true; if (themeStore.theme === 'system') return uni.getSystemInfoSync().theme === 'dark'; return false; });
 
 // System Info Logic - Same as other pages
 const sysInfo = uni.getSystemInfoSync();
@@ -87,14 +91,14 @@ const goBack = () => {
     .title {
       font-size: 40rpx;
       font-weight: 800;
-      color: #333;
+      color: var(--text-primary);
       display: block;
       margin-bottom: 8rpx;
     }
 
     .subtitle {
       font-size: 24rpx;
-      color: #999;
+      color: var(--text-muted);
       display: block;
     }
   }
@@ -139,8 +143,8 @@ const goBack = () => {
     left: 0;
     width: 100%;
     z-index: 999; /* Increased Z-Index significantly to be above content */
-    background-color: #f7f8fa; /* Solid color matching page background */
-    box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.05); /* Optional: Subtle shadow to show edge */
+    background-color: var(--bg-primary); /* Solid color matching page background */
+    box-shadow: 0 4rpx 10rpx var(--shadow-color); /* Optional: Subtle shadow to show edge */
     
     .nav-bar-content {
         display: flex;
@@ -168,7 +172,7 @@ const goBack = () => {
             .page-title {
                 font-size: 32rpx;
                 font-weight: 700;
-                color: #333;
+                color: var(--text-primary);
                 display: block; /* Ensure block level */
             }
         }

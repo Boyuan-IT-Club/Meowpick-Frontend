@@ -1,5 +1,5 @@
 <template>
-  <view class="find-page">
+  <view class="find-page" :class="{ 'dark-mode': isDark }">
     <find :initial-mode="mode" ref="findRef" />
   </view>
 </template>
@@ -8,7 +8,11 @@
 // 只需要引入我们重写好的 find 组件
 import find from "@/components/find/index.vue";
 import { onShow, onLoad } from '@dcloudio/uni-app';
+import { computed } from "vue";
 import { ref } from 'vue';
+import { useThemeStore } from "@/config";
+const themeStore = useThemeStore();
+const isDark = computed(() => { if (themeStore.theme === 'dark') return true; if (themeStore.theme === 'system') return uni.getSystemInfoSync().theme === 'dark'; return false; });
 
 const mode = ref('');
 const findRef = ref<InstanceType<typeof find> | null>(null);
@@ -38,6 +42,6 @@ onShow(() => {
 .find-page {
   width: 100%;
   height: 100vh;
-  background-color: #f7f8fa;
+  background-color: var(--bg-primary);
 }
 </style>

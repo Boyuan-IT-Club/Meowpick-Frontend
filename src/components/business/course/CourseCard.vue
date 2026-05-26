@@ -1,5 +1,5 @@
 <template>
-  <div class="search-result-box"> <!-- Removed dynamic class binding to prevent double styles -->
+  <div class="search-result-box" :class="{ 'dark-mode': isDark }"> <!-- Removed dynamic class binding to prevent double styles -->
     <!-- Proposal Card Style -->
     <template v-if="isProposal">
       <view class="proposal-card">
@@ -76,6 +76,9 @@
 import { computed } from "vue"; // Import computed
 import type { CourseVO, TeacherVO } from "@/api/data-contracts";
 import { getTop3List } from "@/utils/tags";
+import { useThemeStore } from "@/config";
+const themeStore = useThemeStore();
+const isDark = computed(() => { if (themeStore.theme === 'dark') return true; if (themeStore.theme === 'system') return uni.getSystemInfoSync().theme === 'dark'; return false; });
 
 // Extend type locally 
 type MixedResult = CourseVO & {
@@ -110,9 +113,9 @@ const isProposal = computed(() => {
 
 .proposal-card {
   /* This has shadow and radius too? No, it inherits or redefined? */
-  background: linear-gradient(145deg, #ffffff 0%, #fff5f6 100%);
+  background: linear-gradient(145deg, var(--bg-secondary) 0%, #fff5f6 100%);
   border-radius: 16rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.03); 
+  box-shadow: 0 4rpx 12rpx var(--shadow-color); 
   padding: 24rpx;
 
   .proposal-content {
@@ -128,7 +131,7 @@ const isProposal = computed(() => {
           .proposal-name {
                font-size: 32rpx; /* Slightly larger title */
                font-weight: 700;
-               color: #333; 
+               color: var(--text-primary); 
                line-height: 1.4;
                flex: 1;
           }
@@ -145,7 +148,7 @@ const isProposal = computed(() => {
                display: flex;
                align-items: center;
                font-size: 26rpx; /* Larger text */
-               color: #555; /* Darker grey */
+               color: var(--text-secondary); /* Darker grey */
                margin-right: 32rpx; 
 
                .info-icon {
@@ -191,7 +194,7 @@ const isProposal = computed(() => {
                }
                .vote-label {
                     font-size: 22rpx;
-                    color: #999;
+                    color: var(--text-muted);
                     margin-top: 4rpx; /* Align baseline */
                }
           }
@@ -200,12 +203,12 @@ const isProposal = computed(() => {
 }
 
 .search-result {
-  background-color: #ffffff;
+  background-color: var(--bg-secondary);
   width: 100%; 
   box-sizing: border-box;
   /* Add card styling to course card */
   border-radius: 16rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.03); 
+  box-shadow: 0 4rpx 12rpx var(--shadow-color); 
   padding: 24rpx;
   display: flex;
   flex-direction: column;
@@ -225,7 +228,7 @@ const isProposal = computed(() => {
           .course-name {
                font-size: 32rpx;
                font-weight: 700;
-               color: #333; 
+               color: var(--text-primary); 
                line-height: 1.4;
                flex: 1;
                margin-right: 16rpx;
@@ -237,8 +240,8 @@ const isProposal = computed(() => {
           }
           .course-category {
                font-size: 22rpx;
-               color: #666;
-               background: #f0f0f0;
+               color: var(--text-secondary);
+               background: var(--bg-tertiary);
                padding: 6rpx 12rpx;
                border-radius: 8rpx;
                white-space: nowrap;
@@ -258,7 +261,7 @@ const isProposal = computed(() => {
                display: flex;
                align-items: center;
                font-size: 26rpx; 
-               color: #555; 
+               color: var(--text-secondary); 
                margin-right: 32rpx; 
 
                .info-icon {
@@ -310,7 +313,7 @@ const isProposal = computed(() => {
         width: 100%;
         margin-top: 10rpx;
         font-size: 24rpx;
-        color: #999;
+        color: var(--text-muted);
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2; 

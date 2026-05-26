@@ -1,5 +1,5 @@
 <template>
-  <view class="container">
+  <view class="container" :class="{ 'dark-mode': isDark }">
     <!-- Header -->
     <view class="nav-bar" :style="navBarStyle">
       <view class="nav-content" :style="navContentStyle">
@@ -102,10 +102,13 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, computed } from 'vue';
+import { reactive, computed, ref } from 'vue';
 import BackBtn from "@/components/common/BackBtn.vue";
 import { http } from "@/config";
 import { TOAST_DURATION_MS } from "@/utils/constants";
+import { useThemeStore } from "@/config";
+const themeStore = useThemeStore();
+const isDark = computed(() => { if (themeStore.theme === 'dark') return true; if (themeStore.theme === 'system') return uni.getSystemInfoSync().theme === 'dark'; return false; });
 
 // System Info
 const sysInfo = uni.getSystemInfoSync();
@@ -267,7 +270,7 @@ const submit = async () => {
 <style lang="scss" scoped>
 .container {
     min-height: 100vh;
-    background: #FAFAFA;
+    background: var(--bg-primary);
 }
 
 .nav-bar {
@@ -292,7 +295,7 @@ const submit = async () => {
     .nav-title {
         font-size: 36rpx;
         font-weight: 600;
-        color: #333;
+        color: var(--text-primary);
     }
 }
 
@@ -311,17 +314,17 @@ const submit = async () => {
 }
 
 .card {
-    background: #fff;
+    background: var(--bg-secondary);
     border-radius: 20rpx;
     padding: 30rpx;
     margin-bottom: 30rpx;
-    box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.02);
+    box-shadow: 0 4rpx 16rpx var(--shadow-color);
 }
 
 .card-title {
     font-size: 30rpx;
     font-weight: 700;
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 30rpx;
     position: relative;
     padding-left: 20rpx;
@@ -343,7 +346,7 @@ const submit = async () => {
     align-items: center;
     justify-content: space-between;
     padding: 24rpx 0;
-    border-bottom: 1rpx solid #F5F5F5;
+    border-bottom: 1rpx solid var(--border-color);
     
     &:last-child {
         border-bottom: none;
@@ -351,7 +354,7 @@ const submit = async () => {
 
     .label {
         font-size: 28rpx;
-        color: #333;
+        color: var(--text-primary);
         width: 180rpx;
         font-weight: 500;
     }
@@ -360,20 +363,20 @@ const submit = async () => {
         flex: 1;
         text-align: right;
         font-size: 28rpx;
-        color: #333;
+        color: var(--text-primary);
     }
     
     .picker-display {
         font-size: 28rpx;
-        color: #333;
+        color: var(--text-primary);
         
         &.empty {
-            color: #ccc;
+            color: var(--text-muted);
         }
         
         .arrow {
             margin-left: 10rpx;
-            color: #ccc;
+            color: var(--text-muted);
         }
     }
 }
@@ -383,7 +386,7 @@ const submit = async () => {
     
     .label {
         font-size: 28rpx;
-        color: #333;
+        color: var(--text-primary);
         font-weight: 500;
     }
 }
@@ -396,10 +399,10 @@ const submit = async () => {
 
 .tag-item {
     padding: 12rpx 30rpx;
-    background: #F5F5F5;
+    background: var(--bg-tertiary);
     border-radius: 30rpx;
     font-size: 26rpx;
-    color: #666;
+    color: var(--text-secondary);
     border: 1px solid transparent;
     transition: all 0.2s;
     
@@ -415,13 +418,13 @@ const submit = async () => {
     height: 200rpx;
     font-size: 28rpx;
     line-height: 1.6;
-    color: #333;
+    color: var(--text-primary);
 }
 
 .word-count {
     text-align: right;
     font-size: 24rpx;
-    color: #ccc;
+    color: var(--text-muted);
     margin-top: 10rpx;
 }
 
@@ -431,20 +434,20 @@ const submit = async () => {
     line-height: 90rpx;
     border-radius: 45rpx;
     background: linear-gradient(90deg, #b70030, #ff4d6a);
-    color: #fff;
+    color: var(--bg-secondary);
     font-size: 32rpx;
     font-weight: bold;
     margin-top: 20rpx;
-    box-shadow: 0 8rpx 24rpx rgba(183, 0, 48, 0.25);
+    box-shadow: 0 8rpx 24rpx var(--shadow-color);
     
     &:active {
         transform: scale(0.98);
-        box-shadow: 0 4rpx 12rpx rgba(183, 0, 48, 0.2);
+        box-shadow: 0 4rpx 12rpx var(--shadow-color);
     }
 
     &[disabled] {
-        background: #ccc;
-        color: #fff;
+        background: var(--bg-tertiary);
+        color: var(--text-muted);
         box-shadow: none;
     }
 }

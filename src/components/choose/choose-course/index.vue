@@ -84,6 +84,9 @@
 import { computed, defineProps } from "vue"; // Import computed
 import type { CourseVO, TeacherVO } from "@/api/data-contracts";
 import { Emoji, getTop3List } from "@/utils/tags";
+import { useThemeStore } from "@/config";
+const themeStore = useThemeStore();
+const isDark = computed(() => { if (themeStore.theme === 'dark') return true; if (themeStore.theme === 'system') return uni.getSystemInfoSync().theme === 'dark'; return false; });
 
 // Extend type locally
 type MixedResult = CourseVO & {
@@ -113,9 +116,9 @@ const isProposal = computed(() => {
 }
 
 .proposal-card {
-  background: linear-gradient(135deg, #fff5f6 0%, #ffffff 100%);
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, #fff5f6 100%);
   border-radius: 24rpx;
-  box-shadow: 0 8rpx 24rpx rgba(200, 16, 46, 0.06);
+  box-shadow: 0 8rpx 24rpx var(--shadow-color);
   padding: 32rpx;
   border: 1px solid rgba(200, 16, 46, 0.15);
   position: relative;
@@ -124,7 +127,7 @@ const isProposal = computed(() => {
 
   &:active {
     transform: scale(0.98);
-    box-shadow: 0 4rpx 12rpx rgba(200, 16, 46, 0.04);
+    box-shadow: 0 4rpx 12rpx var(--shadow-color);
   }
 
   .proposal-content {
@@ -140,7 +143,7 @@ const isProposal = computed(() => {
           .proposal-name {
                font-size: 36rpx;
                font-weight: 700;
-               color: #1a1a1a;
+               color: var(--text-primary);
                line-height: 1.4;
                flex: 1;
                margin-right: 20rpx;
@@ -158,13 +161,13 @@ const isProposal = computed(() => {
           padding: 20rpx 24rpx;
           border-radius: 16rpx;
           border: 1px solid rgba(200, 16, 46, 0.08);
-          box-shadow: inset 0 2rpx 8rpx rgba(0,0,0,0.01);
+          box-shadow: inset 0 2rpx 8rpx var(--shadow-color);
 
           .proposal-info-item {
                display: flex;
                align-items: center;
                font-size: 26rpx;
-               color: #555;
+               color: var(--text-secondary);
                margin-right: 40rpx;
                font-weight: 500;
 
@@ -225,20 +228,20 @@ const isProposal = computed(() => {
 }
 
 .search-result {
-  background-color: #ffffff;
+  background-color: var(--bg-secondary);
   width: 100%;
   box-sizing: border-box;
   border-radius: 24rpx;
-  box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.05);
+  box-shadow: 0 8rpx 24rpx var(--shadow-color);
   padding: 32rpx;
   display: flex;
   flex-direction: column;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--border-color);
   transition: all 0.3s ease;
 
   &:active {
     transform: scale(0.98);
-    box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.03);
+    box-shadow: 0 4rpx 12rpx var(--shadow-color);
   }
 
   .course-content {
@@ -254,7 +257,7 @@ const isProposal = computed(() => {
           .course-name {
                font-size: 34rpx;
                font-weight: 600;
-               color: #2c3e50;
+               color: var(--text-primary);
                line-height: 1.5;
                flex: 1;
                margin-right: 20rpx;
@@ -286,7 +289,7 @@ const isProposal = computed(() => {
                display: flex;
                align-items: center;
                font-size: 26rpx;
-               color: #666;
+               color: var(--text-secondary);
                margin-right: 40rpx;
 
                .info-icon {
@@ -309,19 +312,19 @@ const isProposal = computed(() => {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
-        background: #f8f9fa;
+        background: var(--bg-primary);
         padding: 16rpx 20rpx;
         border-radius: 12rpx;
 
         .tag-item {
           display: flex;
           align-items: center;
-          background: #ffffff;
-          border: 1px solid #eee;
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-color);
           padding: 6rpx 16rpx;
           border-radius: 30rpx;
           margin-right: 16rpx;
-          box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.02);
+          box-shadow: 0 2rpx 8rpx var(--shadow-color);
 
           .emoji-icon {
             width: 32rpx;
@@ -347,17 +350,17 @@ const isProposal = computed(() => {
         width: 100%;
         margin-top: 20rpx;
         font-size: 26rpx;
-        color: #888;
+        color: var(--text-muted);
         line-height: 1.6;
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
         line-clamp: 2;
         overflow: hidden;
-        background: #fcfcfc;
+        background: var(--bg-secondary);
         padding: 16rpx;
         border-radius: 12rpx;
-        border-left: 6rpx solid #eee;
+        border-left: 6rpx solid var(--border-color);
       }
   }
 }

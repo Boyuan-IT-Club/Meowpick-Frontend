@@ -1,5 +1,7 @@
 <script setup lang="ts">
-const props = defineProps<{
+import { useThemeStore } from "@/config";
+const themeStore = useThemeStore();
+const isDark = computed(() => { if (themeStore.theme === 'dark') return true; if (themeStore.theme === 'system') return uni.getSystemInfoSync().theme === 'dark'; return false; });
   star: number;
 }>();
 </script>

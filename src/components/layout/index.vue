@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useThemeStore } from "@/config";
+const themeStore = useThemeStore();
+const isDark = computed(() => { if (themeStore.theme === 'dark') return true; if (themeStore.theme === 'system') return uni.getSystemInfoSync().theme === 'dark'; return false; });
 let bottomHeight = computed(() =>
   [
     "",
@@ -21,6 +24,7 @@ function bottom() {
 <template>
   <div
     class="root"
+    :class="{ 'dark-mode': isDark }"
     :style="{
       background: `${color}`,
       height: `calc(100vh - env(safe-area-inset-bottom) - ${

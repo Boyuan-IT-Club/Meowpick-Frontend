@@ -1,5 +1,5 @@
 <template>
-  <view class="find-container">
+  <view class="find-container" :class="{ 'dark-mode': isDark }">
     <!-- 顶部动态 Header -->
     <view 
       class="dynamic-header"
@@ -284,6 +284,9 @@ import { onMounted, ref, watch, computed } from "vue";
 import { onShow } from "@dcloudio/uni-app";
 import { http } from "@/config";
 import { DEBOUNCE_DELAY_MS } from "@/utils/constants";
+import { useThemeStore } from "@/config";
+const themeStore = useThemeStore();
+const isDark = computed(() => { if (themeStore.theme === 'dark') return true; if (themeStore.theme === 'system') return uni.getSystemInfoSync().theme === 'dark'; return false; });
 
 // 防抖定时器
 let suggestDebounceTimer: ReturnType<typeof setTimeout> | null = null;
@@ -787,7 +790,7 @@ $brand-red: #c8102e;
 
 .find-container {
   height: 100vh;
-  background-color: #f7f8fa;
+  background-color: var(--bg-primary);
   display: flex;
   flex-direction: column;
 }
@@ -799,7 +802,7 @@ $brand-red: #c8102e;
     left: 0;
     width: 100%;
     z-index: 100;
-    background-color: #fff;
+    background-color: var(--bg-secondary);
     box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
     
@@ -834,13 +837,13 @@ $brand-red: #c8102e;
     .search-input-box {
         flex: 1;
         min-width: 0;
-        background-color: #ffffff;
+background-color: var(--bg-secondary);
         display: flex;
         align-items: center;
         padding: 0 20rpx;
-        border: 1rpx solid #eee;
+        border: 1rpx solid var(--border-color);
         transition: all 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
-        box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.03); 
+        box-shadow: 0 2rpx 8rpx var(--shadow-color); 
         
         .search-icon {
             width: 32rpx;
@@ -852,14 +855,14 @@ $brand-red: #c8102e;
         .search-input {
             flex: 1;
             font-size: 28rpx;
-            color: #333;
+            color: var(--text-primary);
             height: 100%;
         }
         
         .clear-icon {
             width: 36rpx;
             height: 36rpx;
-            background-color: #eee;
+            background-color: var(--bg-tertiary);
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -867,7 +870,7 @@ $brand-red: #c8102e;
             margin-left: 10rpx;
             
             .clear-text {
-                color: #999;
+                color: var(--text-muted);
                 font-size: 28rpx;
                 line-height: 1;
                 margin-top: -4rpx;
@@ -911,12 +914,12 @@ $brand-red: #c8102e;
     .section-title {
         font-size: 32rpx;
         font-weight: 700;
-        color: #333;
+        color: var(--text-primary);
     }
     
     .clear-history {
         font-size: 28rpx;
-        color: #999;
+        color: var(--text-muted);
         padding: 10rpx;
     }
 }
@@ -928,10 +931,10 @@ $brand-red: #c8102e;
     
     .tag-item {
         padding: 12rpx 30rpx;
-        background-color: #fff;
+        background-color: var(--bg-secondary);
         border-radius: 30rpx;
         font-size: 26rpx;
-        color: #555;
+        color: var(--text-secondary);
         border: 1rpx solid transparent;
         transition: all 0.2s;
         
@@ -948,7 +951,7 @@ $brand-red: #c8102e;
     }
     
     .no-history {
-        color: #999;
+        color: var(--text-muted);
         font-size: 26rpx;
         width: 100%;
         text-align: center;
@@ -957,17 +960,17 @@ $brand-red: #c8102e;
 }
 
 .recommend-list {
-    background-color: #fff;
+    background-color: var(--bg-secondary);
     border-radius: 24rpx;
     padding: 0;
     overflow: hidden;
-    box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05); 
+    box-shadow: 0 4rpx 16rpx var(--shadow-color); 
     
     .recommend-item {
         display: flex;
         align-items: center;
         padding: 24rpx 30rpx;
-        border-bottom: 1rpx solid #f9f9f9;
+        border-bottom: 1rpx solid var(--border-color);
         
         &:last-child {
             border-bottom: none;
@@ -988,13 +991,13 @@ $brand-red: #c8102e;
         .recommend-word {
             flex: 1;
             font-size: 30rpx;
-            color: #333;
+            color: var(--text-primary);
         }
         
         .recommend-tag {
             font-size: 22rpx;
-            color: #999;
-            background-color: #f5f5f5;
+            color: var(--text-muted);
+            background-color: var(--bg-tertiary);
             padding: 4rpx 12rpx;
             border-radius: 8rpx;
         }
@@ -1006,14 +1009,14 @@ $brand-red: #c8102e;
     border-radius: 24rpx;
     overflow: hidden;
     background-color: #ffffff;
-    box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.05);
+    box-shadow: 0 4rpx 16rpx var(--shadow-color);
 
     .suggest-item {
         display: flex;
         align-items: center;
         padding: 30rpx 40rpx;
-        background-color: #fff;
-        border-bottom: 1rpx solid #f9f9f9;
+        background-color: var(--bg-secondary);
+        border-bottom: 1rpx solid var(--border-color);
         
         &:last-child { border-bottom: none; }
         
@@ -1029,19 +1032,19 @@ $brand-red: #c8102e;
             flex-direction: column;
             .item-name {
                 font-size: 30rpx;
-                color: #333;
+                color: var(--text-primary);
                 margin-bottom: 6rpx;
             }
         }
         
         .item-arrow {
-            color: #ccc;
+            color: var(--text-muted);
             font-size: 28rpx;
         }
     }
 }
 
-.placeholder-style { color: #bbb; }
+.placeholder-style { color: var(--text-muted); }
 
 /* Result Section Layout */
 .result-section {
@@ -1060,7 +1063,7 @@ $brand-red: #c8102e;
     
     .group-title {
         font-size: 28rpx;
-        color: #999;
+        color: var(--text-muted);
         margin-bottom: 20rpx;
         margin-left: 8rpx;
         font-weight: 500;
@@ -1094,16 +1097,16 @@ $brand-red: #c8102e;
 */
 
 .result-card-wrapper {
-    background-color: #fff;
+    background-color: var(--bg-secondary);
     border-radius: 24rpx;
     padding: 24rpx;
     position: relative;
-    box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.04);
+    box-shadow: 0 4rpx 16rpx var(--shadow-color);
     transition: all 0.2s;
     
     &:active {
         transform: scale(0.995);
-        box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.02);
+        box-shadow: 0 2rpx 8rpx var(--shadow-color);
     }
 
     &.course-card {
@@ -1151,8 +1154,8 @@ $brand-red: #c8102e;
             top: auto;
             bottom: 24rpx;
             right: 24rpx;
-            background-color: #f5f5f5;
-            color: #999;
+            background-color: var(--bg-tertiary);
+            color: var(--text-muted);
         }
     }
 }
@@ -1186,13 +1189,13 @@ $brand-red: #c8102e;
         .new-title {
             font-size: 30rpx;
             font-weight: 600;
-            color: #333;
+            color: var(--text-primary);
             margin-bottom: 8rpx;
         }
         
         .new-sub {
             font-size: 24rpx;
-            color: #999;
+            color: var(--text-muted);
         }
     }
 }
@@ -1200,7 +1203,7 @@ $brand-red: #c8102e;
 .bottom {
     text-align: center;
     font-size: 24rpx;
-    color: #ccc;
+    color: var(--text-muted);
     padding: 30rpx 0;
 }
 
@@ -1218,13 +1221,13 @@ $brand-red: #c8102e;
     height: 44px; /* Approx 88rpx */
     align-items: center;
     justify-content: space-around;
-    background: #fff;
-    border-top: 1rpx solid #eee;
-    box-shadow: 0 4rpx 8rpx rgba(0,0,0,0.02);
+    background: var(--bg-secondary);
+    border-top: 1rpx solid var(--border-color);
+    box-shadow: 0 4rpx 8rpx var(--shadow-color);
 
     .filter-item {
         font-size: 28rpx;
-        color: #666;
+        color: var(--text-secondary);
         height: 100%;
         display: flex;
         align-items: center;
@@ -1256,9 +1259,9 @@ $brand-red: #c8102e;
         gap: 8rpx;
         padding: 0 30rpx; 
         font-size: 28rpx;
-        color: #333;
+        color: var(--text-primary);
         font-weight: 500;
-        border-left: 1rpx solid #eee;
+        border-left: 1rpx solid var(--border-color);
         height: 50%;
     }
 }
@@ -1287,14 +1290,14 @@ $brand-red: #c8102e;
 }
 
 .dropdown-panel {
-    background-color: #fff;
+    background-color: var(--bg-secondary);
     width: 100%;
     /* max-height: 60vh; */ /* Use content height */
     display: flex;
     flex-direction: column;
     border-radius: 0 0 32rpx 32rpx; /* Increased radius */
     animation: slideDown 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    box-shadow: 0 12rpx 32rpx rgba(0,0,0,0.08); /* More refined shadow */
+    box-shadow: 0 12rpx 32rpx var(--shadow-color); /* More refined shadow */
     overflow: hidden; /* Ensure content doesn't bleed */
 }
 
@@ -1302,7 +1305,7 @@ $brand-red: #c8102e;
     padding: 30rpx 32rpx; /* Use standard spacing */
     max-height: 50vh; 
     box-sizing: border-box;
-    background-color: #fff;
+    background-color: var(--bg-secondary);
 }
 
 .dropdown-footer {
@@ -1310,8 +1313,8 @@ $brand-red: #c8102e;
     justify-content: space-between;
     gap: 24rpx; /* Use gap property */
     padding: 24rpx 32rpx 40rpx; /* More bottom padding for aesthetics */
-    border-top: 1rpx solid #f5f5f5;
-    background-color: #fff;
+    border-top: 1rpx solid var(--border-color);
+    background-color: var(--bg-secondary);
     
     .btn-common {
         flex: 1; /* Equal width */
@@ -1329,8 +1332,8 @@ $brand-red: #c8102e;
     }
 
     .btn-reset {
-        background-color: #f7f8fa;
-        color: #666;
+        background-color: var(--bg-primary);
+        color: var(--text-secondary);
     }
     
     .btn-confirm {
@@ -1377,7 +1380,7 @@ $brand-red: #c8102e;
 .still-nothing-tip {
     text-align: center;
     font-size: 24rpx;
-    color: #999;
+    color: var(--text-muted);
     margin-bottom: 24rpx;
     margin-top: 0; /* Changed from 20rpx top margin to completely remove blank space above "still nothing?" tip */
 }
@@ -1388,7 +1391,7 @@ $brand-red: #c8102e;
     
     .group-title {
         font-size: 28rpx;
-        color: #333; /* Darker title text */
+        color: var(--text-primary); /* Darker title text */
         font-weight: 600; /* Bolder */
         margin-bottom: 24rpx;
         display: block;
@@ -1403,8 +1406,8 @@ $brand-red: #c8102e;
 
 .filter-tag {
     padding: 14rpx 36rpx;
-    background-color: #f7f8fa;
-    color: #666;
+    background-color: var(--bg-primary);
+    color: var(--text-secondary);
     border-radius: 12rpx; /* Rounded rectangles instead of capsules */
     font-size: 26rpx;
     border: 1px solid transparent;

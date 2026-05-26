@@ -1,5 +1,5 @@
 <template>
-  <view class="comment-publish-container">
+  <view class="comment-publish-container" :class="{ 'dark-mode': isDark }">
     <view class="nav-bar" :style="navBarStyle">
       <view class="nav-content" :style="navContentStyle">
         <!-- Left aligned Back Button -->
@@ -66,6 +66,9 @@ import { useCourse } from "@/pages/course/index/index";
 import { Tags, TotalTags, InitTags } from "@/utils/tags";
 import { http } from "@/config/index";
 import { TOAST_DURATION_MS } from "@/utils/constants";
+import { useThemeStore } from "@/config";
+const themeStore = useThemeStore();
+const isDark = computed(() => { if (themeStore.theme === 'dark') return true; if (themeStore.theme === 'system') return uni.getSystemInfoSync().theme === 'dark'; return false; });
 
 // Menu Button Info for Custom Navbar
 const sysInfo = uni.getSystemInfoSync();
@@ -203,7 +206,7 @@ const commit = async () => {
 <style scoped lang="scss">
 .comment-publish-container {
     min-height: 100vh;
-    background-color: #F5F7FA;
+    background-color: var(--bg-primary);
     display: flex;
     flex-direction: column;
 }
@@ -215,7 +218,7 @@ const commit = async () => {
     left: 0;
     width: 100%;
     z-index: 100;
-    background-color: #F5F7FA;
+    background-color: var(--bg-primary);
     /* padding styles handled by inline style */
 }
 
@@ -252,11 +255,11 @@ const commit = async () => {
 }
 
 .section-card {
-    background: #fff;
+    background: var(--bg-secondary);
     border-radius: 24rpx;
     padding: 30rpx;
     margin-bottom: 30rpx;
-    box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.03);
+    box-shadow: 0 4rpx 20rpx var(--shadow-color);
 }
 
 .section-header {
@@ -273,7 +276,7 @@ const commit = async () => {
     
     .subtitle {
         font-size: 24rpx;
-        color: #999;
+        color: var(--text-muted);
     }
 }
 
@@ -291,7 +294,7 @@ const commit = async () => {
     justify-content: center;
     width: 140rpx;
     height: 140rpx;
-    background: #FAFAFA;
+    background: var(--bg-tertiary);
     border-radius: 16rpx;
     border: 2rpx solid transparent;
     transition: all 0.3s;
@@ -304,7 +307,7 @@ const commit = async () => {
     
     .tag-text {
         font-size: 24rpx;
-        color: #666;
+        color: var(--text-secondary);
     }
     
     &.active {
@@ -321,7 +324,7 @@ const commit = async () => {
 /* Comment Input */
 .input-box {
     position: relative;
-    background: #FAFAFA;
+    background: var(--bg-tertiary);
     border-radius: 16rpx;
     padding: 20rpx;
 }
@@ -330,14 +333,14 @@ const commit = async () => {
     width: 100%;
     height: 240rpx;
     font-size: 28rpx;
-    color: #333;
+    color: var(--text-primary);
     line-height: 1.6;
 }
 
 .word-count {
     text-align: right;
     font-size: 22rpx;
-    color: #CCCCCC;
+    color: var(--text-muted);
     margin-top: 10rpx;
 }
 
@@ -361,8 +364,8 @@ const commit = async () => {
     }
     
     &[disabled] {
-        background: #ccc;
-        color: #fff;
+        background: var(--bg-tertiary);
+        color: var(--text-muted);
         box-shadow: none;
     }
 }

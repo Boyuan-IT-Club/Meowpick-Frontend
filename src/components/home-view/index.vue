@@ -1,5 +1,5 @@
 <template>
-  <view class="home-view-container">
+  <view class="home-view-container" :class="{ 'dark-mode': isDark }">
     <!-- 顶部欢迎语区域 -->
     <view class="header-welcome">
       <view class="welcome-Line">
@@ -65,6 +65,9 @@ import { ref, onMounted } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
 import { waitForLogin } from '@/utils/init';
 import { http } from '@/config';
+import { useThemeStore } from "@/config";
+const themeStore = useThemeStore();
+const isDark = computed(() => { if (themeStore.theme === 'dark') return true; if (themeStore.theme === 'system') return uni.getSystemInfoSync().theme === 'dark'; return false; });
 
 // 状态定义
 const totalComment = ref(0);
@@ -121,15 +124,15 @@ const goToUpdate = () => {
 // 变量定义
 $brand-red: #c8102e; // 更加通透的亮红色
 $brand-light-bg: #fff1f1; // 极淡的粉红背景
-$card-bg: #ffffff;
-$text-main: #2c2c2c;
+$card-bg: var(--bg-secondary);
+$text-main: var(--text-primary);
 
 .home-view-container {
   min-height: 100vh; 
   // 减少顶部 padding (160 -> 120)，把整体内容提上去
   padding: 120rpx 40rpx 100rpx 40rpx;
   box-sizing: border-box;
-  background-color: #f7f8fa; 
+  background-color: var(--bg-primary); 
   
   display: flex;
   flex-direction: column;
@@ -145,7 +148,7 @@ $text-main: #2c2c2c;
     left: 0;
     width: 100%;
     height: 50vh; // 加高背景色块
-    background: linear-gradient(180deg, #fffcfc 0%, #f7f8fa 100%);
+    background: linear-gradient(180deg, #fffcfc 0%, var(--bg-primary) 100%);
     border-bottom-left-radius: 60rpx;
     border-bottom-right-radius: 60rpx;
     z-index: 0;
@@ -173,7 +176,7 @@ $text-main: #2c2c2c;
   .hello-text {
     font-size: 56rpx; // 再次加大，增加顶部份量
     font-weight: 300; // 纤细现代
-    color: #999;      // 浅灰色
+    color: var(--text-muted);      // 浅灰色
     font-family: sans-serif; 
     font-style: normal; 
     margin-bottom: 10rpx; // 上下间距
@@ -182,7 +185,7 @@ $text-main: #2c2c2c;
   .name-text {
     font-size: 72rpx; // 再次加大，撑起顶部视觉
     font-weight: 900; 
-    color: #333;      
+    color: var(--text-primary);      
     letter-spacing: -2rpx; 
   }
   
@@ -230,16 +233,16 @@ $text-main: #2c2c2c;
   .search-box {
     display: flex;
     align-items: center;
-    background-color: #ffffff;
+    background-color: var(--bg-secondary);
     height: 110rpx; // 高度增加
     border-radius: 40rpx; // 更加圆润
     padding: 0 30rpx;
     
-    // 阴影升级：多层混合阴影，打造“浮起”质感
+    // 阴影升级：多层混合阴影，打造"浮起"质感
     box-shadow: 
       0 10rpx 30rpx -10rpx rgba(200, 16, 46, 0.15),
-      0 4rpx 10rpx rgba(0,0,0,0.02);
-    border: 2rpx solid #fff; // 内描边提亮
+      0 4rpx 10rpx var(--shadow-color);
+    border: 2rpx solid var(--bg-secondary); // 内描边提亮
 
     .search-icon {
       width: 44rpx;
@@ -253,7 +256,7 @@ $text-main: #2c2c2c;
     .search-placeholder {
       flex: 1;
       font-size: 32rpx;
-      color: #bbbbbb;
+      color: var(--text-muted);
       letter-spacing: 1rpx;
       font-weight: 400;
     }
@@ -294,13 +297,13 @@ $text-main: #2c2c2c;
 
 // 通用卡片 - 面板风格
 .card-item {
-  background-color: #ffffff;
+  background-color: var(--bg-secondary);
   border-radius: 36rpx; // 更加圆润
   padding: 30rpx;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.02); // 极淡阴影
-  border: 1rpx solid rgba(0,0,0,0.03);
+  box-shadow: 0 4rpx 20rpx var(--shadow-color); // 极淡阴影
+  border: 1rpx solid var(--shadow-color);
 
   height: 180rpx;
   display: flex;
@@ -319,7 +322,7 @@ $text-main: #2c2c2c;
 
   .card-subtitle {
     font-size: 20rpx;
-    color: #999;
+    color: var(--text-muted);
     letter-spacing: 1rpx;
     text-transform: uppercase;
     z-index: 2;
@@ -343,9 +346,9 @@ $text-main: #2c2c2c;
       transform: scale(0.97);
   }
 
-  // “信件”卡片特殊化：带一点红晕背景，更显温馨
+  // "信件"卡片特殊化：带一点红晕背景，更显温馨
   &.letter-card {
-      background: linear-gradient(135deg, #fff 0%, $brand-light-bg 100%);
+      background: linear-gradient(135deg, var(--bg-secondary) 0%, $brand-light-bg 100%);
       .card-title { color: $brand-red; }
   }
 }
@@ -355,10 +358,10 @@ $text-main: #2c2c2c;
   height: 100% !important; 
   
   // 修改：由深红底改为白底，解决视觉不平衡
-  background-color: #ffffff; 
+  background-color: var(--bg-secondary); 
   
   // 加回边框，保持统一感
-  border: 1rpx solid rgba(0,0,0,0.03);
+  border: 1rpx solid var(--shadow-color);
   
   color: $text-main; // 文字变回深色
   
@@ -370,14 +373,14 @@ $text-main: #2c2c2c;
   position: relative;
   
   // 阴影改为普通阴影，不再发红光
-  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.02); 
+  box-shadow: 0 4rpx 20rpx var(--shadow-color); 
 
   // 顶部标题
   .stat-title {
       font-size: 30rpx;
       font-weight: 700; // 加粗
       opacity: 1;
-      color: #999; // 灰色副标题
+      color: var(--text-muted); // 灰色副标题
   }
 
   // 中间巨大数字
@@ -398,7 +401,7 @@ $text-main: #2c2c2c;
   .stat-unit {
       font-size: 24rpx;
       opacity: 0.5;
-      color: #999;
+      color: var(--text-muted);
       align-self: flex-end; 
   }
 
@@ -415,7 +418,7 @@ $text-main: #2c2c2c;
       left: 0;
       width: 100%;
       height: 12rpx;
-      background: linear-gradient(90deg, #fff 0%, $brand-light-bg 100%);
+      background: linear-gradient(90deg, var(--bg-secondary) 0%, $brand-light-bg 100%);
       // 或者干脆不要装饰，保持极简
       display: none; 
   }

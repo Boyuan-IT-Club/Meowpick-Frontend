@@ -4,8 +4,10 @@ import { useTokenStore } from "@/config";
 import Like from "@/images/like-icon.png";
 import Liked from "@/images/like_active.png";
 import { format as formatTime } from "./utils";
-
 import { Emoji } from "@/utils/tags";
+import { useThemeStore } from "@/config";
+const themeStore = useThemeStore();
+const isDark = computed(() => { if (themeStore.theme === 'dark') return true; if (themeStore.theme === 'system') return uni.getSystemInfoSync().theme === 'dark'; return false; });
 
 type CommentBoxProps = {
     data: CommentVO;
@@ -35,7 +37,7 @@ const textTags = (tags: string[]) => {
 </script>
 
 <template>
-  <view class="comment-box">
+  <view class="comment-box" :class="{ 'dark-mode': isDark }">
 
     <!-- 头部：表情（评价态度） + 标签 -->
     <view class="header-section">
@@ -70,11 +72,11 @@ const textTags = (tags: string[]) => {
 
 <style scoped lang="scss">
 .comment-box {
-  background-color: #fff;
+  background-color: var(--bg-secondary);
   border-radius: 16rpx;
   padding: 24rpx;
   margin-bottom: 24rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.05);
+  box-shadow: 0 4rpx 12rpx var(--shadow-color);
 }
 
 .header-section {
@@ -98,7 +100,7 @@ const textTags = (tags: string[]) => {
       .ctag {
         display: flex;
         align-items: center;
-        background-color: #f7f8fa;
+        background-color: var(--bg-primary);
         padding: 4rpx 16rpx; // 微调 padding 使其更匀称
         border-radius: 20rpx;
         margin-right: 12rpx;
@@ -113,7 +115,7 @@ const textTags = (tags: string[]) => {
 
         .txt {
           font-size: 24rpx;
-          color: #666;
+          color: var(--text-secondary);
         }
       }
   }
@@ -121,7 +123,7 @@ const textTags = (tags: string[]) => {
 
 .content-section {
   font-size: 28rpx;
-  color: #333;
+  color: var(--text-primary);
   line-height: 1.6;
   margin-bottom: 20rpx;
 }
@@ -133,7 +135,7 @@ const textTags = (tags: string[]) => {
   
   .date-str {
     font-size: 24rpx;
-    color: #999;
+    color: var(--text-muted);
   }
   
   .like-block {
@@ -146,7 +148,7 @@ const textTags = (tags: string[]) => {
     }
     .count {
       font-size: 26rpx;
-      color: #666;
+      color: var(--text-secondary);
     }
   }
 }

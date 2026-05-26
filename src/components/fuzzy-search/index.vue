@@ -1,5 +1,5 @@
 <template>
-  <view class="fuzzy-search">
+  <view class="fuzzy-search" :class="{ 'dark-mode': isDark }">
     <view class="input-wrapper">
       <input
         type="text"
@@ -33,8 +33,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { useFuzzySearch } from './index';
+import { useThemeStore } from "@/config";
+const themeStore = useThemeStore();
+const isDark = computed(() => { if (themeStore.theme === 'dark') return true; if (themeStore.theme === 'system') return uni.getSystemInfoSync().theme === 'dark'; return false; });
 
 // 组件属性
 const props = defineProps<{
@@ -112,7 +115,7 @@ const handleSelect = (option: string) => {
 .search-input {
   width: 100%;
   height: 10vw;
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--border-color);
   border-radius: 2vw;
   padding: 0 10vw 0 3vw;
   box-sizing: border-box;
@@ -139,10 +142,10 @@ const handleSelect = (option: string) => {
   top: 11vw;
   left: 0;
   width: 100%;
-  background-color: #fff;
-  border: 1px solid #e5e5e5;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 2vw;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px var(--shadow-color);
   z-index: 10;
   padding: 2vw 0;
   max-height: 50vw;
@@ -156,7 +159,7 @@ const handleSelect = (option: string) => {
   transition: background-color 0.2s ease;
 
   &:hover {
-    background-color: #f5f5f5;
+    background-color: var(--bg-tertiary);
   }
 }
 </style>

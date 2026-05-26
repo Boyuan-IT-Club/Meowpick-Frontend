@@ -1,5 +1,5 @@
 <template>
-  <view class="proposal-detail-page">
+  <view class="proposal-detail-page" :class="{ 'dark-mode': isDark }">
 
     <!-- 1. 新的头部 Header (与课程详情一致) -->
     <!-- 背景改为渐变色以区分 Proposal -->
@@ -103,9 +103,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { onLoad } from "@dcloudio/uni-app";
 import { http } from "@/config";
+import { useThemeStore } from "@/config";
+const themeStore = useThemeStore();
+const isDark = computed(() => { if (themeStore.theme === 'dark') return true; if (themeStore.theme === 'system') return uni.getSystemInfoSync().theme === 'dark'; return false; });
 
 // 1. 获取胶囊位置
 const sysInfo = uni.getSystemInfoSync();
@@ -228,7 +231,7 @@ $proposal-bg-end: #f8f9fa;
 
 .proposal-detail-page {
     height: 100vh;
-    background-color: #f7f8fa;
+    background-color: var(--bg-primary);
     display: flex;
     flex-direction: column;
 }
@@ -239,10 +242,10 @@ $proposal-bg-end: #f8f9fa;
     left: 0;
     width: 100%;
     z-index: 100;
-    background: linear-gradient(to bottom, $proposal-bg-start, #ffffff);
+    background: linear-gradient(to bottom, $proposal-bg-start, var(--bg-secondary));
     display: flex;
     flex-direction: column;
-    box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.02);
+    box-shadow: 0 2rpx 10rpx var(--shadow-color);
 
     .nav-bar {
         display: flex;
@@ -255,7 +258,7 @@ $proposal-bg-end: #f8f9fa;
             align-items: center;
             justify-content: center;
             font-size: 40rpx;
-            color: #333;
+            color: var(--text-primary);
         }
         
         .title-wrapper {
@@ -266,7 +269,7 @@ $proposal-bg-end: #f8f9fa;
             .page-title {
                 font-size: 32rpx;
                 font-weight: 600;
-                color: #333;
+                color: var(--text-primary);
             }
         }
     }
@@ -279,11 +282,11 @@ $proposal-bg-end: #f8f9fa;
 }
 
 .proposal-card {
-    background: #fff;
+    background: var(--bg-secondary);
     border-radius: 24rpx;
     padding: 40rpx 32rpx;
-    box-shadow: 0 8rpx 24rpx rgba(255, 77, 79, 0.08);
-    border: 1rpx solid rgba(255, 77, 79, 0.1);
+    box-shadow: 0 8rpx 24rpx var(--shadow-color);
+    border: 1rpx solid var(--border-color);
     margin-bottom: 30rpx;
     
     .card-header {
@@ -293,7 +296,7 @@ $proposal-bg-end: #f8f9fa;
         margin-bottom: 24rpx;
         
         .proposal-badge {
-            background-color: #fff0f0;
+            background-color: var(--bg-tertiary);
             color: $brand-red;
             font-size: 22rpx;
             padding: 6rpx 16rpx;
@@ -303,14 +306,14 @@ $proposal-bg-end: #f8f9fa;
         
         .proposal-date {
             font-size: 24rpx;
-            color: #999;
+            color: var(--text-muted);
         }
     }
     
     .proposal-title {
         font-size: 40rpx;
         font-weight: 700;
-        color: #333;
+        color: var(--text-primary);
         line-height: 1.4;
         margin-bottom: 30rpx;
     }
@@ -319,7 +322,7 @@ $proposal-bg-end: #f8f9fa;
         display: flex;
         gap: 40rpx;
         margin-bottom: 30rpx;
-        background-color: #fcfcfc;
+        background-color: var(--bg-tertiary);
         padding: 20rpx;
         border-radius: 12rpx;
         
@@ -329,12 +332,12 @@ $proposal-bg-end: #f8f9fa;
             
             .info-label {
                 font-size: 22rpx;
-                color: #999;
+                color: var(--text-muted);
                 margin-bottom: 4rpx;
             }
             .info-value {
                 font-size: 28rpx;
-                color: #333;
+                color: var(--text-primary);
                 font-weight: 500;
             }
         }
@@ -346,21 +349,21 @@ $proposal-bg-end: #f8f9fa;
         .reason-label {
             font-size: 28rpx;
             font-weight: 600;
-            color: #555;
+            color: var(--text-secondary);
             display: block;
             margin-bottom: 12rpx;
         }
         
         .reason-content {
             font-size: 28rpx;
-            color: #444;
+            color: var(--text-secondary);
             line-height: 1.6;
             text-align: justify;
         }
     }
     
     .vote-area {
-        border-top: 1rpx solid #eee;
+        border-top: 1rpx solid var(--border-color);
         padding-top: 30rpx;
         display: flex;
         align-items: center;
@@ -379,26 +382,26 @@ $proposal-bg-end: #f8f9fa;
             
             .vote-desc {
                 font-size: 24rpx;
-                color: #999;
+                color: var(--text-muted);
             }
         }
         
         .vote-btn {
             background: $brand-red;
-            color: #fff;
+            color: var(--bg-secondary);
             font-size: 28rpx;
             padding: 0 48rpx;
             height: 80rpx;
             line-height: 80rpx;
             border-radius: 40rpx;
             border: none;
-            box-shadow: 0 6rpx 16rpx rgba(200, 16, 46, 0.3);
+            box-shadow: 0 6rpx 16rpx var(--shadow-color);
             transition: all 0.2s;
             margin: 0;
             
             &.is-voted {
-                background: #eee;
-                color: #999;
+                background: var(--bg-tertiary);
+                color: var(--text-muted);
                 box-shadow: none;
             }
             
@@ -410,7 +413,7 @@ $proposal-bg-end: #f8f9fa;
 }
 
 .discussion-section {
-    background-color: #fff;
+    background-color: var(--bg-secondary);
     border-radius: 24rpx;
     padding: 30rpx;
     min-height: 400rpx;
@@ -423,13 +426,13 @@ $proposal-bg-end: #f8f9fa;
         .section-title {
             font-size: 32rpx;
             font-weight: 700;
-            color: #333;
+            color: var(--text-primary);
             margin-right: 12rpx;
         }
         
         .section-count {
             font-size: 24rpx;
-            color: #999;
+            color: var(--text-muted);
         }
     }
     
@@ -448,7 +451,7 @@ $proposal-bg-end: #f8f9fa;
         }
         
         text {
-            color: #999;
+            color: var(--text-muted);
             font-size: 26rpx;
         }
     }
@@ -468,15 +471,15 @@ $proposal-bg-end: #f8f9fa;
         width: 80rpx;
         height: 80rpx;
         margin: 0 auto 24rpx;
-        border: 4rpx solid #ddd;
-        border-top-color: #c8102e;
+        border: 4rpx solid var(--border-color);
+        border-top-color: $brand-red;
         border-radius: 50%;
         animation: spin 1s linear infinite;
     }
 
     .loading-text {
         font-size: 28rpx;
-        color: #666;
+        color: var(--text-secondary);
     }
 }
 
@@ -488,14 +491,14 @@ $proposal-bg-end: #f8f9fa;
 
     .error-text {
         font-size: 28rpx;
-        color: #f43f30;
+        color: $brand-red;
         display: block;
         margin-bottom: 32rpx;
     }
 
     .retry-btn {
-        background-color: #c8102e;
-        color: white;
+        background-color: $brand-red;
+        color: var(--bg-secondary);
         border-radius: 24rpx;
         font-size: 28rpx;
         padding: 16rpx 48rpx;
@@ -520,12 +523,12 @@ $proposal-bg-end: #f8f9fa;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 8rpx 20rpx rgba(200, 16, 46, 0.4);
+    box-shadow: 0 8rpx 20rpx var(--shadow-color);
     z-index: 99;
 
     .fab-text {
         font-size: 40rpx;
-        color: #fff;
+        color: var(--bg-secondary);
     }
 }
 </style>

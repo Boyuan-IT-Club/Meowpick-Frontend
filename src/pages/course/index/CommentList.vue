@@ -1,5 +1,5 @@
 <template>
-  <view class="comment">
+  <view class="comment" :class="{ 'dark-mode': isDark }">
     <view v-for="item of list" :key="item.id" class="item">
       <CommentBox :data="item" @like="like" />
     </view>
@@ -9,7 +9,10 @@
 <script setup lang="ts">
 import { useCourseComment } from "@/pages/course/index/utils";
 import CommentBox from "@/pages/course/index/CommentBox.vue";
-import { onUnmounted } from "vue";
+import { onUnmounted, computed } from "vue";
+import { useThemeStore } from "@/config";
+const themeStore = useThemeStore();
+const isDark = computed(() => { if (themeStore.theme === 'dark') return true; if (themeStore.theme === 'system') return uni.getSystemInfoSync().theme === 'dark'; return false; });
 
 const props = defineProps<{
   id: string;

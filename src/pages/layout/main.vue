@@ -1,5 +1,5 @@
 <template>
-  <view class="main-container">
+  <view class="main-container" :class="{ 'dark-mode': isDark }">
     <!-- 顶部内容区 -->
     <swiper 
       class="content-swiper" 
@@ -60,11 +60,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { onShow, onLoad } from '@dcloudio/uni-app';
 // 暂时使用占位组件，后续会替换为真实组件
 import HomeView from '@/components/home-view/index.vue';
 import ProfileView from '@/components/profile-view/index.vue';
+import { useThemeStore } from "@/config";
+const themeStore = useThemeStore();
+const isDark = computed(() => { if (themeStore.theme === 'dark') return true; if (themeStore.theme === 'system') return uni.getSystemInfoSync().theme === 'dark'; return false; });
 
 const currentIndex = ref(0);
 const indicatorLeft = ref(25); // 初始值 25%
@@ -123,7 +126,7 @@ function onSwiperAnimationFinish(e: any) {
   flex-direction: column;
   height: 100vh;
   // 背景色稍微加深一点点，让白色组件反差更好看
-  background-color: #f2f3f5;
+  background-color: var(--bg-primary);
 }
 
 .content-swiper {
@@ -149,7 +152,7 @@ function onSwiperAnimationFinish(e: any) {
   height: auto; // 由内容撑开，不再固定死高度，避免布局冲突
   min-height: 100rpx;
   
-  background-color: rgba(255, 255, 255, 0.98); 
+  background-color: var(--bg-secondary); 
   border-top-left-radius: 40rpx; 
   border-top-right-radius: 40rpx;
   
@@ -157,7 +160,7 @@ function onSwiperAnimationFinish(e: any) {
   padding-bottom: constant(safe-area-inset-bottom);
   padding-bottom: env(safe-area-inset-bottom);
   
-  box-shadow: 0 -10rpx 40rpx rgba(0, 0, 0, 0.04);
+  box-shadow: 0 -10rpx 40rpx var(--shadow-color);
 
   display: flex;
   flex-direction: column; 

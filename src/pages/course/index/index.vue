@@ -1,5 +1,5 @@
 <template>
-  <layout class="background" @on-bottom="handleBottom()">
+  <layout class="background" @on-bottom="handleBottom()" :class="{ 'dark-mode': isDark }">
     
     <!-- 1. 新的头部 Header -->
     <view class="detail-header" 
@@ -54,10 +54,14 @@
 <script setup lang="ts">
 import BackBtn from "@/components/common/BackBtn.vue";
 import { onShow, onLoad } from "@dcloudio/uni-app";
+import { computed } from "vue";
 import { useCourse } from "./index";
 import CommentList from "@/pages/course/index/CommentList.vue";
 import { format as formatTime } from "./utils"; // 修复 import
-import CourseHeader from "@/components/course/course-header/index.vue"; 
+import CourseHeader from "@/components/course/course-header/index.vue";
+import { useThemeStore } from "@/config";
+const themeStore = useThemeStore();
+const isDark = computed(() => { if (themeStore.theme === 'dark') return true; if (themeStore.theme === 'system') return uni.getSystemInfoSync().theme === 'dark'; return false; }); 
 
 // 1. 获取胶囊位置，用于对齐返回按钮
 const sysInfo = uni.getSystemInfoSync();
@@ -109,7 +113,7 @@ const goBack = () => {
 <style scoped lang="scss">
 .background {
   min-height: 100vh;
-  background-color: #f7f8fa; // 浅灰底色
+  background-color: var(--bg-primary); // 浅灰底色
 }
 
 // 1. 顶部区域
@@ -120,7 +124,7 @@ const goBack = () => {
   width: 100%;
   z-index: 100;
   background: #fff;
-  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.02);
+  box-shadow: 0 4rpx 12rpx var(--shadow-color);
   
   .nav-bar {
     display: flex;
@@ -151,7 +155,7 @@ const goBack = () => {
         .page-title {
             font-size: 34rpx; /* 稍微放大一点 */
             font-weight: 600;
-            color: #333;
+color: var(--text-primary);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -193,7 +197,7 @@ const goBack = () => {
     
     .section-subtitle {
         font-size: 28rpx;
-        color: #999;
+        color: var(--text-muted);
         margin-left: 8rpx;
         font-weight: normal;
     }

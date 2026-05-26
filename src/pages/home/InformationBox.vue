@@ -1,5 +1,5 @@
 <template>
-  <view class="timeline-container">
+  <view class="timeline-container" :class="{ 'dark-mode': isDark }">
     <view v-for="(item, index) in data" :key="index" class="timeline-item">
       <!-- Timeline Column -->
       <view class="timeline-column">
@@ -28,10 +28,14 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 type Props = {
   data: string[][]; // Receive full array of arrays
 };
 withDefaults(defineProps<Props>(), {});
+import { useThemeStore } from "@/config";
+const themeStore = useThemeStore();
+const isDark = computed(() => { if (themeStore.theme === 'dark') return true; if (themeStore.theme === 'system') return uni.getSystemInfoSync().theme === 'dark'; return false; });
 </script>
 
 <style scoped lang="scss">
@@ -70,7 +74,7 @@ withDefaults(defineProps<Props>(), {});
 
 .line {
     width: 4rpx; 
-    background-color: #e0e0e0;
+    background-color: var(--border-color);
     position: absolute;
     top: 56rpx; /* Start below dot */
     bottom: 0; /* Extend to bottom of this item container */
@@ -81,10 +85,10 @@ withDefaults(defineProps<Props>(), {});
 
 .content-card {
     flex: 1;
-    background: #fff;
+    background: var(--bg-secondary);
     border-radius: 20rpx;
     padding: 32rpx;
-    box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+    box-shadow: 0 4rpx 16rpx var(--shadow-color);
 }
 
 .header-row {
@@ -92,7 +96,7 @@ withDefaults(defineProps<Props>(), {});
   .version-title {
     font-size: 32rpx;
     font-weight: 700;
-    color: #333;
+    color: var(--text-primary);
   }
 }
 
@@ -101,7 +105,7 @@ withDefaults(defineProps<Props>(), {});
     margin-bottom: 12rpx;
     .content-text {
       font-size: 28rpx;
-      color: #666;
+      color: var(--text-secondary);
       line-height: 1.6;
     }
   }

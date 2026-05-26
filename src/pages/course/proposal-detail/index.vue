@@ -1,5 +1,5 @@
 <template>
-  <view class="proposal-detail-page">
+  <view class="proposal-detail-page" :class="{ 'dark-mode': isDark }">
     
     <!-- 1. 头部 Header (与课程详情一致，但背景不同) -->
     <view class="detail-header" 
@@ -83,9 +83,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { onLoad } from "@dcloudio/uni-app";
 import BackBtn from "@/components/common/BackBtn.vue";
+import { useThemeStore } from "@/config";
+const themeStore = useThemeStore();
+const isDark = computed(() => { if (themeStore.theme === 'dark') return true; if (themeStore.theme === 'system') return uni.getSystemInfoSync().theme === 'dark'; return false; });
 
 // 胶囊位置处理
 const sysInfo = uni.getSystemInfoSync();
@@ -143,7 +146,7 @@ $bg-gradient-top: #fff5f5;
 
 .proposal-detail-page {
     height: 100vh;
-    background-color: #f7f8fa;
+    background-color: var(--bg-primary);
     display: flex;
     flex-direction: column;
 }
@@ -202,11 +205,11 @@ $bg-gradient-top: #fff5f5;
 }
 
 .proposal-card {
-    background: #fff;
+    background: var(--bg-secondary);
     border-radius: 20rpx;
     padding: 40rpx;
     margin-bottom: 24rpx;
-    box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.04);
+    box-shadow: 0 4rpx 16rpx var(--shadow-color);
     
     .card-header {
         display: flex;
@@ -251,14 +254,14 @@ $bg-gradient-top: #fff5f5;
             }
             .info-value {
                 font-size: 28rpx;
-                color: #333;
+                color: var(--text-primary);
                 font-weight: 500;
             }
         }
     }
     
     .proposal-reason-box {
-        background-color: #f9f9f9;
+        background-color: var(--bg-tertiary);
         padding: 24rpx;
         border-radius: 12rpx;
         margin-bottom: 40rpx;
@@ -272,7 +275,7 @@ $bg-gradient-top: #fff5f5;
         }
         .reason-content {
             font-size: 28rpx;
-            color: #333;
+            color: var(--text-primary);
             line-height: 1.6;
         }
     }
@@ -293,7 +296,7 @@ $bg-gradient-top: #fff5f5;
             }
             .vote-text {
                 font-size: 24rpx;
-                color: #999;
+                color: var(--text-muted);
             }
         }
         
@@ -309,8 +312,8 @@ $bg-gradient-top: #fff5f5;
             box-shadow: 0 4rpx 12rpx rgba(200, 16, 46, 0.3);
             
             &.is-voted {
-                background: #f0f0f0;
-                color: #999;
+                background: var(--bg-tertiary);
+                color: var(--text-muted);
                 box-shadow: none;
             }
         }
@@ -318,7 +321,7 @@ $bg-gradient-top: #fff5f5;
 }
 
 .discussion-section {
-    background: #fff;
+    background: var(--bg-secondary);
     border-radius: 20rpx;
     padding: 30rpx;
     min-height: 300rpx;
@@ -328,7 +331,7 @@ $bg-gradient-top: #fff5f5;
         .section-title {
             font-size: 30rpx;
             font-weight: 600;
-            color: #333;
+            color: var(--text-primary);
         }
     }
     

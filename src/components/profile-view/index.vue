@@ -1,5 +1,5 @@
 <template>
-  <view class="profile-container" :style="{ paddingTop: menuButtonInfo.top + 'px' }">
+  <view class="profile-container" :style="{ paddingTop: menuButtonInfo.top + 'px' }" :class="{ 'dark-mode': isDark }">
 
     <!-- 1. Header Area: Large & Breathable -->
     <view class="header-section" :style="{ marginTop: '20rpx', marginBottom: '40rpx' }">
@@ -144,6 +144,9 @@ import { onShow } from '@dcloudio/uni-app';
 import { waitForLogin } from '@/utils/init';
 import { http } from '@/config';
 import { HISTORY_PAGE_SIZE } from '@/utils/constants';
+import { useThemeStore } from "@/config";
+const themeStore = useThemeStore();
+const isDark = computed(() => { if (themeStore.theme === 'dark') return true; if (themeStore.theme === 'system') return uni.getSystemInfoSync().theme === 'dark'; return false; });
 
 // System Info Logic for Header Alignment
 const sysInfo = uni.getSystemInfoSync();
@@ -343,7 +346,7 @@ onShow(async () => { await waitForLogin(); loadData(); });
     padding-right: 0;
     min-height: 100vh;
     box-sizing: border-box;
-    background-color: #f7f8fa; /* Global BG */
+    background-color: var(--bg-primary);
 }
 
 /* 1. Header: Breathable & Bold */
@@ -362,7 +365,7 @@ onShow(async () => { await waitForLogin(); loadData(); });
     .page-title {
         font-size: 56rpx; /* Big Title */
         font-weight: 800; /* Extra Bold */
-        color: #1f1f1f;
+        color: var(--text-primary);
         margin-right: 20rpx;
         line-height: 1;
         letter-spacing: -2rpx; /* Tighter tracking for modern look */
@@ -370,8 +373,8 @@ onShow(async () => { await waitForLogin(); loadData(); });
 
     .sub-title {
         font-size: 26rpx;
-        color: #999;
-        font-weight: 400;
+color: var(--text-muted); 
+            font-weight: 400;
     }
 }
 
@@ -381,7 +384,7 @@ onShow(async () => { await waitForLogin(); loadData(); });
     z-index: 100;
     // background-color: rgba(247, 248, 250, 0.95); <--- Remove hardcoded bg color to let blur work better or keep it subtle
     /* Use a very light blur background */
-    background-color: rgba(247, 248, 250, 0.85); 
+    background-color: var(--bg-secondary); 
     backdrop-filter: blur(20px); 
     padding: 20rpx 40rpx;
     margin-bottom: 20rpx;
@@ -396,14 +399,14 @@ onShow(async () => { await waitForLogin(); loadData(); });
         left: 0;
         right: 0;
         height: 100vh; /* Extend upwards enough to cover the entire screen above */
-        background-color: #f7f8fa; /* Match the global background color */
+        background-color: var(--bg-primary); /* Match the global background color */
         z-index: -1;
     }
 
     .filter-row {
         display: flex;
         align-items: center;
-        background: #fff; 
+        background: var(--bg-secondary); 
         border-radius: 100rpx;
         padding: 6rpx; /* Slightly reduced padding */
         box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.06); /* Softer, deeper shadow */
@@ -433,24 +436,24 @@ onShow(async () => { await waitForLogin(); loadData(); });
 }
 
 .card {
-    background: #ffffff;
+    background: var(--bg-secondary);
     border-radius: 24rpx;
-    box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.05); 
+    box-shadow: 0 8rpx 24rpx var(--shadow-color); 
     display: flex;
     overflow: hidden;
     position: relative;
     margin-bottom: 24rpx; 
-    border: 1px solid #f0f0f0;
+    border: 1px solid var(--border-color);
     transition: all 0.3s ease;
 
     &:active {
         transform: scale(0.98);
-        box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.03);
+        box-shadow: 0 4rpx 12rpx var(--shadow-color);
     }
 
     &.proposal-card {
-        background: linear-gradient(135deg, #fff5f6 0%, #ffffff 100%);
-        box-shadow: 0 8rpx 24rpx rgba(200, 16, 46, 0.06); 
+        background: linear-gradient(135deg, var(--bg-secondary) 0%, #ffffff 100%);
+        box-shadow: 0 8rpx 24rpx var(--shadow-color); 
         border: 1px solid rgba(200, 16, 46, 0.15);
 
         .course-row-middle {
@@ -476,7 +479,7 @@ onShow(async () => { await waitForLogin(); loadData(); });
         .course-name {
             font-size: 36rpx; 
             font-weight: 700;
-            color: #1a1a1a; 
+            color: var(--text-primary); 
             line-height: 1.4;
             flex: 1;
             margin-right: 20rpx;
@@ -484,7 +487,7 @@ onShow(async () => { await waitForLogin(); loadData(); });
         }
         .time-text {
             font-size: 24rpx;
-            color: #999; 
+color: var(--text-muted);
             font-weight: 400;
             white-space: nowrap;
         }
@@ -496,7 +499,7 @@ onShow(async () => { await waitForLogin(); loadData(); });
         flex-wrap: wrap; 
         align-items: center;
         margin-bottom: 32rpx;
-        background: #f8f9fa;
+        background: var(--bg-tertiary);
         padding: 20rpx 24rpx;
         border-radius: 16rpx;
         
@@ -519,7 +522,7 @@ onShow(async () => { await waitForLogin(); loadData(); });
 
     .content-text {
         font-size: 28rpx;
-        color: #333; 
+        color: var(--text-primary); 
         line-height: 1.6; 
         display: -webkit-box;
         -webkit-box-orient: vertical;
@@ -546,9 +549,9 @@ onShow(async () => { await waitForLogin(); loadData(); });
                 margin-right: 8rpx;
                 opacity: 0.6;
             }
-            .likes-text {
+.likes-text {
                 font-size: 26rpx;
-                color: #666;
+                color: var(--text-secondary);
             }
         }
 
@@ -641,7 +644,7 @@ onShow(async () => { await waitForLogin(); loadData(); });
         width: 80rpx;
         height: 80rpx;
         margin: 0 auto 24rpx;
-        border: 4rpx solid #ddd;
+        border: 4rpx solid var(--border-color);
         border-top-color: #c8102e;
         border-radius: 50%;
         animation: spin 1s linear infinite;
@@ -649,7 +652,7 @@ onShow(async () => { await waitForLogin(); loadData(); });
 
     .loading-text {
         font-size: 28rpx;
-        color: #666;
+        color: var(--text-secondary);
     }
 }
 

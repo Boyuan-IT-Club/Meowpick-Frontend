@@ -2,6 +2,9 @@
 import type { CommentVO } from "@/api/data-contracts";
 import { caculateTimeago } from "./index";
 import { Emoji } from "@/utils/tags"; // 引入获取标签图标的方法
+import { useThemeStore } from "@/config";
+const themeStore = useThemeStore();
+const isDark = computed(() => { if (themeStore.theme === 'dark') return true; if (themeStore.theme === 'system') return uni.getSystemInfoSync().theme === 'dark'; return false; });
 
 type Props = {
   data: CommentVO;

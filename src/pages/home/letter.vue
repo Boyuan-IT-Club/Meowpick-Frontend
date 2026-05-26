@@ -1,5 +1,5 @@
 <template>
-  <view class="letter-container">
+  <view class="letter-container" :class="{ 'dark-mode': isDark }">
     <image src="@/images/cat.png" class="background-cat" mode="aspectFill" />
     <view class="custom-header" :style="{ paddingTop: menuButtonInfo.top + 'px' }">
         <view class="nav-bar-content" :style="{ height: menuButtonInfo.height + 'px' }">
@@ -37,7 +37,11 @@
 
 <script setup lang="ts">
 import { onLoad } from "@dcloudio/uni-app";
+import { computed } from "vue";
 import BackBtn from "@/components/common/BackBtn.vue";
+import { useThemeStore } from "@/config";
+const themeStore = useThemeStore();
+const isDark = computed(() => { if (themeStore.theme === 'dark') return true; if (themeStore.theme === 'system') return uni.getSystemInfoSync().theme === 'dark'; return false; });
 
 const sysInfo = uni.getSystemInfoSync();
 let menuButtonInfo = { // Initialize menuButtonInfo
@@ -81,7 +85,7 @@ const text12 = `选课猫团队 2025年10月13日`;
 <style scoped lang="scss">
 .letter-container {
   min-height: 100vh;
-  background-color: #f7f8fa; /* 浅灰底色 */
+  background-color: var(--bg-primary); /* 浅灰底色 */
   position: relative;
   overflow: hidden;
   padding: 0 32rpx 40rpx; /* Remove top padding as it's handled by margin-top */
@@ -157,7 +161,7 @@ const text12 = `选课猫团队 2025年10月13日`;
     .paragraph {
         display: block;
         font-size: 30rpx;
-        color: #555;
+        color: var(--text-secondary);
         line-height: 1.8;
         margin-bottom: 24rpx;
         text-align: justify;
@@ -172,15 +176,21 @@ const text12 = `选课猫团队 2025年10月13日`;
 .card-footer {
     margin-top: 60rpx;
     padding-top: 40rpx;
-    border-top: 2rpx dashed #eee;
+    border-top: 2rpx dashed var(--border-color);
     text-align: center;
     
-    .footer-text {
+.footer-text {
         display: block;
         font-size: 28rpx;
-        color: #333;
+        color: var(--text-primary);
         font-weight: 600;
         margin-bottom: 16rpx;
+    }
+    
+    .signature {
+        display: block;
+        font-size: 24rpx;
+        color: var(--text-muted);
     }
     
     .signature {
