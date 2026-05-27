@@ -24,7 +24,7 @@ input {
 }
 
 /* ======== 主题变量定义 ======== */
-:root {
+page, :root {
   /* 1. 背景色 */
   --bg-page: #f7f8fa;          /* 页面底层灰 */
   --bg-card: #ffffff;          /* 卡片纯白 */
@@ -59,7 +59,7 @@ input {
   --border-vote-box: rgba(178, 0, 53, 0.05);
 }
 
-[data-theme="dark"], .dark-theme {
+page.dark-theme, [data-theme="dark"], .dark-theme {
   /* 1. 背景色 */
   --bg-page: #121212;
   --bg-card: #1e1e1e;

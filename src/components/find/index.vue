@@ -872,7 +872,7 @@ $brand-red: #b20035;
 .search-guide-banner {
     margin: 0 32rpx 30rpx 32rpx;
     padding: 20rpx 32rpx;
-    background-color: var(--bg-card)be6;
+    background-color: #fffbe6;
     color: #d48806;
     display: flex;
     align-items: center;
@@ -1038,7 +1038,7 @@ $brand-red: #b20035;
     }
 
     .suggest-item-input {
-        background-color: var(--bg-card)5f5;
+        background-color: #fff5f5;
     }
 
     .item-input-label {
@@ -1119,7 +1119,7 @@ $brand-red: #b20035;
     }
     
     &.proposal-card {
-        background: linear-gradient(135deg, #ffffff 0%, #fdf2f5 100%);
+        background: var(--bg-proposal-card);
         border: 1rpx solid rgba(178, 0, 53, 0.1);
         
         .result-type-tag.proposal {
@@ -1455,7 +1455,7 @@ $brand-red: #b20035;
 .search-guide-banner {
     margin: 0 32rpx 30rpx 32rpx;
     padding: 20rpx 32rpx;
-    background-color: var(--bg-card)be6;
+    background-color: #fffbe6;
     color: #d48806;
     display: flex;
     align-items: center;

@@ -164,7 +164,7 @@ $bg-gradient-top: #fff5f5;
     left: 0;
     width: 100%;
     z-index: 100;
-    background: linear-gradient(to bottom, $bg-gradient-top, #ffffff);
+    background: linear-gradient(to bottom, var(--bg-card), var(--bg-sub));
     
     .nav-bar {
         display: flex;
@@ -212,7 +212,7 @@ $bg-gradient-top: #fff5f5;
 }
 
 .proposal-card {
-    background: #fff;
+    background: var(--bg-card);
     border-radius: 20rpx;
     padding: 40rpx;
     margin-bottom: 24rpx;

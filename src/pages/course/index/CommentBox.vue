@@ -70,7 +70,7 @@ const textTags = (tags: string[]) => {
 
 <style scoped lang="scss">
 .comment-box {
-  background-color: #fff;
+  background-color: var(--bg-card);
   border-radius: 16rpx;
   padding: 24rpx;
   margin-bottom: 24rpx;

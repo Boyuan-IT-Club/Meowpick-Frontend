@@ -134,7 +134,7 @@ const handleLike = async () => {
 
 .proposal-card {
   /* This has shadow and radius too? No, it inherits or redefined? */
-  background: linear-gradient(145deg, #ffffff 0%, #fff5f6 100%);
+  background: var(--bg-proposal-card);
   border-radius: 16rpx;
   box-shadow: 0 4rpx 12rpx var(--shadow-color-sm); 
   padding: 24rpx;
@@ -316,7 +316,7 @@ const handleLike = async () => {
         .tag-item {
           display: flex;
           align-items: center;
-          background: var(--bg-card)cfc; /* Consistent with light theme */
+          background: #fffcfc; /* Consistent with light theme */
           border: 1px solid #ffebeb;
           padding: 4rpx 12rpx;
           border-radius: 12rpx;

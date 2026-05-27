@@ -1,5 +1,5 @@
 <template>
-  <view class="tool-box">
+  <view class="tool-box" :class="themeStore.themeClass">
     <view class="to-users">
       <view class="letter-container" @click="goToLetter">
         <image
@@ -24,6 +24,8 @@
 </template>
 
 <script setup lang="ts">
+import { useThemeStore } from "@/config";
+const themeStore = useThemeStore();
 import { ref } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
 import { http } from '@/config';
@@ -100,7 +102,7 @@ const goToUpdate = () => {
     .box {
       display: flex;
       flex-direction: column;
-      background-color: #ffffff;
+      background-color: var(--bg-card);
       box-shadow: 2px 2px 16px 0px #0000001f;
       width: 36.5vw;
       height: 30vw;

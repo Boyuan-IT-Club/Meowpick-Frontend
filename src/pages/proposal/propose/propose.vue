@@ -314,7 +314,7 @@ const submit = async () => {
 }
 
 .card {
-    background: #fff;
+    background: var(--bg-card);
     border-radius: 20rpx;
     padding: 30rpx;
     margin-bottom: 30rpx;

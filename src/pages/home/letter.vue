@@ -83,7 +83,7 @@ const text12 = `选课猫团队 2025年10月13日`;
 <style scoped lang="scss">
 .letter-container {
   min-height: 100vh;
-  background-color: #f7f8fa; /* 浅灰底色 */
+  background-color: var(--bg-page); /* 浅灰底色 */
   position: relative;
   overflow: hidden;
   padding: 0 32rpx 40rpx; /* Remove top padding as it's handled by margin-top */
@@ -148,7 +148,7 @@ const text12 = `选课猫团队 2025年10月13日`;
 .content-card {
     position: relative;
     z-index: 1;
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--bg-card); /* was rgba(255, 255, 255, 0.95) */
     border-radius: 24rpx;
     padding: 48rpx 40rpx;
     box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.06);

@@ -121,7 +121,7 @@ const goBack = () => {
   left: 0;
   width: 100%;
   z-index: 100;
-  background: #fff;
+  background: var(--bg-card);
   box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.02);
   
   .nav-bar {

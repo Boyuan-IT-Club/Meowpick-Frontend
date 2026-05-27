@@ -1,5 +1,5 @@
 <template>
-  <view class="timeline-container">
+  <view class="timeline-container" :class="themeStore.themeClass">
     <view v-for="(item, index) in data" :key="index" class="timeline-item">
       <!-- Timeline Column -->
       <view class="timeline-column">
@@ -28,6 +28,8 @@
 </template>
 
 <script setup lang="ts">
+import { useThemeStore } from "@/config";
+const themeStore = useThemeStore();
 type Props = {
   data: string[][]; // Receive full array of arrays
 };
@@ -81,7 +83,7 @@ withDefaults(defineProps<Props>(), {});
 
 .content-card {
     flex: 1;
-    background: #fff;
+    background: var(--bg-card);
     border-radius: 20rpx;
     padding: 32rpx;
     box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);

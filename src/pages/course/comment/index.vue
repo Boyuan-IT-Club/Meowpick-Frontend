@@ -222,7 +222,7 @@ const commit = async () => {
 }
 
 .section-card {
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 24rpx;
   padding: 30rpx;
   margin-bottom: 24rpx;

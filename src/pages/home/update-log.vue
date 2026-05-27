@@ -62,7 +62,7 @@ const goBack = () => {
 <style scoped lang="scss">
 .background {
   min-height: 100vh;
-  background-color: #f7f8fa; /* 统一浅灰色底 */
+  background-color: var(--bg-page); /* 统一浅灰色底 */
   padding: 0 32rpx; 
   /* paddingTop is removed from here as it is handled in log-list */
   box-sizing: border-box;
@@ -113,7 +113,7 @@ const goBack = () => {
     width: 96vw;
     height: auto;
     padding: 5vw;
-    background: #ffffff;
+    background: var(--bg-card);
     box-shadow: 1vw 1vw 6vw 3vw #0000001f;
     z-index: 1;
     opacity: 0.8;
@@ -141,7 +141,7 @@ const goBack = () => {
     left: 0;
     width: 100%;
     z-index: 999; /* Increased Z-Index significantly to be above content */
-    background-color: #f7f8fa; /* Solid color matching page background */
+    background-color: var(--bg-page); /* Solid color matching page background */
     box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.05); /* Optional: Subtle shadow to show edge */
     
     .nav-bar-content {

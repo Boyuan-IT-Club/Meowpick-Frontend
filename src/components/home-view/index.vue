@@ -1,5 +1,5 @@
 <template>
-  <view class="home-view-container">
+  <view class="home-view-container" :class="themeStore.themeClass">
     <!-- 顶部欢迎语区域 -->
     <view class="header-welcome">
       <view class="welcome-Line">
@@ -97,6 +97,8 @@
 </template>
 
 <script setup lang="ts">
+import { useThemeStore } from "@/config";
+const themeStore = useThemeStore();
 import { ref, onMounted } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
 import { waitForLogin } from '@/utils/init';
@@ -196,7 +198,7 @@ $text-main: var(--text-main);
     left: 0;
     width: 100%;
     height: 50vh; // 加高背景色块
-    background: linear-gradient(180deg, #fffcfc 0%, #f7f8fa 100%);
+    background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-page) 100%);
     border-bottom-left-radius: 60rpx;
     border-bottom-right-radius: 60rpx;
     z-index: 0;
@@ -394,7 +396,7 @@ $text-main: var(--text-main);
 
   // “信件”卡片特殊化：带一点红晕背景，更显温馨
   &.letter-card {
-      background: linear-gradient(135deg, #fff 0%, $brand-light-bg 100%);
+      background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-proposal-sub) 100%);
       .card-title { color: $brand-red; }
   }
 }
@@ -464,7 +466,7 @@ $text-main: var(--text-main);
       left: 0;
       width: 100%;
       height: 12rpx;
-      background: linear-gradient(90deg, #fff 0%, $brand-light-bg 100%);
+      background: linear-gradient(90deg, var(--bg-card) 0%, var(--bg-proposal-sub) 100%);
       // 或者干脆不要装饰，保持极简
       display: none;
   }
@@ -531,7 +533,7 @@ $text-main: var(--text-main);
   .section-icon {
     width: 80rpx;
     height: 80rpx;
-    background-color: var(--bg-card)5f7;
+    background-color: var(--bg-sub);
     border-radius: 20rpx;
     display: flex;
     align-items: center;
