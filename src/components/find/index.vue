@@ -779,7 +779,7 @@ $brand-red: #b20035;
 
 .find-container {
   height: 100vh;
-  background-color: #f7f8fa;
+  background-color: var(--bg-page);
   display: flex;
   flex-direction: column;
 }
@@ -791,12 +791,12 @@ $brand-red: #b20035;
     left: 0;
     width: 100%;
     z-index: 100;
-    background-color: #fff;
-    box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.05);
+    background-color: var(--bg-card);
+    box-shadow: 0 4rpx 10rpx var(--shadow-color);
     transition: 'all 0.12s ease';
     
     &.is-collapsed {
-        background-color: rgba(247, 248, 250, 0.98);
+        background-color: var(--bg-blur);
         box-shadow: 0 1rpx 0 rgba(0,0,0,0.05);
     }
 }
@@ -826,13 +826,13 @@ $brand-red: #b20035;
     .search-input-box {
         flex: 1;
         min-width: 0;
-        background-color: #ffffff;
+        background-color: var(--bg-card);
         display: flex;
         align-items: center;
         padding: 0 20rpx;
-        border: 1rpx solid #eee;
+        border: 1rpx solid var(--border-color);
         transition: all 0.12s cubic-bezier(0.25, 0.8, 0.25, 1);
-        box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.03); 
+        box-shadow: 0 2rpx 8rpx var(--shadow-color-sm); 
         
         .search-icon {
             font-size: 28rpx;
@@ -844,14 +844,14 @@ $brand-red: #b20035;
         .search-input {
             flex: 1;
             font-size: 28rpx;
-            color: #333;
+            color: var(--text-main);
             height: 100%;
         }
         
         .clear-icon {
             width: 36rpx;
             height: 36rpx;
-            background-color: #eee;
+            background-color: var(--border-color);
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -859,7 +859,7 @@ $brand-red: #b20035;
             margin-left: 10rpx;
             
             .clear-text {
-                color: #999;
+                color: var(--text-muted);
                 font-size: 28rpx;
                 line-height: 1;
                 margin-top: -4rpx;
@@ -872,7 +872,7 @@ $brand-red: #b20035;
 .search-guide-banner {
     margin: 0 32rpx 30rpx 32rpx;
     padding: 20rpx 32rpx;
-    background-color: #fffbe6;
+    background-color: var(--bg-card)be6;
     color: #d48806;
     display: flex;
     align-items: center;
@@ -902,12 +902,12 @@ $brand-red: #b20035;
     .section-title {
         font-size: 32rpx;
         font-weight: 700;
-        color: #333;
+        color: var(--text-main);
     }
     
     .clear-history {
         font-size: 28rpx;
-        color: #999;
+        color: var(--text-muted);
         padding: 10rpx;
     }
 }
@@ -919,17 +919,17 @@ $brand-red: #b20035;
     
     .tag-item {
         padding: 12rpx 30rpx;
-        background-color: #fff;
+        background-color: var(--bg-card);
         border-radius: 30rpx;
         font-size: 26rpx;
-        color: #555;
+        color: var(--text-sub);
         border: 1rpx solid transparent;
         transition: all 0.1s;
         
         &.active {
             background-color: #fdf2f5;
-            color: #b20035; 
-            border-color: rgba(178,0,53,0.3);
+            color: var(--brand-primary); 
+            border-color: var(--brand-shadow);
             font-weight: 500;
         }
         
@@ -939,7 +939,7 @@ $brand-red: #b20035;
     }
     
     .no-history {
-        color: #999999;
+        color: var(--text-muted);
         font-size: 28rpx;
         width: 100%;
         text-align: center;
@@ -948,17 +948,17 @@ $brand-red: #b20035;
 }
 
 .recommend-list {
-    background-color: #fff;
+    background-color: var(--bg-card);
     border-radius: 24rpx;
     padding: 0;
     overflow: hidden;
-    box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05); 
+    box-shadow: 0 4rpx 16rpx var(--shadow-color-lg); 
     
     .recommend-item {
         display: flex;
         align-items: center;
         padding: 24rpx 30rpx;
-        border-bottom: 1rpx solid #f9f9f9;
+        border-bottom: 1rpx solid var(--border-color);
         
         &:last-child {
             border-bottom: none;
@@ -985,13 +985,13 @@ $brand-red: #b20035;
         .recommend-word {
             flex: 1;
             font-size: 30rpx;
-            color: #333;
+            color: var(--text-main);
         }
         
         .recommend-tag {
             font-size: 22rpx;
-            color: #999;
-            background-color: #f5f5f5;
+            color: var(--text-muted);
+            background-color: var(--bg-page);
             padding: 4rpx 12rpx;
             border-radius: 8rpx;
         }
@@ -1002,15 +1002,15 @@ $brand-red: #b20035;
     margin: 20rpx 30rpx;
     border-radius: 24rpx;
     overflow: hidden;
-    background-color: #ffffff;
-    box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.05);
+    background-color: var(--bg-card);
+    box-shadow: 0 4rpx 16rpx var(--shadow-color-lg);
 
     .suggest-item {
         display: flex;
         align-items: center;
         padding: 30rpx 40rpx;
-        background-color: #fff;
-        border-bottom: 1rpx solid #f9f9f9;
+        background-color: var(--bg-card);
+        border-bottom: 1rpx solid var(--border-color);
         
         &:last-child { border-bottom: none; }
         
@@ -1026,29 +1026,29 @@ $brand-red: #b20035;
             flex-direction: column;
             .item-name {
                 font-size: 30rpx;
-                color: #333;
+                color: var(--text-main);
                 margin-bottom: 6rpx;
             }
         }
         
         .item-arrow {
-            color: #ccc;
+            color: var(--border-color);
             font-size: 28rpx;
         }
     }
 
     .suggest-item-input {
-        background-color: #fff5f5;
+        background-color: var(--bg-card)5f5;
     }
 
     .item-input-label {
         font-size: 22rpx;
-        color: #b20035;
+        color: var(--brand-primary);
         margin-left: 10rpx;
     }
 }
 
-.placeholder-style { color: #bbb; }
+.placeholder-style { color: var(--text-muted); }
 
 /* Result Section Layout */
 .result-section {
@@ -1067,7 +1067,7 @@ $brand-red: #b20035;
     
     .group-title {
         font-size: 28rpx;
-        color: #999;
+        color: var(--text-muted);
         margin-bottom: 20rpx;
         margin-left: 8rpx;
         font-weight: 500;
@@ -1101,11 +1101,11 @@ $brand-red: #b20035;
 */
 
 .result-card-wrapper {
-    background-color: #fff;
+    background-color: var(--bg-card);
     border-radius: 24rpx;
     padding: 24rpx;
     position: relative;
-    box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.04);
+    box-shadow: 0 4rpx 16rpx var(--shadow-color);
     transition: all 0.1s;
     
     &:active {
@@ -1124,7 +1124,7 @@ $brand-red: #b20035;
         
         .result-type-tag.proposal {
             background-color: rgba(178, 0, 53, 0.1);
-            color: #b20035;
+            color: var(--brand-primary);
         }
     }
     
@@ -1149,7 +1149,7 @@ $brand-red: #b20035;
         
         &.proposal {
             background-color: #fdf2f5;
-            color: #b20035;
+            color: var(--brand-primary);
             right: 24rpx;
             top: 24rpx;
         }
@@ -1158,8 +1158,8 @@ $brand-red: #b20035;
             top: auto;
             bottom: 24rpx;
             right: 24rpx;
-            background-color: #f5f5f5;
-            color: #999;
+            background-color: var(--bg-page);
+            color: var(--text-muted);
         }
     }
 }
@@ -1168,7 +1168,7 @@ $brand-red: #b20035;
 .transition-text {
     text-align: center;
     font-size: 26rpx;
-    color: #999999;
+    color: var(--text-muted);
     margin: 10rpx 0 20rpx;
 }
 
@@ -1176,7 +1176,7 @@ $brand-red: #b20035;
     margin: 20rpx 0 60rpx;
     height: 90rpx;
     border-radius: 45rpx;
-    background: linear-gradient(135deg, #b20035, #ff4d6a);
+    background: var(--brand-gradient);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1186,7 +1186,7 @@ $brand-red: #b20035;
 
     &:active {
         transform: scale(0.96);
-        box-shadow: 0 4rpx 12rpx rgba(178, 0, 53, 0.15);
+        box-shadow: 0 4rpx 12rpx var(--border-proposal);
     }
 }
 
@@ -1199,7 +1199,7 @@ $brand-red: #b20035;
 .bottom {
     text-align: center;
     font-size: 24rpx;
-    color: #ccc;
+    color: var(--border-color);
     padding: 30rpx 0;
 }
 
@@ -1217,13 +1217,13 @@ $brand-red: #b20035;
     height: 44px; /* Approx 88rpx */
     align-items: center;
     justify-content: space-around;
-    background: #fff;
-    border-top: 1rpx solid #eee;
+    background: var(--bg-card);
+    border-top: 1rpx solid var(--border-color);
     box-shadow: 0 4rpx 8rpx rgba(0,0,0,0.02);
 
     .filter-item {
         font-size: 28rpx;
-        color: #666;
+        color: var(--text-sub);
         height: 100%;
         display: flex;
         align-items: center;
@@ -1255,9 +1255,9 @@ $brand-red: #b20035;
         gap: 8rpx;
         padding: 0 30rpx; 
         font-size: 28rpx;
-        color: #333;
+        color: var(--text-main);
         font-weight: 500;
-        border-left: 1rpx solid #eee;
+        border-left: 1rpx solid var(--border-color);
         height: 50%;
     }
 }
@@ -1286,7 +1286,7 @@ $brand-red: #b20035;
 }
 
 .dropdown-panel {
-    background-color: #fff;
+    background-color: var(--bg-card);
     width: 100%;
     /* max-height: 60vh; */ /* Use content height */
     display: flex;
@@ -1301,7 +1301,7 @@ $brand-red: #b20035;
     padding: 30rpx 32rpx; /* Use standard spacing */
     max-height: 50vh; 
     box-sizing: border-box;
-    background-color: #fff;
+    background-color: var(--bg-card);
 }
 
 .dropdown-footer {
@@ -1309,8 +1309,8 @@ $brand-red: #b20035;
     justify-content: space-between;
     gap: 24rpx; /* Use gap property */
     padding: 24rpx 32rpx 40rpx; /* More bottom padding for aesthetics */
-    border-top: 1rpx solid #f5f5f5;
-    background-color: #fff;
+    border-top: 1rpx solid var(--border-color);
+    background-color: var(--bg-card);
     
     .btn-common {
         flex: 1; /* Equal width */
@@ -1328,12 +1328,12 @@ $brand-red: #b20035;
     }
 
     .btn-reset {
-        background-color: #f7f8fa;
-        color: #666;
+        background-color: var(--bg-page);
+        color: var(--text-sub);
     }
     
     .btn-confirm {
-        background: linear-gradient(135deg, #b20035, #ff4d6a);
+        background: var(--brand-gradient);
         color: #fff;
         box-shadow: 0 6rpx 16rpx rgba(178, 0, 53, 0.25); /* Styled shadow */
     }
@@ -1344,8 +1344,8 @@ $brand-red: #b20035;
     height: 90rpx;
     width: auto;
     box-sizing: border-box;
-    background: #ffffff;
-    border: 2rpx solid rgba(178, 0, 53, 0.3);
+    background: var(--bg-card);
+    border: 2rpx solid var(--brand-shadow);
     border-radius: 45rpx;
     display: flex;
     justify-content: center;
@@ -1361,7 +1361,7 @@ $brand-red: #b20035;
 
 .show-proposals-tip text {
     font-size: 32rpx;
-    color: #b20035;
+    color: var(--brand-primary);
     font-weight: bold;
 }
 
@@ -1376,7 +1376,7 @@ $brand-red: #b20035;
 .still-nothing-tip {
     text-align: center;
     font-size: 24rpx;
-    color: #999;
+    color: var(--text-muted);
     margin-bottom: 24rpx;
     margin-top: 0; /* Changed from 20rpx top margin to completely remove blank space above "still nothing?" tip */
 }
@@ -1387,7 +1387,7 @@ $brand-red: #b20035;
     
     .group-title {
         font-size: 28rpx;
-        color: #333; /* Darker title text */
+        color: var(--text-main); /* Darker title text */
         font-weight: 600; /* Bolder */
         margin-bottom: 24rpx;
         display: block;
@@ -1402,8 +1402,8 @@ $brand-red: #b20035;
 
 .filter-tag {
     padding: 14rpx 36rpx;
-    background-color: #f7f8fa;
-    color: #666;
+    background-color: var(--bg-page);
+    color: var(--text-sub);
     border-radius: 12rpx; /* Rounded rectangles instead of capsules */
     font-size: 26rpx;
     border: 1px solid transparent;
@@ -1411,7 +1411,7 @@ $brand-red: #b20035;
     user-select: none;
     
     &.active {
-        background-color: rgba(178, 0, 53, 0.08); /* light red tint */
+        background-color: var(--border-proposal-sub); /* light red tint */
         color: $brand-red;
         border: 1px solid $brand-red;
         font-weight: 500;
@@ -1433,8 +1433,8 @@ $brand-red: #b20035;
     .loading-spinner {
         width: 56rpx;
         height: 56rpx;
-        border: 3rpx solid rgba(178, 0, 53, 0.15);
-        border-top-color: #b20035;
+        border: 3rpx solid var(--border-proposal);
+        border-top-color: var(--brand-primary);
         border-radius: 50%;
         animation: spin 0.8s linear infinite;
         margin-bottom: 20rpx;
@@ -1442,7 +1442,7 @@ $brand-red: #b20035;
 
     .loading-text {
         font-size: 28rpx;
-        color: #999;
+        color: var(--text-muted);
     }
 }
 
@@ -1455,7 +1455,7 @@ $brand-red: #b20035;
 .search-guide-banner {
     margin: 0 32rpx 30rpx 32rpx;
     padding: 20rpx 32rpx;
-    background-color: #fffbe6;
+    background-color: var(--bg-card)be6;
     color: #d48806;
     display: flex;
     align-items: center;
@@ -1497,7 +1497,7 @@ $brand-red: #b20035;
 .help-content {
   width: 100%;
   max-width: 560rpx;
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   border-radius: 24rpx;
   padding: 40rpx 32rpx;
   box-shadow: 0 16rpx 48rpx rgba(0, 0, 0, 0.2);
@@ -1512,7 +1512,7 @@ $brand-red: #b20035;
   .help-title {
     font-size: 36rpx;
     font-weight: 700;
-    color: #1a1a1a;
+    color: var(--text-title);
   }
 
   .close-btn {
@@ -1522,7 +1522,7 @@ $brand-red: #b20035;
     align-items: center;
     justify-content: center;
     font-size: 40rpx;
-    color: #999;
+    color: var(--text-muted);
   }
 }
 
@@ -1540,14 +1540,14 @@ $brand-red: #b20035;
   .help-item-title {
     font-size: 28rpx;
     font-weight: 600;
-    color: #333;
+    color: var(--text-main);
     display: block;
     margin-bottom: 8rpx;
   }
 
   .help-item-desc {
     font-size: 24rpx;
-    color: #666;
+    color: var(--text-sub);
     line-height: 1.5;
   }
 }
@@ -1556,7 +1556,7 @@ $brand-red: #b20035;
   width: 100%;
   height: 80rpx;
   line-height: 80rpx;
-  background: linear-gradient(135deg, #b20035, #ff4d6a);
+  background: var(--brand-gradient);
   color: #fff;
   font-size: 30rpx;
   font-weight: 600;

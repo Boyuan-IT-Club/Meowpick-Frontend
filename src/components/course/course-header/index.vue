@@ -96,7 +96,7 @@ const teacherNames = computed(() => {
 }
 
 .header-card {
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   border-radius: 24rpx;
   box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.06);
   padding: 40rpx 32rpx;
@@ -114,7 +114,7 @@ const teacherNames = computed(() => {
   .course-title {
     font-size: 40rpx;
     font-weight: 600;
-    color: #333;
+    color: var(--text-main);
     line-height: 1.4;
     flex: 1;
     margin-right: 20rpx;
@@ -160,13 +160,13 @@ const teacherNames = computed(() => {
       
       .label {
         font-size: 24rpx;
-        color: #999;
+        color: var(--text-muted);
         margin-bottom: 4rpx;
       }
       
       .value {
         font-size: 28rpx;
-        color: #333;
+        color: var(--text-main);
         font-weight: 500;
         white-space: nowrap;
         overflow: hidden;
@@ -179,7 +179,7 @@ const teacherNames = computed(() => {
           .teacher-name {
               margin-right: 10rpx;
               font-size: 28rpx;
-              color: #333;
+              color: var(--text-main);
               font-weight: 500;
               &:not(:last-child)::after {
                   content: '、';
@@ -194,11 +194,11 @@ const teacherNames = computed(() => {
 .tags-section {
     margin-top: 40rpx;
     padding-top: 24rpx;
-    border-top: 2rpx dashed #f0f0f0;
+    border-top: 2rpx dashed var(--border-color-dashed);
     
     .desc-text {
         font-size: 26rpx;
-        color: #666;
+        color: var(--text-sub);
         line-height: 1.6;
     }
 }

@@ -1,5 +1,5 @@
 <template>
-  <view class="comment-publish-container">
+  <view class="comment-publish-container" :class="themeStore.themeClass">
     <!-- 导航栏 -->
     <view class="nav-bar" :style="navBarStyle">
       <view class="nav-content" :style="navContentStyle">
@@ -64,6 +64,8 @@
 </template>
 
 <script setup lang="ts">
+import { useThemeStore } from '@/config';
+const themeStore = useThemeStore();
 import { ref, onMounted, computed } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
 import BackBtn from "@/components/common/BackBtn.vue";

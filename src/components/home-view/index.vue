@@ -172,15 +172,15 @@ const goToUpdate = () => {
 // 变量定义
 $brand-red: #c8102e; // 更加通透的亮红色
 $brand-light-bg: #fff1f1; // 极淡的粉红背景
-$card-bg: #ffffff;
-$text-main: #2c2c2c;
+$card-bg: var(--bg-card);
+$text-main: var(--text-main);
 
 .home-view-container {
   min-height: 100vh; 
   // 减少顶部 padding (160 -> 120)，把整体内容提上去
   padding: 120rpx 40rpx 100rpx 40rpx;
   box-sizing: border-box;
-  background-color: #f7f8fa; 
+  background-color: var(--bg-page); 
   
   display: flex;
   flex-direction: column;
@@ -224,7 +224,7 @@ $text-main: #2c2c2c;
   .hello-text {
     font-size: 56rpx; // 再次加大，增加顶部份量
     font-weight: 300; // 纤细现代
-    color: #999;      // 浅灰色
+    color: var(--text-muted);      // 浅灰色
     font-family: sans-serif; 
     font-style: normal; 
     margin-bottom: 10rpx; // 上下间距
@@ -233,7 +233,7 @@ $text-main: #2c2c2c;
   .name-text {
     font-size: 72rpx; // 再次加大，撑起顶部视觉
     font-weight: 900; 
-    color: #333;      
+    color: var(--text-main);      
     letter-spacing: -2rpx; 
   }
   
@@ -281,7 +281,7 @@ $text-main: #2c2c2c;
   .search-box {
     display: flex;
     align-items: center;
-    background-color: #ffffff;
+    background-color: var(--bg-card);
     height: 110rpx; // 高度增加
     border-radius: 40rpx; // 更加圆润
     padding: 0 30rpx;
@@ -302,7 +302,7 @@ $text-main: #2c2c2c;
     .search-placeholder {
       flex: 1;
       font-size: 32rpx;
-      color: #bbbbbb;
+      color: var(--text-muted);
       letter-spacing: 1rpx;
       font-weight: 400;
     }
@@ -343,7 +343,7 @@ $text-main: #2c2c2c;
 
 // 通用卡片 - 面板风格
 .card-item {
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   border-radius: 36rpx; // 更加圆润
   padding: 30rpx;
   position: relative;
@@ -368,7 +368,7 @@ $text-main: #2c2c2c;
 
   .card-subtitle {
     font-size: 20rpx;
-    color: #999;
+    color: var(--text-muted);
     letter-spacing: 1rpx;
     text-transform: uppercase;
     z-index: 2;
@@ -404,7 +404,7 @@ $text-main: #2c2c2c;
   height: 100% !important; 
   
   // 修改：由深红底改为白底，解决视觉不平衡
-  background-color: #ffffff; 
+  background-color: var(--bg-card); 
   
   // 加回边框，保持统一感
   border: 1rpx solid rgba(0,0,0,0.03);
@@ -426,7 +426,7 @@ $text-main: #2c2c2c;
       font-size: 30rpx;
       font-weight: 700; // 加粗
       opacity: 1;
-      color: #999; // 灰色副标题
+      color: var(--text-muted); // 灰色副标题
   }
 
   // 中间巨大数字
@@ -447,7 +447,7 @@ $text-main: #2c2c2c;
   .stat-unit {
       font-size: 24rpx;
       opacity: 0.5;
-      color: #999;
+      color: var(--text-muted);
       align-self: flex-end; 
   }
 
@@ -490,10 +490,10 @@ $text-main: #2c2c2c;
 .guide-content {
   width: 100%;
   max-width: 600rpx;
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   border-radius: 32rpx;
   padding: 48rpx 40rpx;
-  box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20rpx 60rpx var(--shadow-color);
 }
 
 .guide-header {
@@ -504,14 +504,14 @@ $text-main: #2c2c2c;
     display: block;
     font-size: 44rpx;
     font-weight: 800;
-    color: #1a1a1a;
+    color: var(--text-title);
     margin-bottom: 16rpx;
   }
 
   .guide-subtitle {
     display: block;
     font-size: 26rpx;
-    color: #999;
+    color: var(--text-muted);
   }
 }
 
@@ -531,7 +531,7 @@ $text-main: #2c2c2c;
   .section-icon {
     width: 80rpx;
     height: 80rpx;
-    background-color: #fff5f7;
+    background-color: var(--bg-card)5f7;
     border-radius: 20rpx;
     display: flex;
     align-items: center;
@@ -550,13 +550,13 @@ $text-main: #2c2c2c;
   .section-title {
     font-size: 30rpx;
     font-weight: 600;
-    color: #333;
+    color: var(--text-main);
     margin-bottom: 8rpx;
   }
 
   .section-desc {
     font-size: 24rpx;
-    color: #888;
+    color: var(--text-muted);
     line-height: 1.5;
   }
 }
@@ -566,13 +566,13 @@ $text-main: #2c2c2c;
     width: 100%;
     height: 88rpx;
     line-height: 88rpx;
-    background: linear-gradient(135deg, #b20035, #ff4d6a);
+    background: var(--brand-gradient);
     color: #fff;
     font-size: 32rpx;
     font-weight: 600;
     border-radius: 44rpx;
     border: none;
-    box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.3);
+    box-shadow: 0 8rpx 24rpx var(--brand-shadow);
 
     &:active {
       transform: scale(0.98);

@@ -72,6 +72,11 @@
             >
                 <text>提议</text>
             </view>
+            <view class="theme-toggle" @click="themeStore.toggleTheme()">
+                <text v-if="themeStore.mode === 'light'">☀️</text>
+                <text v-else-if="themeStore.mode === 'dark'">🌙</text>
+                <text v-else>🔄</text>
+            </view>
        </view>
     </view>
 
@@ -181,7 +186,8 @@
 import { ref, computed, onMounted } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
 import { waitForLogin } from '@/utils/init';
-import { http } from '@/config';
+import { http, useThemeStore } from '@/config';
+const themeStore = useThemeStore();
 import { HISTORY_PAGE_SIZE } from '@/utils/constants';
 
 // System Info Logic for Header Alignment
@@ -400,7 +406,7 @@ const hideGuide = () => {
     padding-right: 0;
     min-height: 100vh;
     box-sizing: border-box;
-    background-color: #f7f8fa;
+    background-color: var(--bg-page);
 }
 
 .capsule-mask {
@@ -408,7 +414,7 @@ const hideGuide = () => {
     left: 0;
     right: 0;
     top: 0;
-    background-color: #f7f8fa;
+    background-color: var(--bg-page);
     z-index: 99;
     pointer-events: none;
 }
@@ -430,7 +436,7 @@ const hideGuide = () => {
     .page-title {
         font-size: 56rpx; /* Big Title */
         font-weight: 800; /* Extra Bold */
-        color: #1f1f1f;
+        color: var(--text-title);
         margin-right: 20rpx;
         line-height: 1;
         letter-spacing: -2rpx; /* Tighter tracking for modern look */
@@ -438,7 +444,7 @@ const hideGuide = () => {
 
     .sub-title {
         font-size: 26rpx;
-        color: #999;
+        color: var(--text-muted);
         font-weight: 400;
     }
 
@@ -450,12 +456,12 @@ const hideGuide = () => {
         width: 48rpx;
         height: 48rpx;
         border-radius: 50%;
-        background-color: #f0f0f0;
+        background-color: var(--border-color);
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 28rpx;
-        color: #666;
+        color: var(--text-sub);
         font-weight: 600;
     }
 
@@ -467,12 +473,12 @@ const hideGuide = () => {
         width: 48rpx;
         height: 48rpx;
         border-radius: 50%;
-        background-color: #f0f0f0;
+        background-color: var(--border-color);
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 28rpx;
-        color: #666;
+        color: var(--text-sub);
         font-weight: 600;
     }
 }
@@ -484,35 +490,46 @@ const hideGuide = () => {
     left: 0;
     right: 0;
     padding: 0 40rpx;
-    background-color: rgba(247, 248, 250, 0.85);
+    background-color: var(--bg-blur);
     backdrop-filter: blur(20px);
 
     .filter-row {
         display: inline-flex;
         align-items: center;
-        background: #fff;
+        background: var(--bg-card);
         border-radius: 100rpx;
         padding: 0 6rpx;
-        box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.06);
+        box-shadow: 0 8rpx 24rpx var(--shadow-color-lg);
         height: 100%;
     }
 
+
+    .theme-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        padding: 0 20rpx;
+        font-size: 32rpx;
+        margin-left: 10rpx;
+        border-left: 1px solid var(--border-color);
+    }
     .filter-pill {
         padding: 0 24rpx;
         border-radius: 60rpx;
         font-size: 28rpx;
         font-weight: 500;
-        color: #666;
+        color: var(--text-sub);
         transition: all 0.12s cubic-bezier(0.25, 0.8, 0.25, 1);
         box-sizing: border-box;
         height: 64rpx;
         line-height: 64rpx;
 
         &.active {
-            background: linear-gradient(135deg, #b20035, #ff4d6a);
+            background: var(--brand-gradient);
             color: #fff;
             font-weight: 600;
-            box-shadow: 0 6rpx 16rpx rgba(183, 0, 48, 0.3);
+            box-shadow: 0 6rpx 16rpx var(--brand-shadow);
         }
     }
 }
@@ -522,29 +539,29 @@ const hideGuide = () => {
 }
 
 .card {
-    background: #ffffff;
+    background: var(--bg-card);
     border-radius: 24rpx;
-    box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.05); 
+    box-shadow: 0 8rpx 24rpx var(--shadow-color); 
     display: flex;
     overflow: hidden;
     position: relative;
     margin-bottom: 24rpx; 
-    border: 1px solid #f0f0f0;
+    border: 1px solid var(--border-color);
     transition: all 0.12s ease;
 
     &:active {
         transform: scale(0.96);
-        box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.03);
+        box-shadow: 0 4rpx 12rpx var(--shadow-color-sm);
     }
 
     &.proposal-card {
-        background: linear-gradient(135deg, #fff5f6 0%, #ffffff 100%);
+        background: var(--bg-proposal-card);
         box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.06); 
-        border: 1px solid rgba(178, 0, 53, 0.15);
+        border: 1px solid var(--border-proposal);
 
         .course-row-middle {
-            background: rgba(255, 255, 255, 0.8);
-            border: 1px solid rgba(178, 0, 53, 0.08);
+            background: var(--bg-proposal-sub);
+            border: 1px solid var(--border-proposal-sub);
             box-shadow: inset 0 2rpx 8rpx rgba(0,0,0,0.01);
         }
     }
@@ -565,7 +582,7 @@ const hideGuide = () => {
         .course-name {
             font-size: 36rpx; 
             font-weight: 700;
-            color: #1a1a1a; 
+            color: var(--text-title); 
             line-height: 1.4;
             flex: 1;
             margin-right: 20rpx;
@@ -573,7 +590,7 @@ const hideGuide = () => {
         }
         .time-text {
             font-size: 24rpx;
-            color: #999; 
+            color: var(--text-muted); 
             font-weight: 400;
             white-space: nowrap;
         }
@@ -585,7 +602,7 @@ const hideGuide = () => {
         flex-wrap: wrap; 
         align-items: center;
         margin-bottom: 32rpx;
-        background: #f8f9fa;
+        background: var(--bg-sub);
         padding: 20rpx 24rpx;
         border-radius: 16rpx;
         
@@ -593,7 +610,7 @@ const hideGuide = () => {
              display: flex;
              align-items: center;
              font-size: 26rpx;
-             color: #555;
+             color: var(--text-sub);
              margin-right: 40rpx; 
              font-weight: 500;
 
@@ -608,7 +625,7 @@ const hideGuide = () => {
 
     .content-text {
         font-size: 28rpx;
-        color: #333; 
+        color: var(--text-main); 
         line-height: 1.6; 
         display: -webkit-box;
         -webkit-box-orient: vertical;
@@ -622,7 +639,7 @@ const hideGuide = () => {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-top: 1px dashed rgba(0,0,0,0.05);
+        border-top: 1px dashed var(--border-color-dashed);
         padding-top: 24rpx;
         
         .likes-box {
@@ -637,17 +654,17 @@ const hideGuide = () => {
             }
             .likes-text {
                 font-size: 26rpx;
-                color: #666;
+                color: var(--text-sub);
             }
         }
 
         .vote-count-box {
              display: flex;
              align-items: center;
-             background: linear-gradient(90deg, #fff0f2, #fff5f6);
+             background: var(--bg-vote-box);
              padding: 10rpx 24rpx;
              border-radius: 30rpx;
-             border: 1px solid rgba(178, 0, 53, 0.05);
+             border: 1px solid var(--border-vote-box);
              
              .vote-icon {
                   width: 30rpx;
@@ -657,12 +674,12 @@ const hideGuide = () => {
              .vote-num {
                   font-size: 32rpx;
                   font-weight: 800;
-                  color: #b20035;
+                  color: var(--brand-primary);
                   margin-right: 6rpx;
              }
              .vote-label {
                   font-size: 24rpx;
-                  color: #b20035;
+                  color: var(--brand-primary);
                   opacity: 0.9;
                   font-weight: 500;
              }
@@ -685,9 +702,9 @@ const hideGuide = () => {
                 border: 1px solid rgba(56, 142, 60, 0.05);
             }
             &.status-rejected {
-                background: linear-gradient(90deg, rgba(178, 0, 53, 0.08), rgba(178, 0, 53, 0.04));
-                color: #b20035;
-                border: 1px solid rgba(178, 0, 53, 0.05);
+                background: linear-gradient(90deg, var(--border-proposal-sub), rgba(178, 0, 53, 0.04));
+                color: var(--brand-primary);
+                border: 1px solid var(--border-vote-box);
             }
         }
     }
@@ -699,9 +716,9 @@ const hideGuide = () => {
     bottom: 200rpx; /* Above bottom tab bar */
     width: 110rpx;
     height: 110rpx;
-    background: linear-gradient(135deg, #b20035, #ff4d6a);
+    background: var(--brand-gradient);
     border-radius: 50%;
-    box-shadow: 0 8rpx 30rpx rgba(178, 0, 53, 0.35);
+    box-shadow: 0 8rpx 30rpx var(--brand-shadow);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -727,7 +744,7 @@ const hideGuide = () => {
 
     text {
         font-size: 28rpx;
-        color: #999999;
+        color: var(--text-muted);
     }
 }
 
@@ -741,14 +758,14 @@ const hideGuide = () => {
         height: 80rpx;
         margin: 0 auto 24rpx;
         border: 4rpx solid #ddd;
-        border-top-color: #b20035;
+        border-top-color: var(--brand-primary);
         border-radius: 50%;
         animation: spin 1s linear infinite;
     }
 
     .loading-text {
         font-size: 28rpx;
-        color: #666;
+        color: var(--text-sub);
     }
 }
 
@@ -766,7 +783,7 @@ const hideGuide = () => {
     }
 
     .retry-btn {
-        background: linear-gradient(135deg, #b20035, #ff4d6a);
+        background: var(--brand-gradient);
         color: white;
         border-radius: 24rpx;
         font-size: 28rpx;
@@ -801,10 +818,10 @@ const hideGuide = () => {
 .guide-content {
   width: 100%;
   max-width: 600rpx;
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   border-radius: 32rpx;
   padding: 48rpx 40rpx;
-  box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20rpx 60rpx var(--shadow-color);
 }
 
 .guide-header {
@@ -815,14 +832,14 @@ const hideGuide = () => {
     display: block;
     font-size: 44rpx;
     font-weight: 800;
-    color: #1a1a1a;
+    color: var(--text-title);
     margin-bottom: 16rpx;
   }
 
   .guide-subtitle {
     display: block;
     font-size: 26rpx;
-    color: #999;
+    color: var(--text-muted);
   }
 }
 
@@ -842,7 +859,7 @@ const hideGuide = () => {
   .section-icon {
     width: 80rpx;
     height: 80rpx;
-    background-color: #fff5f7;
+    background-color: var(--bg-sub);
     border-radius: 20rpx;
     display: flex;
     align-items: center;
@@ -861,13 +878,13 @@ const hideGuide = () => {
   .section-title {
     font-size: 30rpx;
     font-weight: 600;
-    color: #333;
+    color: var(--text-main);
     margin-bottom: 8rpx;
   }
 
   .section-desc {
     font-size: 24rpx;
-    color: #888;
+    color: var(--text-muted);
     line-height: 1.5;
   }
 }
@@ -877,13 +894,13 @@ const hideGuide = () => {
     width: 100%;
     height: 88rpx;
     line-height: 88rpx;
-    background: linear-gradient(135deg, #b20035, #ff4d6a);
+    background: var(--brand-gradient);
     color: #fff;
     font-size: 32rpx;
     font-weight: 600;
     border-radius: 44rpx;
     border: none;
-    box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.3);
+    box-shadow: 0 8rpx 24rpx var(--brand-shadow);
 
     &:active {
       transform: scale(0.98);

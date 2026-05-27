@@ -1,5 +1,5 @@
 <template>
-  <view class="letter-container">
+  <view class="letter-container" :class="themeStore.themeClass">
     <image src="@/images/cat.png" class="background-cat" mode="aspectFill" />
     <view class="custom-header" :style="{ paddingTop: menuButtonInfo.top + 'px' }">
         <view class="nav-bar-content" :style="{ height: menuButtonInfo.height + 'px' }">
@@ -36,6 +36,8 @@
 </template>
 
 <script setup lang="ts">
+import { useThemeStore } from '@/config';
+const themeStore = useThemeStore();
 import { onLoad } from "@dcloudio/uni-app";
 import BackBtn from "@/components/common/BackBtn.vue";
 

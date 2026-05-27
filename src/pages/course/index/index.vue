@@ -1,5 +1,5 @@
 <template>
-  <layout class="background" @on-bottom="handleBottom()">
+  <layout class="background" @on-bottom="handleBottom()" :class="themeStore.themeClass">
     
     <!-- 1. 新的头部 Header -->
     <view class="detail-header" 
@@ -52,6 +52,8 @@
 </template>
 
 <script setup lang="ts">
+import { useThemeStore } from '@/config';
+const themeStore = useThemeStore();
 import BackBtn from "@/components/common/BackBtn.vue";
 import { onShow, onLoad } from "@dcloudio/uni-app";
 import { useCourse } from "./index";

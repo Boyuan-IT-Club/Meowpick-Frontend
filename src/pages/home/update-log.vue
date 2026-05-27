@@ -1,5 +1,5 @@
 <template>
-  <view class="background"> <!-- Content starts below header -->
+  <view class="background" :class="themeStore.themeClass"> <!-- Content starts below header -->
     <image src="@/images/cat.png" class="background-image" mode="widthFix" />
     
     <!-- Custom Header -->
@@ -31,6 +31,8 @@
 </template>
 
 <script setup lang="ts">
+import { useThemeStore } from '@/config';
+const themeStore = useThemeStore();
 import InformationBox from "@/pages/home/InformationBox.vue";
 import { UpdateLog } from "./information";
 import BackBtn from "@/components/common/BackBtn.vue";

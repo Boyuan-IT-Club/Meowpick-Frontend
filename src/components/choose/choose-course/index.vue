@@ -137,11 +137,11 @@ const handleLike = async () => {
 }
 
 .proposal-card {
-  background: linear-gradient(135deg, #fff5f6 0%, #ffffff 100%);
+  background: var(--bg-proposal-card);
   border-radius: 24rpx;
   box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.06);
   padding: 32rpx;
-  border: 1px solid rgba(178, 0, 53, 0.15);
+  border: 1px solid var(--border-proposal);
   position: relative;
   overflow: hidden;
   transition: all 0.12s ease;
@@ -164,7 +164,7 @@ const handleLike = async () => {
           .proposal-name {
                font-size: 36rpx;
                font-weight: 700;
-               color: #1a1a1a;
+               color: var(--text-title);
                line-height: 1.4;
                flex: 1;
                margin-right: 20rpx;
@@ -178,17 +178,17 @@ const handleLike = async () => {
           flex-wrap: wrap;
           align-items: center;
           margin-bottom: 32rpx;
-          background: rgba(255, 255, 255, 0.8);
+          background: var(--bg-proposal-sub);
           padding: 20rpx 24rpx;
           border-radius: 16rpx;
-          border: 1px solid rgba(178, 0, 53, 0.08);
+          border: 1px solid var(--border-proposal-sub);
           box-shadow: inset 0 2rpx 8rpx rgba(0,0,0,0.01);
 
           .proposal-info-item {
                display: flex;
                align-items: center;
                font-size: 26rpx;
-               color: #555;
+               color: var(--text-sub);
                margin-right: 40rpx;
                font-weight: 500;
 
@@ -205,26 +205,26 @@ const handleLike = async () => {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          border-top: 1px dashed rgba(178, 0, 53, 0.15);
+          border-top: 1px dashed var(--border-proposal);
           padding-top: 24rpx;
 
            .proposal-badge {
              font-size: 24rpx;
-             color: #b20035;
+             color: var(--brand-primary);
              background: linear-gradient(90deg, rgba(178, 0, 53, 0.1), rgba(178, 0, 53, 0.1));
              padding: 10rpx 20rpx;
              border-radius: 30rpx;
              font-weight: 600;
-             border: 1px solid rgba(178, 0, 53, 0.05);
+             border: 1px solid var(--border-vote-box);
          }
 
            .vote-count-box {
                 display: flex;
                 align-items: center;
-                background: linear-gradient(90deg, #fff0f2, #fff5f6);
+                background: var(--bg-vote-box);
                 padding: 10rpx 24rpx;
                 border-radius: 30rpx;
-                border: 1px solid rgba(178, 0, 53, 0.05);
+                border: 1px solid var(--border-vote-box);
 
                 &.is-liked {
                     background: linear-gradient(90deg, #b20035, #ff4d6a);
@@ -242,12 +242,12 @@ const handleLike = async () => {
                .vote-num {
                     font-size: 32rpx;
                     font-weight: 800;
-                    color: #b20035;
+                    color: var(--brand-primary);
                     margin-right: 6rpx;
                }
                .vote-label {
                     font-size: 24rpx;
-                    color: #b20035;
+                    color: var(--brand-primary);
                     opacity: 0.9;
                     font-weight: 500;
                }
@@ -257,20 +257,20 @@ const handleLike = async () => {
 }
 
 .search-result {
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   width: 100%;
   box-sizing: border-box;
   border-radius: 24rpx;
-  box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.05);
+  box-shadow: 0 8rpx 24rpx var(--shadow-color);
   padding: 32rpx;
   display: flex;
   flex-direction: column;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--border-color);
   transition: all 0.12s ease;
 
   &:active {
     transform: scale(0.96);
-    box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.03);
+    box-shadow: 0 4rpx 12rpx var(--shadow-color-sm);
   }
 
   .course-content {
@@ -318,7 +318,7 @@ const handleLike = async () => {
                display: flex;
                align-items: center;
                font-size: 26rpx;
-               color: #666;
+               color: var(--text-sub);
                margin-right: 40rpx;
 
                .info-icon {
@@ -341,15 +341,15 @@ const handleLike = async () => {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
-        background: #f8f9fa;
+        background: var(--bg-sub);
         padding: 16rpx 20rpx;
         border-radius: 12rpx;
 
         .tag-item {
           display: flex;
           align-items: center;
-          background: #ffffff;
-          border: 1px solid #eee;
+          background: var(--bg-card);
+          border: 1px solid var(--border-color);
           padding: 6rpx 16rpx;
           border-radius: 30rpx;
           margin-right: 16rpx;
@@ -369,7 +369,7 @@ const handleLike = async () => {
 
           .tag-count {
             font-size: 24rpx;
-            color: #b20035;
+            color: var(--brand-primary);
             font-weight: 600;
           }
         }
@@ -379,7 +379,7 @@ const handleLike = async () => {
         width: 100%;
         margin-top: 20rpx;
         font-size: 26rpx;
-        color: #888;
+        color: var(--text-muted);
         line-height: 1.6;
         display: -webkit-box;
         -webkit-box-orient: vertical;
@@ -389,7 +389,7 @@ const handleLike = async () => {
         background: #fcfcfc;
         padding: 16rpx;
         border-radius: 12rpx;
-        border-left: 6rpx solid #eee;
+        border-left: 6rpx solid var(--border-color);
       }
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <view class="proposal-detail-page">
+  <view class="proposal-detail-page" :class="themeStore.themeClass">
     
     <!-- 1. 头部 Header (与课程详情一致，但背景不同) -->
     <view class="detail-header" 
@@ -73,6 +73,8 @@
 </template>
 
 <script setup lang="ts">
+import { useThemeStore } from '@/config';
+const themeStore = useThemeStore();
 import { ref } from 'vue';
 import { onLoad } from "@dcloudio/uni-app";
 import BackBtn from "@/components/common/BackBtn.vue";

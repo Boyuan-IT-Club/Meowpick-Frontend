@@ -1,5 +1,5 @@
 <template>
-  <view class="main-container">
+  <view class="main-container" :class="themeStore.themeClass">
     <!-- 顶部内容区 -->
     <swiper 
       class="content-swiper" 
@@ -60,11 +60,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { onShow, onLoad } from '@dcloudio/uni-app';
-// 暂时使用占位组件，后续会替换为真实组件
+import { useThemeStore } from '@/config';
 import HomeView from '@/components/home-view/index.vue';
 import ProfileView from '@/components/profile-view/index.vue';
+
+const themeStore = useThemeStore();
+
+
 
 const currentIndex = ref(0);
 const indicatorLeft = ref(25); // 初始值 25%
@@ -123,7 +127,7 @@ function onSwiperAnimationFinish(e: any) {
   flex-direction: column;
   height: 100vh;
   // 背景色稍微加深一点点，让白色组件反差更好看
-  background-color: #f2f3f5;
+  background-color: var(--bg-page);
 }
 
 .content-swiper {
@@ -149,7 +153,7 @@ function onSwiperAnimationFinish(e: any) {
   height: auto; // 由内容撑开，不再固定死高度，避免布局冲突
   min-height: 100rpx;
   
-  background-color: rgba(255, 255, 255, 0.98); 
+  background-color: var(--bg-card); 
   border-top-left-radius: 40rpx; 
   border-top-right-radius: 40rpx;
   
@@ -157,7 +161,7 @@ function onSwiperAnimationFinish(e: any) {
   padding-bottom: constant(safe-area-inset-bottom);
   padding-bottom: env(safe-area-inset-bottom);
   
-  box-shadow: 0 -10rpx 40rpx rgba(0, 0, 0, 0.04);
+  box-shadow: 0 -10rpx 40rpx var(--shadow-color);
 
   display: flex;
   flex-direction: column; 
@@ -184,7 +188,7 @@ function onSwiperAnimationFinish(e: any) {
     align-items: center;
 
     font-size: 34rpx; 
-    color: #9ea1a6; 
+    color: var(--text-muted); 
     font-weight: 500;
     transition: all 0.12s cubic-bezier(0.25, 0.8, 0.25, 1);
     
@@ -194,7 +198,7 @@ function onSwiperAnimationFinish(e: any) {
 
     &.active {
       font-weight: 700; 
-      color: #1a1a1a; 
+      color: var(--text-title); 
       font-size: 36rpx; 
     }
   }
@@ -212,14 +216,14 @@ function onSwiperAnimationFinish(e: any) {
     
     width: 48rpx; 
     height: 8rpx; 
-    background: linear-gradient(90deg, #b70030, #ff4d6a); 
+    background: var(--brand-gradient); 
     border-radius: 10rpx;
     
     transform: translateX(-50%); 
     transition: left 0.1s linear; 
     z-index: 3;
     
-    box-shadow: 0 4rpx 12rpx rgba(183, 0, 48, 0.4); 
+    box-shadow: 0 4rpx 12rpx var(--brand-shadow); 
   }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <view class="container">
+  <view class="container" :class="themeStore.themeClass">
     <!-- Header -->
     <view class="nav-bar" :style="navBarStyle">
       <view class="nav-content" :style="navContentStyle">
@@ -102,6 +102,8 @@
 </template>
 
 <script setup lang="ts">
+import { useThemeStore } from '@/config';
+const themeStore = useThemeStore();
 import { reactive, computed, ref } from 'vue';
 import BackBtn from "@/components/common/BackBtn.vue";
 import { http } from "@/config";

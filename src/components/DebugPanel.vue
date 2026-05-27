@@ -118,7 +118,7 @@ const setLaneInputEditable = (isTrue: boolean) => {
   bottom: 25vw;
   width: 96vw;
   background-color: #222222;
-  color: #cccccc;
+  color: var(--border-color);
 
   .clickable {
     background-color: #222222;
@@ -126,7 +126,7 @@ const setLaneInputEditable = (isTrue: boolean) => {
     padding: 1vw 2vw;
 
     &:active {
-      background-color: #333333;
+      background-color: var(--text-main);
       z-index: 20;
     }
   }
@@ -160,7 +160,7 @@ const setLaneInputEditable = (isTrue: boolean) => {
       margin-right: 2vw;
 
       &.current {
-        background-color: #888888;
+        background-color: var(--text-muted);
 
         color: #000000;
 
@@ -191,7 +191,7 @@ const setLaneInputEditable = (isTrue: boolean) => {
       border-radius: 2vw;
 
       &.editable {
-        background-color: #333333;
+        background-color: var(--text-main);
       }
     }
   }

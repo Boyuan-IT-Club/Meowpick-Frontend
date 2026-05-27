@@ -136,7 +136,7 @@ const handleLike = async () => {
   /* This has shadow and radius too? No, it inherits or redefined? */
   background: linear-gradient(145deg, #ffffff 0%, #fff5f6 100%);
   border-radius: 16rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.03); 
+  box-shadow: 0 4rpx 12rpx var(--shadow-color-sm); 
   padding: 24rpx;
 
   .proposal-content {
@@ -152,7 +152,7 @@ const handleLike = async () => {
           .proposal-name {
                font-size: 32rpx; /* Slightly larger title */
                font-weight: 700;
-               color: #333; 
+               color: var(--text-main); 
                line-height: 1.4;
                flex: 1;
           }
@@ -169,7 +169,7 @@ const handleLike = async () => {
                display: flex;
                align-items: center;
                font-size: 26rpx; /* Larger text */
-               color: #555; /* Darker grey */
+               color: var(--text-sub); /* Darker grey */
                margin-right: 32rpx; 
 
                .info-icon {
@@ -188,8 +188,8 @@ const handleLike = async () => {
           
            .proposal-badge {
              font-size: 22rpx;
-             color: #b20035;
-             background: rgba(178, 0, 53, 0.08);
+             color: var(--brand-primary);
+             background: var(--border-proposal-sub);
              padding: 6rpx 12rpx;
              border-radius: 8rpx;
              white-space: nowrap;
@@ -200,12 +200,12 @@ const handleLike = async () => {
                 display: flex;
                 align-items: center;
                 /* Removed background for cleaner look or keep if desired, let's keep it minimal */
-                /* background: rgba(178, 0, 53, 0.05); */
+                /* background: var(--border-vote-box); */
 
                 &.is-liked {
                     .vote-icon { opacity: 1; }
-                    .vote-num { color: #b20035; }
-                    .vote-label { color: #b20035; }
+                    .vote-num { color: var(--brand-primary); }
+                    .vote-label { color: var(--brand-primary); }
                 }
 
                 .vote-icon {
@@ -217,12 +217,12 @@ const handleLike = async () => {
                .vote-num {
                     font-size: 28rpx;
                     font-weight: 600;
-                    color: #b20035;
+                    color: var(--brand-primary);
                     margin-right: 4rpx;
                }
                .vote-label {
                     font-size: 22rpx;
-                    color: #999;
+                    color: var(--text-muted);
                     margin-top: 4rpx; /* Align baseline */
                }
           }
@@ -231,12 +231,12 @@ const handleLike = async () => {
 }
 
 .search-result {
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   width: 100%; 
   box-sizing: border-box;
   /* Add card styling to course card */
   border-radius: 16rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.03); 
+  box-shadow: 0 4rpx 12rpx var(--shadow-color-sm); 
   padding: 24rpx;
   display: flex;
   flex-direction: column;
@@ -256,7 +256,7 @@ const handleLike = async () => {
           .course-name {
                font-size: 32rpx;
                font-weight: 700;
-               color: #333; 
+               color: var(--text-main); 
                line-height: 1.4;
                flex: 1;
                margin-right: 16rpx;
@@ -268,8 +268,8 @@ const handleLike = async () => {
           }
           .course-category {
                font-size: 22rpx;
-               color: #666;
-               background: #f0f0f0;
+               color: var(--text-sub);
+               background: var(--border-color);
                padding: 6rpx 12rpx;
                border-radius: 8rpx;
                white-space: nowrap;
@@ -289,7 +289,7 @@ const handleLike = async () => {
                display: flex;
                align-items: center;
                font-size: 26rpx; 
-               color: #555; 
+               color: var(--text-sub); 
                margin-right: 32rpx; 
 
                .info-icon {
@@ -316,7 +316,7 @@ const handleLike = async () => {
         .tag-item {
           display: flex;
           align-items: center;
-          background: #fffcfc; /* Consistent with light theme */
+          background: var(--bg-card)cfc; /* Consistent with light theme */
           border: 1px solid #ffebeb;
           padding: 4rpx 12rpx;
           border-radius: 12rpx;
@@ -331,7 +331,7 @@ const handleLike = async () => {
 
           .tag-count {
             font-size: 22rpx;
-            color: #b20035;
+            color: var(--brand-primary);
             font-weight: 500;
           }
         }
@@ -341,7 +341,7 @@ const handleLike = async () => {
         width: 100%;
         margin-top: 10rpx;
         font-size: 24rpx;
-        color: #999;
+        color: var(--text-muted);
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2; 

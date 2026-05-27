@@ -1,10 +1,12 @@
 <template>
-  <view class="find-page">
+  <view class="find-page" :class="themeStore.themeClass">
     <find :initial-mode="mode" ref="findRef" />
   </view>
 </template>
 
 <script setup lang="ts">
+import { useThemeStore } from '@/config';
+const themeStore = useThemeStore();
 // 只需要引入我们重写好的 find 组件
 import find from "@/components/find/index.vue";
 import { onShow, onLoad } from '@dcloudio/uni-app';
