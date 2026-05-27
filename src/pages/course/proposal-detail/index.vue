@@ -309,7 +309,7 @@ $bg-gradient-top: #fff5f5;
         
         .vote-btn {
             margin: 0;
-            background: linear-gradient(135deg, #b20035, #ff4d6a);
+            background: var(--brand-gradient);
             color: #fff;
             border-radius: 40rpx;
             padding: 0 48rpx;

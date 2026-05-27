@@ -1180,7 +1180,7 @@ $brand-red: #b20035;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.25);
+    box-shadow: 0 8rpx 24rpx var(--brand-shadow);
     cursor: pointer;
     transition: transform 0.05s ease, box-shadow 0.1s ease;
 

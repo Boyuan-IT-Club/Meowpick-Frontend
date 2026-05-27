@@ -227,7 +227,7 @@ const handleLike = async () => {
                 border: 1px solid var(--border-vote-box);
 
                 &.is-liked {
-                    background: linear-gradient(90deg, #b20035, #ff4d6a);
+                    background: var(--brand-gradient);
                     .vote-icon { opacity: 1; }
                     .vote-num { color: #fff; }
                     .vote-label { color: #fff; }

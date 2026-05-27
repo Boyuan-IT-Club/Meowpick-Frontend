@@ -806,7 +806,7 @@ const hideGuide = () => {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: var(--mask-color);
   z-index: 9999;
   display: flex;
   align-items: center;
@@ -821,7 +821,7 @@ const hideGuide = () => {
   background-color: var(--bg-card);
   border-radius: 32rpx;
   padding: 48rpx 40rpx;
-  box-shadow: 0 20rpx 60rpx var(--shadow-color);
+  box-shadow: 0 20rpx 60rpx var(--shadow-color-modal);
 }
 
 .guide-header {

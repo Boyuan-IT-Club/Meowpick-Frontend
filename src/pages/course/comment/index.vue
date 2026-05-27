@@ -315,7 +315,7 @@ const commit = async () => {
   height: 90rpx;
   line-height: 90rpx;
   border-radius: 45rpx;
-  background: linear-gradient(135deg, #b20035, #ff4d6a);
+  background: var(--brand-gradient);
   color: #fff;
   font-size: 32rpx;
   font-weight: bold;
