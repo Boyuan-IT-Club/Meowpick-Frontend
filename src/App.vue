@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { Init } from "@/utils/init";
+import { useThemeStore } from "@/config";
+const themeStore = useThemeStore();
 
 onLaunch(() => {
   Init()
@@ -7,6 +9,11 @@ onLaunch(() => {
 onShow(() => {});
 onHide(() => {});
 </script>
+<template>
+  <view :class="themeStore.themeClass">
+    <slot />
+  </view>
+</template>
 <style lang="scss">
 @import "nutui-uniapp/styles/index";
 
@@ -21,5 +28,9 @@ view {
 
 input {
   box-sizing: border-box;
+}
+
+.dark-theme page {
+  background-color: #121212;
 }
 </style>
