@@ -11,9 +11,10 @@ export function useCourse() {
   function fetch(data: string) {
     id.value = data;
     http.CourseController.courseDetail(data).then((res) => {
-      if (res.data.code === 0 && res.data.data) {
+      if (res.data.code === 0) {
+        const courseData = res.data.data || res.data;
         course.value = {
-          data: res.data.data,
+          data: courseData,
         };
       }
 

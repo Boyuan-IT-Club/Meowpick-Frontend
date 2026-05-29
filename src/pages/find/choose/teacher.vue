@@ -1,35 +1,37 @@
 <template>
-  <scroll @bottom="handleScrollBottom">
-    <top-bar class="top-bar" :selected="0" />
-    <view v-for="item of rows" class="content">
-      <view v-for="course of item.courses" @click="jump(course.id)">
-        <div class="search-result-box">
-          <div class="search-result">
-            <view class="title">
-              <view class="name">
-                {{ course.name }}
+  <view class="page-container">
+    <scroll @bottom="handleScrollBottom" @scroll="handleScroll">
+      <top-bar class="top-bar" :selected="0" />
+      <view v-for="item of rows" class="content">
+        <view v-for="course of item.courses" :key="course.id" @click="jump(course.id)">
+          <div class="search-result-box">
+            <div class="search-result">
+              <view class="title">
+                <view class="name">
+                  {{ course.name }}
+                </view>
+                <view class="dept-name">{{ course.category }}</view>
               </view>
-              <view class="dept-name">{{ course.category }}</view>
-            </view>
-            <view class="information">
-              <view class="circle" />
-              <view class="department">{{ course.department }}</view>
-              <view class="circle" />
-              <view v-for="item of course.teacherList" class="instructor">{{
-                item.name
-              }}</view>
-            </view>
-            <view class="tip">
-              <view v-for="item of getTop3List(course.tagCount)" class="item">
-                <image class="emoji" :src="Emoji(item.tag)" />
-                <view class="text">{{ item.count }}</view>
+              <view class="information">
+                <view class="circle" />
+                <view class="department">{{ course.department }}</view>
+                <view class="circle" />
+                <view v-for="teacher of course.teacherList" :key="teacher.id" class="instructor">{{
+                  teacher.name
+                }}</view>
               </view>
-            </view>
+              <view class="tip">
+                <view v-for="tagItem of getTop3List(course.tagCount)" :key="tagItem.tag" class="item">
+                  <image class="emoji" :src="Emoji(tagItem.tag)" />
+                  <view class="text">{{ tagItem.count }}</view>
+                </view>
+              </view>
+            </div>
           </div>
-        </div>
+        </view>
       </view>
-    </view>
-  </scroll>
+    </scroll>
+  </view>
 </template>
 <script setup lang="ts">
 import { useChoose } from "./teacher";
@@ -44,8 +46,19 @@ onLoad((options: any) => {
 function handleScrollBottom() {
   page.value++;
 }
+
+function handleScroll(e: any) {
+  const scrollTop = e.detail?.scrollTop || 0;
+  uni.$emit('pageScroll', { scrollTop });
+}
 </script>
 <style scoped lang="scss">
+.page-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 .box {
   margin-top: 35vw;
   margin-left: 5vw;

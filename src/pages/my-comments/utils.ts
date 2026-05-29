@@ -1,7 +1,9 @@
-import type { CommentVO } from "@/api/data-contracts";
+import type { DtoCommentVO } from "@/api/data-contracts";
+import { http } from "@/config";
+
 export function useCourseComment() {
   const page = shallowRef(0);
-  const list = ref<CommentVO[]>([]);
+  const list = ref<DtoCommentVO[]>([]);
   let query = true;
 
   function fetch(page: number) {
@@ -12,10 +14,13 @@ export function useCourseComment() {
 
     if (query) {
       http.CommentController.commentHistoryCreate({ page, pageSize: 5 }).then((res) => {
-        res.data.data.comments?.forEach((comment) => {
-          list.value.push(comment);
-        });
-        query = list.value.length < res.data.data.total!;
+        if (res.data?.code === 0) {
+          const responseData = res.data.data || res.data;
+          responseData?.comments?.forEach((comment) => {
+            list.value.push(comment);
+          });
+          query = list.value.length < (responseData?.total || 0);
+        }
       });
     }
   }
@@ -24,10 +29,19 @@ export function useCourseComment() {
     const comment = list.value.find(c => c.id === target);
     if (!comment) return;
 
-    comment.like = !comment.like;
-    comment.likeCnt += comment.like ? 1 : -1;
-
-    http.ActionController.like(target, {});
+    http.LikeController.likeCreate(target, {
+      targetId: target,
+      targetType: '2'
+    }).then((res) => {
+      if (res.data?.code === 0) {
+        const isLiked = res.data?.like ?? res.data?.data?.like ?? !comment.like;
+        const newCnt = res.data?.likeCnt ?? res.data?.data?.likeCnt ?? (isLiked ? comment.likeCnt! + 1 : comment.likeCnt! - 1);
+        comment.like = isLiked;
+        comment.likeCnt = newCnt;
+      }
+    }).catch((err) => {
+      console.error('[API] 点赞评论失败:', err);
+    });
   }
 
   function next() {

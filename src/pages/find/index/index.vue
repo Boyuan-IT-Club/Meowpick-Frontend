@@ -40,10 +40,10 @@
 </template>
 
 <script setup lang="ts">
-import type { SearchHistoryVO } from "@/api/data-contracts";
+import type { DtoSearchHistoryVO } from "@/api/data-contracts";
 import { useTokenStore } from "@/config";
 import { ref } from "vue";
-import { onShow } from "@dcloudio/uni-app";
+import { onShow, onPageScroll } from "@dcloudio/uni-app";
 import { http } from "@/config";
 import PubSub from "@/config/utils/pubsub";
 import find from "@/components/find/index.vue";
@@ -52,17 +52,22 @@ const tokenStore = useTokenStore();
 const recentText = ref("");
 // const hot = ["思政类", "英语类", "体育类", "劳动与创造"];
 
-const recent = ref<SearchHistoryVO[]>([]);
+const recent = ref<DtoSearchHistoryVO[]>([]);
 onShow(() => {
   http.SearchController.searchRecentList().then((res) => {
-    recent.value = res.data.data.histories;
+    const responseData = res.data.data || res.data;
+    recent.value = responseData?.histories || res.data?.histories || [];
   });
   uni.hideTabBar();
 });
 
+onPageScroll((e) => {
+  uni.$emit('pageScroll', e);
+});
+
 function jump2search(keyword: string) {
   uni.navigateTo({
-    url: `/pages/find/choose/index?keyword=${keyword}`
+    url: `/pages/find/choose/index?keyword=${encodeURIComponent(keyword)}`
   });
 }
 

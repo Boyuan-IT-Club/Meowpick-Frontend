@@ -1,8 +1,6 @@
-<!-- d:\MeowPick\Meowpick-Frontend\src\pages\proposal\detail.vue -->
 <template>
   <view class="proposal-detail-page">
     
-    <!-- 头部 Header -->
     <view class="detail-header" 
       :style="{ 
           height: (menuButtonInfo.bottom + 12) + 'px',
@@ -19,96 +17,79 @@
        </view>
     </view>
 
-    <!-- 内容滚动区域 -->
-    <scroll-view scroll-y class="content-scroll" :style="{ paddingTop: (menuButtonInfo.bottom + 20) + 'px' }">
+    <scroll-view scroll-y class="content-scroll" :style="{ paddingTop: (menuButtonInfo.bottom + 20) + 'px' }" refresher-enabled :refresher-triggered="isRefreshing" @refresherrefresh="onRefresh">
       
-      <!-- 提议详情卡片 -->
-      <view class="proposal-card">
+      <view v-if="pageLoading" class="loading-state">
+        <text class="loading-text">加载中...</text>
+      </view>
+      
+      <view v-else class="proposal-card">
           <view class="card-header">
               <view class="proposal-badge">新课提议</view>
-              <text class="proposal-date">{{ formatDate(proposalData.date) }}</text>
+              <text class="proposal-date">{{ formatDate(proposalData.createdAt) }}</text>
           </view>
           
-          <view class="proposal-title">{{ proposalData.courseName || '未命名提议' }}</view>
+          <view class="proposal-title">{{ proposalData.title || '未命名提议' }}</view>
           
-          <view class="proposal-info-row single-item">
+          <view class="proposal-info-row single-item" v-if="teacherNames">
               <view class="info-item full-width">
                   <text class="info-label">提议教师：</text>
-                  <text class="info-value">{{ proposalData.teachers || '待定' }}</text>
+                  <text class="info-value">{{ teacherNames }}</text>
               </view>
           </view>
           
-          <view class="proposal-info-row single-item">
+          <view class="proposal-info-row single-item" v-if="campusText">
               <view class="info-item full-width">
                   <text class="info-label">校区：</text>
-                  <text class="info-value">{{ proposalData.campus || '全校' }}</text>
+                  <text class="info-value">{{ campusText }}</text>
               </view>
           </view>
           
-          <view class="proposal-info-row single-item">
+          <view class="proposal-info-row single-item" v-if="proposalData.course?.department">
               <view class="info-item full-width">
                   <text class="info-label">院系：</text>
-                  <text class="info-value">{{ proposalData.department || '未知院系' }}</text>
+                  <text class="info-value">{{ proposalData.course.department }}</text>
               </view>
           </view>
           
-          <view class="proposal-info-row single-item">
+          <view class="proposal-info-row single-item" v-if="proposalData.course?.category">
               <view class="info-item full-width">
                   <text class="info-label">分类：</text>
-                  <text class="info-value">{{ proposalData.category || '未分类' }}</text>
+                  <text class="info-value">{{ proposalData.course.category }}</text>
               </view>
           </view>
           
           <view class="proposal-reason-box">
               <text class="reason-label">提议理由：</text>
-              <text class="reason-content">{{ proposalData.reason || '暂无理由' }}</text>
+              <text class="reason-content">{{ proposalData.content || '暂无理由' }}</text>
           </view>
           
-          <!-- 投票互动区 -->
           <view class="vote-area">
               <view class="vote-stats">
-                  <text class="vote-num">{{ proposalData.agreeCount || 0 }}</text>
+                  <text class="vote-num">{{ proposalData.likeCnt || 0 }}</text>
                   <text class="vote-desc">人已支持</text>
               </view>
               <button 
                 class="vote-btn" 
-                :class="{ 'is-voted': proposalData.isAgreed }"
+                :class="{ 'is-voted': proposalData.like }"
                 @click="handleVote"
               >
-                  {{ proposalData.isAgreed ? '已支持' : '👍 支持一下' }}
+                  {{ proposalData.like ? '已支持' : '👍 支持一下' }}
               </button>
           </view>
-      </view>
-      
-      <!-- 讨论区 -->
-      <view class="discussion-section">
-        <view class="section-header">
-           <text class="section-title">讨论区</text>
-           <text class="section-count">(0)</text>
-        </view>
-        
-        <view class="empty-discussion">
-            <image src="@/images/cat.png" mode="aspectFit" class="empty-icon" />
-            <text>暂时还没有讨论，快来抢沙发~</text>
-        </view>
       </view>
       
       <view class="bottom-spacer"></view>
     </scroll-view>
 
-    <!-- 悬浮按钮 -->
-    <view class="fab-btn" @click="handleComment">
-        <text class="fab-text">💬</text>
-    </view>
-
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { onLoad } from "@dcloudio/uni-app";
+import { http } from '@/config';
 
-// 获取胶囊位置
 const sysInfo = uni.getSystemInfoSync();
 let menuButtonInfo = { 
     top: sysInfo.statusBarHeight ? sysInfo.statusBarHeight + 4 : 48,
@@ -126,73 +107,152 @@ try {
     }
 } catch (e) {}
 
-// 当前用户ID
-const currentUserId = 'user_123456';
-
-// 提案数据
 const proposalData = ref<any>({});
+const proposalId = ref('');
+const pageLoading = ref(true);
+const isRefreshing = ref(false);
 
-// 格式化时间为YYYY-MM-DD格式
+const teacherNames = computed(() => {
+    const teachers = proposalData.value.course?.teachers;
+    if (!teachers || !Array.isArray(teachers) || teachers.length === 0) return '';
+    return teachers.map((t: any) => typeof t === 'string' ? t : t.name || '').join('、');
+});
+
+const campusText = computed(() => {
+    const campuses = proposalData.value.course?.campuses;
+    if (!campuses || !Array.isArray(campuses) || campuses.length === 0) return '';
+    return campuses.join('、');
+});
+
 const formatDate = (dateString: string) => {
     if (!dateString) return '刚刚';
     
     try {
-        const date = new Date(dateString);
+        let normalized = dateString;
+        if (!normalized.includes('Z') && !normalized.includes('+') && !normalized.includes('T')) {
+            normalized = normalized.replace(' ', 'T') + 'Z';
+        } else if (normalized.includes('T') && !normalized.includes('Z') && !normalized.includes('+')) {
+            normalized = normalized + 'Z';
+        }
+        const date = new Date(normalized);
+        if (isNaN(date.getTime())) return '刚刚';
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     } catch (e) {
-        console.error('日期格式化失败:', e);
         return '刚刚';
     }
 };
 
+const fetchProposalDetail = async () => {
+    if (!proposalId.value) return;
+    
+    try {
+        const res = await http.ProposalController.proposalDetail(proposalId.value, proposalId.value);
+        console.log('[DEBUG] proposalDetail response:', JSON.stringify(res.data));
+        
+        let proposal = null;
+        if (res.data?.proposal) {
+            proposal = res.data.proposal;
+        } else if (res.data?.data?.proposal) {
+            proposal = res.data.data.proposal;
+        } else if (res.data?.data?.data?.proposal) {
+            proposal = res.data.data.data.proposal;
+        }
+        
+        if (proposal) {
+            proposalData.value = proposal;
+        } else {
+            console.error('[API] 无法从响应中提取提案数据, res.data keys:', Object.keys(res.data || {}));
+        }
+    } catch (err) {
+        console.error('[API] 获取提案详情失败:', err);
+    } finally {
+        pageLoading.value = false;
+        isRefreshing.value = false;
+    }
+};
+
 onLoad((options: any) => {
+    console.log('[DEBUG] detail onLoad options:', JSON.stringify(options));
+    if (options.id) {
+        proposalId.value = options.id;
+    }
+    
     if (options.data) {
         try {
             const data = JSON.parse(decodeURIComponent(options.data));
             proposalData.value = {
                 ...data,
-                isAgreed: data.agreeUserIds?.includes(currentUserId) || false
+                title: data.title || data.courseName || '',
+                likeCnt: data.likeCnt ?? data.agreeCount ?? 0,
+                like: data.like ?? data.isAgreed ?? false
             };
+            if (!proposalId.value && data.id) {
+                proposalId.value = data.id;
+            }
+            pageLoading.value = false;
         } catch (e) {
             console.error("解析提案数据失败", e);
-            uni.showToast({ title: '数据加载失败', icon: 'none' });
         }
+    }
+    
+    if (proposalId.value) {
+        fetchProposalDetail();
+    } else {
+        pageLoading.value = false;
     }
 });
 
+const onRefresh = async () => {
+    isRefreshing.value = true;
+    await fetchProposalDetail();
+};
+
 const goBack = () => {
+    uni.$emit('proposalLikeUpdated', {
+        id: proposalId.value,
+        like: proposalData.value.like,
+        likeCnt: proposalData.value.likeCnt
+    });
     uni.navigateBack();
 };
 
-const handleVote = () => {
-    if (proposalData.value.isAgreed) {
-        // 取消支持
-        proposalData.value.isAgreed = false;
-        proposalData.value.agreeCount = Math.max(0, (proposalData.value.agreeCount || 0) - 1);
-        if (proposalData.value.agreeUserIds) {
-            const idx = proposalData.value.agreeUserIds.indexOf(currentUserId);
-            if (idx > -1) {
-                proposalData.value.agreeUserIds.splice(idx, 1);
-            }
-        }
-        uni.showToast({ title: '已取消支持', icon: 'success' });
-    } else {
-        // 支持
-        proposalData.value.isAgreed = true;
-        proposalData.value.agreeCount = (proposalData.value.agreeCount || 0) + 1;
-        if (!proposalData.value.agreeUserIds) {
-            proposalData.value.agreeUserIds = [];
-        }
-        proposalData.value.agreeUserIds.push(currentUserId);
-        uni.showToast({ title: '支持成功', icon: 'success' });
+const handleVote = async () => {
+    if (!proposalId.value) {
+        uni.showToast({ title: '操作失败', icon: 'none' });
+        return;
     }
-};
 
-const handleComment = () => {
-    uni.showToast({ title: '功能开发中', icon: 'none' });
+    try {
+        const res = await http.LikeController.likeCreate(proposalId.value, {
+            targetId: proposalId.value,
+            targetType: '1'
+        });
+
+        if (res.data?.code === 0) {
+            const isLiked = res.data?.like ?? res.data?.data?.like ?? !proposalData.value.like;
+            const newCnt = res.data?.likeCnt ?? res.data?.data?.likeCnt ?? 
+                (isLiked ? (proposalData.value.likeCnt || 0) + 1 : (proposalData.value.likeCnt || 1) - 1);
+            proposalData.value = { 
+                ...proposalData.value, 
+                like: isLiked, 
+                likeCnt: newCnt 
+            };
+            uni.showToast({ title: isLiked ? '已支持' : '已取消支持', icon: 'success' });
+            uni.$emit('proposalLikeUpdated', {
+                id: proposalId.value,
+                like: isLiked,
+                likeCnt: newCnt
+            });
+        } else {
+            uni.showToast({ title: '操作失败', icon: 'none' });
+        }
+    } catch (err) {
+        console.error('[API] 点赞失败:', err);
+        uni.showToast({ title: '操作失败', icon: 'none' });
+    }
 };
 </script>
 
@@ -206,6 +266,18 @@ $proposal-bg-end: #f8f9fa;
     background-color: #f7f8fa;
     display: flex;
     flex-direction: column;
+}
+
+.loading-state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40vw 0;
+    
+    .loading-text {
+        font-size: 3.5vw;
+        color: #999;
+    }
 }
 
 .detail-header {
@@ -389,74 +461,7 @@ $proposal-bg-end: #f8f9fa;
     }
 }
 
-.discussion-section {
-    background: #fff;
-    border-radius: 24rpx;
-    padding: 32rpx;
-    box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.02);
-    
-    .section-header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 40rpx;
-        
-        .section-title {
-            font-size: 32rpx;
-            font-weight: 700;
-            color: #333;
-        }
-        
-        .section-count {
-            font-size: 26rpx;
-            color: #999;
-            margin-left: 12rpx;
-        }
-    }
-    
-    .empty-discussion {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 60rpx 0;
-        
-        .empty-icon {
-            width: 120rpx;
-            height: 120rpx;
-            margin-bottom: 20rpx;
-            opacity: 0.6;
-        }
-        
-        text {
-            font-size: 26rpx;
-            color: #999;
-        }
-    }
-}
-
 .bottom-spacer {
-    height: 120rpx;
-}
-
-.fab-btn {
-    position: fixed;
-    right: 40rpx;
-    bottom: 60rpx;
-    width: 100rpx;
-    height: 100rpx;
-    background: linear-gradient(135deg, #b70030, #ff4d6a);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 8rpx 24rpx rgba(183, 0, 48, 0.3);
-    z-index: 100;
-    
-    &:active {
-        transform: scale(0.92);
-    }
-    
-    .fab-text {
-        font-size: 40rpx;
-    }
+    height: 60rpx;
 }
 </style>

@@ -31,11 +31,11 @@
 </template>
 
 <script setup lang="ts">
-import type { CourseVO } from "@/api/data-contracts";
+import type { DtoCourseVO } from "@/api/data-contracts";
 import { Emoji, getTop3List } from "@/utils/tags";
 
 type Props = {
-  data: CourseVO;
+  data: DtoCourseVO;
 };
 const props = defineProps<Props>();
 </script>

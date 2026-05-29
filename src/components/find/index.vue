@@ -20,23 +20,20 @@
       <ul>
         <li
           v-for="item in suggestList"
-          :key="item.data?.id"
+          :key="item.id"
           class="search-item"
           @click="
             jump2List(
-              item.data?.name ? item.data?.name : item.data,
-              item['type']
+              item.data,
+              item.type
             )
           "
         >
           <view class="content">
-            <view :class="`type-${item['type']}`">{{
-              SearchTypeMap(item["type"])
+            <view :class="`type-${item.type}`">{{
+              SearchTypeMap(item.type)
             }}</view>
-            <view v-if="item.data?.name" class="name">{{
-              item.data?.name
-            }}</view>
-            <view v-else class="name">{{ item.data }}</view>
+            <view class="name">{{ item.data }}</view>
           </view>
           <view class="line" />
         </li>
@@ -47,7 +44,6 @@
 
 <script setup lang="ts">
 import { useInput, useSuggest, SearchTypeMap } from "./index";
-import { useRoute } from "vue-router";
 import { ref, watch } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
 import PubSub from "@/config/utils/pubsub";
@@ -68,10 +64,7 @@ function handleInput() {
     isVisible.value = true;
   }
 }
-const route = useRoute();
-watch(route, () => {
-  isVisible.value = false;
-});
+
 function notify() {
   emit("onKeydown", searchText.value);
 }
@@ -81,6 +74,11 @@ function suggest() {
 }
 watch([searchText], () => {
   keyword.value = searchText.value;
+  if (searchText.value.length > 0) {
+    isVisible.value = true;
+  } else {
+    isVisible.value = false;
+  }
 });
 
 PubSub.subscribe("commit_input", (value) => {
@@ -106,13 +104,14 @@ const bottom = () => {
 };
 
 const jump2List = (keyword: string, type: string) => {
+  const encodedKeyword = encodeURIComponent(keyword);
   if (type === "teacher") {
     uni.navigateTo({
-      url: `/pages/find/choose/teacher?keyword=${keyword}`
+      url: `/pages/find/choose/teacher?keyword=${encodedKeyword}`
     });
   } else {
     uni.navigateTo({
-      url: `/pages/find/choose/index?keyword=${keyword}&type=${type}`
+      url: `/pages/find/choose/index?keyword=${encodedKeyword}&type=${type}`
     });
   }
 };

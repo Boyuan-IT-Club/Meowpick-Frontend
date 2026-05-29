@@ -1,16 +1,10 @@
-import type { CommentVO, Course, CourseVO, TeacherVO } from "@/api/data-contracts";
+import type { DtoCourseVO } from "@/api/data-contracts";
 
 type choose = {
-  course?: CourseVO[];
-  teacher?: CourseVO[];
-  department?: CourseVO[];
+  course?: DtoCourseVO[];
+  teacher?: DtoCourseVO[];
+  department?: DtoCourseVO[];
   category?: any[];
-};
-const map = {
-  course: useCourseStore(),
-  teacher: useCourseStore(),
-  comment: useCourseStore(),
-  post: useCourseStore()
 };
 
 export function useChoose() {
@@ -27,37 +21,34 @@ export function useChoose() {
   const page = ref(0);
 
   function jump(id: string) {
-    // map[type.value].setData(item)
     uni.navigateTo({
       url: `/pages/course/index/index?id=${id}`
     });
   }
 
-  function search(page: number) {
+  function search(p: number) {
     if (keyword.value.length > 0) {
-      http.SearchController.searchSuggestList({
+      http.CoursesController.searchCreate({
         keyword: keyword.value,
-        type: type.value,
-        page,
+        type: type.value === 'department' || type.value === 'category' ? 'course' : type.value,
+        page: p,
         pageSize: 10
       }).then((res) => {
-        // 确保 type.value 对应的数组已初始化
         if (!rows.value[type.value]) {
           rows.value[type.value] = [];
         }
         
-        // 正确处理响应数据，将 teachers 映射为 teacherList 以匹配组件需要的数据结构
-        const courses = (res.data.data.courses || []).map(course => ({
+        const rawData = res.data?.courses || res.data.data?.courses || res.data.data?.data?.courses || [];
+        const courses = rawData.map((course: any) => ({
           ...course,
-          teacherList: course.teachers || [], // 给模板的 teacherList 字段
-          tagCount: course.tagCount || {}     // 保证 tagCount 不为 null
+          teacherList: course.teachers || [],
+          tagCount: course.tagCount || {}
         }));
         
         rows.value[type.value] = [
           ...rows.value[type.value]!,
           ...courses
         ];
-        console.log("搜索信息：", rows.value[type.value]);
       });
     }
   }

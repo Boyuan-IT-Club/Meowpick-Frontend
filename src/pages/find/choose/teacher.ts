@@ -4,25 +4,25 @@ export function useChoose() {
 
   const page = ref(0);
 
-  function search(page: number) {
+  function search(p: number) {
     if (keyword.value.length > 0) {
-      http.SearchController.searchSuggestList({
+      http.CoursesController.searchCreate({
         keyword: keyword.value,
         type: "teacher",
-        page,
+        page: p,
         pageSize: 5
       }).then((res) => {
-        const courses = res.data.data.courses!.map(course => ({
+        const rawData = res.data?.courses || res.data.data?.courses || res.data.data?.data?.courses || [];
+        const courses = rawData.map((course: any) => ({
           ...course,
-          teacherList: course.teachers || [], // 给模板的 teacherList 字段
-          tagCount: course.tagCount || {}     // 保证 tagCount 不为 null
+          teacherList: course.teachers || [],
+          tagCount: course.tagCount || {}
         }));
         rows.value = [...rows.value, { courses }];
       });
     }
   }
   function jump(id: string) {
-    // map[type.value].setData(item)
     uni.navigateTo({
       url: `/pages/course/index/index?id=${id}`
     });

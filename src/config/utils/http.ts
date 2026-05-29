@@ -1,11 +1,13 @@
 import { ContentType, HttpClient } from "@/api/http-client";
 import { Course } from "@/api/Course";
+import { Courses } from "@/api/Courses";
 import { Comment } from "@/api/Comment";
 import { Teacher } from "@/api/Teacher";
 import { Search } from "@/api/Search";
 import { Like } from "@/api/Like";
 import { Proposal } from "@/api/Proposal";
 import { Auth } from "@/api/Auth";
+import { ChangeLog } from "@/api/Changelog";
 import { StorageKeys } from "@/utils/const";
 import { UniAdapter } from "uniapp-axios-adapter";
 import { useTokenStore } from "@/config";
@@ -15,12 +17,14 @@ class HttpRequest<
     SecurityDataType = unknown
 > extends HttpClient<SecurityDataType> {
   public CourseController = new Course(this);
+  public CoursesController = new Courses(this);
   public SearchController = new Search(this);
   public CommentController = new Comment(this);
   public TeacherController = new Teacher(this);
   public ProposalController = new Proposal(this);
   public LikeController = new Like(this);
   public AuthController = new Auth(this);
+  public ChangeLogController = new ChangeLog(this);
 
   async sign_in(data: any) {
     const resp = await this.request({
@@ -45,11 +49,15 @@ const api = new HttpRequest({
 api.instance.interceptors.request.use(
     (config) => {
       const backendEnv = ref(uni.getStorageSync(StorageKeys.BackendEnv));
-      config.headers![process.env.VITE_TOKEN_NAME] = `Bearer ${
-          useTokenStore().token
-      }`;
+      const token = useTokenStore().token;
+      config.headers![process.env.VITE_TOKEN_NAME] = `Bearer ${token}`;
       config.headers!["X-Xh-Env"] = backendEnv.value;
-      console.log(config);
+      console.log('[DEBUG] request config:', {
+        url: config.url,
+        method: config.method,
+        headers: config.headers,
+        token: token ? 'exists' : 'empty'
+      });
       return config;
     },
     (error) => {
@@ -61,10 +69,12 @@ api.instance.interceptors.request.use(
 api.instance.interceptors.response.use(
     (res) => {
       console.log(res.data);
-      // 安全检查：确保 res.data 和 res.data.data 存在
-      if (res.data && res.data.data && res.data.data.userId != undefined) {
-        useTokenStore().setUserId(res.data.data.userId);
-        console.log("存储userId", res.data.data.userId);
+      if (res.data) {
+        const userId = res.data.userId ?? res.data.data?.userId;
+        if (userId != undefined) {
+          useTokenStore().setUserId(userId);
+          console.log("存储userId", userId);
+        }
       }
       // const code = res.data.state.code;
       // const msg = res.data.state.errMsg || '系统未知错误，请反馈给管理员';

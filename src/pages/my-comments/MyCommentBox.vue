@@ -37,13 +37,13 @@
 </template>
 
 <script setup lang="ts">
-import { CommentVO } from "@/api/data-contracts";
+import type { DtoCommentVO } from "@/api/data-contracts";
 import { Emoji, limitedTags } from "@/utils/tags";
 import Liked from "@/images/like_active.png";
 import Like from "@/images/like-icon.png";
 
 type Props = {
-  data: CommentVO;
+  data: DtoCommentVO;
 };
 const props = defineProps<Props>();
 

@@ -1,11 +1,10 @@
 import type {
-  SearchHistoryVO,
-  CommentVO,
-  Course,
-  TeacherVO
+  DtoSearchHistoryVO,
+  DtoCommentVO,
+  DtoCourseVO,
+  DtoTeacherVO
 } from "@/api/data-contracts";
 import { ref, computed, shallowRef, watch, watchEffect } from "vue";
-import { useCourseStore } from "@/config";
 import { http } from "@/config";
 import PubSub from "@/config/utils/pubsub";
 
@@ -13,7 +12,7 @@ export const useInput = () => {
   const searchText = ref("");
   const placeHolder = shallowRef("搜索课程类别、名称、院系或任课教师");
   const list = shallowRef<any[]>([]);
-  const searchHistory = shallowRef<SearchHistoryVO[]>([]);
+  const searchHistory = shallowRef<DtoSearchHistoryVO[]>([]);
   const isSearch = ref(false);
 
   watchEffect(() => {
@@ -44,16 +43,10 @@ export const useInput = () => {
 };
 
 type choose = {
-  course?: Course[];
-  teacher?: TeacherVO[];
-  comment?: CommentVO[];
+  course?: DtoCourseVO[];
+  teacher?: DtoTeacherVO[];
+  comment?: DtoCommentVO[];
   post?: any[];
-};
-const map = {
-  course: useCourseStore(),
-  teacher: useCourseStore(),
-  comment: useCourseStore(),
-  post: useCourseStore()
 };
 
 export function useSuggest() {
@@ -65,7 +58,7 @@ export function useSuggest() {
     comment: [],
     post: []
   });
-  const suggestList = ref<object[]>([]);
+  const suggestList = ref<any[]>([]);
   const page = ref(0);
 
   function jump(id: string) {
@@ -88,25 +81,22 @@ export function useSuggest() {
   //     }
   // }
 
-  function suggestContent(page: number) {
+  function suggestContent() {
     if (!keyword.value) return;
 
     http.SearchController.searchSuggestList({
-      keyword: keyword.value,
-      pageNum: page,
-      pageSize: 15
+      keyword: keyword.value
     }).then((res) => {
-      const suggestions = res.data.data.suggestions || [];
+      console.log('[DEBUG] searchSuggest response:', JSON.stringify(res.data));
+      const suggestions = res.data?.suggestions || res.data.data?.suggestions || res.data.data?.data?.suggestions || [];
 
-      // 合并旧数据和新数据
-      const merged = [...suggestList.value, ...suggestions.map((item: any) => ({
-        data: item.name,
-        type: item.type,
-        id: `${item.type}-${item.name}` // 用 type+name 拼接做唯一 id
-      }))];
+      const mapped = suggestions.map((item: any, index: number) => ({
+        data: item.name || '',
+        type: item.type || 'course',
+        id: `${item.type || 'course'}-${item.name || ''}-${index}`
+      }));
 
-      // 去重：type+name 一起判断
-      const unique = merged.filter(
+      const unique = mapped.filter(
         (item, index, self) =>
           index === self.findIndex(
             (t) => t.type === item.type && t.data === item.data
@@ -114,16 +104,17 @@ export function useSuggest() {
       );
 
       suggestList.value = unique;
-      console.log("去重后提示信息：", suggestList.value);
+    }).catch((err) => {
+      console.error('[API] 搜索建议失败:', err);
     });
   }
 
   watch([page], () => {
-    suggestContent(page.value);
+    suggestContent();
   });
   watch([keyword, type], () => {
     suggestList.value = [];
-    suggestContent(page.value);
+    suggestContent();
   });
 
   return {
