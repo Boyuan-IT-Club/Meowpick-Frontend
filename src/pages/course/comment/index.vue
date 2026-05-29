@@ -1,5 +1,5 @@
 <template>
-  <view class="comment-publish-container">
+  <view class="comment-publish-container" :class="themeStore.themeClass">
     <!-- 导航栏 -->
     <view class="nav-bar" :style="navBarStyle">
       <view class="nav-content" :style="navContentStyle">
@@ -68,7 +68,8 @@ import { ref, onMounted, computed } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
 import BackBtn from "@/components/common/BackBtn.vue";
 import { Tags, TotalTags, InitTags } from "@/utils/tags";
-import { http } from "@/config/index";
+import { http, useThemeStore } from "@/config/index";
+const themeStore = useThemeStore();
 import { TOAST_DURATION_MS } from "@/utils/constants";
 
 // 胶囊按钮信息
@@ -370,4 +371,15 @@ const commit = async () => {
     transform: rotate(360deg);
   }
 }
+</style>
+
+<style lang="scss">
+$brand-red: #b20035;
+
+.dark-theme .comment-publish-container { background-color: #121212; }
+.dark-theme .nav-bar { background-color: #121212; .nav-title { color: #e0e0e0; } }
+.dark-theme .section-card { background: #1e1e1e; .title { color: #e0e0e0; } }
+.dark-theme .tag-item { background: #2a2a2a; .tag-text { color: #aaa; } &.active { background: rgba(178,0,53,0.15); .tag-text { color: $brand-red; } } }
+.dark-theme .input-box .comment-input { background: #2a2a2a; color: #e0e0e0; }
+.dark-theme .word-count { color: #666; }
 </style>

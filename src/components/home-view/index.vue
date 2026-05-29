@@ -1,5 +1,5 @@
 <template>
-  <view class="home-view-container">
+  <view class="home-view-container" :class="themeStore.themeClass">
     <!-- 顶部欢迎语区域 -->
     <view class="header-welcome">
       <view class="welcome-Line">
@@ -100,7 +100,8 @@
 import { ref, onMounted } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
 import { waitForLogin } from '@/utils/init';
-import { http } from '@/config';
+import { http, useThemeStore } from '@/config';
+const themeStore = useThemeStore();
 
 // 状态定义
 const totalComment = ref(0);
@@ -176,30 +177,36 @@ $card-bg: #ffffff;
 $text-main: #2c2c2c;
 
 .home-view-container {
-  min-height: 100vh; 
-  // 减少顶部 padding (160 -> 120)，把整体内容提上去
+  min-height: 100vh;
   padding: 120rpx 40rpx 100rpx 40rpx;
   box-sizing: border-box;
-  background-color: #f7f8fa; 
-  
+  background-color: #f7f8fa;
+
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; // 从上往下排
+  justify-content: flex-start;
   position: relative;
   overflow: hidden;
 
-  // 顶部大色块：圆弧底边的微光背景
   &::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 50vh; // 加高背景色块
+    height: 50vh;
     background: linear-gradient(180deg, #fffcfc 0%, #f7f8fa 100%);
     border-bottom-left-radius: 60rpx;
     border-bottom-right-radius: 60rpx;
     z-index: 0;
+  }
+}
+
+.dark-theme .home-view-container {
+  background-color: #121212;
+
+  &::before {
+    background: linear-gradient(180deg, #1a1a1a 0%, #121212 100%);
   }
 }
 
@@ -222,21 +229,21 @@ $text-main: #2c2c2c;
   }
 
   .hello-text {
-    font-size: 56rpx; // 再次加大，增加顶部份量
-    font-weight: 300; // 纤细现代
-    color: #999;      // 浅灰色
-    font-family: sans-serif; 
-    font-style: normal; 
-    margin-bottom: 10rpx; // 上下间距
+    font-size: 56rpx;
+    font-weight: 300;
+    color: #999;
+    font-family: sans-serif;
+    font-style: normal;
+    margin-bottom: 10rpx;
   }
 
   .name-text {
-    font-size: 72rpx; // 再次加大，撑起顶部视觉
-    font-weight: 900; 
-    color: #333;      
-    letter-spacing: -2rpx; 
+    font-size: 72rpx;
+    font-weight: 900;
+    color: #333;
+    letter-spacing: -2rpx;
   }
-  
+
   .brand-logo {
     margin-top: 40rpx; 
     height: 360rpx;   // Logo 继续加大，撑满上半场
@@ -252,6 +259,11 @@ $text-main: #2c2c2c;
     // 增加一点缩放动画，吸引眼球
     transform: scale(1.05); 
   }
+}
+
+.dark-theme .header-welcome {
+  .hello-text { color: #666; }
+  .name-text { color: #e0e0e0; }
 }
 
 // 1. Logo 区域
@@ -282,15 +294,14 @@ $text-main: #2c2c2c;
     display: flex;
     align-items: center;
     background-color: #ffffff;
-    height: 110rpx; // 高度增加
-    border-radius: 40rpx; // 更加圆润
+    height: 110rpx;
+    border-radius: 40rpx;
     padding: 0 30rpx;
-    
-    // 阴影升级：多层混合阴影，打造“浮起”质感
-    box-shadow: 
+
+    box-shadow:
       0 10rpx 30rpx -10rpx rgba(200, 16, 46, 0.15),
       0 4rpx 10rpx rgba(0,0,0,0.02);
-    border: 2rpx solid #fff; // 内描边提亮
+    border: 2rpx solid #fff;
 
     .search-icon {
       font-size: 36rpx;
@@ -307,10 +318,18 @@ $text-main: #2c2c2c;
       font-weight: 400;
     }
   }
-  
-  // 悬浮态：轻微下沉
+
   &:active {
       transform: scale(0.94);
+  }
+}
+
+.dark-theme .search-section {
+  .search-box {
+    background-color: #2a2a2a;
+    border-color: #3a3a3a;
+    box-shadow: 0 10rpx 30rpx -10rpx rgba(0,0,0,0.3), 0 4rpx 10px rgba(0,0,0,0.1);
+    .search-placeholder { color: #666; }
   }
 }
 
@@ -344,11 +363,11 @@ $text-main: #2c2c2c;
 // 通用卡片 - 面板风格
 .card-item {
   background-color: #ffffff;
-  border-radius: 36rpx; // 更加圆润
+  border-radius: 36rpx;
   padding: 30rpx;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.02); // 极淡阴影
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.02);
   border: 1rpx solid rgba(0,0,0,0.03);
 
   height: 180rpx;
@@ -361,9 +380,9 @@ $text-main: #2c2c2c;
     font-size: 30rpx;
     font-weight: 700;
     color: $text-main;
-    margin-bottom: 2rpx; // 减小与英文的间距
+    margin-bottom: 2rpx;
     z-index: 2;
-    display: block; // 确保换行 (本来就是 flex column，所以这句加个安心)
+    display: block;
   }
 
   .card-subtitle {
@@ -372,8 +391,8 @@ $text-main: #2c2c2c;
     letter-spacing: 1rpx;
     text-transform: uppercase;
     z-index: 2;
-    display: block; // 确保换行
-    margin-top: 4rpx; // 稍微加一点上间距
+    display: block;
+    margin-top: 4rpx;
   }
 
   .card-bg-icon {
@@ -387,76 +406,68 @@ $text-main: #2c2c2c;
     transform: rotate(-15deg);
   }
 
-  // 交互态
   &:active {
       transform: scale(0.97);
   }
 
-  // “信件”卡片特殊化：带一点红晕背景，更显温馨
   &.letter-card {
       background: linear-gradient(135deg, #fff 0%, $brand-light-bg 100%);
       .card-title { color: $brand-red; }
   }
 }
 
+.dark-theme .card-item {
+  background-color: #2a2a2a;
+  border-color: #3a3a3a;
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.1);
+
+  .card-title { color: #e0e0e0; }
+  .card-subtitle { color: #888; }
+}
+
+.dark-theme .letter-card {
+  background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+}
+
 // 统计卡片：纵向大卡片
 .stat-card {
-  height: 100% !important; 
-  
-  // 修改：由深红底改为白底，解决视觉不平衡
-  background-color: #ffffff; 
-  
-  // 加回边框，保持统一感
+  height: 100% !important;
+  background-color: #ffffff;
   border: 1rpx solid rgba(0,0,0,0.03);
-  
-  color: $text-main; // 文字变回深色
-  
+  color: $text-main;
   border-radius: 36rpx;
   padding: 40rpx;
   display: flex;
   flex-direction: column;
-  justify-content: space-between; 
+  justify-content: space-between;
   position: relative;
-  
-  // 阴影改为普通阴影，不再发红光
-  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.02); 
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.02);
 
-  // 顶部标题
   .stat-title {
       font-size: 30rpx;
-      font-weight: 700; // 加粗
+      font-weight: 700;
       opacity: 1;
-      color: #999; // 灰色副标题
+      color: #999;
   }
 
-  // 中间巨大数字
   .stat-number {
       font-size: 80rpx;
       font-weight: 900;
       line-height: 1;
       margin: 20rpx 0;
       letter-spacing: -2rpx;
-      
-      // 数字改为品牌红，作为点睛之笔，而不是大面积色块
-      color: $brand-red; 
-      // 移除原来的文字阴影
+      color: $brand-red;
       text-shadow: none;
   }
-  
-  // 底部单位
+
   .stat-unit {
       font-size: 24rpx;
       opacity: 0.5;
       color: #999;
-      align-self: flex-end; 
+      align-self: flex-end;
   }
 
-  // 移除原来的圆圈装饰，改为底部装饰条或者简约背景
-  &::before {
-      display: none;
-  }
-  
-  // 新增：底部红色装饰条，呼应品牌
+  &::before { display: none; }
   &::after {
       content: '';
       position: absolute;
@@ -465,9 +476,16 @@ $text-main: #2c2c2c;
       width: 100%;
       height: 12rpx;
       background: linear-gradient(90deg, #fff 0%, $brand-light-bg 100%);
-      // 或者干脆不要装饰，保持极简
       display: none;
   }
+}
+
+.dark-theme .stat-card {
+  background-color: #2a2a2a;
+  border-color: #3a3a3a;
+  .stat-title { color: #888; }
+  .stat-number { color: $brand-red; }
+  .stat-unit { color: #666; }
 }
 </style>
 
@@ -485,6 +503,25 @@ $text-main: #2c2c2c;
   justify-content: center;
   padding: 40rpx;
   box-sizing: border-box;
+}
+
+.dark-theme .guide-overlay {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.dark-theme .guide-content {
+  background-color: #2a2a2a;
+}
+
+.dark-theme .guide-header {
+  .guide-title { color: #e0e0e0; }
+  .guide-subtitle { color: #888; }
+}
+
+.dark-theme .guide-section {
+  .section-icon { background-color: #1a1a1a; }
+  .section-title { color: #e0e0e0; }
+  .section-desc { color: #888; }
 }
 
 .guide-content {

@@ -1,5 +1,5 @@
 <template>
-  <view class="profile-container" :style="{ paddingTop: (menuButtonInfo.top + 15) + 'px' }">
+  <view class="profile-container" :class="themeStore.themeClass" :style="{ paddingTop: (menuButtonInfo.top + 15) + 'px' }">
 
     <!-- 胶囊遮罩：挡住胶囊上方的内容 -->
     <view class="capsule-mask" :style="{ height: (menuButtonInfo.top + menuButtonInfo.height + 15) + 'px' }" />
@@ -181,7 +181,8 @@
 import { ref, computed, onMounted } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
 import { waitForLogin } from '@/utils/init';
-import { http } from '@/config';
+import { http, useThemeStore } from '@/config';
+const themeStore = useThemeStore();
 import { HISTORY_PAGE_SIZE } from '@/utils/constants';
 
 // System Info Logic for Header Alignment
@@ -783,6 +784,51 @@ const hideGuide = () => {
 </style>
 
 <style lang="scss">
+.dark-theme .profile-container {
+    background-color: #121212;
+}
+
+.dark-theme .capsule-mask {
+    background-color: #121212;
+}
+
+.dark-theme .header-section {
+    .page-title { color: #e0e0e0; }
+    .sub-title { color: #666; }
+}
+
+.dark-theme .sticky-bar {
+    background-color: rgba(18, 18, 18, 0.85);
+    .filter-row { background: #2a2a2a; box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.15); }
+    .filter-pill { color: #888; }
+}
+
+.dark-theme .list-container {
+    .card { background: #1e1e1e; border-color: #333; }
+    .proposal-card { background: linear-gradient(135deg, #1a0a0e 0%, #1e1e1e 100%); border-color: rgba(178,0,53,0.2); }
+    .course-row-top .course-name { color: #e0e0e0; }
+    .course-row-top .time-text { color: #666; }
+    .course-row-middle { background: #2a2a2a; .course-info-item { color: #999; } }
+    .content-text { color: #ccc; }
+    .footer-row { border-color: rgba(255,255,255,0.05); .likes-text { color: #888; } }
+}
+
+.dark-theme .empty-tip text { color: #555; }
+.dark-theme .loading-state .loading-text { color: #888; }
+.dark-theme .error-state .error-text { color: #ff6b6b; }
+
+.dark-theme .guide-overlay { background-color: rgba(0,0,0,0.8); }
+.dark-theme .guide-content { background-color: #2a2a2a; }
+.dark-theme .guide-header {
+    .guide-title { color: #e0e0e0; }
+    .guide-subtitle { color: #888; }
+}
+.dark-theme .guide-section {
+    .section-icon { background-color: #1a1a1a; }
+    .section-title { color: #e0e0e0; }
+    .section-desc { color: #888; }
+}
+
 .guide-overlay {
   position: fixed;
   top: 0;

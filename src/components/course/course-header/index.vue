@@ -1,5 +1,5 @@
 <template>
-  <view class="course-header-container">
+  <view class="course-header-container" :class="themeStore.themeClass">
     <view class="header-card">
       
       <!-- 1. 课程名称 -->
@@ -202,5 +202,10 @@ const teacherNames = computed(() => {
         line-height: 1.6;
     }
 }
+</style>
 
+<style lang="scss">
+.dark-theme .course-header-container { }
+.dark-theme .header-card { background-color: #1e1e1e; box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.15); .course-title { color: #e0e0e0; } .label { color: #888; } .value { color: #ccc; } }
+.dark-theme .tags-section { border-color: #333; .desc-text { color: #888; } }
 </style>

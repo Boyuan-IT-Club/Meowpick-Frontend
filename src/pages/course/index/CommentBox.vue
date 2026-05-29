@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { CommentVO } from "@/api/data-contracts";
-import { useTokenStore } from "@/config";
+import { useTokenStore, useThemeStore } from "@/config";
+const themeStore = useThemeStore();
 import Like from "@/images/like-icon.png";
 import Liked from "@/images/like_active.png";
 import { format as formatTime } from "./utils";
@@ -35,7 +36,7 @@ const textTags = (tags: string[]) => {
 </script>
 
 <template>
-  <view class="comment-box">
+  <view class="comment-box" :class="themeStore.themeClass">
 
     <!-- 头部：表情（评价态度） + 标签 -->
     <view class="header-section">
@@ -150,5 +151,8 @@ const textTags = (tags: string[]) => {
     }
   }
 }
+</style>
 
+<style lang="scss">
+.dark-theme .comment-box { background-color: #1e1e1e; .ctag { background-color: #2a2a2a; .txt { color: #aaa; } } .content-section { color: #ccc; } .date-str { color: #666; } .like-block .count { color: #888; } }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <layout class="background" @on-bottom="handleBottom()">
+  <layout class="background" :class="themeStore.themeClass" @on-bottom="handleBottom()">
     
     <!-- 1. 新的头部 Header -->
     <view class="detail-header" 
@@ -56,8 +56,9 @@ import BackBtn from "@/components/common/BackBtn.vue";
 import { onShow, onLoad } from "@dcloudio/uni-app";
 import { useCourse } from "./index";
 import CommentList from "@/pages/course/index/CommentList.vue";
-import { format as formatTime } from "./utils"; // 修复 import
-import CourseHeader from "@/components/course/course-header/index.vue"; 
+import { format as formatTime } from "./utils";
+import CourseHeader from "@/components/course/course-header/index.vue";
+import { useThemeStore } from "@/config"; 
 
 // 1. 获取胶囊位置，用于对齐返回按钮
 const sysInfo = uni.getSystemInfoSync();
@@ -74,6 +75,9 @@ try {
         };
     }
 } catch (e) {}
+
+import { useThemeStore } from "@/config";
+const themeStore = useThemeStore();
 
 let course_id = "";
 const { fetch, id, course, teachers, trends } = useCourse();
@@ -223,8 +227,12 @@ const goBack = () => {
   .fab-icon {
     width: 56rpx;
     height: 56rpx;
-    filter: brightness(100); 
+    filter: brightness(100);
   }
 }
+
+.dark-theme .background { background-color: #121212; }
+.dark-theme .detail-header { background: #1e1e1e; box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.15); .page-title { color: #e0e0e0; } }
+.dark-theme .comment-section .section-title { color: #e0e0e0; }
 
 </style>

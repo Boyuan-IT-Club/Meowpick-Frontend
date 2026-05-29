@@ -1,5 +1,5 @@
 <template>
-  <view class="proposal-detail-page">
+  <view class="proposal-detail-page" :class="themeStore.themeClass">
     
     <!-- 1. 头部 Header (与课程详情一致，但背景不同) -->
     <view class="detail-header" 
@@ -76,7 +76,8 @@
 import { ref } from 'vue';
 import { onLoad } from "@dcloudio/uni-app";
 import BackBtn from "@/components/common/BackBtn.vue";
-import { http } from "@/config";
+import { http, useThemeStore } from "@/config";
+const themeStore = useThemeStore();
 
 // 胶囊位置处理
 const sysInfo = uni.getSystemInfoSync();
@@ -328,4 +329,15 @@ $bg-gradient-top: #fff5f5;
 .bottom-spacer {
     height: 60rpx;
 }
+</style>
+
+<style lang="scss">
+$brand-red: #b20035;
+
+.dark-theme .proposal-detail-page { background-color: #121212; }
+.dark-theme .detail-header { background: linear-gradient(to bottom, #1a0a0e, #1e1e1e); .page-title { color: #e0e0e0; } .back-btn-wrapper { color: #e0e0e0; } }
+.dark-theme .proposal-card { background: #1e1e1e; box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.15); .proposal-title { color: #e0e0e0; } .proposal-date { color: #666; } .proposal-reason-box { background-color: #2a2a2a; .reason-content { color: #ccc; } } }
+.dark-theme .proposal-info-row .info-value { color: #ccc; }
+.dark-theme .vote-info { .vote-count-big { color: $brand-red; } .vote-text { color: #888; } }
+.dark-theme .vote-btn.is-voted { background: #333; color: #888; }
 </style>
