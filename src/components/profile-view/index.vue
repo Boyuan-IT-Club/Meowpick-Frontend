@@ -6,10 +6,13 @@
 
     <!-- 1. Header Area: Large & Breathable -->
      <view class="header-section" :style="{ marginTop: '20rpx', marginBottom: '40rpx' }">
-      <view class="title-wrapper">
-         <text class="page-title">我的发布</text>
-         <text class="sub-title">{{ loading ? '加载中...' : (filteredList.length + ' 条记录') }}</text>
-      </view>
+<view class="title-wrapper">
+          <text class="page-title">我的发布</text>
+          <text class="sub-title">{{ loading ? '加载中...' : (filteredList.length + ' 条记录') }}</text>
+          <view class="theme-toggle" @click="themeStore.toggleTheme()">
+            <text>{{ themeStore.mode === 'dark' ? '🌙' : '☀️' }}</text>
+          </view>
+       </view>
     </view>
 
     <!-- 首次使用引导弹窗 -->
@@ -443,6 +446,21 @@ const hideGuide = () => {
         font-weight: 400;
     }
 
+    .theme-toggle {
+        position: absolute;
+        right: 40rpx;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 48rpx;
+        height: 48rpx;
+        border-radius: 50%;
+        background-color: #f0f0f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28rpx;
+    }
+
     .help-icon {
         position: absolute;
         right: 40rpx;
@@ -795,6 +813,7 @@ const hideGuide = () => {
 .dark-theme .header-section {
     .page-title { color: #e0e0e0; }
     .sub-title { color: #666; }
+    .theme-toggle { background-color: #333; }
 }
 
 .dark-theme .sticky-bar {
