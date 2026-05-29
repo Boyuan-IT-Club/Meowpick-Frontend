@@ -30,7 +30,10 @@ input {
   box-sizing: border-box;
 }
 
-.dark-theme page {
-  background-color: #121212;
+.dark-theme page,
+.dark-theme view,
+.dark-theme .scroll-view,
+.dark-theme .content-swiper {
+  background-color: #121212 !important;
 }
 </style>
