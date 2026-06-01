@@ -1,5 +1,5 @@
 <template>
-  <view class="background"> <!-- Content starts below header -->
+  <view class="background" :class="themeStore.themeClass"> <!-- Content starts below header -->
     <image src="@/images/cat.png" class="background-image" mode="widthFix" />
     
     <!-- Custom Header -->
@@ -35,6 +35,9 @@ import InformationBox from "@/pages/home/InformationBox.vue";
 import { UpdateLog } from "./information";
 import BackBtn from "@/components/common/BackBtn.vue";
 import { onShow, onLoad } from "@dcloudio/uni-app";
+import { useThemeStore } from '@/config';
+
+const themeStore = useThemeStore();
 
 // System Info Logic - Same as other pages
 const sysInfo = uni.getSystemInfoSync();
@@ -60,12 +63,10 @@ const goBack = () => {
 <style scoped lang="scss">
 .background {
   min-height: 100vh;
-  background-color: #f7f8fa; /* 统一浅灰色底 */
-  padding: 0 32rpx; 
-  /* paddingTop is removed from here as it is handled in log-list */
+  background-color: #f7f8fa;
+  padding: 0 32rpx;
   box-sizing: border-box;
 
-  /* 移除旧的 fixed image，使用新的装饰方式 */
   .background-image {
     position: fixed;
     right: -20rpx;
@@ -78,10 +79,9 @@ const goBack = () => {
     transform: rotate(15deg);
   }
 
-  /* 增加顶部大标题 */
   .page-header {
     margin-bottom: 40rpx;
-    padding-left: 24rpx; /* Increased padding */
+    padding-left: 24rpx;
     border-left: 8rpx solid #b20035;
 
     .title {
@@ -118,13 +118,15 @@ const goBack = () => {
     display: flex;
     flex-direction: column;
     border-radius: 1vw;
-    word-wrap: break-word; /* 允许长单词或URL地址换行 */
-    overflow-wrap: break-word; /* 允许在单词内部换行以避免溢出 */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+
     .title {
       display: flex;
       font-weight: bold;
       justify-content: center;
     }
+
     .text {
       white-space: pre-wrap;
       margin-top: 2vw;
@@ -133,45 +135,61 @@ const goBack = () => {
   }
 }
 
+.dark-theme .background,
+.background.dark-theme {
+  background-color: #121212;
+}
+
 .custom-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 999; /* Increased Z-Index significantly to be above content */
-    background-color: #f7f8fa; /* Solid color matching page background */
-    box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.05); /* Optional: Subtle shadow to show edge */
-    
-    .nav-bar-content {
-        display: flex;
-        align-items: center;
-        padding-left: 32rpx; /* Match search page padding */
-        position: relative;
-        box-sizing: border-box;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 999;
+  background-color: #f7f8fa;
+  box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.05);
 
-        .back-btn-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
+  .nav-bar-content {
+    display: flex;
+    align-items: center;
+    padding-left: 32rpx;
+    position: relative;
+    box-sizing: border-box;
 
-        .title-wrapper {
-            position: static; /* Ensure static positioning */
-            margin-left: 32rpx; /* Gap = padding-left of navbar */
-            pointer-events: auto;
-            text-align: left; /* Ensure text is left aligned */
-            left: auto; /* Reset left */
-            right: auto; /* Reset right */
-            transform: none; /* Reset transform */
-
-            .page-title {
-                font-size: 32rpx;
-                font-weight: 700;
-                color: #333;
-                display: block; /* Ensure block level */
-            }
-        }
+    .back-btn-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     }
+
+    .title-wrapper {
+      position: static;
+      margin-left: 32rpx;
+      pointer-events: auto;
+      text-align: left;
+      left: auto;
+      right: auto;
+      transform: none;
+
+      .page-title {
+        font-size: 32rpx;
+        font-weight: 700;
+        color: #333;
+        display: block;
+      }
+    }
+  }
+}
+
+.dark-theme .custom-header,
+.custom-header.dark-theme {
+  background-color: #1a1a1a;
+  box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.3);
+}
+
+.dark-theme .page-title,
+.page-title.dark-theme {
+  color: #e0e0e0;
 }
 </style>

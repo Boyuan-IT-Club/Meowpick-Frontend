@@ -1,5 +1,5 @@
 <template>
-  <view class="letter-container">
+  <view class="letter-container" :class="themeStore.themeClass">
     <image src="@/images/cat.png" class="background-cat" mode="aspectFill" />
     <view class="custom-header" :style="{ paddingTop: menuButtonInfo.top + 'px' }">
         <view class="nav-bar-content" :style="{ height: menuButtonInfo.height + 'px' }">
@@ -38,6 +38,9 @@
 <script setup lang="ts">
 import { onLoad } from "@dcloudio/uni-app";
 import BackBtn from "@/components/common/BackBtn.vue";
+import { useThemeStore } from '@/config';
+
+const themeStore = useThemeStore();
 
 const sysInfo = uni.getSystemInfoSync();
 let menuButtonInfo = { // Initialize menuButtonInfo
@@ -86,6 +89,11 @@ const text12 = `选课猫团队 2025年10月13日`;
   overflow: hidden;
   padding: 0 32rpx 40rpx; /* Remove top padding as it's handled by margin-top */
   box-sizing: border-box;
+}
+
+.dark-theme .letter-container,
+.letter-container.dark-theme {
+  background-color: #121212;
 }
 
 .custom-header {
@@ -151,6 +159,37 @@ const text12 = `选课猫团队 2025年10月13日`;
     padding: 48rpx 40rpx;
     box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.06);
     backdrop-filter: blur(10px);
+}
+
+.dark-theme .content-card,
+.content-card.dark-theme {
+    background: rgba(30, 30, 30, 0.95);
+    box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.3);
+}
+
+.dark-theme .page-title,
+.page-title.dark-theme {
+    color: #e0e0e0;
+}
+
+.dark-theme .paragraph,
+.paragraph.dark-theme {
+    color: #b0b0b0;
+}
+
+.dark-theme .footer-text,
+.footer-text.dark-theme {
+    color: #e0e0e0;
+}
+
+.dark-theme .signature,
+.signature.dark-theme {
+    color: #777;
+}
+
+.dark-theme .card-footer,
+.card-footer.dark-theme {
+    border-top-color: #333;
 }
 
 .card-body {

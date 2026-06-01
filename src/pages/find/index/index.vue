@@ -1,14 +1,16 @@
 <template>
-  <view class="find-page">
+  <view class="find-page" :class="themeStore.themeClass">
     <find :initial-mode="mode" ref="findRef" />
   </view>
 </template>
 
 <script setup lang="ts">
-// 只需要引入我们重写好的 find 组件
 import find from "@/components/find/index.vue";
 import { onShow, onLoad } from '@dcloudio/uni-app';
 import { ref } from 'vue';
+import { useThemeStore } from '@/config';
+
+const themeStore = useThemeStore();
 
 const mode = ref('');
 const findRef = ref<InstanceType<typeof find> | null>(null);
@@ -32,5 +34,10 @@ onShow(() => {
   width: 100%;
   height: 100vh;
   background-color: #f7f8fa;
+}
+
+.dark-theme .find-page,
+.find-page.dark-theme {
+  background-color: #121212;
 }
 </style>

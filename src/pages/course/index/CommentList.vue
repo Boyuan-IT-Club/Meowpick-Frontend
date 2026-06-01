@@ -1,5 +1,5 @@
 <template>
-  <view class="comment">
+  <view class="comment" :class="themeStore.themeClass">
     <view v-for="item of list" :key="item.id" class="item">
       <CommentBox :data="item" @like="like" />
     </view>
@@ -10,6 +10,9 @@
 import { useCourseComment } from "@/pages/course/index/utils";
 import CommentBox from "@/pages/course/index/CommentBox.vue";
 import { onUnmounted } from "vue";
+import { useThemeStore } from '@/config';
+
+const themeStore = useThemeStore();
 
 const props = defineProps<{
   id: string;
