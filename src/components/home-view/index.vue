@@ -183,35 +183,14 @@ $text-main: #2c2c2c;
   justify-content: flex-start;
   position: relative;
   overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 50vh;
-    background: linear-gradient(180deg, #fffcfc 0%, #f7f8fa 100%);
-    border-bottom-left-radius: 60rpx;
-    border-bottom-right-radius: 60rpx;
-    z-index: 0;
-  }
 }
 
 .dark-theme .home-view-container {
   background-color: #121212 !important;
-
-  &::before {
-    background: #121212 !important;
-  }
 }
 
 .home-view-container.dark-theme {
   background-color: #121212 !important;
-}
-
-.home-view-container.dark-theme::before {
-  background: #121212 !important;
 }
 
 // 新增：顶部欢迎语样式
