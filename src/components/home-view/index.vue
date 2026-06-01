@@ -42,7 +42,6 @@
           <text class="card-subtitle">Update Logs</text>
           <text class="card-bg-icon">📝</text>
         </view>
-        </view>
       </view>
 
       <!-- 右侧：吐槽统计 -->
@@ -90,6 +89,7 @@
         </view>
       </view>
     </view>
+  </view>
 </template>
 
 <script setup lang="ts">
@@ -411,6 +411,19 @@ $text-main: #2c2c2c;
 .dark-theme .letter-card {
   background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
   .card-title { color: $brand-red !important; }
+}
+
+.new-tag {
+  position: absolute;
+  top: 16rpx;
+  right: 16rpx;
+  background: linear-gradient(135deg, #b20035, #ff4d6a);
+  color: #fff;
+  font-size: 20rpx;
+  font-weight: 700;
+  padding: 4rpx 12rpx;
+  border-radius: 20rpx;
+  z-index: 3;
 }
 
 // 统计卡片：纵向大卡片
