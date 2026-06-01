@@ -31,7 +31,7 @@ input {
 }
 </style>
 
-<style>
+<style lang="scss">
 .light-theme, .light-theme page, .light-theme view, .light-theme scroll-view, .light-theme .scroll-view {
   background-color: #f7f8fa !important;
 }
