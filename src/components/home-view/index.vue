@@ -203,11 +203,19 @@ $text-main: #2c2c2c;
 }
 
 .dark-theme .home-view-container {
-  background-color: #121212;
+  background-color: #121212 !important;
 
   &::before {
-    background: linear-gradient(180deg, #252525 0%, #121212 100%);
+    background: linear-gradient(180deg, #252525 0%, #121212 100%) !important;
   }
+}
+
+.home-view-container.dark-theme {
+  background-color: #121212 !important;
+}
+
+.home-view-container.dark-theme::before {
+  background: linear-gradient(180deg, #252525 0%, #121212 100%) !important;
 }
 
 // 新增：顶部欢迎语样式

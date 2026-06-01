@@ -29,11 +29,10 @@ view {
 input {
   box-sizing: border-box;
 }
+</style>
 
-.dark-theme page,
-.dark-theme view,
-.dark-theme .scroll-view,
-.dark-theme .content-swiper {
+<style>
+.dark-theme, .dark-theme page, .dark-theme view, .dark-theme scroll-view, .dark-theme .scroll-view {
   background-color: #121212 !important;
 }
 </style>

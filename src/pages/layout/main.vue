@@ -234,4 +234,21 @@ function onSwiperAnimationFinish(e: any) {
     }
   }
 }
+
+.main-container.dark-theme {
+  background-color: #121212;
+}
+
+.bottom-tab-bar.dark-theme {
+  background-color: rgba(30, 30, 30, 0.98);
+  box-shadow: 0 -10rpx 40rpx rgba(0, 0, 0, 0.4);
+}
+
+.tab-item.dark-theme {
+  color: #666;
+
+  &.active {
+    color: #e0e0e0;
+  }
+}
 </style>
