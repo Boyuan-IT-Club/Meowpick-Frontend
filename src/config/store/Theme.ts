@@ -7,7 +7,7 @@ export default defineStore("theme-store", {
   },
   getters: {
     themeClass: (state) => {
-      return state.mode === "dark" ? "dark-theme" : "";
+      return state.mode === "dark" ? "dark-theme" : "light-theme";
     }
   },
   actions: {
