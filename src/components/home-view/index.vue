@@ -22,29 +22,26 @@
     <view class="toolbox-section">
       <!-- 左侧：信件与日志 -->
       <view class="left-group">
-        <view 
-          class="card-item letter-card" 
+        <view
+          class="card-item letter-card"
           hover-class="card-hover"
           @click="goToLetter"
         >
-          <view class="card-content">
-            <text class="card-title">致用户的一封信</text>
-            <text class="card-subtitle">To Users</text>
-            <text class="card-bg-icon">✉️</text>
-          </view>
+          <text class="card-title">致用户的一封信</text>
+          <text class="card-subtitle">To Users</text>
+          <text class="card-bg-icon">✉️</text>
           <view v-if="showNewIcon" class="new-tag">NEW</view>
         </view>
 
-        <view
+<view
           class="card-item log-card"
           hover-class="card-hover"
           @click="goToUpdate"
         >
-          <view class="card-content">
-            <text class="card-title">更新日志</text>
-            <text class="card-subtitle">Update Log</text>
-            <text class="card-bg-icon">📋</text>
-          </view>
+          <text class="card-title">更新日志</text>
+          <text class="card-subtitle">Update Logs</text>
+          <text class="card-bg-icon">📝</text>
+        </view>
         </view>
       </view>
 
@@ -93,7 +90,6 @@
         </view>
       </view>
     </view>
-  </view>
 </template>
 
 <script setup lang="ts">
@@ -435,7 +431,7 @@ $text-main: #2c2c2c;
 
 .dark-theme .letter-card {
   background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
-  .card-bg-icon { opacity: 0.05; }
+  .card-title { color: $brand-red !important; }
 }
 
 // 统计卡片：纵向大卡片
