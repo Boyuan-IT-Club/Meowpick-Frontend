@@ -206,7 +206,7 @@ $text-main: #2c2c2c;
   background-color: #121212 !important;
 
   &::before {
-    background: linear-gradient(180deg, #252525 0%, #121212 100%) !important;
+    background: #121212 !important;
   }
 }
 
@@ -215,7 +215,7 @@ $text-main: #2c2c2c;
 }
 
 .home-view-container.dark-theme::before {
-  background: linear-gradient(180deg, #252525 0%, #121212 100%) !important;
+  background: #121212 !important;
 }
 
 // 新增：顶部欢迎语样式
@@ -435,6 +435,7 @@ $text-main: #2c2c2c;
 
 .dark-theme .letter-card {
   background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+  .card-bg-icon { opacity: 0.05; }
 }
 
 // 统计卡片：纵向大卡片
@@ -514,7 +515,7 @@ $text-main: #2c2c2c;
 }
 
 .dark-theme .guide-overlay {
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.45);
 }
 
 .dark-theme .guide-content {
