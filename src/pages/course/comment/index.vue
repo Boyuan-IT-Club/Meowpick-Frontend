@@ -382,4 +382,5 @@ $brand-red: #b20035;
 .dark-theme .tag-item { background: #2a2a2a; .tag-text { color: #aaa; } &.active { background: rgba(178,0,53,0.15); .tag-text { color: $brand-red; } } }
 .dark-theme .input-box .comment-input { background: #2a2a2a; color: #e0e0e0; }
 .dark-theme .word-count { color: #666; }
+.dark-theme .loading-overlay { background-color: rgba(0,0,0,0.7); .loading-spinner { border-color: rgba(255,255,255,0.15); border-top-color: #fff; } .loading-text { color: #ddd; } }
 </style>

@@ -96,6 +96,12 @@ const text12 = `选课猫团队 2025年10月13日`;
   background-color: #121212;
 }
 
+.dark-theme .custom-header,
+.custom-header.dark-theme {
+    background-color: rgba(18, 18, 18, 0.95);
+    backdrop-filter: blur(5px);
+}
+
 .custom-header {
     position: fixed;
     top: 0;

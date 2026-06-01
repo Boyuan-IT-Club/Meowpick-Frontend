@@ -824,7 +824,7 @@ const hideGuide = () => {
 
 .dark-theme .list-container {
     .card { background: #1e1e1e; border-color: #333; }
-    .proposal-card { background: linear-gradient(135deg, #1a0a0e 0%, #1e1e1e 100%); border-color: rgba(178,0,53,0.2); }
+    .proposal-card { background: linear-gradient(135deg, #1a0a0e 0%, #1e1e1e 100%); border-color: rgba(178,0,53,0.2); .vote-count-box { background: linear-gradient(90deg, #2a1a1e, #1e1e1e); } }
     .course-row-top .course-name { color: #e0e0e0; }
     .course-row-top .time-text { color: #666; }
     .course-row-middle { background: #2a2a2a; .course-info-item { color: #999; } }
@@ -843,9 +843,15 @@ const hideGuide = () => {
     .guide-subtitle { color: #888; }
 }
 .dark-theme .guide-section {
-    .section-icon { background-color: #1a1a1a; }
+    .section-icon { background-color: #2a2a2a; }
     .section-title { color: #e0e0e0; }
     .section-desc { color: #888; }
+}
+
+.dark-theme .status-badge {
+    &.status-pending { background: rgba(0, 102, 204, 0.2); color: #4da6ff; border-color: rgba(0, 102, 204, 0.2); }
+    &.status-approved { background: rgba(56, 142, 60, 0.2); color: #66bb6a; border-color: rgba(56, 142, 60, 0.2); }
+    &.status-rejected { background: rgba(178, 0, 53, 0.2); color: #ff6b8a; border-color: rgba(178, 0, 53, 0.2); }
 }
 
 .guide-overlay {
