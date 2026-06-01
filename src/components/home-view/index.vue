@@ -206,7 +206,7 @@ $text-main: #2c2c2c;
   background-color: #121212;
 
   &::before {
-    background: linear-gradient(180deg, #1a1a1a 0%, #121212 100%);
+    background: linear-gradient(180deg, #252525 0%, #121212 100%);
   }
 }
 
