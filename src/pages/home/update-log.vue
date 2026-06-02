@@ -188,5 +188,5 @@ const goBack = () => {
   box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.3);
 }
 
-.dark-theme .page-title { color: #e0e0e0; }
+.title-wrapper.dark-theme .page-title { color: #e0e0e0; }
 </style>
