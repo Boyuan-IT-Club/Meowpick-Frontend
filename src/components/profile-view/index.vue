@@ -16,8 +16,8 @@
     </view>
 
     <!-- 首次使用引导弹窗 -->
-    <view v-if="showGuide" class="guide-overlay" :class="themeStore.themeClass" @click="hideGuide">
-      <view class="guide-content" @click.stop :style="{ background: themeStore.mode === 'dark' ? '#2a2a2a' : '#ffffff' }">
+    <view v-if="showGuide" class="guide-overlay" @click="hideGuide">
+      <view class="guide-content" @click.stop>
         <view class="guide-header">
           <text class="guide-title">欢迎来到"我的发布" 🎉</text>
           <text class="guide-subtitle">管理你的吐槽和提议</text>

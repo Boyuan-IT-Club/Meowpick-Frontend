@@ -55,8 +55,8 @@
     </view>
 
     <!-- 首次使用引导弹窗 -->
-    <view v-if="showGuide" class="guide-overlay" :class="themeStore.themeClass" @click="hideGuide" :style="{ background: themeStore.mode === 'dark' ? 'rgba(0,0,0,0.45) !important' : 'rgba(0,0,0,0.6) !important' }">
-      <view class="guide-content" @click.stop :style="{ background: themeStore.mode === 'dark' ? '#2a2a2a' : '#ffffff' }">
+    <view v-if="showGuide" class="guide-overlay" @click="hideGuide">
+      <view class="guide-content" @click.stop>
         <view class="guide-header">
           <text class="guide-title">欢迎使用选课猫 🎉</text>
           <text class="guide-subtitle">华东师范大学选课经验分享平台</text>
@@ -502,39 +502,19 @@ $text-main: #2c2c2c;
   box-sizing: border-box;
 }
 
-.dark-theme .guide-overlay,
-.guide-overlay.dark-theme {
-  background-color: rgba(0, 0, 0, 0.45) !important;
+.dark-theme .guide-overlay {
+  background-color: rgba(0, 0, 0, 0.45);
 }
 
-.dark-theme .guide-content,
-.guide-content.dark-theme {
-  background-color: #2a2a2a !important;
+.dark-theme .guide-content {
+  background-color: #2a2a2a;
 }
 
-.dark-theme .guide-header,
-.guide-header.dark-theme {
-  .guide-title { color: #e0e0e0 !important; }
-  .guide-subtitle { color: #888 !important; }
-}
-
-.dark-theme .guide-section .section-icon,
-.guide-section.dark-theme .section-icon {
-  background-color: #2a2a2a !important;
-}
-
-.guide-section .section-icon {
-  background-color: #fff5f7;
-}
-
-.guide-content text {
-  background-color: transparent !important;
-}
-
-.dark-theme .guide-overlay text,
-.guide-overlay.dark-theme text {
-  background-color: transparent !important;
-}
+.dark-theme .guide-title { color: #e0e0e0; }
+.dark-theme .guide-subtitle { color: #888; }
+.dark-theme .guide-section-icon { background-color: #2a2a2a; }
+.dark-theme .guide-section-title { color: #e0e0e0; }
+.dark-theme .guide-section-desc { color: #888; }
 
 .guide-content {
   width: 100%;
