@@ -527,6 +527,15 @@ $text-main: #2c2c2c;
   background-color: #fff5f7;
 }
 
+.guide-content text {
+  background-color: transparent !important;
+}
+
+.dark-theme .guide-overlay text,
+.guide-overlay.dark-theme text {
+  background-color: transparent !important;
+}
+
 .guide-content {
   width: 100%;
   max-width: 600rpx;
