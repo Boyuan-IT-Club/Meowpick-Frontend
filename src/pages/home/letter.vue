@@ -14,7 +14,7 @@
 
     <!-- Content Card -->
     <!-- Content starts below header -->
-    <view class="content-card" :style="{ marginTop: (menuButtonInfo.top + menuButtonInfo.height + 20) + 'px' }">
+    <view class="content-card" :class="themeStore.themeClass" :style="{ marginTop: (menuButtonInfo.top + menuButtonInfo.height + 20) + 'px' }">
       <view class="card-body">
         <text class="paragraph">{{ text1 }}</text>
         <text class="paragraph">{{ text2 }}</text>
@@ -207,8 +207,9 @@ const text12 = `选课猫团队 2025年10月13日`;
 
 <style lang="scss">
 .dark-theme .page-title { color: #e0e0e0; }
-.dark-theme .paragraph { color: #b0b0b0; }
-.dark-theme .footer-text { color: #e0e0e0; }
-.dark-theme .signature { color: #777; }
-.dark-theme .card-footer { border-top-color: #333; }
+.dark-theme .content-card .card-body .paragraph { color: #b0b0b0; }
+.dark-theme .content-card .card-footer .footer-text { color: #e0e0e0; }
+.dark-theme .content-card .card-footer .signature { color: #777; }
+.dark-theme .content-card .card-footer { border-top-color: #333; }
+.dark-theme .content-card { background: rgba(30, 30, 30, 0.95) !important; box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.3); }
 </style>

@@ -13,7 +13,7 @@
             <view class="back-btn-wrapper" @click="goBack" :style="{ width: menuButtonInfo.height + 'px', height: '100%' }">
                 <BackBtn />
             </view>
-            <view class="title-wrapper">
+            <view class="title-wrapper" :class="themeStore.themeClass">
                 <text class="page-title">版本更新日志</text>
             </view>
         </view>
