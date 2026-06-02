@@ -512,15 +512,19 @@ $text-main: #2c2c2c;
   background-color: #2a2a2a !important;
 }
 
-.dark-theme .guide-header {
-  .guide-title { color: #e0e0e0; }
-  .guide-subtitle { color: #888; }
+.dark-theme .guide-header,
+.guide-header.dark-theme {
+  .guide-title { color: #e0e0e0 !important; }
+  .guide-subtitle { color: #888 !important; }
 }
 
-.dark-theme .guide-section {
-  .section-icon { background-color: #1a1a1a; }
-  .section-title { color: #e0e0e0; }
-  .section-desc { color: #888; }
+.dark-theme .guide-section .section-icon,
+.guide-section.dark-theme .section-icon {
+  background-color: #2a2a2a !important;
+}
+
+.guide-section .section-icon {
+  background-color: #fff5f7;
 }
 
 .guide-content {
