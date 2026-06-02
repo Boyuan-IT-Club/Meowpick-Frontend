@@ -33,10 +33,10 @@ input {
 
 <style lang="scss">
 .light-theme, .light-theme page, .light-theme view, .light-theme scroll-view, .light-theme .scroll-view {
-  background-color: #f7f8fa !important;
+  background-color: #f7f8fa;
 }
 
 .dark-theme, .dark-theme page, .dark-theme view, .dark-theme scroll-view, .dark-theme .scroll-view {
-  background-color: #121212 !important;
+  background-color: #121212;
 }
 </style>
