@@ -510,11 +510,11 @@ $text-main: #2c2c2c;
   background-color: #2a2a2a;
 }
 
-.dark-theme .guide-title { color: #e0e0e0; }
-.dark-theme .guide-subtitle { color: #888; }
-.dark-theme .guide-section-icon { background-color: #2a2a2a; }
-.dark-theme .guide-section-title { color: #e0e0e0; }
-.dark-theme .guide-section-desc { color: #888; }
+.dark-theme .guide-header .guide-title { color: #e0e0e0; }
+.dark-theme .guide-header .guide-subtitle { color: #888; }
+.dark-theme .guide-section .section-icon { background-color: #2a2a2a; }
+.dark-theme .guide-section .section-title { color: #e0e0e0; }
+.dark-theme .guide-section .section-desc { color: #888; }
 
 .guide-content {
   width: 100%;
