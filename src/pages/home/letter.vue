@@ -206,10 +206,16 @@ const text12 = `选课猫团队 2025年10月13日`;
 </style>
 
 <style lang="scss">
+.letter-container.dark-theme {
+  background-color: #121212;
+}
+
 .dark-theme .page-title { color: #e0e0e0; }
 .dark-theme .content-card .card-body .paragraph { color: #b0b0b0; }
 .dark-theme .content-card .card-footer .footer-text { color: #e0e0e0; }
 .dark-theme .content-card .card-footer .signature { color: #777; }
 .dark-theme .content-card .card-footer { border-top-color: #333; }
-.dark-theme .content-card { background: rgba(30, 30, 30, 0.95) !important; box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.3); }
+.dark-theme .content-card { background: rgba(30, 30, 30, 0.95); box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.3); }
+.dark-theme .background-cat { opacity: 0.05; }
+.dark-theme .custom-header { background-color: rgba(18, 18, 18, 0.95); }
 </style>
