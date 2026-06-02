@@ -802,42 +802,35 @@ const hideGuide = () => {
 </style>
 
 <style lang="scss">
-.dark-theme .profile-container {
-    background-color: #121212;
-}
-
-.dark-theme .capsule-mask {
-    background-color: #121212;
-}
-
-.dark-theme .header-section {
-    .page-title { color: #e0e0e0; }
-    .sub-title { color: #666; }
-    .theme-toggle { background-color: #333; }
-}
-
-.dark-theme .sticky-bar {
-    background-color: rgba(18, 18, 18, 0.85);
-    .filter-row { background: #2a2a2a; box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.15); }
-    .filter-pill { color: #888; }
-}
-
-.dark-theme .list-container { background-color: #121212; }
-.dark-theme .list-container .card { background: #1e1e1e; border-color: #333; box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.3); }
-.dark-theme .proposal-card { background: linear-gradient(135deg, #1a0a0e 0%, #1e1e1e 100%); border-color: rgba(178,0,53,0.2); }
-.dark-theme .proposal-card .course-row-middle { background: rgba(30,30,30,0.5); border-color: rgba(178,0,53,0.1); box-shadow: none; }
-.dark-theme .proposal-card .vote-count-box { background: linear-gradient(90deg, #2a1a1e, #1e1e1e); }
-.dark-theme .course-row-top .course-name { color: #e0e0e0; }
-.dark-theme .course-row-top .time-text { color: #666; }
-.dark-theme .course-row-middle { background: #2a2a2a; }
-.dark-theme .course-info-item { color: #999; }
-.dark-theme .content-text { color: #ccc; }
-.dark-theme .footer-row { border-color: rgba(255,255,255,0.05); }
-.dark-theme .footer-row .likes-text { color: #888; }
-.dark-theme .footer-row .likes-box { background: transparent; }
-.dark-theme .list-empty-text { color: #555; }
-.dark-theme .loading-state .loading-text { color: #888; }
-.dark-theme .error-state .error-text { color: #ff6b6b; }
+.dark-theme .profile-container { background-color: #121212; }
+.dark-theme .profile-container .capsule-mask { background-color: #121212; }
+.dark-theme .profile-container .header-section .page-title { color: #e0e0e0; }
+.dark-theme .profile-container .header-section .sub-title { color: #666; }
+.dark-theme .profile-container .header-section .theme-toggle { background-color: #333; }
+.dark-theme .profile-container .sticky-bar { background-color: rgba(18,18,18,0.85); }
+.dark-theme .profile-container .sticky-bar .filter-row { background: #2a2a2a; }
+.dark-theme .profile-container .sticky-bar .filter-pill { color: #888; }
+.dark-theme .profile-container .list-container { background-color: #121212; padding: 40rpx 32rpx; }
+.dark-theme .profile-container .list-item { background: transparent; }
+.dark-theme .profile-container .card { background: #1e1e1e; border-color: #333; box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.3); }
+.dark-theme .profile-container .card .card-main { background: transparent; }
+.dark-theme .profile-container .card .course-row-top .course-name { color: #e0e0e0; }
+.dark-theme .profile-container .card .course-row-top .time-text { color: #666; }
+.dark-theme .profile-container .card .course-row-middle { background: #2a2a2a; }
+.dark-theme .profile-container .card .course-row-middle .course-info-item { color: #999; }
+.dark-theme .profile-container .card .content-text { color: #ccc; }
+.dark-theme .profile-container .card .footer-row { border-color: rgba(255,255,255,0.05); }
+.dark-theme .profile-container .card .footer-row .likes-text { color: #888; }
+.dark-theme .profile-container .card .footer-row .likes-box { background: transparent; }
+.dark-theme .profile-container .card.proposal-card { background: linear-gradient(135deg, #1a0a0e 0%, #1e1e1e 100%); border-color: rgba(178,0,53,0.2); }
+.dark-theme .profile-container .card.proposal-card .course-row-middle { background: rgba(30,30,30,0.5); border-color: rgba(178,0,53,0.1); }
+.dark-theme .profile-container .card.proposal-card .vote-count-box { background: linear-gradient(90deg, #2a1a1e, #1e1e1e); }
+.dark-theme .profile-container .empty-tip { color: #555; }
+.dark-theme .profile-container .loading-state .loading-text { color: #888; }
+.dark-theme .profile-container .error-state .error-text { color: #ff6b6b; }
+.dark-theme .status-badge.status-pending { background: rgba(0, 102, 204, 0.2); color: #4da6ff; border-color: rgba(0, 102, 204, 0.2); }
+.dark-theme .status-badge.status-approved { background: rgba(56, 142, 60, 0.2); color: #66bb6a; border-color: rgba(56, 142, 60, 0.2); }
+.dark-theme .status-badge.status-rejected { background: rgba(178, 0, 53, 0.2); color: #ff6b8a; border-color: rgba(178, 0, 53, 0.2); }
 
 .dark-theme .guide-overlay { background-color: rgba(0,0,0,0.45); }
 .guide-overlay.dark-theme { background-color: rgba(0,0,0,0.45); }
@@ -847,12 +840,6 @@ const hideGuide = () => {
 .guide-overlay.dark-theme .guide-section .section-icon { background-color: #2a2a2a; }
 .guide-overlay.dark-theme .guide-section .section-title { color: #e0e0e0; }
 .guide-overlay.dark-theme .guide-section .section-desc { color: #888; }
-
-.dark-theme .status-badge {
-    &.status-pending { background: rgba(0, 102, 204, 0.2); color: #4da6ff; border-color: rgba(0, 102, 204, 0.2); }
-    &.status-approved { background: rgba(56, 142, 60, 0.2); color: #66bb6a; border-color: rgba(56, 142, 60, 0.2); }
-    &.status-rejected { background: rgba(178, 0, 53, 0.2); color: #ff6b8a; border-color: rgba(178, 0, 53, 0.2); }
-}
 
 .guide-overlay {
   position: fixed;
