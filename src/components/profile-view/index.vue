@@ -822,23 +822,25 @@ const hideGuide = () => {
     .filter-pill { color: #888; }
 }
 
-.dark-theme .list-container {
-    .card { background: #1e1e1e; border-color: #333; box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.3); }
-    .proposal-card { background: linear-gradient(135deg, #1a0a0e 0%, #1e1e1e 100%); border-color: rgba(178,0,53,0.2); .vote-count-box { background: linear-gradient(90deg, #2a1a1e, #1e1e1e); } }
-    .course-row-top .course-name { color: #e0e0e0; }
-    .course-row-top .time-text { color: #666; background: transparent; }
-    .course-row-middle { background: #2a2a2a; .course-info-item { color: #999; } }
-    .content-text { color: #ccc; }
-    .footer-row { border-color: rgba(255,255,255,0.05); .likes-text { color: #888; } .likes-box { background: transparent; } }
-}
-
-.dark-theme .empty-tip text { color: #555; }
+.dark-theme .list-container { background-color: #121212; }
+.dark-theme .list-container .card { background: #1e1e1e; border-color: #333; box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.3); }
+.dark-theme .proposal-card { background: linear-gradient(135deg, #1a0a0e 0%, #1e1e1e 100%); border-color: rgba(178,0,53,0.2); }
+.dark-theme .proposal-card .course-row-middle { background: rgba(30,30,30,0.5); border-color: rgba(178,0,53,0.1); box-shadow: none; }
+.dark-theme .proposal-card .vote-count-box { background: linear-gradient(90deg, #2a1a1e, #1e1e1e); }
+.dark-theme .course-row-top .course-name { color: #e0e0e0; }
+.dark-theme .course-row-top .time-text { color: #666; }
+.dark-theme .course-row-middle { background: #2a2a2a; }
+.dark-theme .course-info-item { color: #999; }
+.dark-theme .content-text { color: #ccc; }
+.dark-theme .footer-row { border-color: rgba(255,255,255,0.05); }
+.dark-theme .footer-row .likes-text { color: #888; }
+.dark-theme .footer-row .likes-box { background: transparent; }
+.dark-theme .list-empty-text { color: #555; }
 .dark-theme .loading-state .loading-text { color: #888; }
 .dark-theme .error-state .error-text { color: #ff6b6b; }
 
-.dark-theme .guide-overlay,
-.guide-overlay.dark-theme { background-color: rgba(0,0,0,0.8); }
-
+.dark-theme .guide-overlay { background-color: rgba(0,0,0,0.45); }
+.guide-overlay.dark-theme { background-color: rgba(0,0,0,0.45); }
 .guide-overlay.dark-theme .guide-content { background-color: #2a2a2a; }
 .guide-overlay.dark-theme .guide-header .guide-title { color: #e0e0e0; }
 .guide-overlay.dark-theme .guide-header .guide-subtitle { color: #888; }
