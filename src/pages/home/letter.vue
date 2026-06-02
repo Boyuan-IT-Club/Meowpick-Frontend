@@ -1,6 +1,5 @@
 <template>
   <view class="letter-container" :class="themeStore.themeClass">
-    <image src="@/images/cat.png" class="background-cat" mode="aspectFill" />
     <view class="custom-header" :style="{ paddingTop: menuButtonInfo.top + 'px' }">
         <view class="nav-bar-content" :style="{ height: menuButtonInfo.height + 'px' }">
             <view class="back-area" @click="goBack" :style="{ width: menuButtonInfo.height + 'px', height: menuButtonInfo.height + 'px' }">
@@ -141,17 +140,6 @@ const text12 = `选课猫团队 2025年10月13日`;
   display: block;
 }
 
-.background-cat {
-  position: fixed;
-  right: -200rpx;
-  bottom: -100rpx;
-  width: 600rpx;
-  height: 600rpx;
-  opacity: 0.15;
-  z-index: 0;
-  pointer-events: none;
-}
-
 .content-card {
   position: relative;
   z-index: 1;
@@ -216,6 +204,5 @@ const text12 = `选课猫团队 2025年10月13日`;
 .dark-theme .content-card .card-footer .signature { color: #777; }
 .dark-theme .content-card .card-footer { border-top-color: #333; }
 .dark-theme .content-card { background: rgba(30, 30, 30, 0.95); box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.3); }
-.dark-theme .background-cat { opacity: 0.05; }
 .dark-theme .custom-header { background-color: rgba(18, 18, 18, 0.95); }
 </style>

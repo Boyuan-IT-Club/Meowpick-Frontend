@@ -1,7 +1,5 @@
 <template>
-  <view class="background" :class="themeStore.themeClass"> <!-- Content starts below header -->
-    <image src="@/images/cat.png" class="background-image" mode="widthFix" />
-    
+  <view class="background" :class="themeStore.themeClass">
     <!-- Custom Header -->
     <view class="custom-header" 
           :style="{ 
@@ -66,18 +64,6 @@ const goBack = () => {
   background-color: #f7f8fa;
   padding: 0 32rpx;
   box-sizing: border-box;
-
-  .background-image {
-    position: fixed;
-    right: -20rpx;
-    top: -20rpx;
-    width: 300rpx;
-    height: 300rpx;
-    opacity: 0.1;
-    z-index: 0;
-    pointer-events: none;
-    transform: rotate(15deg);
-  }
 
   .page-header {
     margin-bottom: 40rpx;
