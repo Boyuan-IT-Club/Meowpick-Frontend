@@ -19,11 +19,11 @@
         <text class="paragraph">{{ text1 }}</text>
         <text class="paragraph">{{ text2 }}</text>
         <text class="paragraph highlight">{{ text3 }}</text>
-        
+
         <text class="paragraph">{{ text5 }}</text>
         <text class="paragraph highlight">{{ text6 }}</text>
         <text class="paragraph">{{ text7 }}</text>
-        
+
         <text class="paragraph">{{ text9 }}</text>
         <text class="paragraph">{{ text10 }}</text>
       </view>
@@ -43,7 +43,7 @@ import { useThemeStore } from '@/config';
 const themeStore = useThemeStore();
 
 const sysInfo = uni.getSystemInfoSync();
-let menuButtonInfo = { // Initialize menuButtonInfo
+let menuButtonInfo = {
     top: sysInfo.statusBarHeight ? sysInfo.statusBarHeight : 20,
     height: 32
 };
@@ -63,7 +63,6 @@ const goBack = () => {
 };
 
 onLoad(() => {
-  // 当用户访问这封信时，标记为已读
   uni.setStorageSync('hasReadLetter', true);
 });
 
@@ -84,154 +83,132 @@ const text12 = `选课猫团队 2025年10月13日`;
 <style scoped lang="scss">
 .letter-container {
   min-height: 100vh;
-  background-color: #f7f8fa; /* 浅灰底色 */
+  background-color: #f7f8fa;
   position: relative;
   overflow: hidden;
-  padding: 0 32rpx 40rpx; /* Remove top padding as it's handled by margin-top */
+  padding: 0 32rpx 40rpx;
   box-sizing: border-box;
 }
 
-.dark-theme .letter-container,
-.letter-container.dark-theme {
+.dark-theme .letter-container {
   background-color: #121212;
 }
 
-.dark-theme .custom-header,
-.custom-header.dark-theme {
-    background-color: rgba(18, 18, 18, 0.95);
-    backdrop-filter: blur(5px);
+.custom-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  background-color: transparent;
+  backdrop-filter: blur(5px);
 }
 
-.custom-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 100;
-    background-color: transparent; /* Initially transparent */
-    /* If user scrolls, maybe add background? For simplified view, let's keep transparent or light blur */
-    backdrop-filter: blur(5px);
+.dark-theme .custom-header {
+  background-color: rgba(18, 18, 18, 0.95);
 }
 
 .nav-bar-content {
-    display: flex;
-    align-items: center;
-    position: relative;
-    padding-left: 32rpx; /* Left padding for back button alignment */
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-left: 32rpx;
 }
 
 .back-area {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .title-area {
-    margin-left: 32rpx; /* Gap = padding-left of navbar */
-    position: static; /* Force reset */
-    left: auto; /* Reset */
-    transform: none; /* Reset */
-    display: flex; /* Ensure container behaves flexily or normally */
-    align-items: center;
+  margin-left: 32rpx;
+  position: static;
+  left: auto;
+  transform: none;
+  display: flex;
+  align-items: center;
 }
 
 .page-title {
-    position: static; /* Remove any absolute positioning */
-    left: auto; /* Reset left */
-    transform: none; /* Reset transform */
-    font-size: 32rpx;
-    font-weight: 700;
-    color: #333;
-    display: block; /* Ensure it takes up space correctly */
+  position: static;
+  left: auto;
+  transform: none;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #333;
+  display: block;
 }
 
 .background-cat {
-    position: fixed;
-    right: -200rpx;
-    bottom: -100rpx;
-    width: 600rpx;
-    height: 600rpx;
-    opacity: 0.15;
-    z-index: 0;
-    pointer-events: none;
+  position: fixed;
+  right: -200rpx;
+  bottom: -100rpx;
+  width: 600rpx;
+  height: 600rpx;
+  opacity: 0.15;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .content-card {
-    position: relative;
-    z-index: 1;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 24rpx;
-    padding: 48rpx 40rpx;
-    box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.06);
-    backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 24rpx;
+  padding: 48rpx 40rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(10px);
 }
 
-.dark-theme .content-card,
-.content-card.dark-theme {
-    background: rgba(30, 30, 30, 0.95);
-    box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.3);
-}
-
-.dark-theme .page-title,
-.page-title.dark-theme {
-    color: #e0e0e0;
-}
-
-.dark-theme .paragraph,
-.paragraph.dark-theme {
-    color: #b0b0b0;
-}
-
-.dark-theme .footer-text,
-.footer-text.dark-theme {
-    color: #e0e0e0;
-}
-
-.dark-theme .signature,
-.signature.dark-theme {
-    color: #777;
-}
-
-.dark-theme .card-footer,
-.card-footer.dark-theme {
-    border-top-color: #333;
+.dark-theme .content-card {
+  background: rgba(30, 30, 30, 0.95);
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.3);
 }
 
 .card-body {
-    .paragraph {
-        display: block;
-        font-size: 30rpx;
-        color: #555;
-        line-height: 1.8;
-        margin-bottom: 24rpx;
-        text-align: justify;
-        
-        &.highlight {
-            color: #b20035;
-            font-weight: 500;
-        }
+  .paragraph {
+    display: block;
+    font-size: 30rpx;
+    color: #555;
+    line-height: 1.8;
+    margin-bottom: 24rpx;
+    text-align: justify;
+
+    &.highlight {
+      color: #b20035;
+      font-weight: 500;
     }
+  }
 }
 
 .card-footer {
-    margin-top: 60rpx;
-    padding-top: 40rpx;
-    border-top: 2rpx dashed #eee;
-    text-align: center;
-    
-    .footer-text {
-        display: block;
-        font-size: 28rpx;
-        color: #333;
-        font-weight: 600;
-        margin-bottom: 16rpx;
-    }
-    
-    .signature {
-        display: block;
-        font-size: 24rpx;
-        color: #999;
-    }
+  margin-top: 60rpx;
+  padding-top: 40rpx;
+  border-top: 2rpx dashed #eee;
+  text-align: center;
+
+  .footer-text {
+    display: block;
+    font-size: 28rpx;
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 16rpx;
+  }
+
+  .signature {
+    display: block;
+    font-size: 24rpx;
+    color: #999;
+  }
 }
+</style>
+
+<style lang="scss">
+.dark-theme .page-title { color: #e0e0e0; }
+.dark-theme .paragraph { color: #b0b0b0; }
+.dark-theme .footer-text { color: #e0e0e0; }
+.dark-theme .signature { color: #777; }
+.dark-theme .card-footer { border-top-color: #333; }
 </style>
