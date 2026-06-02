@@ -16,7 +16,7 @@
     </view>
 
     <!-- 首次使用引导弹窗 -->
-    <view v-if="showGuide" class="guide-overlay" @click="hideGuide">
+    <view v-if="showGuide" class="guide-overlay" :class="themeStore.themeClass" @click="hideGuide">
       <view class="guide-content" @click.stop>
         <view class="guide-header">
           <text class="guide-title">欢迎来到"我的发布" 🎉</text>
@@ -823,30 +823,28 @@ const hideGuide = () => {
 }
 
 .dark-theme .list-container {
-    .card { background: #1e1e1e; border-color: #333; }
+    .card { background: #1e1e1e; border-color: #333; box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.3); }
     .proposal-card { background: linear-gradient(135deg, #1a0a0e 0%, #1e1e1e 100%); border-color: rgba(178,0,53,0.2); .vote-count-box { background: linear-gradient(90deg, #2a1a1e, #1e1e1e); } }
     .course-row-top .course-name { color: #e0e0e0; }
-    .course-row-top .time-text { color: #666; }
+    .course-row-top .time-text { color: #666; background: transparent; }
     .course-row-middle { background: #2a2a2a; .course-info-item { color: #999; } }
     .content-text { color: #ccc; }
-    .footer-row { border-color: rgba(255,255,255,0.05); .likes-text { color: #888; } }
+    .footer-row { border-color: rgba(255,255,255,0.05); .likes-text { color: #888; } .likes-box { background: transparent; } }
 }
 
 .dark-theme .empty-tip text { color: #555; }
 .dark-theme .loading-state .loading-text { color: #888; }
 .dark-theme .error-state .error-text { color: #ff6b6b; }
 
-.dark-theme .guide-overlay { background-color: rgba(0,0,0,0.8); }
-.dark-theme .guide-content { background-color: #2a2a2a; }
-.dark-theme .guide-header {
-    .guide-title { color: #e0e0e0; }
-    .guide-subtitle { color: #888; }
-}
-.dark-theme .guide-section {
-    .section-icon { background-color: #2a2a2a; }
-    .section-title { color: #e0e0e0; }
-    .section-desc { color: #888; }
-}
+.dark-theme .guide-overlay,
+.guide-overlay.dark-theme { background-color: rgba(0,0,0,0.8); }
+
+.guide-overlay.dark-theme .guide-content { background-color: #2a2a2a; }
+.guide-overlay.dark-theme .guide-header .guide-title { color: #e0e0e0; }
+.guide-overlay.dark-theme .guide-header .guide-subtitle { color: #888; }
+.guide-overlay.dark-theme .guide-section .section-icon { background-color: #2a2a2a; }
+.guide-overlay.dark-theme .guide-section .section-title { color: #e0e0e0; }
+.guide-overlay.dark-theme .guide-section .section-desc { color: #888; }
 
 .dark-theme .status-badge {
     &.status-pending { background: rgba(0, 102, 204, 0.2); color: #4da6ff; border-color: rgba(0, 102, 204, 0.2); }
