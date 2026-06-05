@@ -202,7 +202,7 @@ function likeComment(target: string) {
 
   http.LikeController.likeCreate(target, {
     targetId: target,
-    targetType: '2'
+    targetType: 'comment'
   }).then((res) => {
     if (res.data?.code === 0) {
       const isLiked = res.data?.like ?? res.data?.data?.like ?? !comment.like;
@@ -221,7 +221,7 @@ function likeProposal(target: string) {
 
   http.LikeController.likeCreate(target, {
     targetId: target,
-    targetType: '1'
+    targetType: 'proposal'
   }).then((res) => {
     console.log('[DEBUG] likeProposal response:', JSON.stringify(res.data));
     if (res.data?.code === 0) {

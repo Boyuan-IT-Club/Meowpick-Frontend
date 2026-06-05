@@ -31,7 +31,7 @@ export function useCourseComment() {
 
     http.LikeController.likeCreate(target, {
       targetId: target,
-      targetType: '2'
+      targetType: 'comment'
     }).then((res) => {
       if (res.data?.code === 0) {
         const isLiked = res.data?.like ?? res.data?.data?.like ?? !comment.like;

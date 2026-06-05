@@ -252,7 +252,7 @@ const handleVote = async () => {
     try {
         const res = await http.LikeController.likeCreate(proposalId.value, {
             targetId: proposalId.value,
-            targetType: '1'
+            targetType: 'proposal'
         });
 
         if (res.data?.code === 0) {

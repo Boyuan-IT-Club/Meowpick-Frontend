@@ -496,7 +496,7 @@ const handleAgree = async (index: number) => {
   try {
     const res = await http.LikeController.likeCreate(proposal.id, {
       targetId: proposal.id,
-      targetType: '1'
+      targetType: 'proposal'
     });
 
     if (res.data?.code === 0) {
@@ -558,35 +558,56 @@ const handleReject = async (index: number) => {
   const proposal = proposals.value[index];
   if (!proposal) return;
 
-  uni.showToast({ title: '下架接口暂未提供', icon: 'none' });
-};
-
-const handleWithdraw = async (index: number) => {
-  const proposal = proposals.value[index];
-  if (!proposal) return;
-
   try {
-    const res = await http.ProposalController.proposalUpdateCreate(proposal.id, {
-      title: proposal.courseName,
-      content: proposal.reason,
-      course: {
-        name: proposal.courseName,
-        department: proposal.department,
-        category: proposal.category,
-        campuses: proposal.campus ? proposal.campus.split('、') : [],
-        teachers: []
-      }
+    const res = await http.ProposalController.proposalRejectCreate(proposal.id, {
+      proposalId: proposal.id,
+      reason: '管理员下架'
     });
 
     if (res.data?.code === 0) {
-      uni.showToast({ title: '已撤回至待审核', icon: 'success' });
+      uni.showToast({ title: '已下架', icon: 'success' });
       if (isFilterMode.value) {
         fetchFilteredProposals(currentPage.value);
       } else {
         fetchProposals(currentPage.value);
       }
     } else {
-      uni.showToast({ title: '撤回失败', icon: 'none' });
+      uni.showToast({ title: res.data?.message || '下架失败', icon: 'none' });
+    }
+  } catch (err) {
+    console.error('[API] 下架提议失败:', err);
+    uni.showToast({ title: '下架失败', icon: 'none' });
+  }
+};
+
+const handleWithdraw = async (index: number) => {
+  const proposal = proposals.value[index];
+  if (!proposal) return;
+
+  // 根据 proposal 当前状态决定撤回的 actionType
+  let actionType = '';
+  if (proposal.status === 'approved') {
+    actionType = 'approve';
+  } else if (proposal.status === 'rejected') {
+    actionType = 'reject';
+  } else {
+    actionType = 'delete';
+  }
+
+  try {
+    const res = await http.ProposalController.proposalRevokeCreate(proposal.id, {
+      actionType
+    });
+
+    if (res.data?.code === 0) {
+      uni.showToast({ title: '已撤回', icon: 'success' });
+      if (isFilterMode.value) {
+        fetchFilteredProposals(currentPage.value);
+      } else {
+        fetchProposals(currentPage.value);
+      }
+    } else {
+      uni.showToast({ title: res.data?.message || '撤回失败', icon: 'none' });
     }
   } catch (err) {
     console.error('[API] 撤回提议失败:', err);
