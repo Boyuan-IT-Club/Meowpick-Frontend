@@ -18,17 +18,22 @@
         </view>
       </view>
       <scroll-view class="search-results" scroll-y>
-        <view 
-          class="result-item" 
-          v-for="(item, index) in searchResults" 
-          :key="index"
-          @click="handleSelect(item)"
-        >
-          {{ item }}
+        <view v-if="searchLoading" class="loading-state">
+          <text class="loading-text">搜索中...</text>
         </view>
-        <view class="no-result" v-if="searchResults.length === 0 && searchKeyword">
-          未找到匹配项，请点击"新增"按钮添加
-        </view>
+        <template v-else>
+          <view 
+            class="result-item" 
+            v-for="(item, index) in searchResults" 
+            :key="index"
+            @click="handleSelect(item)"
+          >
+            {{ item }}
+          </view>
+          <view class="no-result" v-if="searchResults.length === 0 && searchKeyword">
+            未找到匹配项，请点击"新增"按钮添加
+          </view>
+        </template>
       </scroll-view>
     </view>
   </view>
@@ -36,12 +41,14 @@
 
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue';
+import { http } from '@/config';
 
 interface Props {
   visible: boolean;
   title: string;
   placeholder: string;
-  dataSource: string[];
+  /** 后端 field-suggestions 接口的 field 参数，如 department/category/campus/courseName/courseCode/teacherName */
+  field: string;
   multiple?: boolean;
   selectedItems?: string[];
 }
@@ -61,8 +68,8 @@ export default defineComponent({
       type: String,
       required: true
     },
-    dataSource: {
-      type: Array as () => string[],
+    field: {
+      type: String,
       required: true
     },
     multiple: {
@@ -78,6 +85,8 @@ export default defineComponent({
   setup(props, { emit }) {
     const searchKeyword = ref('');
     const searchResults = ref<string[]>([]);
+    const searchLoading = ref(false);
+    let searchTimer: ReturnType<typeof setTimeout> | null = null;
 
     watch(() => props.visible, (newVal) => {
       if (newVal) {
@@ -86,16 +95,47 @@ export default defineComponent({
       }
     });
 
-    const handleSearch = () => {
-      const keyword = searchKeyword.value.trim().toLowerCase();
+    const fetchSuggestions = async (keyword: string) => {
       if (!keyword) {
         searchResults.value = [];
         return;
       }
 
-      searchResults.value = props.dataSource.filter(item => 
-        item.toLowerCase().includes(keyword)
-      );
+      searchLoading.value = true;
+      try {
+        const res = await http.ProposalController.proposalFieldSuggestionsList({
+          field: props.field,
+          keyword,
+          page: 0,
+          pageSize: 50
+        });
+
+        if (res.data?.code === 0) {
+          const responseData = res.data.data || res.data;
+          const suggestions = responseData?.suggestions || [];
+          searchResults.value = suggestions.map((s: any) => s.value || s.label || '');
+        } else {
+          searchResults.value = [];
+        }
+      } catch (err) {
+        console.error('[API] 获取字段建议失败:', err);
+        searchResults.value = [];
+      } finally {
+        searchLoading.value = false;
+      }
+    };
+
+    const handleSearch = () => {
+      const keyword = searchKeyword.value.trim();
+      if (!keyword) {
+        searchResults.value = [];
+        return;
+      }
+
+      if (searchTimer) clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        fetchSuggestions(keyword);
+      }, 300);
     };
 
     const handleSelect = (item: string) => {
@@ -120,6 +160,7 @@ export default defineComponent({
     return {
       searchKeyword,
       searchResults,
+      searchLoading,
       handleSearch,
       handleSelect,
       handleAddNew,
@@ -245,5 +286,17 @@ export default defineComponent({
   text-align: center;
   font-size: 28rpx;
   color: #999;
+}
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60rpx 0;
+
+  .loading-text {
+    font-size: 28rpx;
+    color: #999;
+  }
 }
 </style>

@@ -9,32 +9,27 @@
       <scroll-view class="form-scroll" scroll-y>
         <view class="form-group">
           <view class="form-label">教师姓名</view>
-          <input class="form-input" v-model="teacherData.name" placeholder="请输入教师姓名" />
-        </view>
-        
-        <view class="form-group">
-          <view class="form-label">职称</view>
           <view class="search-box">
             <input 
               class="search-input" 
-              v-model="titleSearchKeyword" 
-              placeholder="搜索职称"
-              @input="handleTitleSearch"
+              v-model="teacherNameKeyword" 
+              placeholder="请输入教师姓名"
+              @input="handleTeacherNameSearch"
             />
           </view>
-          <scroll-view class="options-list" scroll-y>
-            <view 
-              class="option-item" 
-              v-for="(title, index) in filteredTitles" 
-              :key="index"
-              :class="{ active: teacherData.title === title }"
-              @click="selectTitle(title)"
-            >
-              {{ title }}
-            </view>
-            <view class="no-result" v-if="filteredTitles.length === 0">
-              未找到匹配的职称
-            </view>
+          <scroll-view class="options-list" scroll-y v-if="filteredTeacherNames.length > 0 || teacherNameLoading">
+            <view v-if="teacherNameLoading" class="loading-hint">搜索中...</view>
+            <template v-else>
+              <view 
+                class="option-item" 
+                v-for="(name, index) in filteredTeacherNames" 
+                :key="index"
+                :class="{ active: teacherData.name === name }"
+                @click="selectTeacherName(name)"
+              >
+                {{ name }}
+              </view>
+            </template>
           </scroll-view>
         </view>
         
@@ -48,19 +43,19 @@
               @input="handleDepartmentSearch"
             />
           </view>
-          <scroll-view class="options-list" scroll-y>
-            <view 
-              class="option-item" 
-              v-for="(dept, index) in filteredDepartments" 
-              :key="index"
-              :class="{ active: teacherData.department === dept }"
-              @click="selectDepartment(dept)"
-            >
-              {{ dept }}
-            </view>
-            <view class="no-result" v-if="filteredDepartments.length === 0">
-              未找到匹配的院系
-            </view>
+          <scroll-view class="options-list" scroll-y v-if="filteredDepartments.length > 0 || departmentLoading">
+            <view v-if="departmentLoading" class="loading-hint">搜索中...</view>
+            <template v-else>
+              <view 
+                class="option-item" 
+                v-for="(dept, index) in filteredDepartments" 
+                :key="index"
+                :class="{ active: teacherData.department === dept }"
+                @click="selectDepartment(dept)"
+              >
+                {{ dept }}
+              </view>
+            </template>
           </scroll-view>
         </view>
       </scroll-view>
@@ -71,12 +66,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, watch, ref, computed } from 'vue';
-import { teacherTitles, departmentsData } from '@/data/mappingData';
+import { defineComponent, reactive, watch, ref } from 'vue';
+import { http } from '@/config';
 
 interface Teacher {
   name: string;
-  title: string;
   department: string;
 }
 
@@ -92,64 +86,134 @@ export default defineComponent({
   setup(props, { emit }) {
     const teacherData = reactive<Teacher>({
       name: '',
-      title: '',
       department: ''
     });
 
-    const titleSearchKeyword = ref('');
+    // 教师姓名搜索
+    const teacherNameKeyword = ref('');
+    const filteredTeacherNames = ref<string[]>([]);
+    const teacherNameLoading = ref(false);
+    let teacherNameTimer: ReturnType<typeof setTimeout> | null = null;
+
+    // 院系搜索
     const departmentSearchKeyword = ref('');
-
-    const filteredTitles = computed(() => {
-      const keyword = titleSearchKeyword.value.trim().toLowerCase();
-      if (!keyword) {
-        return teacherTitles;
-      }
-      return teacherTitles.filter(title => 
-        title.toLowerCase().includes(keyword)
-      );
-    });
-
-    const filteredDepartments = computed(() => {
-      const keyword = departmentSearchKeyword.value.trim().toLowerCase();
-      if (!keyword) {
-        return departmentsData;
-      }
-      return departmentsData.filter(dept => 
-        dept.toLowerCase().includes(keyword)
-      );
-    });
+    const filteredDepartments = ref<string[]>([]);
+    const departmentLoading = ref(false);
+    let departmentTimer: ReturnType<typeof setTimeout> | null = null;
 
     watch(() => props.visible, (newVal) => {
       if (newVal) {
         teacherData.name = '';
-        teacherData.title = '';
         teacherData.department = '';
-        titleSearchKeyword.value = '';
+        teacherNameKeyword.value = '';
+        filteredTeacherNames.value = [];
         departmentSearchKeyword.value = '';
+        filteredDepartments.value = [];
       }
     });
 
-    const handleTitleSearch = () => {
+    const fetchTeacherNameSuggestions = async (keyword: string) => {
+      if (!keyword) {
+        filteredTeacherNames.value = [];
+        return;
+      }
+
+      teacherNameLoading.value = true;
+      try {
+        const res = await http.ProposalController.proposalFieldSuggestionsList({
+          field: 'teacherName',
+          keyword,
+          page: 0,
+          pageSize: 50
+        });
+
+        if (res.data?.code === 0) {
+          const responseData = res.data.data || res.data;
+          const suggestions = responseData?.suggestions || [];
+          filteredTeacherNames.value = suggestions.map((s: any) => s.value || s.label || '');
+        } else {
+          filteredTeacherNames.value = [];
+        }
+      } catch (err) {
+        console.error('[API] 获取教师姓名建议失败:', err);
+        filteredTeacherNames.value = [];
+      } finally {
+        teacherNameLoading.value = false;
+      }
+    };
+
+    const handleTeacherNameSearch = () => {
+      const keyword = teacherNameKeyword.value.trim();
+      if (!keyword) {
+        filteredTeacherNames.value = [];
+        return;
+      }
+
+      if (teacherNameTimer) clearTimeout(teacherNameTimer);
+      teacherNameTimer = setTimeout(() => {
+        fetchTeacherNameSuggestions(keyword);
+      }, 300);
+    };
+
+    const selectTeacherName = (name: string) => {
+      teacherData.name = name;
+      teacherNameKeyword.value = name;
+      filteredTeacherNames.value = [];
+    };
+
+    const fetchDepartmentSuggestions = async (keyword: string) => {
+      if (!keyword) {
+        filteredDepartments.value = [];
+        return;
+      }
+
+      departmentLoading.value = true;
+      try {
+        const res = await http.ProposalController.proposalFieldSuggestionsList({
+          field: 'department',
+          keyword,
+          page: 0,
+          pageSize: 50
+        });
+
+        if (res.data?.code === 0) {
+          const responseData = res.data.data || res.data;
+          const suggestions = responseData?.suggestions || [];
+          filteredDepartments.value = suggestions.map((s: any) => s.value || s.label || '');
+        } else {
+          filteredDepartments.value = [];
+        }
+      } catch (err) {
+        console.error('[API] 获取院系建议失败:', err);
+        filteredDepartments.value = [];
+      } finally {
+        departmentLoading.value = false;
+      }
     };
 
     const handleDepartmentSearch = () => {
-    };
+      const keyword = departmentSearchKeyword.value.trim();
+      if (!keyword) {
+        filteredDepartments.value = [];
+        return;
+      }
 
-    const selectTitle = (title: string) => {
-      teacherData.title = title;
+      if (departmentTimer) clearTimeout(departmentTimer);
+      departmentTimer = setTimeout(() => {
+        fetchDepartmentSuggestions(keyword);
+      }, 300);
     };
 
     const selectDepartment = (dept: string) => {
       teacherData.department = dept;
+      departmentSearchKeyword.value = dept;
+      filteredDepartments.value = [];
     };
 
     const handleConfirm = () => {
-      if (!teacherData.name.trim()) {
+      const name = teacherData.name || teacherNameKeyword.value.trim();
+      if (!name) {
         uni.showToast({ title: '请输入教师姓名', icon: 'none' });
-        return;
-      }
-      if (!teacherData.title) {
-        uni.showToast({ title: '请选择职称', icon: 'none' });
         return;
       }
       if (!teacherData.department) {
@@ -157,8 +221,7 @@ export default defineComponent({
         return;
       }
       emit('confirm', {
-        name: teacherData.name,
-        title: teacherData.title,
+        name,
         department: teacherData.department
       });
       handleClose();
@@ -171,13 +234,15 @@ export default defineComponent({
 
     return {
       teacherData,
-      titleSearchKeyword,
+      teacherNameKeyword,
+      filteredTeacherNames,
+      teacherNameLoading,
+      handleTeacherNameSearch,
+      selectTeacherName,
       departmentSearchKeyword,
-      filteredTitles,
       filteredDepartments,
-      handleTitleSearch,
+      departmentLoading,
       handleDepartmentSearch,
-      selectTitle,
       selectDepartment,
       handleConfirm,
       handleClose
@@ -247,7 +312,7 @@ export default defineComponent({
 }
 
 .form-group {
-  margin-bottom: 30rpx;
+  margin-bottom: 50rpx;
 }
 
 .form-label {
@@ -255,16 +320,6 @@ export default defineComponent({
   color: #333;
   font-weight: 500;
   margin-bottom: 20rpx;
-}
-
-.form-input {
-  width: 100%;
-  height: 80rpx;
-  padding: 0 30rpx;
-  background: #F5F5F5;
-  border-radius: 20rpx;
-  font-size: 28rpx;
-  color: #333;
 }
 
 .search-box {
@@ -307,6 +362,13 @@ export default defineComponent({
   &:active {
     background: #F0F0F0;
   }
+}
+
+.loading-hint {
+  padding: 40rpx;
+  text-align: center;
+  font-size: 26rpx;
+  color: #999;
 }
 
 .no-result {

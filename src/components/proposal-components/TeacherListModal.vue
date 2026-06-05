@@ -9,7 +9,7 @@
         <view class="teacher-item" v-for="(teacher, index) in teachers" :key="index">
           <view class="teacher-info">
             <view class="teacher-name">{{ teacher.name }}</view>
-            <view class="teacher-detail">{{ teacher.title }} · {{ teacher.department }}</view>
+            <view class="teacher-detail">{{ teacher.department }}</view>
           </view>
           <view class="delete-teacher" @click="handleRemove(index)">×</view>
         </view>
@@ -30,7 +30,6 @@ import { defineComponent } from 'vue';
 
 interface Teacher {
   name: string;
-  title: string;
   department: string;
 }
 

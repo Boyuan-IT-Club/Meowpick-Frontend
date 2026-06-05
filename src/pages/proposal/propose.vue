@@ -99,7 +99,7 @@
       v-model:visible="showSearchModal"
       :title="modalTitle"
       :placeholder="searchPlaceholder"
-      :dataSource="currentDataSource"
+      :field="currentField"
       @select="handleSearchSelect"
     />
 
@@ -122,14 +122,13 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue';
 import { http } from '@/config';
-import { campusesData, categoriesData, departmentsData } from '@/data/mappingData';
+import { campusesData } from '@/data/mappingData';
 import SearchModal from '@/components/proposal-components/SearchModal.vue';
 import TeacherListModal from '@/components/proposal-components/TeacherListModal.vue';
 import AddTeacherModal from '@/components/proposal-components/AddTeacherModal.vue';
 
 interface Teacher {
   name: string;
-  title: string;
   department: string;
 }
 
@@ -205,7 +204,7 @@ const formData = reactive({
     reason: ''
 });
 
-const campusOptions = ['普陀校区', '闵行校区', '临港校区'];
+const campusOptions = campusesData;
 
 const showSearchModal = ref(false);
 const showTeacherModal = ref(false);
@@ -232,22 +231,6 @@ const searchPlaceholder = computed(() => {
         campuses: '请输入开课校区进行搜索'
     };
     return placeholders[currentField.value] || '请输入关键词';
-});
-
-const currentDataSource = computed(() => {
-    switch (currentField.value) {
-        case 'courseName':
-        case 'courseCode':
-            return [];
-        case 'department':
-            return departmentsData;
-        case 'category':
-            return categoriesData;
-        case 'campuses':
-            return campusesData;
-        default:
-            return [];
-    }
 });
 
 const openSearchModal = (field: string) => {
@@ -389,7 +372,7 @@ const submit = async () => {
     left: 0;
     width: 100%;
     z-index: 100;
-    background: transparent;
+    background: #fff;
     box-shadow: none;
 }
 

@@ -183,11 +183,35 @@ onLoad((options: any) => {
     if (options.data) {
         try {
             const data = JSON.parse(decodeURIComponent(options.data));
+            
+            const existingCourse = data.course || {};
+            const teachers = existingCourse.teachers
+                || (data.teachers
+                    ? (typeof data.teachers === 'string'
+                        ? data.teachers.split('、').filter(Boolean).map((t: string) => ({ name: t.trim() }))
+                        : data.teachers)
+                    : []);
+            const campuses = existingCourse.campuses
+                || (data.campus
+                    ? (typeof data.campus === 'string'
+                        ? data.campus.split('、').filter(Boolean).map((c: string) => c.trim())
+                        : data.campus)
+                    : []);
+            
             proposalData.value = {
                 ...data,
                 title: data.title || data.courseName || '',
+                content: data.content || data.reason || '',
                 likeCnt: data.likeCnt ?? data.agreeCount ?? 0,
-                like: data.like ?? data.isAgreed ?? false
+                like: data.like ?? data.isAgreed ?? false,
+                createdAt: data.createdAt || data.date || '',
+                course: {
+                    ...existingCourse,
+                    teachers,
+                    campuses,
+                    department: existingCourse.department || data.department || '',
+                    category: existingCourse.category || data.category || '',
+                }
             };
             if (!proposalId.value && data.id) {
                 proposalId.value = data.id;

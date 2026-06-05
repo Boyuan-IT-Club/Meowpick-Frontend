@@ -1,8 +1,8 @@
 export const campusesData = [
-  '滴水湖软件楼',
-  '临港校区',
   '普陀校区',
-  '闵行校区'
+  '闵行校区',
+  '临港校区',
+  '滴水湖软楼'
 ];
 
 export const categoriesData = [

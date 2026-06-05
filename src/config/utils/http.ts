@@ -40,7 +40,17 @@ class HttpRequest<
 }
 
 const api = new HttpRequest({
-  // paramsSerializer: (params) => qs.stringify(params, { indices: false }),
+  paramsSerializer: (params) => {
+    const parts: string[] = [];
+    Object.entries(params || {}).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach(v => parts.push(`${encodeURIComponent(key)}=${encodeURIComponent(v)}`));
+      } else if (value !== undefined && value !== null && value !== '') {
+        parts.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
+      }
+    });
+    return parts.join('&');
+  },
   baseURL: import.meta.env.VITE_SERVER_HOST_PORT,
   adapter: UniAdapter, // 指定适配器
   timeout: 3000

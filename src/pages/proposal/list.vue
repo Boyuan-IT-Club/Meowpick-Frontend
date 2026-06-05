@@ -118,7 +118,7 @@
       </div>
       <div class="filter-content">
         <div class="filter-section">
-          <div class="filter-label">提案状态 <span class="required-mark">(必选)</span></div>
+          <div class="filter-label">提案状态 <span class="required-mark">(多选)</span></div>
           <div class="tags-group">
             <div 
               class="tag-item" 
@@ -134,7 +134,7 @@
         </div>
 
         <div class="filter-section">
-          <div class="filter-label">校区 <span class="required-mark">(必选)</span></div>
+          <div class="filter-label">校区 <span class="required-mark">(多选)</span></div>
           <div class="tags-group">
             <div 
               class="tag-item" 
@@ -177,7 +177,7 @@
     v-model:visible="showSearchModal"
     :title="modalTitle"
     :placeholder="searchPlaceholder"
-    :dataSource="currentDataSource"
+    :field="currentField"
     @select="handleSearchSelect"
   />
 </template>
@@ -186,7 +186,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { onShow, onPageScroll } from '@dcloudio/uni-app';
 import { http } from '@/config';
-import { campusesData, categoriesData, departmentsData } from '@/data/mappingData';
+import { campusesData } from '@/data/mappingData';
 import SearchModal from '@/components/proposal-components/SearchModal.vue';
 
 interface Proposal {
@@ -217,13 +217,6 @@ const noMore = ref(false);
 const isFilterMode = ref(false);
 let searchTimer: ReturnType<typeof setTimeout> | null = null;
 
-const filterForm = ref({
-  status: [] as string[],
-  campus: [] as string[],
-  department: '',
-  category: ''
-});
-
 const statusOptions = [
   { label: '待审核', value: 'pending' },
   { label: '已通过', value: 'approved' },
@@ -231,6 +224,13 @@ const statusOptions = [
 ];
 
 const campusOptions = campusesData;
+
+const filterForm = ref({
+  status: statusOptions.map(s => s.value),
+  campus: [...campusOptions] as string[],
+  department: '',
+  category: ''
+});
 
 const modalTitle = computed(() => {
   const titles: Record<string, string> = {
@@ -246,17 +246,6 @@ const searchPlaceholder = computed(() => {
     category: '请输入课程分类进行搜索'
   };
   return placeholders[currentField.value] || '请输入关键词';
-});
-
-const currentDataSource = computed(() => {
-  switch (currentField.value) {
-    case 'department':
-      return departmentsData;
-    case 'category':
-      return categoriesData;
-    default:
-      return [];
-  }
 });
 
 const isFiltered = computed(() => {
@@ -476,22 +465,14 @@ const handleSearchSelect = (item: string) => {
 
 const resetFilter = () => {
   filterForm.value = {
-    status: [],
-    campus: [],
+    status: statusOptions.map(s => s.value),
+    campus: [...campusOptions],
     department: '',
     category: ''
   };
 };
 
 const applyFilter = () => {
-  if (filterForm.value.status.length === 0) {
-    uni.showToast({ title: '请选择提案状态', icon: 'none' });
-    return;
-  }
-  if (filterForm.value.campus.length === 0) {
-    uni.showToast({ title: '请选择校区', icon: 'none' });
-    return;
-  }
   showFilterModal.value = false;
   isFilterMode.value = true;
   currentPage.value = 0;
