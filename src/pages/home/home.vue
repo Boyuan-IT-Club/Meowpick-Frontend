@@ -10,7 +10,8 @@
             </view>
         </view>
         <view class="ellipse" />
-        <image :src="Logo" class="logo" />
+        <view class="brand-title"><text class="brand-en">ECNU</text><text class="brand-cn">选课猫</text></view>
+        <image :src="Logo" class="logo" mode="widthFix" />
         <view class="search-table">
             <image
                     src="../../images/search_table.png"
@@ -91,9 +92,31 @@ const goToMyComments = () => {
   }
   .logo {
     position: fixed;
-    top: 33vw;
+    top: 43vw;
     width: 100vw;
-    height: 69.87vw;
+    height: auto;
+  }
+  .brand-title {
+    position: fixed;
+    top: 33.5vw;
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    width: 100vw;
+    color: #111111;
+    font-family: "Yuanti SC", "STYuanti-SC-Regular", "PingFang SC", "Microsoft YaHei", sans-serif;
+    font-weight: 400;
+    line-height: 1.25;
+    text-align: center;
+    .brand-en {
+      margin-right: 0.4vw;
+      font-size: 7vw;
+      letter-spacing: 0.8vw;
+    }
+    .brand-cn {
+      font-size: 7vw;
+      letter-spacing: 1vw;
+    }
   }
   .search-button {
     position: fixed;
