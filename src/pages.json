@@ -51,6 +51,12 @@
       }
     },
     {
+      "path": "pages/proposal/feed/feed",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
       "path": "pages/course/proposal-detail/index",
       "style": {
         "navigationStyle": "custom",
