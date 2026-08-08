@@ -205,7 +205,6 @@ const teacherNames = computed(() => {
 </style>
 
 <style lang="scss">
-.dark-theme .course-header-container { }
-.dark-theme .header-card { background-color: #1e1e1e; box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.15); .course-title { color: #e0e0e0; } .label { color: #888; } .value { color: #ccc; } }
-.dark-theme .tags-section { border-color: #333; .desc-text { color: #888; } }
+.course-header-container.dark-theme .header-card { background-color: #1e1e1e; box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.3); .course-title { color: #e0e0e0; } .label { color: #888; } .value { color: #ccc; } .teacher-name { color: #ccc; } .icon-wrapper { &.bg-blue { background-color: rgba(52,152,219,0.18); } &.bg-green { background-color: rgba(46,204,113,0.18); } &.bg-orange { background-color: rgba(243,156,18,0.18); } &.bg-purple { background-color: rgba(155,89,182,0.18); } } }
+.course-header-container.dark-theme .tags-section { border-color: #333; .desc-text { color: #888; } }
 </style>
