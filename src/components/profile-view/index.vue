@@ -198,10 +198,38 @@
        <view style="height: 160rpx;"></view>
     </view>
 
-    <!-- Floating Action Button -->
-    <view class="fab-btn" @click="onAddClick">
-      <view class="plus-icon">+</view>
-    </view>
+<!-- Floating Action Button -->
+     <view class="fab-btn" @click="onAddClick">
+       <view class="plus-icon">+</view>
+     </view>
+
+     <!-- Nickname Edit Modal -->
+     <view v-if="showNicknameModal" class="modal-overlay" @click="closeNicknameModal">
+       <view class="modal-card" :class="themeStore.themeClass" @click.stop>
+          <view class="modal-header">
+             <text class="modal-title">修改昵称</text>
+             <view class="modal-close" @click="closeNicknameModal">×</view>
+          </view>
+
+          <view class="modal-body">
+             <text class="field-label">昵称</text>
+             <input
+                class="nickname-input"
+                v-model="newNickname"
+                :maxlength="20"
+                placeholder="请输入新昵称"
+             />
+             <text class="word-count">{{ newNickname.length }}/20</text>
+          </view>
+
+          <view class="modal-footer">
+             <view class="btn-cancel" @click="closeNicknameModal">取消</view>
+             <view class="btn-confirm" :class="{ disabled: submittingNickname }" @click="confirmNicknameChange">
+                {{ submittingNickname ? '提交中...' : '确认' }}
+             </view>
+          </view>
+       </view>
+     </view>
 </template>
 
 <script setup lang="ts">
@@ -326,11 +354,56 @@ const handleMenuClick = (action: 'theme' | 'feed' | 'nickname' | 'feedback') => 
             uni.navigateTo({ url: '/pages/proposal/feed/feed' });
             break;
         case 'nickname':
-            showNicknameModal.value = true;
+            openNicknameModal();
             break;
         case 'feedback':
             showFeedbackModal.value = true;
             break;
+    }
+};
+
+// Nickname Modal
+const newNickname = ref('');
+const submittingNickname = ref(false);
+
+const openNicknameModal = () => {
+    newNickname.value = '';
+    showNicknameModal.value = true;
+};
+
+const closeNicknameModal = () => {
+    showNicknameModal.value = false;
+};
+
+const confirmNicknameChange = async () => {
+    const trimmed = newNickname.value.trim();
+    if (!trimmed) {
+        return uni.showToast({ title: '昵称不能为空', icon: 'none' });
+    }
+    if (trimmed.length > 20) {
+        return uni.showToast({ title: '昵称不超过20字符', icon: 'none' });
+    }
+
+    submittingNickname.value = true;
+    try {
+        uni.showLoading({ title: '提交中' });
+
+        // mock：等待 500ms 模拟网络请求
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        // TODO: 等后端提供 UpdateUserProfile 接口后接入真实 API
+        // const res = await http.UserController.updateUserProfileCreate({ username: trimmed });
+        // if (res.data?.code !== 0) throw new Error(res.data?.msg || '提交失败');
+
+        uni.hideLoading();
+        uni.showToast({ title: '修改成功', icon: 'success' });
+        closeNicknameModal();
+    } catch (err) {
+        uni.hideLoading();
+        uni.showToast({ title: '修改失败，请重试', icon: 'none' });
+        console.error('[nickname change] error:', err);
+    } finally {
+        submittingNickname.value = false;
     }
 };
 
@@ -921,6 +994,119 @@ onShow(() => {
         transform: rotate(360deg);
     }
 }
+
+/* Modal: Nickname & Feedback (shared base styles) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40rpx;
+}
+
+.modal-card {
+    width: 100%;
+    max-width: 600rpx;
+    background-color: #ffffff;
+    border-radius: 24rpx;
+    overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 32rpx;
+    border-bottom: 1rpx solid #f0f0f0;
+
+    .modal-title {
+        font-size: 32rpx;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .modal-close {
+        font-size: 40rpx;
+        color: #999;
+        width: 48rpx;
+        height: 48rpx;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+    }
+}
+
+.modal-body {
+    padding: 32rpx;
+}
+
+.field-label {
+    font-size: 28rpx;
+    color: #666;
+    margin-bottom: 16rpx;
+    display: block;
+}
+
+.nickname-input {
+    width: 100%;
+    height: 80rpx;
+    background-color: #f5f5f5;
+    border-radius: 12rpx;
+    padding: 0 24rpx;
+    font-size: 28rpx;
+    color: #333;
+    box-sizing: border-box;
+}
+
+.word-count {
+    font-size: 22rpx;
+    color: #999;
+    text-align: right;
+    margin-top: 8rpx;
+    display: block;
+}
+
+.modal-footer {
+    display: flex;
+    border-top: 1rpx solid #f0f0f0;
+
+    .btn-cancel,
+    .btn-confirm {
+        flex: 1;
+        height: 96rpx;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30rpx;
+        transition: opacity 0.15s;
+    }
+
+    .btn-cancel {
+        color: #666;
+    }
+
+    .btn-confirm {
+        color: #b20035;
+        font-weight: 600;
+        border-left: 1rpx solid #f0f0f0;
+
+        &:active {
+            background-color: rgba(178, 0, 53, 0.05);
+        }
+
+        &.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    }
+}
 </style>
 
 <style lang="scss">
@@ -971,6 +1157,12 @@ onShow(() => {
 /* More Menu Dark Mode */
 .profile-container.dark-theme .more-btn-wrapper .more-btn { &:active { background-color: rgba(255, 255, 255, 0.06); } .line { background-color: #e0e0e0; } }
 .more-menu-popover.dark-theme { background-color: #2a2a2a; box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.5); .menu-item { color: #e0e0e0; &:active { background-color: #3a3a3a; } } }
+
+/* Nickname Modal Dark Mode */
+.modal-card.dark-theme { background-color: #1e1e1e; }
+.modal-card.dark-theme .modal-header { border-color: #333; .modal-title { color: #e0e0e0; } .modal-close { color: #888; } }
+.modal-card.dark-theme .modal-body { .field-label { color: #aaa; } .nickname-input { background-color: #2a2a2a; color: #e0e0e0; } }
+.modal-card.dark-theme .modal-footer { border-color: #333; .btn-confirm { border-color: #333; } }
 
 .guide-overlay {
   position: fixed;
