@@ -55,29 +55,51 @@
 
     <!-- 2. Filter Bar: Minimalist Text Tabs -->
     <view class="sticky-bar" :style="{ top: (menuButtonInfo.top) + 'px', height: menuButtonInfo.height + 'px' }">
-       <view class="filter-row">
-            <view
-                class="filter-pill"
-                :class="{ active: currentFilter === 'all' }"
-                @click="setFilter('all')"
-            >
-                <text>全部</text>
+       <view class="filter-row-wrapper">
+         <view class="filter-row">
+              <view
+                  class="filter-pill"
+                  :class="{ active: currentFilter === 'all' }"
+                  @click="setFilter('all')"
+              >
+                  <text>全部</text>
+              </view>
+              <view
+                  class="filter-pill"
+                  :class="{ active: currentFilter === 'comment' }"
+                  @click="setFilter('comment')"
+              >
+                  <text>吐槽</text>
+              </view>
+              <view
+                  class="filter-pill"
+                  :class="{ active: currentFilter === 'proposal' }"
+                  @click="setFilter('proposal')"
+              >
+                  <text>提议</text>
+              </view>
+         </view>
+
+         <!-- More Menu Button (⋯) -->
+         <view class="more-btn-wrapper" @click="toggleMoreMenu">
+            <view class="more-btn" :class="themeStore.themeClass">
+               <view class="line"></view>
+               <view class="line"></view>
+               <view class="line"></view>
             </view>
-            <view
-                class="filter-pill"
-                :class="{ active: currentFilter === 'comment' }"
-                @click="setFilter('comment')"
-            >
-                <text>吐槽</text>
-            </view>
-            <view
-                class="filter-pill"
-                :class="{ active: currentFilter === 'proposal' }"
-                @click="setFilter('proposal')"
-            >
-                <text>提议</text>
-            </view>
+         </view>
        </view>
+
+       <!-- More Menu Popover -->
+       <view v-if="showMoreMenu" class="more-menu-popover" :class="themeStore.themeClass" @click.stop>
+          <view class="menu-item" @click="handleMenuClick('theme')">切换深色模式</view>
+          <view class="menu-item" @click="handleMenuClick('feed')">提议广场</view>
+          <view class="menu-item" @click="handleMenuClick('nickname')">修改昵称</view>
+          <view class="menu-item" @click="handleMenuClick('feedback')">反馈</view>
+       </view>
+
+       <!-- External click mask to close popover -->
+       <view v-if="showMoreMenu" class="more-menu-mask" @click="showMoreMenu = false"></view>
     </view>
 
     <!-- 3. List Content -->
@@ -284,6 +306,33 @@ const filteredList = computed(() => {
     }
     return result.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
 });
+
+// More Menu (⋯ Popover)
+const showMoreMenu = ref(false);
+const showNicknameModal = ref(false);
+const showFeedbackModal = ref(false);
+
+const toggleMoreMenu = () => {
+    showMoreMenu.value = !showMoreMenu.value;
+};
+
+const handleMenuClick = (action: 'theme' | 'feed' | 'nickname' | 'feedback') => {
+    showMoreMenu.value = false;
+    switch (action) {
+        case 'theme':
+            themeStore.toggleTheme();
+            break;
+        case 'feed':
+            uni.navigateTo({ url: '/pages/proposal/feed/feed' });
+            break;
+        case 'nickname':
+            showNicknameModal.value = true;
+            break;
+        case 'feedback':
+            showFeedbackModal.value = true;
+            break;
+    }
+};
 
 // Actions
 const onAddClick = () => {
@@ -509,6 +558,13 @@ onShow(() => {
     background-color: rgba(247, 248, 250, 0.85);
     backdrop-filter: blur(20px);
 
+    .filter-row-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 100%;
+    }
+
     .filter-row {
         display: inline-flex;
         align-items: center;
@@ -537,6 +593,69 @@ onShow(() => {
             box-shadow: 0 6rpx 16rpx rgba(183, 0, 48, 0.3);
         }
     }
+
+    /* More Button (⋯) */
+    .more-btn-wrapper {
+        padding: 8rpx 16rpx;
+        margin-left: auto;
+    }
+
+    .more-btn {
+        width: 48rpx;
+        height: 48rpx;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 8rpx;
+        border-radius: 12rpx;
+        transition: background-color 0.15s;
+
+        &:active {
+            background-color: rgba(0, 0, 0, 0.04);
+        }
+
+        .line {
+            width: 36rpx;
+            height: 4rpx;
+            background-color: #666;
+            border-radius: 2rpx;
+        }
+    }
+}
+
+/* More Menu Popover (anchored to sticky-bar) */
+.more-menu-popover {
+    position: absolute;
+    top: calc(100% + 12rpx);
+    right: 40rpx;
+    background-color: #ffffff;
+    border-radius: 16rpx;
+    box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.15);
+    padding: 12rpx 0;
+    z-index: 1000;
+    min-width: 240rpx;
+
+    .menu-item {
+        padding: 24rpx 32rpx;
+        font-size: 28rpx;
+        color: #333;
+        transition: background-color 0.1s;
+
+        &:active {
+            background-color: #f5f5f5;
+        }
+    }
+}
+
+/* Mask to close popover on outside tap */
+.more-menu-mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
 }
 
 .list-container {
@@ -848,6 +967,10 @@ onShow(() => {
 .profile-container.dark-theme .sticky-bar .filter-pill.active { color: #fff; }
 .profile-container.dark-theme .loading-state .loading-spinner { border-color: #333; border-top-color: #b20035; }
 .profile-container.dark-theme .fab-btn { box-shadow: 0 8rpx 30rpx rgba(178, 0, 53, 0.5); }
+
+/* More Menu Dark Mode */
+.profile-container.dark-theme .more-btn-wrapper .more-btn { &:active { background-color: rgba(255, 255, 255, 0.06); } .line { background-color: #e0e0e0; } }
+.more-menu-popover.dark-theme { background-color: #2a2a2a; box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.5); .menu-item { color: #e0e0e0; &:active { background-color: #3a3a3a; } } }
 
 .guide-overlay {
   position: fixed;
