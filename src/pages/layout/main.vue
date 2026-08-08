@@ -57,13 +57,13 @@
 
     </view>
 
-    <!-- More Button (☰) - 胶囊风格，与筛选胶囊统一（64×64rpx） -->
+    <!-- More Button (☰) - 与筛选胶囊顶部对齐（同一行） -->
     <view
       v-if="currentIndex === 1"
       class="global-more-btn"
       :class="themeStore.themeClass"
       :style="{
-        top: menuButtonTopRpx + 'rpx',
+        top: (menuButtonTopRpx + 16) + 'rpx',
         position: 'fixed',
         right: '40rpx',
         width: '64rpx',
@@ -109,14 +109,14 @@
       ></view>
     </view>
 
-    <!-- Popover - 从 ⋯ 按钮下方弹出（紧邻按钮） -->
+    <!-- Popover - 从 ⋯ 按钮下方弹出 -->
     <view
       v-if="showMoreMenu"
       class="global-more-popover"
       :class="themeStore.themeClass"
       :style="{
         position: 'fixed',
-        top: (menuButtonTopRpx + 64 + 12) + 'rpx',
+        top: (menuButtonTopRpx + 16 + 64 + 12) + 'rpx',
         right: '40rpx'
       }"
       @click.stop
