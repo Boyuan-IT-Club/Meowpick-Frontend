@@ -2,7 +2,7 @@
   <view class="profile-container" :class="themeStore.themeClass" :style="{ paddingTop: (menuButtonInfo.top + 15) + 'px' }">
 
     <!-- 胶囊遮罩：挡住胶囊上方的内容 -->
-    <view class="capsule-mask" :style="{ height: (menuButtonInfo.top + menuButtonInfo.height + 15) + 'px' }" />
+    <view class="capsule-mask" :class="themeStore.themeClass" :style="{ height: (menuButtonInfo.top + menuButtonInfo.height + 15) + 'px' }" />
 
     <!-- 1. Header Area: Large & Breathable -->
      <view class="header-section" :style="{ marginTop: '20rpx', marginBottom: '40rpx' }">
@@ -382,20 +382,21 @@ const deleteItem = async (item: ListItem) => {
     }
 };
 
-onMounted(async () => { await waitForLogin(); loadData(); });
-
-onShow(() => {
-  // 检查是否首次使用"我的"页面
-  const hasSeenGuide = uni.getStorageSync(GUIDE_KEY);
-  if (!hasSeenGuide) {
-    showGuide.value = true;
-  }
-});
-
 const hideGuide = () => {
   showGuide.value = false;
   uni.setStorageSync(GUIDE_KEY, true);
 };
+
+const checkGuide = () => {
+  const hasSeenGuide = uni.getStorageSync(GUIDE_KEY);
+  if (!hasSeenGuide) {
+    showGuide.value = true;
+  }
+};
+
+onShow(() => {
+  checkGuide();
+});
 </script>
 
 <style scoped lang="scss">
@@ -803,34 +804,34 @@ const hideGuide = () => {
 
 <style lang="scss">
 .profile-container.dark-theme { background-color: #121212 !important; }
-.dark-theme .profile-container .capsule-mask { background-color: #121212; }
-.dark-theme .profile-container .header-section .page-title { color: #e0e0e0; }
-.dark-theme .profile-container .header-section .sub-title { color: #666; }
-.dark-theme .profile-container .header-section .theme-toggle { background-color: #333; }
-.dark-theme .profile-container .sticky-bar { background-color: rgba(18,18,18,0.85) !important; }
-.dark-theme .profile-container .sticky-bar .filter-row { background: #2a2a2a !important; }
-.dark-theme .profile-container .sticky-bar .filter-pill { color: #888; }
-.dark-theme .profile-container .list-container { background-color: #121212 !important; padding: 40rpx 32rpx; }
-.dark-theme .profile-container .list-item { background: transparent; }
-.dark-theme .profile-container .card { background: #1e1e1e !important; border-color: #333; box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.3); }
-.dark-theme .profile-container .card .card-main { background: transparent; }
-.dark-theme .profile-container .card .course-row-top .course-name { color: #e0e0e0; }
-.dark-theme .profile-container .card .course-row-top .time-text { color: #666; }
-.dark-theme .profile-container .card .course-row-middle { background: #2a2a2a !important; }
-.dark-theme .profile-container .card .course-row-middle .course-info-item { color: #999; }
-.dark-theme .profile-container .card .content-text { color: #ccc; }
-.dark-theme .profile-container .card .footer-row { border-color: rgba(255,255,255,0.05); }
-.dark-theme .profile-container .card .footer-row .likes-text { color: #888; }
-.dark-theme .profile-container .card .footer-row .likes-box { background: transparent; }
-.dark-theme .profile-container .card.proposal-card { background: linear-gradient(135deg, #1a0a0e 0%, #1e1e1e 100%) !important; border-color: rgba(178,0,53,0.2); }
-.dark-theme .profile-container .card.proposal-card .course-row-middle { background: rgba(30,30,30,0.5) !important; border-color: rgba(178,0,53,0.1); }
-.dark-theme .profile-container .card.proposal-card .vote-count-box { background: linear-gradient(90deg, #2a1a1e, #1e1e1e); }
-.dark-theme .profile-container .empty-tip text { color: #555; }
-.dark-theme .profile-container .loading-state .loading-text { color: #888; }
-.dark-theme .profile-container .error-state .error-text { color: #ff6b6b; }
-.dark-theme .profile-container .status-badge.status-pending { background: rgba(0, 102, 204, 0.2); color: #4da6ff; border-color: rgba(0, 102, 204, 0.2); }
-.dark-theme .profile-container .status-badge.status-approved { background: rgba(56, 142, 60, 0.2); color: #66bb6a; border-color: rgba(56, 142, 60, 0.2); }
-.dark-theme .profile-container .status-badge.status-rejected { background: rgba(178, 0, 53, 0.2); color: #ff6b8a; border-color: rgba(178, 0, 53, 0.2); }
+.profile-container.dark-theme .capsule-mask { background-color: #121212; }
+.profile-container.dark-theme .header-section .page-title { color: #e0e0e0; }
+.profile-container.dark-theme .header-section .sub-title { color: #666; }
+.profile-container.dark-theme .header-section .theme-toggle { background-color: #333; }
+.profile-container.dark-theme .sticky-bar { background-color: rgba(18,18,18,0.85) !important; }
+.profile-container.dark-theme .sticky-bar .filter-row { background: #2a2a2a !important; }
+.profile-container.dark-theme .sticky-bar .filter-pill { color: #888; }
+.profile-container.dark-theme .list-container { background-color: #121212 !important; padding: 40rpx 32rpx; }
+.profile-container.dark-theme .list-item { background: transparent; }
+.profile-container.dark-theme .card { background: #1e1e1e !important; border-color: #333; box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.3); }
+.profile-container.dark-theme .card .card-main { background: transparent; }
+.profile-container.dark-theme .card .course-row-top .course-name { color: #e0e0e0; }
+.profile-container.dark-theme .card .course-row-top .time-text { color: #666; }
+.profile-container.dark-theme .card .course-row-middle { background: #2a2a2a !important; }
+.profile-container.dark-theme .card .course-row-middle .course-info-item { color: #999; }
+.profile-container.dark-theme .card .content-text { color: #ccc; }
+.profile-container.dark-theme .card .footer-row { border-color: rgba(255,255,255,0.05); }
+.profile-container.dark-theme .card .footer-row .likes-text { color: #888; }
+.profile-container.dark-theme .card .footer-row .likes-box { background: transparent; }
+.profile-container.dark-theme .card.proposal-card { background: linear-gradient(135deg, #1a0a0e 0%, #1e1e1e 100%) !important; border-color: rgba(178,0,53,0.2); }
+.profile-container.dark-theme .card.proposal-card .course-row-middle { background: rgba(30,30,30,0.5) !important; border-color: rgba(178,0,53,0.1); }
+.profile-container.dark-theme .card.proposal-card .vote-count-box { background: linear-gradient(90deg, #2a1a1e, #1e1e1e); }
+.profile-container.dark-theme .empty-tip text { color: #555; }
+.profile-container.dark-theme .loading-state .loading-text { color: #888; }
+.profile-container.dark-theme .error-state .error-text { color: #ff6b6b; }
+.profile-container.dark-theme .status-badge.status-pending { background: rgba(0, 102, 204, 0.2); color: #4da6ff; border-color: rgba(0, 102, 204, 0.2); }
+.profile-container.dark-theme .status-badge.status-approved { background: rgba(56, 142, 60, 0.2); color: #66bb6a; border-color: rgba(56, 142, 60, 0.2); }
+.profile-container.dark-theme .status-badge.status-rejected { background: rgba(178, 0, 53, 0.2); color: #ff6b8a; border-color: rgba(178, 0, 53, 0.2); }
 
 .dark-theme .guide-overlay { background-color: rgba(0,0,0,0.45); }
 .guide-overlay.dark-theme { background-color: rgba(0,0,0,0.45); }
@@ -840,6 +841,11 @@ const hideGuide = () => {
 .guide-overlay.dark-theme .guide-section .section-icon { background-color: #2a2a2a; }
 .guide-overlay.dark-theme .guide-section .section-title { color: #e0e0e0; }
 .guide-overlay.dark-theme .guide-section .section-desc { color: #888; }
+.dark-theme .guide-overlay.dark-theme .guide-footer .start-btn { opacity: 0.85; }
+
+.profile-container.dark-theme .sticky-bar .filter-pill.active { color: #fff; }
+.profile-container.dark-theme .loading-state .loading-spinner { border-color: #333; border-top-color: #b20035; }
+.profile-container.dark-theme .fab-btn { box-shadow: 0 8rpx 30rpx rgba(178, 0, 53, 0.5); }
 
 .guide-overlay {
   position: fixed;

@@ -1,5 +1,5 @@
 <template>
-  <view class="search-result-box" :class="themeStore.themeClass">
+  <view class="search-result-box"> <!-- Removed dynamic class binding to prevent double styles -->
     <!-- Proposal Card Style -->
     <template v-if="isProposal">
       <view class="proposal-card">
@@ -84,7 +84,7 @@
 import { computed, ref, defineProps } from "vue"; // Import computed
 import type { CourseVO, TeacherVO } from "@/api/data-contracts";
 import { Emoji, getTop3List } from "@/utils/tags";
-import { http, useThemeStore } from "@/config";
+import { http } from "@/config";
 
 // Extend type locally
 type MixedResult = CourseVO & {
@@ -392,28 +392,5 @@ const handleLike = async () => {
         border-left: 6rpx solid #eee;
       }
   }
-}
-</style>
-
-<style lang="scss">
-$brand-red: #b20035;
-
-.dark-theme .search-result-box { }
-
-.dark-theme .proposal-card {
-  background: linear-gradient(135deg, #1a0a0e 0%, #1e1e1e 100%);
-  border-color: rgba(178,0,53,0.2);
-  .proposal-name { color: #e0e0e0; }
-  .proposal-info-item { color: #888; }
-  .proposal-row-bottom .proposal-badge { color: $brand-red; }
-}
-
-.dark-theme .search-result {
-  background-color: #1e1e1e;
-  border-color: #333;
-  .course-name { color: #e0e0e0; }
-  .teacher-name-list { color: #aaa; }
-  .course-info-item { color: #888; }
-  .desc { background: #252525; color: #888; border-color: #333; }
 }
 </style>

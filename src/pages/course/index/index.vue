@@ -231,8 +231,8 @@ const goBack = () => {
   }
 }
 
-.dark-theme .background { background-color: #121212; }
-.dark-theme .detail-header { background: #1e1e1e; box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.15); .page-title { color: #e0e0e0; } }
-.dark-theme .comment-section .section-title { color: #e0e0e0; }
+.background.dark-theme { background-color: #121212; }
+.background.dark-theme .detail-header { background: #1e1e1e; box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.15); .page-title { color: #e0e0e0; } }
+.background.dark-theme .comment-section .section-title { color: #e0e0e0; }
 
 </style>

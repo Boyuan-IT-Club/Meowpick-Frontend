@@ -459,12 +459,12 @@ const submit = async () => {
 <style lang="scss">
 $brand-red: #b20035;
 
-.dark-theme .container { background: #121212; }
-.dark-theme .nav-bar { background-color: #1e1e1e; .nav-title { color: #e0e0e0; } }
-.dark-theme .card { background: #1e1e1e; .card-title { color: #e0e0e0; } .label { color: #aaa; } }
-.dark-theme .input { background: #2a2a2a; color: #e0e0e0; }
-.dark-theme .picker-display { background: #2a2a2a; color: #e0e0e0; }
-.dark-theme .tag-item { background: #2a2a2a; color: #aaa; &.active { background: rgba(178,0,53,0.15); color: $brand-red; } }
-.dark-theme .reason-area { background: #2a2a2a; color: #e0e0e0; }
-.dark-theme .word-count { color: #666; }
+.container.dark-theme { background: #121212; }
+.container.dark-theme .nav-bar { background-color: #1e1e1e; .nav-title { color: #e0e0e0; } }
+.container.dark-theme .card { background: #1e1e1e; .card-title { color: #e0e0e0; } .label { color: #aaa; } }
+.container.dark-theme .input { background: #2a2a2a; color: #e0e0e0; }
+.container.dark-theme .picker-display { background: #2a2a2a; color: #e0e0e0; }
+.container.dark-theme .tag-item { background: #2a2a2a; color: #aaa; &.active { background: rgba(178,0,53,0.15); color: $brand-red; } }
+.container.dark-theme .reason-area { background: #2a2a2a; color: #e0e0e0; }
+.container.dark-theme .word-count { color: #666; }
 </style>

@@ -121,7 +121,6 @@ const goBack = () => {
   }
 }
 
-.dark-theme .background,
 .background.dark-theme {
   background-color: #121212;
 }
