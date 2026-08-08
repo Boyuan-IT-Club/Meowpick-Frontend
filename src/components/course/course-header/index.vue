@@ -69,7 +69,10 @@
 </template>
 
 <script setup lang="ts">
+import { useThemeStore } from "@/config";
 import type { DtoCourseVO, DtoTeacherVO } from "@/api/data-contracts";
+
+const themeStore = useThemeStore();
 
 type Props = {
   data: DtoCourseVO;
