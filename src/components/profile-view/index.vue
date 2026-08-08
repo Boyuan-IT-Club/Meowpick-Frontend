@@ -79,31 +79,8 @@
                   <text>提议</text>
               </view>
          </view>
-
-<!-- More Menu Button (⋯) - Now in layout/main.vue for scroll-view compatibility -->
-          <!-- <view class="more-btn-wrapper" @click="toggleMoreMenu"> -->
-          <!--   <view class="more-btn" :class="themeStore.themeClass"> -->
-          <!--      <view class="line"></view> -->
-          <!--      <view class="line"></view> -->
-          <!--      <view class="line"></view> -->
-          <!--   </view> -->
-          <!-- </view> -->
         </view>
-
-        <!-- More Menu Popover - Now in layout/main.vue -->
-        <!-- <view v-if="showMoreMenu" class="more-menu-popover" :class="themeStore.themeClass" @click.stop> -->
-        <!--   <view class="menu-item" @click="handleMenuClick('theme')">切换深色模式</view> -->
-        <!--   <view class="menu-item" @click="handleMenuClick('feed')">提议广场</view> -->
-        <!--   <view class="menu-item" @click="handleMenuClick('nickname')">修改昵称</view> -->
-        <!--   <view class="menu-item" @click="handleMenuClick('feedback')">反馈</view> -->
-        <!-- </view> -->
-
-        <!-- External click mask - Now in layout/main.vue -->
-        <!-- <view v-if="showMoreMenu" class="more-menu-mask" @click="showMoreMenu = false"></view> -->
     </view>
-
-    <!-- Fixed More Button (deprecated: now in layout/main.vue) -->
-    <!-- <view class="fixed-more-btn" ... ></view> -->
 
     <!-- 3. List Content -->
     <view class="list-container">
@@ -722,106 +699,7 @@ onUnmounted(() => {
         }
     }
 
-    /* More Button (⋯) - Hidden (replaced by fixed-more-btn) */
-    .more-btn-wrapper {
-        padding: 16rpx 20rpx;
-        margin-left: auto;
-        display: none;
-    }
-
-    .more-btn {
-        width: 56rpx;
-        height: 56rpx;
-        min-width: 56rpx;
-        min-height: 56rpx;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 8rpx;
-        border-radius: 16rpx;
-        background-color: rgba(255, 255, 255, 0.8);
-        box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.06);
-        transition: background-color 0.15s;
-
-        &:active {
-            background-color: rgba(255, 255, 255, 1);
-        }
-
-        .line {
-            width: 36rpx;
-            height: 5rpx;
-            background-color: #333;
-            border-radius: 3rpx;
-            display: block;
-        }
-    }
-}
-
-/* More Menu Popover (anchored to sticky-bar) */
-.more-menu-popover {
-    position: absolute;
-    top: calc(100% + 12rpx);
-    right: 40rpx;
-    background-color: #ffffff;
-    border-radius: 16rpx;
-    box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.15);
-    padding: 12rpx 0;
-    z-index: 1000;
-    min-width: 240rpx;
-
-    .menu-item {
-        padding: 24rpx 32rpx;
-        font-size: 28rpx;
-        color: #333;
-        transition: background-color 0.1s;
-
-        &:active {
-            background-color: #f5f5f5;
-        }
-    }
-}
-
-/* Mask to close popover on outside tap */
-.more-menu-mask {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 999;
-}
-
-/* Fixed More Button - always visible regardless of scroll-view sticky support */
-.fixed-more-btn {
-    position: fixed;
-    right: 24rpx;
-    width: 64rpx;
-    height: 64rpx;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 8rpx;
-    border-radius: 20rpx;
-    background-color: #ffffff;
-    border: 2rpx solid #b20035;
-    box-shadow: 0 4rpx 16rpx rgba(178, 0, 53, 0.2);
-    z-index: 9999;
-    transition: transform 0.15s, background-color 0.15s;
-
-    &:active {
-        transform: scale(0.92);
-        background-color: #fff5f6;
-    }
-
-    .line {
-        width: 40rpx;
-        height: 6rpx;
-        background-color: #b20035;
-        border-radius: 3rpx;
-        display: block;
-    }
+    /* ⋯ 按钮和 Popover 已迁移至 pages/layout/main.vue（页面层级，避免 scroll-view 嵌套） */
 }
 
 .list-container {
@@ -1324,9 +1202,7 @@ onUnmounted(() => {
 .profile-container.dark-theme .loading-state .loading-spinner { border-color: #333; border-top-color: #b20035; }
 .profile-container.dark-theme .fab-btn { box-shadow: 0 8rpx 30rpx rgba(178, 0, 53, 0.5); }
 
-/* More Menu Dark Mode */
-.profile-container.dark-theme .more-btn-wrapper .more-btn { &:active { background-color: rgba(255, 255, 255, 0.06); } .line { background-color: #e0e0e0; } }
-.fixed-more-btn.dark-theme { background-color: #2a2a2a; border-color: rgba(255, 77, 106, 0.6); box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.4); &:active { background-color: rgba(178, 0, 53, 0.2); } .line { background-color: #ff6b8a; } }
+/* More Menu Dark Mode - 已迁移至 pages/layout/main.vue */
 .more-menu-popover.dark-theme { background-color: #2a2a2a; box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.5); .menu-item { color: #e0e0e0; &:active { background-color: #3a3a3a; } } }
 
 /* Nickname Modal Dark Mode */

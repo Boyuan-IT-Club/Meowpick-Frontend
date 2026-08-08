@@ -1,30 +1,9 @@
 <template>
   <view class="main-container" :class="themeStore.themeClass">
-    <!-- DEBUG: 在 main-container 顶部加一个超显眼的红色横幅 -->
-    <view
-      :style="{
-        position: 'fixed',
-        top: '0px',
-        left: '0px',
-        right: '0px',
-        height: '80px',
-        backgroundColor: '#ff0000',
-        zIndex: 99999,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: '#ffffff',
-        fontSize: '40px',
-        fontWeight: 'bold'
-      }"
-    >
-      🔴 DEBUG V2
-    </view>
-
     <!-- 顶部内容区 -->
-    <swiper 
-      class="content-swiper" 
-      :current="currentIndex" 
+    <swiper
+      class="content-swiper"
+      :current="currentIndex"
       @change="onSwiperChange"
       @transition="onSwiperTransition"
       @animationfinish="onSwiperAnimationFinish"
@@ -78,45 +57,23 @@
 
     </view>
 
-    <!-- DEBUG: Always-visible test marker to verify rendering -->
-    <view
-      class="debug-marker"
-      :style="{
-        position: 'fixed',
-        top: '200px',
-        left: '20px',
-        width: '120px',
-        height: '120px',
-        backgroundColor: '#ff0000',
-        zIndex: 99999,
-        color: '#ffffff',
-        fontSize: '32px',
-        textAlign: 'center',
-        lineHeight: '120px',
-        borderRadius: '20px',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.5)'
-      }"
-    >
-      DEBUG
-    </view>
-
-    <!-- More Button (⋯) - 仅在"我的"页可见，置于页面层级避免 scroll-view 嵌套问题 -->
+    <!-- More Button (☰) - 仅在"我的"页可见，与胶囊右上角对齐 -->
     <view
       v-if="currentIndex === 1"
       class="global-more-btn"
       :class="themeStore.themeClass"
       :style="{
-        top: (menuButtonTop + menuButtonHeight / 2 - 32) + 'px',
+        top: (menuButtonTop + menuButtonHeight / 2 - 28) + 'px',
         position: 'fixed',
         right: '24px',
-        width: '64px',
-        height: '64px',
+        width: '56px',
+        height: '56px',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        gap: '8px',
-        borderRadius: '20px',
+        gap: '6px',
+        borderRadius: '50%',
         backgroundColor: themeStore.mode === 'dark' ? '#2a2a2a' : '#ffffff',
         border: themeStore.mode === 'dark' ? '2px solid #ff6b8a' : '2px solid #b20035',
         boxShadow: themeStore.mode === 'dark' ? '0 6px 20px rgba(0,0,0,0.4)' : '0 6px 20px rgba(178,0,53,0.25)',
@@ -126,28 +83,28 @@
     >
       <view
         :style="{
-          width: '40px',
-          height: '6px',
+          width: '26px',
+          height: '3px',
           backgroundColor: themeStore.mode === 'dark' ? '#ff6b8a' : '#b20035',
-          borderRadius: '3px',
+          borderRadius: '2px',
           display: 'block'
         }"
       ></view>
       <view
         :style="{
-          width: '40px',
-          height: '6px',
+          width: '26px',
+          height: '3px',
           backgroundColor: themeStore.mode === 'dark' ? '#ff6b8a' : '#b20035',
-          borderRadius: '3px',
+          borderRadius: '2px',
           display: 'block'
         }"
       ></view>
       <view
         :style="{
-          width: '40px',
-          height: '6px',
+          width: '26px',
+          height: '3px',
           backgroundColor: themeStore.mode === 'dark' ? '#ff6b8a' : '#b20035',
-          borderRadius: '3px',
+          borderRadius: '2px',
           display: 'block'
         }"
       ></view>
@@ -269,47 +226,17 @@ function onSwiperAnimationFinish(e: any) {
 <style lang="scss">
 /* Global More Button - 在页面层级，脱离 scroll-view 嵌套 */
 .global-more-btn {
-  position: fixed;
-  right: 24rpx;
-  width: 64rpx;
-  height: 64rpx;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 8rpx;
-  border-radius: 20rpx;
-  background-color: #ffffff;
-  border: 2rpx solid #b20035;
-  box-shadow: 0 6rpx 20rpx rgba(178, 0, 53, 0.25);
-  z-index: 9999;
-  transition: transform 0.15s, background-color 0.15s;
+  transition: transform 0.15s, background-color 0.15s, box-shadow 0.15s;
 
   &:active {
     transform: scale(0.92);
-    background-color: #fff5f6;
-  }
-
-  .line {
-    width: 40rpx;
-    height: 6rpx;
-    background-color: #b20035;
-    border-radius: 3rpx;
-    display: block;
+    background-color: #f5f5f5 !important;
   }
 }
 
 .global-more-btn.dark-theme {
-  background-color: #2a2a2a;
-  border-color: rgba(255, 77, 106, 0.6);
-  box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.4);
-
   &:active {
-    background-color: rgba(178, 0, 53, 0.2);
-  }
-
-  .line {
-    background-color: #ff6b8a;
+    background-color: #3a3a3a !important;
   }
 }
 
