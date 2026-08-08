@@ -55,7 +55,7 @@
     </view>
 
     <!-- 首次使用引导弹窗 -->
-    <view v-if="showGuide" class="guide-overlay" @click="hideGuide">
+    <view v-if="showGuide" class="guide-overlay" :class="themeStore.themeClass" @click="hideGuide">
       <view class="guide-content" @click.stop>
         <view class="guide-header">
           <text class="guide-title">欢迎使用选课猫 🎉</text>
@@ -483,6 +483,21 @@ $text-main: #2c2c2c;
 </style>
 
 <style lang="scss">
+.guide-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx;
+  box-sizing: border-box;
+}
+
 .home-view-container.dark-theme .guide-overlay {
   background-color: rgba(0, 0, 0, 0.45);
 }

@@ -1,5 +1,5 @@
 <template>
-  <view class="find-container">
+  <view class="find-container" :class="themeStore.themeClass">
     <!-- 顶部动态 Header -->
     <view 
       class="dynamic-header"
@@ -266,7 +266,8 @@
 import BackBtn from "@/components/common/BackBtn.vue";
 import { onMounted, onUnmounted, ref, watch, computed } from "vue";
 import { onShow } from "@dcloudio/uni-app";
-import { http } from "@/config";
+import { http, useThemeStore } from "@/config";
+const themeStore = useThemeStore();
 import type { DtoSearchHistoryVO, DtoSearchSuggestionsVO } from "@/api/data-contracts";
 import { DEBOUNCE_DELAY_MS, COLLAPSE_SCROLL_THRESHOLD, EXPAND_SCROLL_THRESHOLD, MAX_HISTORY_SIZE, DEFAULT_HOT_RECOMMENDATIONS, EXPANDED_ROW_HEIGHT, HEADER_EXPANDED_PADDING } from "@/utils/constants";
 import type { MixedResult, SuggestItem } from "@/utils/types/search";
@@ -1107,6 +1108,7 @@ $brand-red: #b20035;
     position: relative;
     box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.04);
     transition: all 0.1s;
+    overflow: hidden;
     
     &:active {
         transform: scale(0.94);
@@ -1567,4 +1569,56 @@ $brand-red: #b20035;
     opacity: 0.9;
   }
 }
+
+.find-container.dark-theme {
+  background-color: #121212;
+}
+
+.find-container.dark-theme .dynamic-header {
+  background-color: #1e1e1e;
+  box-shadow: 0 4rpx 10rpx rgba(0,0,0,0.15);
+  &.is-collapsed { background-color: rgba(30,30,30,0.98); box-shadow: 0 1rpx 0 rgba(0,0,0,0.1); }
+}
+
+.find-container.dark-theme .search-input-box {
+  background-color: #2a2a2a !important;
+  border-color: #3a3a3a !important;
+  .search-icon { opacity: 0.6; }
+  .search-input { color: #e0e0e0; }
+  .clear-icon { background-color: #444; .clear-text { color: #ccc; } }
+}
+
+.find-container.dark-theme .content-scroll { background-color: #121212; }
+.find-container.dark-theme .section-header .section-title { color: #e0e0e0; }
+.find-container.dark-theme .clear-history { color: #888; }
+.find-container.dark-theme .history-tags .tag-item { background-color: #2a2a2a; color: #aaa; }
+.find-container.dark-theme .history-tags .no-history { color: #555; }
+.find-container.dark-theme .recommend-list { background-color: #1e1e1e; box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.1); .recommend-item { border-color: #333; .mini-icon { opacity: 0.5; } .recommend-word { color: #e0e0e0; } .recommend-tag { background-color: #333; color: #999; } } }
+.find-container.dark-theme .suggest-section { background-color: #1e1e1e; box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.1); .suggest-item { background-color: #1e1e1e; border-color: #333; .item-name { color: #e0e0e0; } .item-sub { color: #888; } .item-arrow { color: #555; } .mini-search-icon { opacity: 0.5; } } .suggest-item-input { background-color: #1e1e1e; } .item-input-label { color: #ff6b8a; } }
+.find-container.dark-theme .placeholder-style { color: #777; }
+.find-container.dark-theme .result-card-wrapper { background-color: #1e1e1e; box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.1); overflow: hidden; &.proposal-card { background: linear-gradient(135deg, #1e1e1e 0%, #2a1218 100%); border-color: rgba(178,0,53,0.2); } }
+.find-container.dark-theme .filter-bar { background: #1e1e1e; border-color: #333; .filter-item { color: #aaa; &.active { color: #b20035; } } .filter-action { color: #aaa; border-color: #333; } }
+.find-container.dark-theme .dropdown-panel .filter-group .group-title { color: #e0e0e0; }
+.find-container.dark-theme .dropdown-panel .filter-tag { background-color: #333; color: #aaa; &.active { background-color: rgba(178,0,53,0.15); color: #b20035; } }
+.find-container.dark-theme .mask-overlay { background-color: rgba(0,0,0,0.7); }
+.find-container.dark-theme .dropdown-panel { background-color: #2a2a2a; }
+.find-container.dark-theme .dropdown-scroll-content { background-color: #2a2a2a; }
+.find-container.dark-theme .dropdown-footer { border-color: #3a3a3a; background-color: #2a2a2a; .btn-reset { background-color: #333; color: #aaa; } }
+.find-container.dark-theme .filter-group .group-title { color: #e0e0e0; }
+.find-container.dark-theme .filter-tag { background-color: #333; color: #aaa; &.active { background-color: rgba(178,0,53,0.15); } }
+.find-container.dark-theme .bottom { color: #555; }
+.find-container.dark-theme .transition-text { color: #666; }
+.find-container.dark-theme .show-proposals-tip text { color: #b20035; }
+.find-container.dark-theme .new-card { box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.3); }
+.find-container.dark-theme .loading-section .loading-spinner { border-color: rgba(178,0,53,0.2); border-top-color: #b20035; }
+.find-container.dark-theme .loading-section .loading-text { color: #666; }
+.find-container.dark-theme .search-guide-banner { background-color: #2a2518; color: #c9a227; }
+.find-container.dark-theme .group-title { color: #888; }
+.find-container.dark-theme .help-overlay { background-color: rgba(0,0,0,0.8); }
+.find-container.dark-theme .help-content { background-color: #2a2a2a; }
+.find-container.dark-theme .help-header .help-title { color: #e0e0e0; }
+.find-container.dark-theme .help-item-title { color: #e0e0e0; }
+.find-container.dark-theme .help-item-desc { color: #888; }
+.find-container.dark-theme .empty-section { background-color: #121212; }
+.find-container.dark-theme .clear-history { color: #666; }
 </style>

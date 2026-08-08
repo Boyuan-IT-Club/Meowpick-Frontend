@@ -1,5 +1,5 @@
 <template>
-  <view class="search-result-box"> <!-- Removed dynamic class binding to prevent double styles -->
+  <view class="search-result-box" :class="themeStore.themeClass">
     <!-- Proposal Card Style -->
     <template v-if="isProposal">
       <view class="proposal-card">
@@ -84,7 +84,8 @@
 import { computed, ref, defineProps } from "vue"; // Import computed
 import type { CourseVO, TeacherVO } from "@/api/data-contracts";
 import { Emoji, getTop3List } from "@/utils/tags";
-import { http } from "@/config";
+import { http, useThemeStore } from "@/config";
+const themeStore = useThemeStore();
 
 // Extend type locally
 type MixedResult = CourseVO & {
@@ -267,6 +268,7 @@ const handleLike = async () => {
   flex-direction: column;
   border: 1px solid #f0f0f0;
   transition: all 0.12s ease;
+  overflow: hidden;
 
   &:active {
     transform: scale(0.96);
@@ -392,5 +394,45 @@ const handleLike = async () => {
         border-left: 6rpx solid #eee;
       }
   }
+}
+</style>
+
+<style lang="scss">
+$brand-red: #b20035;
+
+.search-result-box.dark-theme {
+  background-color: #121212;
+}
+
+.search-result-box.dark-theme .proposal-card {
+  background: linear-gradient(135deg, #1e1e1e 0%, #2a1a1e 100%) !important;
+  border: 1px solid rgba(178,0,53,0.2) !important;
+  border-radius: 24rpx !important;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.15) !important;
+  .proposal-name { color: #e0e0e0 !important; }
+  .proposal-info-item { color: #888 !important; .info-icon { opacity: 0.6 !important; } }
+  .proposal-row-middle { background: rgba(30,30,30,0.9) !important; border-color: rgba(178,0,53,0.1) !important; border-radius: 16rpx !important; }
+  .proposal-row-bottom { border-color: rgba(178,0,53,0.2) !important; }
+  .proposal-badge { color: $brand-red !important; }
+  .vote-count-box { background: linear-gradient(90deg, #2a1a1e, #1e1e1e) !important; }
+  .vote-count-box .vote-num { color: $brand-red !important; }
+  .vote-count-box .vote-label { color: $brand-red !important; }
+  .vote-count-box.is-liked { background: linear-gradient(90deg, #b20035, #ff4d6a) !important; }
+  .vote-count-box.is-liked .vote-icon { opacity: 1 !important; }
+  .vote-count-box.is-liked .vote-num { color: #fff !important; }
+  .vote-count-box.is-liked .vote-label { color: #fff !important; }
+}
+
+.search-result-box.dark-theme .search-result {
+  background-color: #1e1e1e !important;
+  border-color: #333 !important;
+  border-radius: 24rpx !important;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.1) !important;
+  .course-name { color: #d5d5d5 !important; }
+  .course-category { color: #7fc4ff !important; background: rgba(0, 102, 204, 0.15) !important; }
+  .teacher-name-list { color: #b0b0b0 !important; }
+  .course-info-item { color: #999 !important; }
+  .course-row-bottom { background: #2a2a2a !important; border-radius: 12rpx !important; .tag-item { background: #333 !important; border-color: #444 !important; .emoji-text { color: #ccc !important; } .tag-count { color: $brand-red !important; } } }
+  .desc { background: #252525 !important; color: #999 !important; border-color: #333 !important; }
 }
 </style>
