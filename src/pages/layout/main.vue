@@ -57,78 +57,10 @@
 
     </view>
 
-    <!-- More Button (☰) - 与筛选胶囊顶部对齐（同一行） -->
-    <view
-      v-if="currentIndex === 1"
-      class="global-more-btn"
-      :class="themeStore.themeClass"
-      :style="{
-        top: (menuButtonTopRpx + 16) + 'rpx',
-        position: 'fixed',
-        right: '40rpx',
-        width: '64rpx',
-        height: '64rpx',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        gap: '7rpx',
-        borderRadius: '100rpx',
-        backgroundColor: themeStore.mode === 'dark' ? '#2a2a2a' : '#ffffff',
-        boxShadow: themeStore.mode === 'dark' ? '0 6rpx 20rpx rgba(0,0,0,0.3)' : '0 8rpx 24rpx rgba(0,0,0,0.06)',
-        zIndex: 9999
-      }"
-      @click="toggleMoreMenu"
-    >
-      <view
-        :style="{
-          width: '28rpx',
-          height: '3rpx',
-          backgroundColor: themeStore.mode === 'dark' ? '#e0e0e0' : '#666666',
-          borderRadius: '2rpx',
-          display: 'block'
-        }"
-      ></view>
-      <view
-        :style="{
-          width: '28rpx',
-          height: '3rpx',
-          backgroundColor: themeStore.mode === 'dark' ? '#e0e0e0' : '#666666',
-          borderRadius: '2rpx',
-          display: 'block'
-        }"
-      ></view>
-      <view
-        :style="{
-          width: '28rpx',
-          height: '3rpx',
-          backgroundColor: themeStore.mode === 'dark' ? '#e0e0e0' : '#666666',
-          borderRadius: '2rpx',
-          display: 'block'
-        }"
-      ></view>
-    </view>
+    <!-- More Button (☰) - 移至 profile-view 内部，与筛选胶囊同步滚动 -->
 
-    <!-- Popover - 从 ⋯ 按钮下方弹出 -->
-    <view
-      v-if="showMoreMenu"
-      class="global-more-popover"
-      :class="themeStore.themeClass"
-      :style="{
-        position: 'fixed',
-        top: (menuButtonTopRpx + 16 + 64 + 12) + 'rpx',
-        right: '40rpx'
-      }"
-      @click.stop
-    >
-      <view class="menu-item" @click="handleMenuClick('theme')">切换深色模式</view>
-      <view class="menu-item" @click="handleMenuClick('feed')">提议广场</view>
-      <view class="menu-item" @click="handleMenuClick('nickname')">修改昵称</view>
-      <view class="menu-item" @click="handleMenuClick('feedback')">反馈</view>
-    </view>
+    <!-- Popover 由 profile-view 触发 -->
 
-    <!-- Popover Mask -->
-    <view v-if="showMoreMenu" class="global-more-mask" @click="showMoreMenu = false"></view>
   </view>
 </template>
 
@@ -163,30 +95,8 @@ try {
   menuButtonTopRpx = (sysInfoForMenu.statusBarHeight ? sysInfoForMenu.statusBarHeight + 4 : 48) * PX_TO_RPX;
 }
 
-// 转发点击事件给 ProfileView
-const showMoreMenu = ref(false);
-
-const toggleMoreMenu = () => {
-  showMoreMenu.value = !showMoreMenu.value;
-};
-
-const handleMenuClick = (action: 'theme' | 'feed' | 'nickname' | 'feedback') => {
-  showMoreMenu.value = false;
-  switch (action) {
-    case 'theme':
-      themeStore.toggleTheme();
-      break;
-    case 'feed':
-      uni.navigateTo({ url: '/pages/proposal/feed/feed' });
-      break;
-    case 'nickname':
-      uni.$emit('open-nickname-modal');
-      break;
-    case 'feedback':
-      uni.$emit('open-feedback-modal');
-      break;
-  }
-};
+// ⋯ 按钮已迁回 profile-view 内部，与筛选胶囊同步滚动
+// showMoreMenu / toggleMoreMenu / handleMenuClick 在 profile-view 中定义
 
 onLoad(() => {
   const sysInfo = uni.getSystemInfoSync();

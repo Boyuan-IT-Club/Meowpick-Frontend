@@ -79,7 +79,29 @@
                   <text>提议</text>
               </view>
          </view>
-        </view>
+
+         <!-- More Button (☰) - 位于筛选胶囊右侧同一行 -->
+         <view
+           class="more-btn-pill"
+           :class="themeStore.themeClass"
+           @click="toggleMoreMenu"
+         >
+            <view class="line"></view>
+            <view class="line"></view>
+            <view class="line"></view>
+         </view>
+
+         <!-- Popover -->
+         <view v-if="showMoreMenu" class="more-menu-popover" :class="themeStore.themeClass" @click.stop>
+            <view class="menu-item" @click="handleMenuClick('theme')">切换深色模式</view>
+            <view class="menu-item" @click="handleMenuClick('feed')">提议广场</view>
+            <view class="menu-item" @click="handleMenuClick('nickname')">修改昵称</view>
+            <view class="menu-item" @click="handleMenuClick('feedback')">反馈</view>
+         </view>
+
+         <!-- External click mask -->
+         <view v-if="showMoreMenu" class="more-menu-mask" @click="showMoreMenu = false"></view>
+       </view>
     </view>
 
     <!-- 3. List Content -->
@@ -356,6 +378,31 @@ const filteredList = computed(() => {
 const showNicknameModal = ref(false);
 const showFeedbackModal = ref(false);
 
+// More Menu (⋯ Popover)
+const showMoreMenu = ref(false);
+
+const toggleMoreMenu = () => {
+    showMoreMenu.value = !showMoreMenu.value;
+};
+
+const handleMenuClick = (action: 'theme' | 'feed' | 'nickname' | 'feedback') => {
+    showMoreMenu.value = false;
+    switch (action) {
+        case 'theme':
+            themeStore.toggleTheme();
+            break;
+        case 'feed':
+            uni.navigateTo({ url: '/pages/proposal/feed/feed' });
+            break;
+        case 'nickname':
+            openNicknameModal();
+            break;
+        case 'feedback':
+            openFeedbackModal();
+            break;
+    }
+};
+
 // Nickname Modal
 const newNickname = ref('');
 const submittingNickname = ref(false);
@@ -545,14 +592,6 @@ const checkGuide = () => {
 
 onShow(() => {
   checkGuide();
-  // 监听来自 layout 的弹窗触发事件
-  uni.$on('open-nickname-modal', openNicknameModal);
-  uni.$on('open-feedback-modal', openFeedbackModal);
-});
-
-onUnmounted(() => {
-  uni.$off('open-nickname-modal', openNicknameModal);
-  uni.$off('open-feedback-modal', openFeedbackModal);
 });
 </script>
 
@@ -699,7 +738,68 @@ onUnmounted(() => {
         }
     }
 
-    /* ⋯ 按钮和 Popover 已迁移至 pages/layout/main.vue（页面层级，避免 scroll-view 嵌套） */
+    /* ⋯ 按钮 - 与筛选胶囊同一行，胶囊风格完全一致 */
+    .more-btn-pill {
+        width: 64rpx;
+        height: 64rpx;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 7rpx;
+        background: #fff;
+        border-radius: 100rpx;
+        box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.06);
+        transition: transform 0.12s, box-shadow 0.12s;
+        flex-shrink: 0;
+
+        &:active {
+            transform: scale(0.96);
+        }
+
+        .line {
+            width: 28rpx;
+            height: 3rpx;
+            background-color: #666;
+            border-radius: 2rpx;
+            display: block;
+        }
+    }
+
+    /* Popover - 从 ⋯ 按钮下方弹出 */
+    .more-menu-popover {
+        position: absolute;
+        top: calc(100% + 12rpx);
+        right: 0;
+        background-color: #ffffff;
+        border-radius: 24rpx;
+        box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.15);
+        padding: 12rpx 0;
+        z-index: 1000;
+        min-width: 240rpx;
+        overflow: hidden;
+
+        .menu-item {
+            padding: 24rpx 32rpx;
+            font-size: 28rpx;
+            color: #333;
+            transition: background-color 0.1s;
+
+            &:active {
+                background-color: #f5f5f5;
+            }
+        }
+    }
+
+    /* Mask to close popover on outside tap */
+    .more-menu-mask {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 999;
+    }
 }
 
 .list-container {
@@ -1202,7 +1302,9 @@ onUnmounted(() => {
 .profile-container.dark-theme .loading-state .loading-spinner { border-color: #333; border-top-color: #b20035; }
 .profile-container.dark-theme .fab-btn { box-shadow: 0 8rpx 30rpx rgba(178, 0, 53, 0.5); }
 
-/* More Menu Dark Mode - 已迁移至 pages/layout/main.vue */
+/* More Menu Dark Mode */
+.more-btn-pill.dark-theme { background-color: #2a2a2a; box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.3); .line { background-color: #e0e0e0; } }
+.more-menu-popover.dark-theme { background-color: #2a2a2a; box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.5); .menu-item { color: #e0e0e0; &:active { background-color: #3a3a3a; } } }
 .more-menu-popover.dark-theme { background-color: #2a2a2a; box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.5); .menu-item { color: #e0e0e0; &:active { background-color: #3a3a3a; } } }
 
 /* Nickname Modal Dark Mode */
