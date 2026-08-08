@@ -12,7 +12,7 @@
                 <BackBtn />
             </view>
             <view class="title-wrapper" :class="themeStore.themeClass">
-                <text class="page-title" :style="{ color: themeStore.mode === 'dark' ? '#e0e0e0' : '#333' }">版本更新日志</text>
+                <text class="page-title">版本更新日志</text>
             </view>
         </view>
     </view>
