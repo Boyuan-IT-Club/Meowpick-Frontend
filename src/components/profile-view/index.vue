@@ -230,6 +230,42 @@
           </view>
        </view>
      </view>
+
+     <!-- Feedback Modal -->
+     <view v-if="showFeedbackModal" class="modal-overlay" @click="closeFeedbackModal">
+       <view class="modal-card feedback-card" :class="themeStore.themeClass" @click.stop>
+          <view class="modal-header">
+             <text class="modal-title">反馈</text>
+             <view class="modal-close" @click="closeFeedbackModal">×</view>
+          </view>
+
+          <view class="modal-body">
+             <!-- QQ群反馈 -->
+             <view class="feedback-section">
+                <text class="feedback-label">QQ群反馈</text>
+                <view class="feedback-value">群号：{{ CONTACT_INFO.qqGroup.number }}</view>
+                <view class="feedback-actions">
+                   <view class="btn-secondary" @click="copyQQNumber">复制群号</view>
+                   <view class="btn-primary" @click="joinQQGroup">加群</view>
+                </view>
+             </view>
+
+             <!-- 邮件反馈 -->
+             <view class="feedback-section">
+                <text class="feedback-label">邮件反馈</text>
+                <view class="feedback-value">{{ CONTACT_INFO.email.address }}</view>
+                <view class="feedback-actions">
+                   <view class="btn-secondary" @click="copyEmail">复制邮箱</view>
+                   <view class="btn-primary" @click="sendEmail">发邮件</view>
+                </view>
+             </view>
+          </view>
+
+          <view class="modal-footer modal-footer-single">
+             <view class="btn-cancel-full" @click="closeFeedbackModal">关闭</view>
+          </view>
+       </view>
+     </view>
 </template>
 
 <script setup lang="ts">
@@ -239,6 +275,7 @@ import { waitForLogin } from '@/utils/init';
 import { http, useThemeStore } from '@/config';
 const themeStore = useThemeStore();
 import { HISTORY_PAGE_SIZE } from '@/utils/constants';
+import { CONTACT_INFO, buildMailtoLink, copyToClipboard } from '@/utils/contact-info';
 
 // System Info Logic for Header Alignment
 const sysInfo = uni.getSystemInfoSync();
@@ -357,7 +394,7 @@ const handleMenuClick = (action: 'theme' | 'feed' | 'nickname' | 'feedback') => 
             openNicknameModal();
             break;
         case 'feedback':
-            showFeedbackModal.value = true;
+            openFeedbackModal();
             break;
     }
 };
@@ -405,6 +442,37 @@ const confirmNicknameChange = async () => {
     } finally {
         submittingNickname.value = false;
     }
+};
+
+// Feedback Modal
+const openFeedbackModal = () => {
+    showFeedbackModal.value = true;
+};
+
+const closeFeedbackModal = () => {
+    showFeedbackModal.value = false;
+};
+
+const copyQQNumber = () => copyToClipboard(CONTACT_INFO.qqGroup.number, '已复制群号');
+const copyEmail = () => copyToClipboard(CONTACT_INFO.email.address, '已复制邮箱');
+
+const joinQQGroup = () => {
+    uni.setClipboardData({
+        data: CONTACT_INFO.qqGroup.joinLink,
+        success: () => {
+            uni.showModal({
+                title: '提示',
+                content: '加群链接已复制，请在浏览器中打开',
+                showCancel: false,
+                confirmText: '我知道了'
+            });
+        }
+    });
+};
+
+const sendEmail = () => {
+    // 微信小程序内 mailto 无效，降级为复制邮箱
+    copyToClipboard(CONTACT_INFO.email.address, '邮箱已复制，请手动发送');
 };
 
 // Actions
@@ -1107,6 +1175,83 @@ onShow(() => {
         }
     }
 }
+
+/* Feedback Modal Styles */
+.feedback-card {
+    .modal-body {
+        padding: 24rpx 32rpx;
+    }
+
+    .feedback-section {
+        margin-bottom: 24rpx;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    .feedback-label {
+        font-size: 26rpx;
+        color: #666;
+        margin-bottom: 12rpx;
+        display: block;
+        font-weight: 500;
+    }
+
+    .feedback-value {
+        font-size: 28rpx;
+        color: #333;
+        background-color: #f5f5f5;
+        padding: 20rpx 24rpx;
+        border-radius: 12rpx;
+        margin-bottom: 16rpx;
+        font-family: monospace;
+    }
+
+    .feedback-actions {
+        display: flex;
+        gap: 16rpx;
+    }
+
+    .btn-secondary,
+    .btn-primary {
+        flex: 1;
+        height: 72rpx;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26rpx;
+        border-radius: 36rpx;
+        transition: opacity 0.15s;
+
+        &:active {
+            opacity: 0.7;
+        }
+    }
+
+    .btn-secondary {
+        background-color: #f5f5f5;
+        color: #666;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #b20035, #ff4d6a);
+        color: #fff;
+        font-weight: 500;
+    }
+}
+
+.modal-footer-single {
+    .btn-cancel-full {
+        flex: 1;
+        height: 96rpx;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30rpx;
+        color: #666;
+    }
+}
 </style>
 
 <style lang="scss">
@@ -1163,6 +1308,9 @@ onShow(() => {
 .modal-card.dark-theme .modal-header { border-color: #333; .modal-title { color: #e0e0e0; } .modal-close { color: #888; } }
 .modal-card.dark-theme .modal-body { .field-label { color: #aaa; } .nickname-input { background-color: #2a2a2a; color: #e0e0e0; } }
 .modal-card.dark-theme .modal-footer { border-color: #333; .btn-confirm { border-color: #333; } }
+
+/* Feedback Modal Dark Mode */
+.modal-card.dark-theme.feedback-card { .feedback-label { color: #aaa; } .feedback-value { background-color: #2a2a2a; color: #e0e0e0; } .btn-secondary { background-color: #2a2a2a; color: #aaa; } }
 
 .guide-overlay {
   position: fixed;
