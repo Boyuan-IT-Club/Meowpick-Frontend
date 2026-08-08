@@ -334,10 +334,10 @@ $bg-gradient-top: #fff5f5;
 <style lang="scss">
 $brand-red: #b20035;
 
-.dark-theme .proposal-detail-page { background-color: #121212; }
-.dark-theme .detail-header { background: linear-gradient(to bottom, #1a0a0e, #1e1e1e); .page-title { color: #e0e0e0; } .back-btn-wrapper { color: #e0e0e0; } }
-.dark-theme .proposal-card { background: #1e1e1e; box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.15); .proposal-title { color: #e0e0e0; } .proposal-date { color: #666; } .proposal-reason-box { background-color: #2a2a2a; .reason-content { color: #ccc; } } }
-.dark-theme .proposal-info-row .info-value { color: #ccc; }
-.dark-theme .vote-info { .vote-count-big { color: $brand-red; } .vote-text { color: #888; } }
-.dark-theme .vote-btn.is-voted { background: #333; color: #888; }
+.proposal-detail-page.dark-theme { background-color: #121212; }
+.proposal-detail-page.dark-theme .detail-header { background: linear-gradient(to bottom, #1a0a0e, #1e1e1e); .page-title { color: #e0e0e0; } .back-btn-wrapper { color: #e0e0e0; } }
+.proposal-detail-page.dark-theme .proposal-card { background: #1e1e1e; box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.15); .proposal-title { color: #e0e0e0; } .proposal-date { color: #666; } .proposal-reason-box { background-color: #2a2a2a; .reason-content { color: #ccc; } } }
+.proposal-detail-page.dark-theme .proposal-info-row .info-value { color: #ccc; }
+.proposal-detail-page.dark-theme .vote-info { .vote-count-big { color: $brand-red; } .vote-text { color: #888; } }
+.proposal-detail-page.dark-theme .vote-btn.is-voted { background: #333; color: #888; }
 </style>

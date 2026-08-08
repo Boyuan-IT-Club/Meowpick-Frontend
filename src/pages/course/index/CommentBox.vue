@@ -154,5 +154,5 @@ const textTags = (tags: string[]) => {
 </style>
 
 <style lang="scss">
-.dark-theme .comment-box { background-color: #1e1e1e; .ctag { background-color: #2a2a2a; .txt { color: #aaa; } } .content-section { color: #ccc; } .date-str { color: #666; } .like-block .count { color: #888; } }
+.comment-box.dark-theme { background-color: #1e1e1e; .ctag { background-color: #2a2a2a; .txt { color: #aaa; } } .content-section { color: #ccc; } .date-str { color: #666; } .like-block .count { color: #888; } }
 </style>

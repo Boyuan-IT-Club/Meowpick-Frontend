@@ -376,11 +376,11 @@ const commit = async () => {
 <style lang="scss">
 $brand-red: #b20035;
 
-.dark-theme .comment-publish-container { background-color: #121212; }
-.dark-theme .nav-bar { background-color: #121212; .nav-title { color: #e0e0e0; } }
-.dark-theme .section-card { background: #1e1e1e; .title { color: #e0e0e0; } }
-.dark-theme .tag-item { background: #2a2a2a; .tag-text { color: #aaa; } &.active { background: rgba(178,0,53,0.15); .tag-text { color: $brand-red; } } }
-.dark-theme .input-box .comment-input { background: #2a2a2a; color: #e0e0e0; }
-.dark-theme .word-count { color: #666; }
-.dark-theme .loading-overlay { background-color: rgba(0,0,0,0.7); .loading-spinner { border-color: rgba(255,255,255,0.15); border-top-color: #fff; } .loading-text { color: #ddd; } }
+.comment-publish-container.dark-theme { background-color: #121212; }
+.comment-publish-container.dark-theme .nav-bar { background-color: #1e1e1e; .nav-title { color: #e0e0e0; } }
+.comment-publish-container.dark-theme .section-card { background: #1e1e1e; .title { color: #e0e0e0; } }
+.comment-publish-container.dark-theme .tag-item { background: #2a2a2a; .tag-text { color: #aaa; } &.active { background: rgba(178,0,53,0.15); .tag-text { color: $brand-red; } } }
+.comment-publish-container.dark-theme .input-box .comment-input { background: #2a2a2a; color: #e0e0e0; }
+.comment-publish-container.dark-theme .word-count { color: #666; }
+.comment-publish-container.dark-theme .loading-overlay { background-color: rgba(0,0,0,0.7); .loading-spinner { border-color: rgba(255,255,255,0.15); border-top-color: #fff; } .loading-text { color: #ddd; } }
 </style>
