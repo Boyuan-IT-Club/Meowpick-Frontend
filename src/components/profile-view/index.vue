@@ -80,29 +80,29 @@
               </view>
          </view>
 
-         <!-- More Button (☰) - 位于筛选胶囊右侧同一行 -->
-         <view
-           class="more-btn-pill"
-           :class="themeStore.themeClass"
-           @click="toggleMoreMenu"
-         >
-            <view class="line"></view>
-            <view class="line"></view>
-            <view class="line"></view>
-         </view>
+<!-- More Button (☰) - 位于筛选胶囊右侧同一行 -->
+          <view
+            class="more-btn-pill"
+            :class="themeStore.themeClass"
+            @click="toggleMoreMenu"
+          >
+             <view class="line"></view>
+             <view class="line"></view>
+             <view class="line"></view>
 
-         <!-- Popover -->
-         <view v-if="showMoreMenu" class="more-menu-popover" :class="themeStore.themeClass" @click.stop>
-            <view class="menu-item" @click="handleMenuClick('theme')">切换深色模式</view>
-            <view class="menu-item" @click="handleMenuClick('feed')">提议广场</view>
-            <view class="menu-item" @click="handleMenuClick('nickname')">修改昵称</view>
-            <view class="menu-item" @click="handleMenuClick('feedback')">反馈</view>
-         </view>
+             <!-- Popover - 作为 ⋯ 按钮子元素，right:0 严格对齐按钮右边缘 -->
+             <view v-if="showMoreMenu" class="more-menu-popover" :class="themeStore.themeClass" @click.stop>
+                <view class="menu-item" @click="handleMenuClick('theme')">切换深色模式</view>
+                <view class="menu-item" @click="handleMenuClick('feed')">提议广场</view>
+                <view class="menu-item" @click="handleMenuClick('nickname')">修改昵称</view>
+                <view class="menu-item" @click="handleMenuClick('feedback')">反馈</view>
+             </view>
+          </view>
 
-         <!-- External click mask -->
-         <view v-if="showMoreMenu" class="more-menu-mask" @click="showMoreMenu = false"></view>
-       </view>
-    </view>
+          <!-- External click mask -->
+          <view v-if="showMoreMenu" class="more-menu-mask" @click="showMoreMenu = false"></view>
+        </view>
+     </view>
 
     <!-- 3. List Content -->
     <view class="list-container">
@@ -740,6 +740,7 @@ onShow(() => {
 
     /* ⋯ 按钮 - 与筛选胶囊同一行，胶囊风格完全一致 */
     .more-btn-pill {
+        position: relative; /* 让 popover 相对此按钮定位 */
         width: 64rpx;
         height: 64rpx;
         display: flex;
@@ -766,7 +767,7 @@ onShow(() => {
         }
     }
 
-    /* Popover - 从 ⋯ 按钮下方弹出 */
+    /* Popover - 紧贴 ⋯ 按钮右下角 */
     .more-menu-popover {
         position: absolute;
         top: calc(100% + 12rpx);
@@ -1304,7 +1305,6 @@ onShow(() => {
 
 /* More Menu Dark Mode */
 .more-btn-pill.dark-theme { background-color: #2a2a2a; box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.3); .line { background-color: #e0e0e0; } }
-.more-menu-popover.dark-theme { background-color: #2a2a2a; box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.5); .menu-item { color: #e0e0e0; &:active { background-color: #3a3a3a; } } }
 .more-menu-popover.dark-theme { background-color: #2a2a2a; box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.5); .menu-item { color: #e0e0e0; &:active { background-color: #3a3a3a; } } }
 
 /* Nickname Modal Dark Mode */
