@@ -1,5 +1,26 @@
 <template>
   <view class="main-container" :class="themeStore.themeClass">
+    <!-- DEBUG: 在 main-container 顶部加一个超显眼的红色横幅 -->
+    <view
+      :style="{
+        position: 'fixed',
+        top: '0px',
+        left: '0px',
+        right: '0px',
+        height: '80px',
+        backgroundColor: '#ff0000',
+        zIndex: 99999,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#ffffff',
+        fontSize: '40px',
+        fontWeight: 'bold'
+      }"
+    >
+      🔴 DEBUG V2
+    </view>
+
     <!-- 顶部内容区 -->
     <swiper 
       class="content-swiper" 
