@@ -9,9 +9,11 @@
 <view class="title-wrapper">
           <text class="page-title">我的发布</text>
           <text class="sub-title">{{ loading ? '加载中...' : (filteredList.length + ' 条记录') }}</text>
-          <view class="theme-toggle" @click="themeStore.toggleTheme()">
-            <text>{{ themeStore.mode === 'dark' ? '🌙' : '☀️' }}</text>
-          </view>
+          <!-- @deprecated: 深色模式切换按钮已迁移至 sticky-bar 右侧的"更多"菜单中 -->
+          <!-- 保留代码方便回滚，UI 不再渲染 -->
+          <!-- <view class="theme-toggle" @click="themeStore.toggleTheme()"> -->
+          <!--   <text>{{ themeStore.mode === 'dark' ? '🌙' : '☀️' }}</text> -->
+          <!-- </view> -->
        </view>
     </view>
 
