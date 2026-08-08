@@ -58,11 +58,11 @@ import { useCourse } from "./index";
 import CommentList from "@/pages/course/index/CommentList.vue";
 import { format as formatTime } from "./utils";
 import CourseHeader from "@/components/course/course-header/index.vue";
-import { useThemeStore } from "@/config"; 
+import { useThemeStore } from "@/config";
 
 // 1. 获取胶囊位置，用于对齐返回按钮
 const sysInfo = uni.getSystemInfoSync();
-let menuButtonInfo = { 
+let menuButtonInfo = {
     top: sysInfo.statusBarHeight ? sysInfo.statusBarHeight + 4 : 48,
     height: 32,
 };
@@ -76,7 +76,6 @@ try {
     }
 } catch (e) {}
 
-import { useThemeStore } from "@/config";
 const themeStore = useThemeStore();
 
 let course_id = "";
@@ -234,5 +233,8 @@ const goBack = () => {
 .background.dark-theme { background-color: #121212; }
 .background.dark-theme .detail-header { background: #1e1e1e; box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.15); .page-title { color: #e0e0e0; } }
 .background.dark-theme .comment-section .section-title { color: #e0e0e0; }
+.background.dark-theme .comment-section .section-subtitle { color: #888; }
+.background.dark-theme .comment-section .header-icon { opacity: 0.85; }
+.background.dark-theme .fab-btn { box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.5); }
 
 </style>
