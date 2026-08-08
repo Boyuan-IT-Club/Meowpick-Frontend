@@ -57,22 +57,22 @@
 
     </view>
 
-    <!-- More Button (☰) - 胶囊风格，与筛选胶囊统一 -->
+    <!-- More Button (☰) - 胶囊风格，与筛选胶囊统一（64×64rpx） -->
     <view
       v-if="currentIndex === 1"
       class="global-more-btn"
       :class="themeStore.themeClass"
       :style="{
-        top: (menuButtonTop + menuButtonHeight / 2 - 32) + 'px',
+        top: menuButtonTopRpx + 'rpx',
         position: 'fixed',
-        right: '24px',
-        width: '64px',
-        height: '64px',
+        right: '40rpx',
+        width: '64rpx',
+        height: '64rpx',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        gap: '7px',
+        gap: '7rpx',
         borderRadius: '100rpx',
         backgroundColor: themeStore.mode === 'dark' ? '#2a2a2a' : '#ffffff',
         boxShadow: themeStore.mode === 'dark' ? '0 6rpx 20rpx rgba(0,0,0,0.3)' : '0 8rpx 24rpx rgba(0,0,0,0.06)',
@@ -82,28 +82,28 @@
     >
       <view
         :style="{
-          width: '28px',
-          height: '3px',
+          width: '28rpx',
+          height: '3rpx',
           backgroundColor: themeStore.mode === 'dark' ? '#e0e0e0' : '#666666',
-          borderRadius: '2px',
+          borderRadius: '2rpx',
           display: 'block'
         }"
       ></view>
       <view
         :style="{
-          width: '28px',
-          height: '3px',
+          width: '28rpx',
+          height: '3rpx',
           backgroundColor: themeStore.mode === 'dark' ? '#e0e0e0' : '#666666',
-          borderRadius: '2px',
+          borderRadius: '2rpx',
           display: 'block'
         }"
       ></view>
       <view
         :style="{
-          width: '28px',
-          height: '3px',
+          width: '28rpx',
+          height: '3rpx',
           backgroundColor: themeStore.mode === 'dark' ? '#e0e0e0' : '#666666',
-          borderRadius: '2px',
+          borderRadius: '2rpx',
           display: 'block'
         }"
       ></view>
@@ -116,8 +116,8 @@
       :class="themeStore.themeClass"
       :style="{
         position: 'fixed',
-        top: (menuButtonTop + menuButtonHeight / 2 + 12) + 'px',
-        right: '24px'
+        top: (menuButtonTopRpx + 64 + 12) + 'rpx',
+        right: '40rpx'
       }"
       @click.stop
     >
@@ -143,21 +143,24 @@ const themeStore = useThemeStore();
 const currentIndex = ref(0);
 const indicatorLeft = ref(25); // 初始值 25%
 let windowWidth = 0;
-let menuButtonTop = 0;
-let menuButtonHeight = 32;
+let menuButtonTopRpx = 0; // rpx 单位
+let menuButtonHeightRpx = 0; // rpx 单位
 
-// 胶囊位置计算
+// 胶囊位置计算（px → rpx 转换，确保单位统一）
 const sysInfoForMenu = uni.getSystemInfoSync();
+const screenWidth = sysInfoForMenu.windowWidth || 375;
+const PX_TO_RPX = 750 / screenWidth; // px → rpx 转换比例
+
 try {
   const res = uni.getMenuButtonBoundingClientRect();
   if (res && res.top) {
-    menuButtonTop = res.top;
-    menuButtonHeight = res.height;
+    menuButtonTopRpx = res.top * PX_TO_RPX;
+    menuButtonHeightRpx = res.height * PX_TO_RPX;
   } else {
-    menuButtonTop = sysInfoForMenu.statusBarHeight ? sysInfoForMenu.statusBarHeight + 4 : 48;
+    menuButtonTopRpx = (sysInfoForMenu.statusBarHeight ? sysInfoForMenu.statusBarHeight + 4 : 48) * PX_TO_RPX;
   }
 } catch (e) {
-  menuButtonTop = sysInfoForMenu.statusBarHeight ? sysInfoForMenu.statusBarHeight + 4 : 48;
+  menuButtonTopRpx = (sysInfoForMenu.statusBarHeight ? sysInfoForMenu.statusBarHeight + 4 : 48) * PX_TO_RPX;
 }
 
 // 转发点击事件给 ProfileView
