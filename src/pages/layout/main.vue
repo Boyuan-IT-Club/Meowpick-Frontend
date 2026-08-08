@@ -57,61 +57,70 @@
 
     </view>
 
-    <!-- More Button (☰) - 仅在"我的"页可见，与胶囊右上角对齐 -->
+    <!-- More Button (☰) - 胶囊风格，与筛选胶囊统一 -->
     <view
       v-if="currentIndex === 1"
       class="global-more-btn"
       :class="themeStore.themeClass"
       :style="{
-        top: (menuButtonTop + menuButtonHeight / 2 - 28) + 'px',
+        top: (menuButtonTop + menuButtonHeight / 2 - 32) + 'px',
         position: 'fixed',
         right: '24px',
-        width: '56px',
-        height: '56px',
+        width: '64px',
+        height: '64px',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        gap: '6px',
-        borderRadius: '50%',
+        gap: '7px',
+        borderRadius: '100rpx',
         backgroundColor: themeStore.mode === 'dark' ? '#2a2a2a' : '#ffffff',
-        border: themeStore.mode === 'dark' ? '2px solid #ff6b8a' : '2px solid #b20035',
-        boxShadow: themeStore.mode === 'dark' ? '0 6px 20px rgba(0,0,0,0.4)' : '0 6px 20px rgba(178,0,53,0.25)',
+        boxShadow: themeStore.mode === 'dark' ? '0 6rpx 20rpx rgba(0,0,0,0.3)' : '0 8rpx 24rpx rgba(0,0,0,0.06)',
         zIndex: 9999
       }"
       @click="toggleMoreMenu"
     >
       <view
         :style="{
-          width: '26px',
+          width: '28px',
           height: '3px',
-          backgroundColor: themeStore.mode === 'dark' ? '#ff6b8a' : '#b20035',
+          backgroundColor: themeStore.mode === 'dark' ? '#e0e0e0' : '#666666',
           borderRadius: '2px',
           display: 'block'
         }"
       ></view>
       <view
         :style="{
-          width: '26px',
+          width: '28px',
           height: '3px',
-          backgroundColor: themeStore.mode === 'dark' ? '#ff6b8a' : '#b20035',
+          backgroundColor: themeStore.mode === 'dark' ? '#e0e0e0' : '#666666',
           borderRadius: '2px',
           display: 'block'
         }"
       ></view>
       <view
         :style="{
-          width: '26px',
+          width: '28px',
           height: '3px',
-          backgroundColor: themeStore.mode === 'dark' ? '#ff6b8a' : '#b20035',
+          backgroundColor: themeStore.mode === 'dark' ? '#e0e0e0' : '#666666',
           borderRadius: '2px',
           display: 'block'
         }"
       ></view>
     </view>
 
-    <!-- Popover -->
-    <view v-if="showMoreMenu" class="global-more-popover" :class="themeStore.themeClass" @click.stop>
+    <!-- Popover - 从 ⋯ 按钮下方弹出（紧邻按钮） -->
+    <view
+      v-if="showMoreMenu"
+      class="global-more-popover"
+      :class="themeStore.themeClass"
+      :style="{
+        position: 'fixed',
+        top: (menuButtonTop + menuButtonHeight / 2 + 12) + 'px',
+        right: '24px'
+      }"
+      @click.stop
+    >
       <view class="menu-item" @click="handleMenuClick('theme')">切换深色模式</view>
       <view class="menu-item" @click="handleMenuClick('feed')">提议广场</view>
       <view class="menu-item" @click="handleMenuClick('nickname')">修改昵称</view>
@@ -224,12 +233,12 @@ function onSwiperAnimationFinish(e: any) {
 </script>
 
 <style lang="scss">
-/* Global More Button - 在页面层级，脱离 scroll-view 嵌套 */
+/* Global More Button - 胶囊风格，与筛选胶囊统一 */
 .global-more-btn {
   transition: transform 0.15s, background-color 0.15s, box-shadow 0.15s;
 
   &:active {
-    transform: scale(0.92);
+    transform: scale(0.96);
     background-color: #f5f5f5 !important;
   }
 }
@@ -240,17 +249,15 @@ function onSwiperAnimationFinish(e: any) {
   }
 }
 
+/* Popover - 位置由 inline style 控制，紧邻 ⋯ 按钮下方 */
 .global-more-popover {
-  position: fixed;
-  top: 50%;
-  right: 24rpx;
-  transform: translateY(-50%);
   background-color: #ffffff;
-  border-radius: 16rpx;
+  border-radius: 24rpx;
   box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.15);
   padding: 12rpx 0;
   z-index: 10000;
   min-width: 240rpx;
+  overflow: hidden;
 
   .menu-item {
     padding: 24rpx 32rpx;
