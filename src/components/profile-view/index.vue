@@ -54,7 +54,7 @@
     </view>
 
     <!-- 2. Filter Bar: Minimalist Text Tabs -->
-    <view class="sticky-bar" :style="{ top: (menuButtonInfo.top) + 'px', height: menuButtonInfo.height + 'px' }">
+    <view class="sticky-bar" :style="{ top: (menuButtonInfo.top) + 'px' }">
        <view class="filter-row-wrapper">
          <view class="filter-row">
               <view
@@ -703,7 +703,7 @@ onShow(() => {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        height: 100%;
+        padding: 16rpx 0;
     }
 
     .filter-row {
@@ -713,7 +713,6 @@ onShow(() => {
         border-radius: 100rpx;
         padding: 0 6rpx;
         box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.06);
-        height: 100%;
     }
 
     .filter-pill {
@@ -737,30 +736,37 @@ onShow(() => {
 
     /* More Button (⋯) */
     .more-btn-wrapper {
-        padding: 8rpx 16rpx;
+        padding: 16rpx 20rpx;
         margin-left: auto;
+        display: flex;
+        align-items: center;
     }
 
     .more-btn {
-        width: 48rpx;
-        height: 48rpx;
+        width: 56rpx;
+        height: 56rpx;
+        min-width: 56rpx;
+        min-height: 56rpx;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         gap: 8rpx;
-        border-radius: 12rpx;
+        border-radius: 16rpx;
+        background-color: rgba(255, 255, 255, 0.8);
+        box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.06);
         transition: background-color 0.15s;
 
         &:active {
-            background-color: rgba(0, 0, 0, 0.04);
+            background-color: rgba(255, 255, 255, 1);
         }
 
         .line {
             width: 36rpx;
-            height: 4rpx;
-            background-color: #666;
-            border-radius: 2rpx;
+            height: 5rpx;
+            background-color: #333;
+            border-radius: 3rpx;
+            display: block;
         }
     }
 }
