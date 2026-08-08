@@ -28,21 +28,21 @@
       </swiper-item>
     </swiper>
 
-    <!-- 底部导航栏 -->
-    <view class="bottom-tab-bar safe-area-bottom">
-      
+<!-- 底部导航栏 -->
+    <view class="bottom-tab-bar safe-area-bottom" :class="themeStore.themeClass">
+       
       <!-- 文字容器 -->
       <view class="tabs-container">
         <view 
           class="tab-item" 
-          :class="{ active: currentIndex === 0 }"
+          :class="[themeStore.themeClass, { active: currentIndex === 0 }]"
           @click="switchTab(0)"
         >
           首页
         </view>
         <view 
           class="tab-item" 
-          :class="{ active: currentIndex === 1 }"
+          :class="[themeStore.themeClass, { active: currentIndex === 1 }]"
           @click="switchTab(1)"
         >
           我的
@@ -213,25 +213,6 @@ function onSwiperAnimationFinish(e: any) {
     z-index: 3;
 
     box-shadow: 0 4rpx 12rpx rgba(183, 0, 48, 0.4);
-  }
-}
-
-.dark-theme {
-  .main-container {
-    background-color: #121212;
-  }
-
-  .bottom-tab-bar {
-    background-color: rgba(30, 30, 30, 0.98);
-    box-shadow: 0 -10rpx 40rpx rgba(0, 0, 0, 0.4);
-  }
-
-  .tab-item {
-    color: #666;
-
-    &.active {
-      color: #e0e0e0;
-    }
   }
 }
 

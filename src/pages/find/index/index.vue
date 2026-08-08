@@ -36,7 +36,6 @@ onShow(() => {
   background-color: #f7f8fa;
 }
 
-.dark-theme .find-page,
 .find-page.dark-theme {
   background-color: #121212;
 }

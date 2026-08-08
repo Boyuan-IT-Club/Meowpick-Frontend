@@ -112,7 +112,8 @@ withDefaults(defineProps<Props>(), {});
 </style>
 
 <style lang="scss">
-.dark-theme .timeline-container { }
-.dark-theme .timeline-item .content-card { background-color: #1e1e1e; box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.15); .version-title { color: #e0e0e0; } .content-text { color: #888; } }
-.dark-theme .timeline-item .line { background-color: #333; }
+.timeline-container.dark-theme {
+  .timeline-item .content-card { background-color: #1e1e1e; box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.15); .version-title { color: #e0e0e0; } .content-text { color: #888; } }
+  .timeline-item .line { background-color: #333; }
+}
 </style>

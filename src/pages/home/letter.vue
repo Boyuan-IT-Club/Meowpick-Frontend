@@ -89,10 +89,6 @@ const text12 = `选课猫团队 2025年10月13日`;
   box-sizing: border-box;
 }
 
-.dark-theme .letter-container {
-  background-color: #121212;
-}
-
 .custom-header {
   position: fixed;
   top: 0;
@@ -101,10 +97,6 @@ const text12 = `选课猫团队 2025年10月13日`;
   z-index: 100;
   background-color: transparent;
   backdrop-filter: blur(5px);
-}
-
-.dark-theme .custom-header {
-  background-color: rgba(18, 18, 18, 0.95);
 }
 
 .nav-bar-content {
@@ -123,21 +115,14 @@ const text12 = `选课猫团队 2025年10月13日`;
 
 .title-area {
   margin-left: 32rpx;
-  position: static;
-  left: auto;
-  transform: none;
   display: flex;
   align-items: center;
 }
 
 .page-title {
-  position: static;
-  left: auto;
-  transform: none;
   font-size: 32rpx;
   font-weight: 700;
   color: #333;
-  display: block;
 }
 
 .content-card {
@@ -148,11 +133,6 @@ const text12 = `选课猫团队 2025年10月13日`;
   padding: 48rpx 40rpx;
   box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.06);
   backdrop-filter: blur(10px);
-}
-
-.dark-theme .content-card {
-  background: rgba(30, 30, 30, 0.95);
-  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.3);
 }
 
 .card-body {
@@ -198,11 +178,36 @@ const text12 = `选课猫团队 2025年10月13日`;
   background-color: #121212;
 }
 
-.letter-container.dark-theme .page-title { color: #e0e0e0; }
-.letter-container.dark-theme .content-card .card-body .paragraph { color: #b0b0b0; }
-.letter-container.dark-theme .content-card .card-footer .footer-text { color: #e0e0e0; }
-.letter-container.dark-theme .content-card .card-footer .signature { color: #777; }
-.letter-container.dark-theme .content-card .card-footer { border-top-color: #333; }
-.letter-container.dark-theme .content-card { background: rgba(30, 30, 30, 0.95); box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.3); }
-.letter-container.dark-theme .custom-header { background-color: rgba(18, 18, 18, 0.95); }
+.letter-container.dark-theme .custom-header {
+  background-color: rgba(18, 18, 18, 0.95);
+}
+
+.letter-container.dark-theme .page-title {
+  color: #e0e0e0;
+}
+
+.letter-container.dark-theme .content-card {
+  background: rgba(30, 30, 30, 0.95);
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.3);
+}
+
+.letter-container.dark-theme .content-card .card-body .paragraph {
+  color: #b0b0b0;
+}
+
+.letter-container.dark-theme .content-card .card-body .paragraph.highlight {
+  color: #ff6b8a;
+}
+
+.letter-container.dark-theme .content-card .card-footer {
+  border-top-color: #333;
+}
+
+.letter-container.dark-theme .content-card .card-footer .footer-text {
+  color: #e0e0e0;
+}
+
+.letter-container.dark-theme .content-card .card-footer .signature {
+  color: #777;
+}
 </style>
