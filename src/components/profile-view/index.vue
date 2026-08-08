@@ -80,39 +80,30 @@
               </view>
          </view>
 
-<!-- More Menu Button (⋯) -->
-          <view class="more-btn-wrapper" @click="toggleMoreMenu">
-            <view class="more-btn" :class="themeStore.themeClass">
-               <view class="line"></view>
-               <view class="line"></view>
-               <view class="line"></view>
-            </view>
-          </view>
+<!-- More Menu Button (⋯) - Now in layout/main.vue for scroll-view compatibility -->
+          <!-- <view class="more-btn-wrapper" @click="toggleMoreMenu"> -->
+          <!--   <view class="more-btn" :class="themeStore.themeClass"> -->
+          <!--      <view class="line"></view> -->
+          <!--      <view class="line"></view> -->
+          <!--      <view class="line"></view> -->
+          <!--   </view> -->
+          <!-- </view> -->
         </view>
 
-        <!-- More Menu Popover -->
-        <view v-if="showMoreMenu" class="more-menu-popover" :class="themeStore.themeClass" @click.stop>
-          <view class="menu-item" @click="handleMenuClick('theme')">切换深色模式</view>
-          <view class="menu-item" @click="handleMenuClick('feed')">提议广场</view>
-          <view class="menu-item" @click="handleMenuClick('nickname')">修改昵称</view>
-          <view class="menu-item" @click="handleMenuClick('feedback')">反馈</view>
-        </view>
+        <!-- More Menu Popover - Now in layout/main.vue -->
+        <!-- <view v-if="showMoreMenu" class="more-menu-popover" :class="themeStore.themeClass" @click.stop> -->
+        <!--   <view class="menu-item" @click="handleMenuClick('theme')">切换深色模式</view> -->
+        <!--   <view class="menu-item" @click="handleMenuClick('feed')">提议广场</view> -->
+        <!--   <view class="menu-item" @click="handleMenuClick('nickname')">修改昵称</view> -->
+        <!--   <view class="menu-item" @click="handleMenuClick('feedback')">反馈</view> -->
+        <!-- </view> -->
 
-        <!-- External click mask to close popover -->
-        <view v-if="showMoreMenu" class="more-menu-mask" @click="showMoreMenu = false"></view>
+        <!-- External click mask - Now in layout/main.vue -->
+        <!-- <view v-if="showMoreMenu" class="more-menu-mask" @click="showMoreMenu = false"></view> -->
     </view>
 
-    <!-- Fixed More Button (always visible above scroll-view) -->
-    <view
-      class="fixed-more-btn"
-      :class="themeStore.themeClass"
-      :style="{ top: (menuButtonInfo.top + 4) + 'px' }"
-      @click="toggleMoreMenu"
-    >
-      <view class="line"></view>
-      <view class="line"></view>
-      <view class="line"></view>
-    </view>
+    <!-- Fixed More Button (deprecated: now in layout/main.vue) -->
+    <!-- <view class="fixed-more-btn" ... ></view> -->
 
     <!-- 3. List Content -->
     <view class="list-container">
@@ -384,32 +375,9 @@ const filteredList = computed(() => {
     return result.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
 });
 
-// More Menu (⋯ Popover)
-const showMoreMenu = ref(false);
+// Modals (toggled by layout/main.vue via uni.$emit)
 const showNicknameModal = ref(false);
 const showFeedbackModal = ref(false);
-
-const toggleMoreMenu = () => {
-    showMoreMenu.value = !showMoreMenu.value;
-};
-
-const handleMenuClick = (action: 'theme' | 'feed' | 'nickname' | 'feedback') => {
-    showMoreMenu.value = false;
-    switch (action) {
-        case 'theme':
-            themeStore.toggleTheme();
-            break;
-        case 'feed':
-            uni.navigateTo({ url: '/pages/proposal/feed/feed' });
-            break;
-        case 'nickname':
-            openNicknameModal();
-            break;
-        case 'feedback':
-            openFeedbackModal();
-            break;
-    }
-};
 
 // Nickname Modal
 const newNickname = ref('');
@@ -600,6 +568,14 @@ const checkGuide = () => {
 
 onShow(() => {
   checkGuide();
+  // 监听来自 layout 的弹窗触发事件
+  uni.$on('open-nickname-modal', openNicknameModal);
+  uni.$on('open-feedback-modal', openFeedbackModal);
+});
+
+onUnmounted(() => {
+  uni.$off('open-nickname-modal', openNicknameModal);
+  uni.$off('open-feedback-modal', openFeedbackModal);
 });
 </script>
 
@@ -819,7 +795,7 @@ onShow(() => {
 /* Fixed More Button - always visible regardless of scroll-view sticky support */
 .fixed-more-btn {
     position: fixed;
-    right: 32rpx;
+    right: 24rpx;
     width: 64rpx;
     height: 64rpx;
     display: flex;
@@ -828,20 +804,21 @@ onShow(() => {
     align-items: center;
     gap: 8rpx;
     border-radius: 20rpx;
-    background-color: rgba(255, 255, 255, 0.95);
-    box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
-    z-index: 500;
+    background-color: #ffffff;
+    border: 2rpx solid #b20035;
+    box-shadow: 0 4rpx 16rpx rgba(178, 0, 53, 0.2);
+    z-index: 9999;
     transition: transform 0.15s, background-color 0.15s;
 
     &:active {
         transform: scale(0.92);
-        background-color: rgba(245, 245, 245, 1);
+        background-color: #fff5f6;
     }
 
     .line {
         width: 40rpx;
         height: 6rpx;
-        background-color: #333;
+        background-color: #b20035;
         border-radius: 3rpx;
         display: block;
     }
@@ -1349,7 +1326,7 @@ onShow(() => {
 
 /* More Menu Dark Mode */
 .profile-container.dark-theme .more-btn-wrapper .more-btn { &:active { background-color: rgba(255, 255, 255, 0.06); } .line { background-color: #e0e0e0; } }
-.fixed-more-btn.dark-theme { background-color: rgba(40, 40, 40, 0.95); box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.4); &:active { background-color: rgba(60, 60, 60, 1); } .line { background-color: #e0e0e0; } }
+.fixed-more-btn.dark-theme { background-color: #2a2a2a; border-color: rgba(255, 77, 106, 0.6); box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.4); &:active { background-color: rgba(178, 0, 53, 0.2); } .line { background-color: #ff6b8a; } }
 .more-menu-popover.dark-theme { background-color: #2a2a2a; box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.5); .menu-item { color: #e0e0e0; &:active { background-color: #3a3a3a; } } }
 
 /* Nickname Modal Dark Mode */

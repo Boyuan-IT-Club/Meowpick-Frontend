@@ -30,18 +30,18 @@
 
 <!-- 底部导航栏 -->
     <view class="bottom-tab-bar safe-area-bottom" :class="themeStore.themeClass">
-       
+
       <!-- 文字容器 -->
       <view class="tabs-container">
-        <view 
-          class="tab-item" 
+        <view
+          class="tab-item"
           :class="[themeStore.themeClass, { active: currentIndex === 0 }]"
           @click="switchTab(0)"
         >
           首页
         </view>
-        <view 
-          class="tab-item" 
+        <view
+          class="tab-item"
           :class="[themeStore.themeClass, { active: currentIndex === 1 }]"
           @click="switchTab(1)"
         >
@@ -50,12 +50,36 @@
       </view>
 
       <!-- 指示条 (独立图层) -->
-      <view 
-        class="indicator-line" 
+      <view
+        class="indicator-line"
         :style="{ left: indicatorLeft + '%' }"
       ></view>
 
     </view>
+
+    <!-- More Button (⋯) - 仅在"我的"页可见，置于页面层级避免 scroll-view 嵌套问题 -->
+    <view
+      v-if="currentIndex === 1"
+      class="global-more-btn"
+      :class="themeStore.themeClass"
+      :style="{ top: (menuButtonTop + menuButtonHeight / 2 - 32) + 'px' }"
+      @click="toggleMoreMenu"
+    >
+      <text class="line"></text>
+      <text class="line"></text>
+      <text class="line"></text>
+    </view>
+
+    <!-- Popover -->
+    <view v-if="showMoreMenu" class="global-more-popover" :class="themeStore.themeClass" @click.stop>
+      <view class="menu-item" @click="handleMenuClick('theme')">切换深色模式</view>
+      <view class="menu-item" @click="handleMenuClick('feed')">提议广场</view>
+      <view class="menu-item" @click="handleMenuClick('nickname')">修改昵称</view>
+      <view class="menu-item" @click="handleMenuClick('feedback')">反馈</view>
+    </view>
+
+    <!-- Popover Mask -->
+    <view v-if="showMoreMenu" class="global-more-mask" @click="showMoreMenu = false"></view>
   </view>
 </template>
 
@@ -70,6 +94,47 @@ const themeStore = useThemeStore();
 const currentIndex = ref(0);
 const indicatorLeft = ref(25); // 初始值 25%
 let windowWidth = 0;
+let menuButtonTop = 0;
+let menuButtonHeight = 32;
+
+// 胶囊位置计算
+const sysInfoForMenu = uni.getSystemInfoSync();
+try {
+  const res = uni.getMenuButtonBoundingClientRect();
+  if (res && res.top) {
+    menuButtonTop = res.top;
+    menuButtonHeight = res.height;
+  } else {
+    menuButtonTop = sysInfoForMenu.statusBarHeight ? sysInfoForMenu.statusBarHeight + 4 : 48;
+  }
+} catch (e) {
+  menuButtonTop = sysInfoForMenu.statusBarHeight ? sysInfoForMenu.statusBarHeight + 4 : 48;
+}
+
+// 转发点击事件给 ProfileView
+const showMoreMenu = ref(false);
+
+const toggleMoreMenu = () => {
+  showMoreMenu.value = !showMoreMenu.value;
+};
+
+const handleMenuClick = (action: 'theme' | 'feed' | 'nickname' | 'feedback') => {
+  showMoreMenu.value = false;
+  switch (action) {
+    case 'theme':
+      themeStore.toggleTheme();
+      break;
+    case 'feed':
+      uni.navigateTo({ url: '/pages/proposal/feed/feed' });
+      break;
+    case 'nickname':
+      uni.$emit('open-nickname-modal');
+      break;
+    case 'feedback':
+      uni.$emit('open-feedback-modal');
+      break;
+  }
+};
 
 onLoad(() => {
   const sysInfo = uni.getSystemInfoSync();
@@ -117,6 +182,100 @@ function onSwiperAnimationFinish(e: any) {
   indicatorLeft.value = currentIndex.value === 0 ? 25 : 75;
 }
 </script>
+
+<style lang="scss">
+/* Global More Button - 在页面层级，脱离 scroll-view 嵌套 */
+.global-more-btn {
+  position: fixed;
+  right: 24rpx;
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8rpx;
+  border-radius: 20rpx;
+  background-color: #ffffff;
+  border: 2rpx solid #b20035;
+  box-shadow: 0 6rpx 20rpx rgba(178, 0, 53, 0.25);
+  z-index: 9999;
+  transition: transform 0.15s, background-color 0.15s;
+
+  &:active {
+    transform: scale(0.92);
+    background-color: #fff5f6;
+  }
+
+  .line {
+    width: 40rpx;
+    height: 6rpx;
+    background-color: #b20035;
+    border-radius: 3rpx;
+    display: block;
+  }
+}
+
+.global-more-btn.dark-theme {
+  background-color: #2a2a2a;
+  border-color: rgba(255, 77, 106, 0.6);
+  box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.4);
+
+  &:active {
+    background-color: rgba(178, 0, 53, 0.2);
+  }
+
+  .line {
+    background-color: #ff6b8a;
+  }
+}
+
+.global-more-popover {
+  position: fixed;
+  top: 50%;
+  right: 24rpx;
+  transform: translateY(-50%);
+  background-color: #ffffff;
+  border-radius: 16rpx;
+  box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.15);
+  padding: 12rpx 0;
+  z-index: 10000;
+  min-width: 240rpx;
+
+  .menu-item {
+    padding: 24rpx 32rpx;
+    font-size: 28rpx;
+    color: #333;
+    transition: background-color 0.1s;
+
+    &:active {
+      background-color: #f5f5f5;
+    }
+  }
+}
+
+.global-more-popover.dark-theme {
+  background-color: #2a2a2a;
+  box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.5);
+
+  .menu-item {
+    color: #e0e0e0;
+
+    &:active {
+      background-color: #3a3a3a;
+    }
+  }
+}
+
+.global-more-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9998;
+}
+</style>
 
 <style lang="scss" scoped>
 .main-container {
