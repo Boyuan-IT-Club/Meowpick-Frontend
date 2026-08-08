@@ -57,6 +57,28 @@
 
     </view>
 
+    <!-- DEBUG: Always-visible test marker to verify rendering -->
+    <view
+      class="debug-marker"
+      :style="{
+        position: 'fixed',
+        top: '200px',
+        left: '20px',
+        width: '120px',
+        height: '120px',
+        backgroundColor: '#ff0000',
+        zIndex: 99999,
+        color: '#ffffff',
+        fontSize: '32px',
+        textAlign: 'center',
+        lineHeight: '120px',
+        borderRadius: '20px',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.5)'
+      }"
+    >
+      DEBUG
+    </view>
+
     <!-- More Button (⋯) - 仅在"我的"页可见，置于页面层级避免 scroll-view 嵌套问题 -->
     <view
       v-if="currentIndex === 1"
