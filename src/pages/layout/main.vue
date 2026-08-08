@@ -62,12 +62,52 @@
       v-if="currentIndex === 1"
       class="global-more-btn"
       :class="themeStore.themeClass"
-      :style="{ top: (menuButtonTop + menuButtonHeight / 2 - 32) + 'px' }"
+      :style="{
+        top: (menuButtonTop + menuButtonHeight / 2 - 32) + 'px',
+        position: 'fixed',
+        right: '24px',
+        width: '64px',
+        height: '64px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: '8px',
+        borderRadius: '20px',
+        backgroundColor: themeStore.mode === 'dark' ? '#2a2a2a' : '#ffffff',
+        border: themeStore.mode === 'dark' ? '2px solid #ff6b8a' : '2px solid #b20035',
+        boxShadow: themeStore.mode === 'dark' ? '0 6px 20px rgba(0,0,0,0.4)' : '0 6px 20px rgba(178,0,53,0.25)',
+        zIndex: 9999
+      }"
       @click="toggleMoreMenu"
     >
-      <text class="line"></text>
-      <text class="line"></text>
-      <text class="line"></text>
+      <view
+        :style="{
+          width: '40px',
+          height: '6px',
+          backgroundColor: themeStore.mode === 'dark' ? '#ff6b8a' : '#b20035',
+          borderRadius: '3px',
+          display: 'block'
+        }"
+      ></view>
+      <view
+        :style="{
+          width: '40px',
+          height: '6px',
+          backgroundColor: themeStore.mode === 'dark' ? '#ff6b8a' : '#b20035',
+          borderRadius: '3px',
+          display: 'block'
+        }"
+      ></view>
+      <view
+        :style="{
+          width: '40px',
+          height: '6px',
+          backgroundColor: themeStore.mode === 'dark' ? '#ff6b8a' : '#b20035',
+          borderRadius: '3px',
+          display: 'block'
+        }"
+      ></view>
     </view>
 
     <!-- Popover -->
