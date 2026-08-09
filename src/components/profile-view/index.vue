@@ -233,37 +233,8 @@
        </view>
      </view>
 
-<!-- Feedback Modal -->
-      <view v-if="showFeedbackModal" class="modal-overlay" @click="closeFeedbackModal">
-        <view class="modal-card feedback-card" :class="themeStore.themeClass" @click.stop>
-           <view class="modal-header">
-              <text class="modal-title">反馈</text>
-              <view class="modal-close" @click="closeFeedbackModal">×</view>
-           </view>
-
-           <view class="modal-body feedback-body">
-              <text class="feedback-desc">遇到问题或有建议？点击下方框即可复制对应联系方式：</text>
-
-              <!-- QQ群反馈 - 点击复制群号 -->
-              <view class="feedback-section" @click="copyQQNumber">
-                 <view class="feedback-label-row">
-                    <text class="feedback-label">QQ 群</text>
-                    <text class="feedback-hint">点击复制</text>
-                 </view>
-                 <view class="feedback-value">群号 {{ CONTACT_INFO.qqGroup.number }}</view>
-              </view>
-
-              <!-- 邮件反馈 - 点击复制邮箱 -->
-              <view class="feedback-section" @click="copyEmail">
-                 <view class="feedback-label-row">
-                    <text class="feedback-label">邮箱</text>
-                    <text class="feedback-hint">点击复制</text>
-                 </view>
-                 <view class="feedback-value">{{ CONTACT_INFO.email.address }}</view>
-              </view>
-           </view>
-        </view>
-      </view>
+<!-- Feedback Modal (共用组件) -->
+      <feedback-modal v-model:visible="showFeedbackModal" />
 </template>
 
 <script setup lang="ts">
@@ -271,9 +242,9 @@ import { ref, computed, onMounted } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
 import { waitForLogin } from '@/utils/init';
 import { http, useThemeStore } from '@/config';
+import FeedbackModal from '@/components/feedback/feedback-modal.vue';
 const themeStore = useThemeStore();
 import { HISTORY_PAGE_SIZE } from '@/utils/constants';
-import { CONTACT_INFO, buildMailtoLink, copyToClipboard } from '@/utils/contact-info';
 
 // System Info Logic for Header Alignment
 const sysInfo = uni.getSystemInfoSync();
@@ -444,35 +415,9 @@ const confirmNicknameChange = async () => {
     }
 };
 
-// Feedback Modal
+// Feedback Modal (使用共用组件 feedback-modal.vue)
 const openFeedbackModal = () => {
     showFeedbackModal.value = true;
-};
-
-const closeFeedbackModal = () => {
-    showFeedbackModal.value = false;
-};
-
-const copyQQNumber = () => copyToClipboard(CONTACT_INFO.qqGroup.number, '已复制群号');
-const copyEmail = () => copyToClipboard(CONTACT_INFO.email.address, '已复制邮箱');
-
-const joinQQGroup = () => {
-    uni.setClipboardData({
-        data: CONTACT_INFO.qqGroup.joinLink,
-        success: () => {
-            uni.showModal({
-                title: '提示',
-                content: '加群链接已复制，请在浏览器中打开',
-                showCancel: false,
-                confirmText: '我知道了'
-            });
-        }
-    });
-};
-
-const sendEmail = () => {
-    // 微信小程序内 mailto 无效，降级为复制邮箱
-    copyToClipboard(CONTACT_INFO.email.address, '邮箱已复制，请手动发送');
 };
 
 // Actions
@@ -1176,68 +1121,7 @@ onShow(() => {
     }
 }
 
-/* Feedback Modal Styles */
-.feedback-card {
-    .modal-body {
-        padding: 32rpx 40rpx;
-    }
-
-    .feedback-desc {
-        font-size: 30rpx;
-        color: #666;
-        line-height: 1.6;
-        margin-bottom: 32rpx;
-        display: block;
-    }
-
-    /* 可点击的分组：整块可点击，复制对应内容 */
-    .feedback-section {
-        margin-bottom: 32rpx;
-        transition: opacity 0.15s;
-
-        &:active {
-            opacity: 0.6;
-        }
-
-        &:last-child {
-            margin-bottom: 0;
-        }
-    }
-
-    .feedback-label-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
-        margin-bottom: 14rpx;
-    }
-
-    .feedback-label {
-        font-size: 30rpx;
-        color: #333;
-        font-weight: 600;
-        display: block;
-    }
-
-    .feedback-hint {
-        font-size: 22rpx;
-        color: #999;
-        font-weight: 400;
-    }
-
-    .feedback-value {
-        font-size: 32rpx;
-        color: #1a1a1a;
-        background-color: #f5f5f5;
-        padding: 28rpx;
-        border-radius: 14rpx;
-        font-family: monospace;
-        font-weight: 500;
-        letter-spacing: 1rpx;
-        text-align: center;
-        border: 2rpx solid transparent;
-        transition: border-color 0.15s, background-color 0.15s;
-    }
-}
+/* Feedback Modal Styles 已迁移至 components/feedback/feedback-modal.vue */
 </style>
 
 <style lang="scss">
@@ -1295,8 +1179,7 @@ onShow(() => {
 .modal-card.dark-theme .modal-body { .field-label { color: #aaa; } .nickname-input { background-color: #2a2a2a; color: #e0e0e0; } }
 .modal-card.dark-theme .modal-footer { border-color: #333; .btn-confirm { border-color: #333; } }
 
-/* Feedback Modal Dark Mode */
-.modal-card.dark-theme.feedback-card { .feedback-desc { color: #aaa; } .feedback-label { color: #e0e0e0; } .feedback-hint { color: #888; } .feedback-value { background-color: #2a2a2a; color: #e0e0e0; border-color: #3a3a3a; } }
+/* Feedback Modal Dark Mode 已迁移至 components/feedback/feedback-modal.vue */
 
 .guide-overlay {
   position: fixed;

@@ -54,6 +54,14 @@
       </view>
     </view>
 
+    <!-- 底部反馈入口 -->
+    <view class="feedback-entry" @click="openFeedback">
+      <text class="feedback-entry-text">我要反馈</text>
+    </view>
+
+    <!-- 反馈弹窗（共用组件） -->
+    <feedback-modal v-model:visible="showFeedback" />
+
     <!-- 首次使用引导弹窗 -->
     <view v-if="showGuide" class="guide-overlay" :class="themeStore.themeClass" @click="hideGuide">
       <view class="guide-content" @click.stop>
@@ -97,12 +105,18 @@ import { ref, onMounted } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
 import { waitForLogin } from '@/utils/init';
 import { http, useThemeStore } from '@/config';
+import FeedbackModal from '@/components/feedback/feedback-modal.vue';
 const themeStore = useThemeStore();
 
 // 状态定义
 const totalComment = ref(0);
 const showNewIcon = ref(true);
 const userName = ref('同学');
+const showFeedback = ref(false);
+
+const openFeedback = () => {
+  showFeedback.value = true;
+};
 
 // 首次使用引导弹窗
 const showGuide = ref(false);
@@ -479,6 +493,29 @@ $text-main: #2c2c2c;
   .stat-title { color: #888; }
   .stat-number { color: $brand-red; }
   .stat-unit { color: #666; }
+}
+
+.home-view-container.dark-theme .feedback-entry {
+  .feedback-entry-text { color: #666; &:active { color: #ff6b8a; } }
+}
+
+/* 底部"我要反馈"小字入口 */
+.feedback-entry {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40rpx 0 80rpx;
+
+  .feedback-entry-text {
+    font-size: 24rpx;
+    color: #999;
+    text-decoration: underline;
+    transition: color 0.15s;
+
+    &:active {
+      color: #b20035;
+    }
+  }
 }
 </style>
 
