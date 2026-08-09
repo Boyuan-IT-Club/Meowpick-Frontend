@@ -4,17 +4,147 @@
     <!-- 胶囊遮罩：挡住胶囊上方的内容 -->
     <view class="capsule-mask" :class="themeStore.themeClass" :style="{ height: (menuButtonInfo.top + menuButtonInfo.height + 15) + 'px' }" />
 
-    <!-- 1. Header Area: Large & Breathable -->
-     <view class="header-section" :style="{ marginTop: '20rpx', marginBottom: '40rpx' }">
-<view class="title-wrapper">
-          <text class="page-title">我的发布</text>
-          <text class="sub-title">{{ loading ? '加载中...' : (filteredList.length + ' 条记录') }}</text>
-          <!-- @deprecated: 深色模式切换按钮已迁移至 sticky-bar 右侧的"更多"菜单中 -->
-          <!-- 保留代码方便回滚，UI 不再渲染 -->
-          <!-- <view class="theme-toggle" @click="themeStore.toggleTheme()"> -->
-          <!--   <text>{{ themeStore.mode === 'dark' ? '🌙' : '☀️' }}</text> -->
-          <!-- </view> -->
-       </view>
+    <!-- 底层：头像 + 昵称 + 贡献值（被上方"我的发布"组件覆盖） -->
+    <view class="user-info-layer">
+      <view class="avatar-circle">
+        <text class="avatar-emoji">👤</text>
+      </view>
+      <view class="user-meta">
+        <text class="user-nickname">{{ userName || '同学' }}</text>
+        <text class="user-contribution">贡献值：{{ contribution || 0 }}</text>
+      </view>
+      <view class="user-more-btn" @click="toggleMoreMenu">
+        <view class="line"></view>
+        <view class="line"></view>
+        <view class="line"></view>
+      </view>
+    </view>
+
+    <!-- 顶层："我的发布"组件（圆角矩形，覆盖底层） -->
+    <view class="my-publish-card">
+      <!-- 标题 -->
+      <view class="my-publish-header">
+        <text class="page-title">我的发布</text>
+        <text class="sub-title">{{ loading ? '加载中...' : (filteredList.length + ' 条记录') }}</text>
+      </view>
+
+      <!-- 筛选胶囊 -->
+      <view class="sticky-bar">
+        <view class="filter-row-wrapper">
+          <view class="filter-row">
+            <view
+              class="filter-pill"
+              :class="{ active: currentFilter === 'all' }"
+              @click="setFilter('all')"
+            >
+              <text>全部</text>
+            </view>
+            <view
+              class="filter-pill"
+              :class="{ active: currentFilter === 'comment' }"
+              @click="setFilter('comment')"
+            >
+              <text>吐槽</text>
+            </view>
+            <view
+              class="filter-pill"
+              :class="{ active: currentFilter === 'proposal' }"
+              @click="setFilter('proposal')"
+            >
+              <text>提议</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 列表 -->
+      <view class="list-container">
+        <!-- 加载状态 -->
+        <view class="loading-state" v-if="loading">
+          <view class="loading-spinner"></view>
+          <text class="loading-text">加载中...</text>
+        </view>
+
+        <!-- 错误状态 -->
+        <view class="error-state" v-else-if="error">
+          <text class="error-text">加载失败</text>
+          <button class="retry-btn" @click="loadData">重试</button>
+        </view>
+
+        <!-- 空状态 -->
+        <view class="empty-tip" v-else-if="filteredList.length === 0">
+          <text>这里空空如也~</text>
+        </view>
+
+        <view
+          v-else
+          v-for="(item, index) in filteredList"
+          :key="item.id"
+          class="list-item"
+          @click="onItemClick(item)"
+          @longpress="onLongPress(item)"
+        >
+          <!-- Comment Item -->
+          <view v-if="item.type === 'comment'" class="card comment-card">
+            <view class="card-main">
+              <view class="course-row-top">
+                <text class="course-name">{{ item.courseName }}</text>
+                <text class="time-text">{{ item.time }}</text>
+              </view>
+              <view class="course-row-middle">
+                <view class="course-info-item">
+                  <image src="@/images/depart-icon.png" class="info-icon" />
+                  <text>未知院系</text>
+                </view>
+              </view>
+              <text class="content-text">{{ item.content }}</text>
+              <view class="footer-row">
+                <view class="likes-box">
+                  <image src="@/images/like-icon.png" class="like-icon" />
+                  <text class="likes-text">{{ item.likes || 0 }}</text>
+                </view>
+              </view>
+            </view>
+          </view>
+
+          <!-- Proposal Item -->
+          <view v-if="item.type === 'proposal'" class="card proposal-card">
+            <view class="card-main">
+              <view class="course-row-top">
+                <text class="course-name">{{ item.courseName }}</text>
+                <text class="time-text">{{ item.time }}</text>
+              </view>
+              <view class="course-row-middle">
+                <view class="course-info-item">
+                  <image src="@/images/depart-icon.png" class="info-icon" />
+                  <text>未知院系</text>
+                </view>
+              </view>
+              <text class="content-text">{{ item.reason }}</text>
+              <view class="footer-row">
+                <view class="vote-count-box">
+                  <image src="@/images/like_active.png" class="vote-icon" />
+                  <text class="vote-num">{{ item.voteCount || 0 }}</text>
+                  <text class="vote-label">支持</text>
+                </view>
+                <text
+                  class="status-badge"
+                  :class="{
+                    'status-approved': item.status === 'approved',
+                    'status-rejected': item.status === 'rejected',
+                    'status-pending': item.status === 'pending'
+                  }"
+                >
+                  {{ item.status === 'approved' ? '已采纳' : item.status === 'rejected' ? '已拒绝' : '投票中' }}
+                </text>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <!-- Bottom Spacer for FAB -->
+        <view style="height: 160rpx;"></view>
+      </view>
     </view>
 
     <!-- 首次使用引导弹窗 -->
@@ -53,487 +183,61 @@
       </view>
     </view>
 
-    <!-- 2. Filter Bar: Minimalist Text Tabs -->
-    <view class="sticky-bar" :style="{ top: (menuButtonInfo.top) + 'px' }">
-       <view class="filter-row-wrapper">
-         <view class="filter-row">
-              <view
-                  class="filter-pill"
-                  :class="{ active: currentFilter === 'all' }"
-                  @click="setFilter('all')"
-              >
-                  <text>全部</text>
-              </view>
-              <view
-                  class="filter-pill"
-                  :class="{ active: currentFilter === 'comment' }"
-                  @click="setFilter('comment')"
-              >
-                  <text>吐槽</text>
-              </view>
-              <view
-                  class="filter-pill"
-                  :class="{ active: currentFilter === 'proposal' }"
-                  @click="setFilter('proposal')"
-              >
-                  <text>提议</text>
-              </view>
-         </view>
-
-<!-- More Button (☰) - 位于筛选胶囊右侧同一行 -->
-          <view
-            class="more-btn-pill"
-            :class="themeStore.themeClass"
-            @click="toggleMoreMenu"
-          >
-             <view class="line"></view>
-             <view class="line"></view>
-             <view class="line"></view>
-
-             <!-- Popover - 作为 ⋯ 按钮子元素，right:0 严格对齐按钮右边缘 -->
-             <view v-if="showMoreMenu" class="more-menu-popover" :class="themeStore.themeClass" @click.stop>
-                <view class="menu-item" @click="handleMenuClick('theme')">切换深色模式</view>
-                <view class="menu-item" @click="handleMenuClick('feed')">提议广场</view>
-                <view class="menu-item" @click="handleMenuClick('nickname')">修改昵称</view>
-                <view class="menu-item" @click="handleMenuClick('feedback')">反馈</view>
-             </view>
-          </view>
-
-          <!-- External click mask -->
-          <view v-if="showMoreMenu" class="more-menu-mask" @click="showMoreMenu = false"></view>
-        </view>
-     </view>
-
-    <!-- 3. List Content -->
-    <view class="list-container">
-       <!-- 加载状态 -->
-       <view class="loading-state" v-if="loading">
-         <view class="loading-spinner"></view>
-         <text class="loading-text">加载中...</text>
-       </view>
-
-       <!-- 错误状态 -->
-       <view class="error-state" v-else-if="error">
-         <text class="error-text">加载失败</text>
-         <button class="retry-btn" @click="loadData">重试</button>
-       </view>
-
-       <!-- 空状态 -->
-       <view class="empty-tip" v-else-if="filteredList.length === 0">
-          <text>这里空空如也~</text>
-       </view>
-
-       <view
-         v-else
-         v-for="(item, index) in filteredList"
-         :key="item.id"
-         class="list-item"
-         @click="onItemClick(item)"
-         @longpress="onLongPress(item)"
-       >
-          <!-- Comment Item -->
-          <view v-if="item.type === 'comment'" class="card comment-card">
-              <view class="card-main">
-                  <view class="course-row-top">
-                      <text class="course-name">{{ item.courseName }}</text>
-                      <text class="time-text">{{ item.time }}</text>
-                  </view>
-                  
-                  <view class="course-row-middle">
-                       <view class="course-info-item">
-                            <image src="@/images/depart-icon.png" class="info-icon" />
-                            <text>未知院系</text>
-                       </view>
-                  </view>
-
-                  <text class="content-text">{{ item.content }}</text>
-                  
-                  <view class="footer-row">
-                     <view class="likes-box">
-                        <image src="@/images/like-icon.png" class="like-icon" />
-                        <text class="likes-text">{{ item.likes || 0 }}</text>
-                     </view>
-                  </view>
-              </view>
-          </view>
-
-          <!-- Proposal Item -->
-          <view v-if="item.type === 'proposal'" class="card proposal-card">
-              <view class="card-main">
-                  <view class="course-row-top">
-                      <text class="course-name">{{ item.courseName }}</text>
-                      <text class="time-text">{{ item.time }}</text>
-                  </view>
-                  
-                  <view class="course-row-middle">
-                       <view class="course-info-item">
-                            <image src="@/images/depart-icon.png" class="info-icon" />
-                            <text>未知院系</text>
-                       </view>
-                  </view>
-
-                  <text class="content-text">{{ item.reason }}</text>
-                  
-                   <view class="footer-row">
-                      <view class="vote-count-box">
-                         <image src="@/images/like_active.png" class="vote-icon" />
-                         <text class="vote-num">{{ item.voteCount || 0 }}</text>
-                         <text class="vote-label">支持</text>
-                      </view>
-                     <text
-                        class="status-badge"
-                        :class="{
-                          'status-approved': item.status === 'approved',
-                          'status-rejected': item.status === 'rejected',
-                          'status-pending': item.status === 'pending'
-                        }"
-                     >
-                        {{ item.status === 'approved' ? '已采纳' : item.status === 'rejected' ? '已拒绝' : '投票中' }}
-                     </text>
-                  </view>
-              </view>
-          </view>
-       </view>
-       </view>
-
-       <!-- Bottom Spacer for FAB -->
-       <view style="height: 160rpx;"></view>
+<!-- Floating Action Button -->
+    <view class="fab-btn" @click="onAddClick">
+      <view class="plus-icon">+</view>
     </view>
 
+    <!-- More Menu Popover (页面层级，覆盖在所有内容之上) -->
+    <view v-if="showMoreMenu" class="more-menu-popover" :class="themeStore.themeClass" @click.stop>
+      <view class="menu-item" @click="handleMenuClick('theme')">切换深色模式</view>
+      <view class="menu-item" @click="handleMenuClick('feed')">提议广场</view>
+      <view class="menu-item" @click="handleMenuClick('nickname')">修改昵称</view>
+      <view class="menu-item" @click="handleMenuClick('feedback')">反馈</view>
+    </view>
+
+<!-- External click mask -->
+    <view v-if="showMoreMenu" class="more-menu-mask" @click="showMoreMenu = false"></view>
+  </view>
+
 <!-- Floating Action Button -->
-     <view class="fab-btn" @click="onAddClick">
-       <view class="plus-icon">+</view>
-     </view>
+  <view class="fab-btn" @click="onAddClick">
+    <view class="plus-icon">+</view>
+  </view>
 
-     <!-- Nickname Edit Modal -->
-     <view v-if="showNicknameModal" class="modal-overlay" @click="closeNicknameModal">
-       <view class="modal-card" :class="themeStore.themeClass" @click.stop>
-          <view class="modal-header">
-             <text class="modal-title">修改昵称</text>
-             <view class="modal-close" @click="closeNicknameModal">×</view>
-          </view>
+  <!-- Nickname Edit Modal (页面层级) -->
+  <view v-if="showNicknameModal" class="modal-overlay" @click="closeNicknameModal">
+    <view class="modal-card" :class="themeStore.themeClass" @click.stop>
+      <view class="modal-header">
+        <text class="modal-title">修改昵称</text>
+        <view class="modal-close" @click="closeNicknameModal">×</view>
+      </view>
 
-          <view class="modal-body">
-             <text class="field-label">昵称</text>
-             <input
-                class="nickname-input"
-                v-model="newNickname"
-                :maxlength="20"
-                placeholder="请输入新昵称"
-             />
-             <text class="word-count">{{ newNickname.length }}/20</text>
-          </view>
+      <view class="modal-body">
+        <text class="field-label">昵称</text>
+        <input
+          class="nickname-input"
+          v-model="newNickname"
+          :maxlength="20"
+          placeholder="请输入新昵称"
+        />
+        <text class="word-count">{{ newNickname.length }}/20</text>
+      </view>
 
-          <view class="modal-footer">
-             <view class="btn-cancel" @click="closeNicknameModal">取消</view>
-             <view class="btn-confirm" :class="{ disabled: submittingNickname }" @click="confirmNicknameChange">
-                {{ submittingNickname ? '提交中...' : '确认' }}
-             </view>
-          </view>
-       </view>
-     </view>
+      <view class="modal-footer">
+        <view class="btn-cancel" @click="closeNicknameModal">取消</view>
+        <view class="btn-confirm" :class="{ disabled: submittingNickname }" @click="confirmNicknameChange">
+          {{ submittingNickname ? '提交中...' : '确认' }}
+        </view>
+      </view>
+    </view>
+  </view>
 
 <!-- Feedback Modal (共用组件) -->
-      <feedback-modal v-model:visible="showFeedbackModal" />
+<feedback-modal v-model:visible="showFeedbackModal" />
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { onShow } from '@dcloudio/uni-app';
-import { waitForLogin } from '@/utils/init';
-import { http, useThemeStore } from '@/config';
-import FeedbackModal from '@/components/feedback/feedback-modal.vue';
-const themeStore = useThemeStore();
-import { HISTORY_PAGE_SIZE } from '@/utils/constants';
-
-// System Info Logic for Header Alignment
-const sysInfo = uni.getSystemInfoSync();
-let menuButtonInfo = {
-    top: sysInfo.statusBarHeight ? sysInfo.statusBarHeight : 20,
-    height: 32
-};
-try {
-    const res = uni.getMenuButtonBoundingClientRect();
-    if (res && res.top) {
-        menuButtonInfo = {
-            top: res.top,
-            height: res.height
-        };
-    }
-} catch (e) {}
-
-const navBarHeight = menuButtonInfo.height;
-const paddingTotal = menuButtonInfo.top + menuButtonInfo.height + 10;
-
-onMounted(async () => { await waitForLogin(); loadData(); });
-
-// Types
-type ItemType = 'comment' | 'proposal';
-interface ListItem {
-    id: string;
-    type: ItemType;
-    time: string;
-    courseName: string;
-    content?: string;
-    likes?: number;
-    reason?: string;
-    voteCount?: number;
-    status?: 'pending' | 'approved' | 'rejected';
-}
-
-const listData = ref<ListItem[]>([]);
-const loading = ref(false);
-const error = ref(false);
-
-// 首次使用引导弹窗
-const showGuide = ref(false);
-const GUIDE_KEY = 'meowpick_profile_guide_seen';
-
-const loadData = async () => {
-    loading.value = true;
-    error.value = false;
-    try {
-        const [commentRes, proposalRes] = await Promise.all([
-            http.CommentController.commentHistoryCreate({ page: 1, pageSize: HISTORY_PAGE_SIZE }),
-            http.ProposalController.proposalHistoryList({ page: 1, pageSize: HISTORY_PAGE_SIZE })
-        ]);
-
-        const comments = (commentRes.data?.data?.comments || commentRes.data?.comments || []).map((c: any) => ({
-            id: c.id || c.courseId,
-            type: 'comment' as ItemType,
-            time: c.createdAt ? new Date(c.createdAt).toISOString().split('T')[0] : '',
-            courseName: c.name || c.courseName || '未知课程',
-            content: c.content || c.text || '',
-            likes: c.likeCnt || 0
-        }));
-
-        const proposals = (proposalRes.data?.data?.proposals || proposalRes.data?.proposals || []).map((p: any) => ({
-            id: p.id,
-            type: 'proposal' as ItemType,
-            time: p.createdAt ? new Date(p.createdAt).toISOString().split('T')[0] : '',
-            courseName: p.title || p.courseName || '未知提议',
-            reason: p.content || p.reason || '',
-            voteCount: p.likeCnt || p.agreeCount || 0,
-            status: p.status === 'approved' ? 'approved' : p.status === 'rejected' ? 'rejected' : 'pending'
-        }));
-
-        listData.value = [...comments, ...proposals];
-    } catch (err) {
-        console.error('[profile-view] loadData error:', err);
-        error.value = true;
-        uni.showToast({ title: '加载失败，请重试', icon: 'none' });
-    } finally {
-        loading.value = false;
-    }
-};
-
-const currentFilter = ref<'all' | 'comment' | 'proposal'>('all');
-
-const setFilter = (filter: 'all' | 'comment' | 'proposal') => {
-    currentFilter.value = filter;
-};
-
-const filteredList = computed(() => {
-    let result = [...listData.value];
-    if (currentFilter.value !== 'all') {
-        result = result.filter(item => item.type === currentFilter.value);
-    }
-    return result.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
-});
-
-// Modals (toggled by layout/main.vue via uni.$emit)
-const showNicknameModal = ref(false);
-const showFeedbackModal = ref(false);
-
-// More Menu (⋯ Popover)
-const showMoreMenu = ref(false);
-
-const toggleMoreMenu = () => {
-    showMoreMenu.value = !showMoreMenu.value;
-};
-
-const handleMenuClick = (action: 'theme' | 'feed' | 'nickname' | 'feedback') => {
-    showMoreMenu.value = false;
-    switch (action) {
-        case 'theme':
-            themeStore.toggleTheme();
-            break;
-        case 'feed':
-            uni.navigateTo({ url: '/pages/proposal/feed/feed' });
-            break;
-        case 'nickname':
-            openNicknameModal();
-            break;
-        case 'feedback':
-            openFeedbackModal();
-            break;
-    }
-};
-
-// Nickname Modal
-const newNickname = ref('');
-const submittingNickname = ref(false);
-
-const openNicknameModal = () => {
-    newNickname.value = '';
-    showNicknameModal.value = true;
-};
-
-const closeNicknameModal = () => {
-    showNicknameModal.value = false;
-};
-
-const confirmNicknameChange = async () => {
-    const trimmed = newNickname.value.trim();
-    if (!trimmed) {
-        return uni.showToast({ title: '昵称不能为空', icon: 'none' });
-    }
-    if (trimmed.length > 20) {
-        return uni.showToast({ title: '昵称不超过20字符', icon: 'none' });
-    }
-
-    submittingNickname.value = true;
-    try {
-        uni.showLoading({ title: '提交中' });
-
-        // mock：等待 500ms 模拟网络请求
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        // TODO: 等后端提供 UpdateUserProfile 接口后接入真实 API
-        // const res = await http.UserController.updateUserProfileCreate({ username: trimmed });
-        // if (res.data?.code !== 0) throw new Error(res.data?.msg || '提交失败');
-
-        uni.hideLoading();
-        uni.showToast({ title: '修改成功', icon: 'success' });
-        closeNicknameModal();
-    } catch (err) {
-        uni.hideLoading();
-        uni.showToast({ title: '修改失败，请重试', icon: 'none' });
-        console.error('[nickname change] error:', err);
-    } finally {
-        submittingNickname.value = false;
-    }
-};
-
-// Feedback Modal (使用共用组件 feedback-modal.vue)
-const openFeedbackModal = () => {
-    showFeedbackModal.value = true;
-};
-
-// Actions
-const onAddClick = () => {
-    // If specific filter is selected, no menu, strictly filter related action? 
-    // Requirement 6: "并且此时点击新增也无子菜单选择" (Wait, requirement 6 says: "点击'提议'或'吐槽'可以只筛选相关内容，并且此时点击新增也无子菜单选择")
-    
-    if (currentFilter.value === 'comment') {
-        goToAddComment();
-        return;
-    }
-    if (currentFilter.value === 'proposal') {
-        goToAddProposal();
-        return;
-    }
-
-    // Default: Show Action Sheet
-    uni.showActionSheet({
-        itemList: ['新增吐槽', '新增提议'],
-        success: (res) => {
-            if (res.tapIndex === 0) {
-                goToAddComment();
-            } else if (res.tapIndex === 1) {
-                goToAddProposal();
-            }
-        }
-    });
-};
-
-const goToAddComment = () => {
-    // Navigate to Search page with mode parameter
-    uni.navigateTo({ url: '/pages/find/index/index?mode=add-comment' });
-};
-
-const goToAddProposal = () => {
-    uni.navigateTo({ url: '/pages/proposal/propose/propose' });
-};
-
-const onLongPress = (item: ListItem) => {
-    const itemList: string[] = [];
-    
-    // Logic for Proposal
-    if (item.type === 'proposal') {
-        if (item.voteCount === undefined || item.voteCount === 0) {
-             itemList.push('修改', '删除');
-        } else {
-             // 需求: 有投票数时支持查看，如果修改或删除则投票数清零
-             // We allow modify/delete but warn user
-             itemList.push('查看详情', '修改 (清空票数)', '删除');
-        }
-    } 
-    // Logic for Comment
-    else {
-        itemList.push('查看详情', '修改', '删除');
-    }
-
-    uni.showActionSheet({
-        itemList: itemList,
-        success: (res) => {
-            const action = itemList[res.tapIndex || 0];
-            if (action.includes('删除')) {
-                deleteItem(item);
-            } else if (action.includes('修改')) {
-                uni.showToast({ title: '功能正在开发中', icon: 'none' });
-            } else if (action.includes('查看')) {
-                onItemClick(item);
-            }
-        }
-    });
-};
-
-const onItemClick = (item: ListItem) => {
-    if (item.type === 'comment') {
-        uni.navigateTo({
-            url: `/pages/course/index/index?id=${item.id}`
-        });
-    } else {
-        const dataStr = encodeURIComponent(JSON.stringify(item));
-        uni.navigateTo({
-            url: `/pages/course/proposal-detail/index?data=${dataStr}`
-        });
-    }
-};
-
-const deleteItem = async (item: ListItem) => {
-    try {
-        if (item.type === 'proposal') {
-            await http.ProposalController.proposalDeleteCreate(item.id);
-        } else {
-            // Comment deletion not available in API
-            uni.showToast({ title: '评论暂不支持删除', icon: 'none' });
-            return;
-        }
-        listData.value = listData.value.filter(i => i.id !== item.id);
-        uni.showToast({ title: '已删除', icon: 'success' });
-    } catch (err) {
-        console.error('Delete failed:', err);
-        uni.showToast({ title: '删除失败', icon: 'none' });
-    }
-};
-
-const hideGuide = () => {
-  showGuide.value = false;
-  uni.setStorageSync(GUIDE_KEY, true);
-};
-
-const checkGuide = () => {
-  const hasSeenGuide = uni.getStorageSync(GUIDE_KEY);
-  if (!hasSeenGuide) {
-    showGuide.value = true;
-  }
-};
-
-onShow(() => {
-  checkGuide();
-});
 </script>
 
 <style scoped lang="scss">
@@ -555,100 +259,125 @@ onShow(() => {
     pointer-events: none;
 }
 
-/* 1. Header: Breathable & Bold */
-.header-section {
+/* 底层：用户信息层（被"我的发布"组件覆盖） */
+.user-info-layer {
     position: relative;
-    z-index: 100; /* Above capsule-mask (99) */
-    padding: 0 40rpx;
+    z-index: 1;
+    padding: 20rpx 40rpx 32rpx;
     display: flex;
-    align-items: flex-end;
-    position: relative;
-    
-    .title-wrapper {
-        display: flex;
-        align-items: baseline; 
+    align-items: center;
+    gap: 24rpx;
+    background-color: #f7f8fa;
+}
+
+.avatar-circle {
+    width: 96rpx;
+    height: 96rpx;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffe2e8 0%, #ffd4d4 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4rpx 16rpx rgba(178, 0, 53, 0.15);
+}
+
+.avatar-emoji {
+    font-size: 56rpx;
+    line-height: 1;
+}
+
+.user-meta {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6rpx;
+}
+
+.user-nickname {
+    font-size: 40rpx;
+    font-weight: 700;
+    color: #1f1f1f;
+    letter-spacing: -1rpx;
+}
+
+.user-contribution {
+    font-size: 26rpx;
+    color: #999;
+}
+
+.user-more-btn {
+    width: 56rpx;
+    height: 56rpx;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 7rpx;
+    background-color: #ffffff;
+    border-radius: 100rpx;
+    box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.06);
+    flex-shrink: 0;
+    transition: transform 0.12s;
+
+    &:active {
+        transform: scale(0.94);
     }
 
-    .page-title {
-        font-size: 56rpx; /* Big Title */
-        font-weight: 800; /* Extra Bold */
-        color: #1f1f1f;
-        margin-right: 20rpx;
-        line-height: 1;
-        letter-spacing: -2rpx; /* Tighter tracking for modern look */
-    }
-
-    .sub-title {
-        font-size: 26rpx;
-        color: #999;
-        font-weight: 400;
-    }
-
-    .theme-toggle {
-        position: absolute;
-        right: 40rpx;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 48rpx;
-        height: 48rpx;
-        border-radius: 50%;
-        background-color: #f0f0f0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 28rpx;
-    }
-
-    .help-icon {
-        position: absolute;
-        right: 40rpx;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 48rpx;
-        height: 48rpx;
-        border-radius: 50%;
-        background-color: #f0f0f0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 28rpx;
-        color: #666;
-        font-weight: 600;
-    }
-
-    .guide-icon {
-        position: absolute;
-        right: 40rpx;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 48rpx;
-        height: 48rpx;
-        border-radius: 50%;
-        background-color: #f0f0f0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 28rpx;
-        color: #666;
-        font-weight: 600;
+    .line {
+        width: 28rpx;
+        height: 3rpx;
+        background-color: #666;
+        border-radius: 2rpx;
+        display: block;
     }
 }
 
-/* 2. Filter Bar: Sticky & Clean */
+/* 顶层："我的发布"组件（圆角矩形覆盖底层） */
+.my-publish-card {
+    position: relative;
+    z-index: 10;
+    background-color: #ffffff;
+    border-radius: 32rpx 32rpx 0 0;
+    box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.04);
+    margin-top: -16rpx; /* 让圆角与底层视觉重叠 */
+    padding-top: 24rpx;
+    min-height: calc(100vh - 280rpx);
+    transition: transform 0.05s linear;
+}
+
+/* 标题栏 */
+.my-publish-header {
+    padding: 0 40rpx 16rpx;
+
+    .page-title {
+        font-size: 44rpx;
+        font-weight: 800;
+        color: #1f1f1f;
+        letter-spacing: -1rpx;
+        display: block;
+    }
+
+    .sub-title {
+        font-size: 24rpx;
+        color: #999;
+        margin-top: 4rpx;
+        display: block;
+    }
+}
+
+/* 1. Header (已迁移至 my-publish-header) */
+
+/* 2. Filter Bar: 在 my-publish-card 内部，普通 block 布局 */
 .sticky-bar {
-    position: sticky;
-    z-index: 100;
-    left: 0;
-    right: 0;
-    padding: 0 40rpx;
-    background-color: rgba(247, 248, 250, 0.85);
-    backdrop-filter: blur(20px);
+    padding: 16rpx 40rpx 8rpx;
+    background-color: transparent;
 
     .filter-row-wrapper {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        padding: 16rpx 0;
+        justify-content: center;
+        padding: 0;
     }
 
     .filter-row {
@@ -708,16 +437,16 @@ onShow(() => {
         }
     }
 
-    /* Popover - 紧贴 ⋯ 按钮右下角 */
+    /* Popover - 固定在 ⋯ 按钮位置（页面层级） */
     .more-menu-popover {
-        position: absolute;
-        top: calc(100% + 12rpx);
-        right: 0;
+        position: fixed;
+        top: 180rpx;
+        right: 24rpx;
         background-color: #ffffff;
         border-radius: 24rpx;
         box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.15);
         padding: 12rpx 0;
-        z-index: 1000;
+        z-index: 1500;
         min-width: 240rpx;
         overflow: hidden;
 
@@ -745,7 +474,7 @@ onShow(() => {
 }
 
 .list-container {
-    padding: 40rpx 32rpx 40rpx;
+    padding: 24rpx 32rpx 40rpx;
 }
 
 .card {
@@ -1127,13 +856,21 @@ onShow(() => {
 <style lang="scss">
 .profile-container.dark-theme { background-color: #121212 !important; }
 .profile-container.dark-theme .capsule-mask { background-color: #121212; }
-.profile-container.dark-theme .header-section .page-title { color: #e0e0e0; }
-.profile-container.dark-theme .header-section .sub-title { color: #666; }
-.profile-container.dark-theme .header-section .theme-toggle { background-color: #333; }
-.profile-container.dark-theme .sticky-bar { background-color: rgba(18,18,18,0.85) !important; }
-.profile-container.dark-theme .sticky-bar .filter-row { background: #2a2a2a !important; }
+
+/* User info layer dark mode */
+.profile-container.dark-theme .user-info-layer { background-color: #121212; }
+.profile-container.dark-theme .avatar-circle { background: linear-gradient(135deg, #4a2828 0%, #6a3838 100%); box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.4); }
+.profile-container.dark-theme .user-nickname { color: #e0e0e0; }
+.profile-container.dark-theme .user-contribution { color: #888; }
+.profile-container.dark-theme .user-more-btn { background-color: #2a2a2a; box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.3); .line { background-color: #e0e0e0; } &:active { background-color: #3a3a3a; } }
+
+/* My publish card dark mode */
+.profile-container.dark-theme .my-publish-card { background-color: #1e1e1e; box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.3); }
+
+/* Sticky bar dark mode (now transparent background) */
+.profile-container.dark-theme .sticky-bar .filter-row { background: #2a2a2a; }
 .profile-container.dark-theme .sticky-bar .filter-pill { color: #888; }
-.profile-container.dark-theme .list-container { background-color: #121212 !important; padding: 40rpx 32rpx; }
+.profile-container.dark-theme .list-container { padding: 24rpx 32rpx 40rpx; }
 .profile-container.dark-theme .list-item { background: transparent; }
 .profile-container.dark-theme .card { background: #1e1e1e !important; border-color: #333; box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.3); }
 .profile-container.dark-theme .card .card-main { background: transparent; }
@@ -1169,10 +906,8 @@ onShow(() => {
 .profile-container.dark-theme .loading-state .loading-spinner { border-color: #333; border-top-color: #b20035; }
 .profile-container.dark-theme .fab-btn { box-shadow: 0 8rpx 30rpx rgba(178, 0, 53, 0.5); }
 
-/* More Menu Dark Mode - 使用父类选择器确保作用域 */
-.profile-container.dark-theme .sticky-bar .more-btn-pill { background-color: #2a2a2a; box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.3); }
-.profile-container.dark-theme .sticky-bar .more-btn-pill .line { background-color: #e0e0e0; }
-.profile-container.dark-theme .sticky-bar .more-btn-pill:active { background-color: #3a3a3a; }
+/* More Menu Dark Mode - ⋯ 按钮现已在 user-info-layer 内 */
+.profile-container.dark-theme .user-more-btn { background-color: #2a2a2a; box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.3); .line { background-color: #e0e0e0; } &:active { background-color: #3a3a3a; } }
 .profile-container.dark-theme .more-menu-popover { background-color: #2a2a2a; box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.5); }
 .profile-container.dark-theme .more-menu-popover .menu-item { color: #e0e0e0; }
 .profile-container.dark-theme .more-menu-popover .menu-item:active { background-color: #3a3a3a; }
