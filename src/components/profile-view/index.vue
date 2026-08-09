@@ -1,8 +1,8 @@
 <template>
-  <view class="profile-container" :class="themeStore.themeClass" :style="{ paddingTop: (menuButtonInfo.top + 15) + 'px' }">
+  <view class="profile-container" :class="themeStore.themeClass" :style="{ paddingTop: topReservedHeight + 'px' }">
 
     <!-- 胶囊遮罩：挡住胶囊上方的内容 -->
-    <view class="capsule-mask" :class="themeStore.themeClass" :style="{ height: (menuButtonInfo.top + menuButtonInfo.height + 15) + 'px' }" />
+    <view class="capsule-mask" :class="themeStore.themeClass" :style="{ height: (menuButtonInfo.top + menuButtonInfo.height) + 'px' }" />
 
     <!-- 底层：头像 + 昵称 + 贡献值（被上方"我的发布"组件覆盖） -->
     <view class="user-info-layer">
@@ -238,6 +238,31 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed, onMounted } from 'vue';
+import { onShow } from '@dcloudio/uni-app';
+import { waitForLogin } from '@/utils/init';
+import { http, useThemeStore } from '@/config';
+const themeStore = useThemeStore();
+
+// 胶囊位置信息（顶部留白计算用）
+const sysInfo = uni.getSystemInfoSync();
+let menuButtonInfo = {
+    top: sysInfo.statusBarHeight ? sysInfo.statusBarHeight + 4 : 48,
+    height: 32
+};
+try {
+    const res = uni.getMenuButtonBoundingClientRect();
+    if (res && res.top) {
+        menuButtonInfo = { top: res.top, height: res.height };
+    }
+} catch (e) {}
+
+// 用户信息（mock 占位）
+const userName = ref('华师喵');
+const contribution = ref(128);
+
+// 顶部预留：胶囊底部 + 额外间距
+const topReservedHeight = computed(() => menuButtonInfo.top + menuButtonInfo.height + 40);
 </script>
 
 <style scoped lang="scss">
