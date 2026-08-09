@@ -242,32 +242,24 @@
            </view>
 
            <view class="modal-body feedback-body">
-              <text class="feedback-desc">遇到问题或有建议？通过以下渠道联系我们：</text>
+              <text class="feedback-desc">遇到问题或有建议？点击下方框即可复制对应联系方式：</text>
 
-              <!-- QQ群反馈 -->
-              <view class="feedback-section">
+              <!-- QQ群反馈 - 点击复制群号 -->
+              <view class="feedback-section" @click="copyQQNumber">
                  <view class="feedback-label-row">
                     <text class="feedback-label">QQ 群</text>
+                    <text class="feedback-hint">点击复制</text>
                  </view>
                  <view class="feedback-value">群号 {{ CONTACT_INFO.qqGroup.number }}</view>
               </view>
 
-              <!-- 邮件反馈 -->
-              <view class="feedback-section">
+              <!-- 邮件反馈 - 点击复制邮箱 -->
+              <view class="feedback-section" @click="copyEmail">
                  <view class="feedback-label-row">
                     <text class="feedback-label">邮箱</text>
+                    <text class="feedback-hint">点击复制</text>
                  </view>
                  <view class="feedback-value">{{ CONTACT_INFO.email.address }}</view>
-              </view>
-           </view>
-
-           <!-- 底部两个大按钮：复制群号 + 复制邮箱 -->
-           <view class="modal-footer feedback-footer">
-              <view class="feedback-action-btn" @click="copyQQNumber">
-                 <text class="action-btn-label">复制群号</text>
-              </view>
-              <view class="feedback-action-btn feedback-action-primary" @click="copyEmail">
-                 <text class="action-btn-label">复制邮箱</text>
               </view>
            </view>
         </view>
@@ -1198,8 +1190,14 @@ onShow(() => {
         display: block;
     }
 
+    /* 可点击的分组：整块可点击，复制对应内容 */
     .feedback-section {
-        margin-bottom: 28rpx;
+        margin-bottom: 32rpx;
+        transition: opacity 0.15s;
+
+        &:active {
+            opacity: 0.6;
+        }
 
         &:last-child {
             margin-bottom: 0;
@@ -1207,7 +1205,10 @@ onShow(() => {
     }
 
     .feedback-label-row {
-        margin-bottom: 12rpx;
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 14rpx;
     }
 
     .feedback-label {
@@ -1217,54 +1218,25 @@ onShow(() => {
         display: block;
     }
 
+    .feedback-hint {
+        font-size: 22rpx;
+        color: #999;
+        font-weight: 400;
+    }
+
     .feedback-value {
         font-size: 32rpx;
         color: #1a1a1a;
         background-color: #f5f5f5;
-        padding: 24rpx 28rpx;
+        padding: 28rpx;
         border-radius: 14rpx;
         font-family: monospace;
         font-weight: 500;
         letter-spacing: 1rpx;
+        text-align: center;
+        border: 2rpx solid transparent;
+        transition: border-color 0.15s, background-color 0.15s;
     }
-}
-
-/* 底部两个并排大按钮 */
-.feedback-footer {
-    padding: 0 32rpx 32rpx !important;
-    border-top: 1rpx solid #f0f0f0 !important;
-    gap: 20rpx !important;
-}
-
-.feedback-action-btn {
-    flex: 1;
-    height: 88rpx;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #f5f5f5;
-    color: #333;
-    border-radius: 44rpx;
-    transition: opacity 0.15s, transform 0.15s;
-    font-size: 32rpx;
-    font-weight: 500;
-
-    &:active {
-        opacity: 0.7;
-        transform: scale(0.98);
-    }
-}
-
-.feedback-action-primary {
-    background: linear-gradient(135deg, #b20035, #ff4d6a);
-    color: #ffffff;
-    font-weight: 600;
-    box-shadow: 0 4rpx 12rpx rgba(178, 0, 53, 0.25);
-}
-
-.action-btn-label {
-    font-size: 32rpx;
-    line-height: 1;
 }
 </style>
 
@@ -1324,7 +1296,7 @@ onShow(() => {
 .modal-card.dark-theme .modal-footer { border-color: #333; .btn-confirm { border-color: #333; } }
 
 /* Feedback Modal Dark Mode */
-.modal-card.dark-theme.feedback-card { .feedback-desc { color: #aaa; } .feedback-label { color: #e0e0e0; } .feedback-value { background-color: #2a2a2a; color: #e0e0e0; border: 1rpx solid #3a3a3a; } .feedback-footer { border-color: #333 !important; } .feedback-action-btn { background-color: #2a2a2a; color: #e0e0e0; } }
+.modal-card.dark-theme.feedback-card { .feedback-desc { color: #aaa; } .feedback-label { color: #e0e0e0; } .feedback-hint { color: #888; } .feedback-value { background-color: #2a2a2a; color: #e0e0e0; border-color: #3a3a3a; } }
 
 .guide-overlay {
   position: fixed;
