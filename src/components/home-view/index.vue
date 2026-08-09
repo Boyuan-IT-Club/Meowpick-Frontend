@@ -504,7 +504,7 @@ $text-main: #2c2c2c;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 120rpx 0 60rpx;
+  padding: 120rpx 0 20rpx;
 
   .feedback-entry-text {
     font-size: 28rpx;
