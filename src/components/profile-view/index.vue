@@ -1169,9 +1169,13 @@ onShow(() => {
 .profile-container.dark-theme .loading-state .loading-spinner { border-color: #333; border-top-color: #b20035; }
 .profile-container.dark-theme .fab-btn { box-shadow: 0 8rpx 30rpx rgba(178, 0, 53, 0.5); }
 
-/* More Menu Dark Mode */
-.more-btn-pill.dark-theme { background-color: #2a2a2a; box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.3); .line { background-color: #e0e0e0; } }
-.more-menu-popover.dark-theme { background-color: #2a2a2a; box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.5); .menu-item { color: #e0e0e0; &:active { background-color: #3a3a3a; } } }
+/* More Menu Dark Mode - 使用父类选择器确保作用域 */
+.profile-container.dark-theme .sticky-bar .more-btn-pill { background-color: #2a2a2a; box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.3); }
+.profile-container.dark-theme .sticky-bar .more-btn-pill .line { background-color: #e0e0e0; }
+.profile-container.dark-theme .sticky-bar .more-btn-pill:active { background-color: #3a3a3a; }
+.profile-container.dark-theme .more-menu-popover { background-color: #2a2a2a; box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.5); }
+.profile-container.dark-theme .more-menu-popover .menu-item { color: #e0e0e0; }
+.profile-container.dark-theme .more-menu-popover .menu-item:active { background-color: #3a3a3a; }
 
 /* Nickname Modal Dark Mode */
 .modal-card.dark-theme { background-color: #1e1e1e; }
