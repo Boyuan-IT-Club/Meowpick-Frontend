@@ -182,30 +182,25 @@
         </view>
       </view>
     </view>
-
-<!-- Floating Action Button -->
-    <view class="fab-btn" @click="onAddClick">
-      <view class="plus-icon">+</view>
-    </view>
-
-    <!-- More Menu Popover (页面层级，覆盖在所有内容之上) -->
-    <view v-if="showMoreMenu" class="more-menu-popover" :class="themeStore.themeClass" @click.stop>
-      <view class="menu-item" @click="handleMenuClick('theme')">切换深色模式</view>
-      <view class="menu-item" @click="handleMenuClick('feed')">提议广场</view>
-      <view class="menu-item" @click="handleMenuClick('nickname')">修改昵称</view>
-      <view class="menu-item" @click="handleMenuClick('feedback')">反馈</view>
-    </view>
-
-<!-- External click mask -->
-    <view v-if="showMoreMenu" class="more-menu-mask" @click="showMoreMenu = false"></view>
   </view>
 
-<!-- Floating Action Button -->
+  <!-- Floating Action Button -->
   <view class="fab-btn" @click="onAddClick">
     <view class="plus-icon">+</view>
   </view>
 
-  <!-- Nickname Edit Modal (页面层级) -->
+  <!-- More Menu Popover -->
+  <view v-if="showMoreMenu" class="more-menu-popover" :class="themeStore.themeClass" @click.stop>
+    <view class="menu-item" @click="handleMenuClick('theme')">切换深色模式</view>
+    <view class="menu-item" @click="handleMenuClick('feed')">提议广场</view>
+    <view class="menu-item" @click="handleMenuClick('nickname')">修改昵称</view>
+    <view class="menu-item" @click="handleMenuClick('feedback')">反馈</view>
+  </view>
+
+  <!-- More Menu Mask -->
+  <view v-if="showMoreMenu" class="more-menu-mask" @click="showMoreMenu = false"></view>
+
+  <!-- Nickname Edit Modal -->
   <view v-if="showNicknameModal" class="modal-overlay" @click="closeNicknameModal">
     <view class="modal-card" :class="themeStore.themeClass" @click.stop>
       <view class="modal-header">
@@ -233,8 +228,8 @@
     </view>
   </view>
 
-<!-- Feedback Modal (共用组件) -->
-<feedback-modal v-model:visible="showFeedbackModal" />
+  <!-- Feedback Modal (共用组件) -->
+  <feedback-modal v-model:visible="showFeedbackModal" />
 </template>
 
 <script setup lang="ts">
