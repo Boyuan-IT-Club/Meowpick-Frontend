@@ -233,41 +233,45 @@
        </view>
      </view>
 
-     <!-- Feedback Modal -->
-     <view v-if="showFeedbackModal" class="modal-overlay" @click="closeFeedbackModal">
-       <view class="modal-card feedback-card" :class="themeStore.themeClass" @click.stop>
-          <view class="modal-header">
-             <text class="modal-title">反馈</text>
-             <view class="modal-close" @click="closeFeedbackModal">×</view>
-          </view>
+<!-- Feedback Modal -->
+      <view v-if="showFeedbackModal" class="modal-overlay" @click="closeFeedbackModal">
+        <view class="modal-card feedback-card" :class="themeStore.themeClass" @click.stop>
+           <view class="modal-header">
+              <text class="modal-title">反馈</text>
+              <view class="modal-close" @click="closeFeedbackModal">×</view>
+           </view>
 
-          <view class="modal-body">
-             <!-- QQ群反馈 -->
-             <view class="feedback-section">
-                <text class="feedback-label">QQ群反馈</text>
-                <view class="feedback-value">群号：{{ CONTACT_INFO.qqGroup.number }}</view>
-                <view class="feedback-actions">
-                   <view class="btn-secondary" @click="copyQQNumber">复制群号</view>
-                   <view class="btn-primary" @click="joinQQGroup">加群</view>
-                </view>
-             </view>
+           <view class="modal-body feedback-body">
+              <text class="feedback-desc">遇到问题或有建议？通过以下渠道联系我们：</text>
 
-             <!-- 邮件反馈 -->
-             <view class="feedback-section">
-                <text class="feedback-label">邮件反馈</text>
-                <view class="feedback-value">{{ CONTACT_INFO.email.address }}</view>
-                <view class="feedback-actions">
-                   <view class="btn-secondary" @click="copyEmail">复制邮箱</view>
-                   <view class="btn-primary" @click="sendEmail">发邮件</view>
-                </view>
-             </view>
-          </view>
+              <!-- QQ群反馈 -->
+              <view class="feedback-section">
+                 <view class="feedback-label-row">
+                    <text class="feedback-label">QQ 群</text>
+                 </view>
+                 <view class="feedback-value">群号 {{ CONTACT_INFO.qqGroup.number }}</view>
+              </view>
 
-          <view class="modal-footer modal-footer-single">
-             <view class="btn-cancel-full" @click="closeFeedbackModal">关闭</view>
-          </view>
-       </view>
-     </view>
+              <!-- 邮件反馈 -->
+              <view class="feedback-section">
+                 <view class="feedback-label-row">
+                    <text class="feedback-label">邮箱</text>
+                 </view>
+                 <view class="feedback-value">{{ CONTACT_INFO.email.address }}</view>
+              </view>
+           </view>
+
+           <!-- 底部两个大按钮：复制群号 + 复制邮箱 -->
+           <view class="modal-footer feedback-footer">
+              <view class="feedback-action-btn" @click="copyQQNumber">
+                 <text class="action-btn-label">复制群号</text>
+              </view>
+              <view class="feedback-action-btn feedback-action-primary" @click="copyEmail">
+                 <text class="action-btn-label">复制邮箱</text>
+              </view>
+           </view>
+        </view>
+      </view>
 </template>
 
 <script setup lang="ts">
@@ -1183,78 +1187,84 @@ onShow(() => {
 /* Feedback Modal Styles */
 .feedback-card {
     .modal-body {
-        padding: 24rpx 32rpx;
+        padding: 32rpx 40rpx;
+    }
+
+    .feedback-desc {
+        font-size: 30rpx;
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 32rpx;
+        display: block;
     }
 
     .feedback-section {
-        margin-bottom: 24rpx;
+        margin-bottom: 28rpx;
 
         &:last-child {
             margin-bottom: 0;
         }
     }
 
-    .feedback-label {
-        font-size: 26rpx;
-        color: #666;
+    .feedback-label-row {
         margin-bottom: 12rpx;
+    }
+
+    .feedback-label {
+        font-size: 30rpx;
+        color: #333;
+        font-weight: 600;
         display: block;
-        font-weight: 500;
     }
 
     .feedback-value {
-        font-size: 28rpx;
-        color: #333;
+        font-size: 32rpx;
+        color: #1a1a1a;
         background-color: #f5f5f5;
-        padding: 20rpx 24rpx;
-        border-radius: 12rpx;
-        margin-bottom: 16rpx;
+        padding: 24rpx 28rpx;
+        border-radius: 14rpx;
         font-family: monospace;
-    }
-
-    .feedback-actions {
-        display: flex;
-        gap: 16rpx;
-    }
-
-    .btn-secondary,
-    .btn-primary {
-        flex: 1;
-        height: 72rpx;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 26rpx;
-        border-radius: 36rpx;
-        transition: opacity 0.15s;
-
-        &:active {
-            opacity: 0.7;
-        }
-    }
-
-    .btn-secondary {
-        background-color: #f5f5f5;
-        color: #666;
-    }
-
-    .btn-primary {
-        background: linear-gradient(135deg, #b20035, #ff4d6a);
-        color: #fff;
         font-weight: 500;
+        letter-spacing: 1rpx;
     }
 }
 
-.modal-footer-single {
-    .btn-cancel-full {
-        flex: 1;
-        height: 96rpx;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 30rpx;
-        color: #666;
+/* 底部两个并排大按钮 */
+.feedback-footer {
+    padding: 0 32rpx 32rpx !important;
+    border-top: 1rpx solid #f0f0f0 !important;
+    gap: 20rpx !important;
+}
+
+.feedback-action-btn {
+    flex: 1;
+    height: 88rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f5f5;
+    color: #333;
+    border-radius: 44rpx;
+    transition: opacity 0.15s, transform 0.15s;
+    font-size: 32rpx;
+    font-weight: 500;
+
+    &:active {
+        opacity: 0.7;
+        transform: scale(0.98);
     }
+}
+
+.feedback-action-primary {
+    background: linear-gradient(135deg, #b20035, #ff4d6a);
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: 0 4rpx 12rpx rgba(178, 0, 53, 0.25);
+}
+
+.action-btn-label {
+    font-size: 32rpx;
+    line-height: 1;
 }
 </style>
 
@@ -1314,7 +1324,7 @@ onShow(() => {
 .modal-card.dark-theme .modal-footer { border-color: #333; .btn-confirm { border-color: #333; } }
 
 /* Feedback Modal Dark Mode */
-.modal-card.dark-theme.feedback-card { .feedback-label { color: #aaa; } .feedback-value { background-color: #2a2a2a; color: #e0e0e0; } .btn-secondary { background-color: #2a2a2a; color: #aaa; } }
+.modal-card.dark-theme.feedback-card { .feedback-desc { color: #aaa; } .feedback-label { color: #e0e0e0; } .feedback-value { background-color: #2a2a2a; color: #e0e0e0; border: 1rpx solid #3a3a3a; } .feedback-footer { border-color: #333 !important; } .feedback-action-btn { background-color: #2a2a2a; color: #e0e0e0; } }
 
 .guide-overlay {
   position: fixed;
