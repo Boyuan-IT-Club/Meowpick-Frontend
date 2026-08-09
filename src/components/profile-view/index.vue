@@ -263,27 +263,28 @@
 .user-info-layer {
     position: relative;
     z-index: 1;
-    padding: 20rpx 40rpx 32rpx;
+    padding: 40rpx 40rpx 48rpx;
     display: flex;
     align-items: center;
-    gap: 24rpx;
+    gap: 28rpx;
     background-color: #f7f8fa;
+    min-height: 220rpx;
 }
 
 .avatar-circle {
-    width: 96rpx;
-    height: 96rpx;
+    width: 136rpx;
+    height: 136rpx;
     border-radius: 50%;
     background: linear-gradient(135deg, #ffe2e8 0%, #ffd4d4 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    box-shadow: 0 4rpx 16rpx rgba(178, 0, 53, 0.15);
+    box-shadow: 0 6rpx 20rpx rgba(178, 0, 53, 0.18);
 }
 
 .avatar-emoji {
-    font-size: 56rpx;
+    font-size: 76rpx;
     line-height: 1;
 }
 
@@ -291,24 +292,27 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 6rpx;
+    gap: 10rpx;
+    min-width: 0;
 }
 
 .user-nickname {
-    font-size: 40rpx;
-    font-weight: 700;
+    font-size: 56rpx;
+    font-weight: 800;
     color: #1f1f1f;
-    letter-spacing: -1rpx;
+    letter-spacing: -2rpx;
+    line-height: 1.2;
 }
 
 .user-contribution {
-    font-size: 26rpx;
+    font-size: 32rpx;
     color: #999;
+    font-weight: 400;
 }
 
 .user-more-btn {
-    width: 56rpx;
-    height: 56rpx;
+    width: 64rpx;
+    height: 64rpx;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -325,7 +329,7 @@
     }
 
     .line {
-        width: 28rpx;
+        width: 30rpx;
         height: 3rpx;
         background-color: #666;
         border-radius: 2rpx;
@@ -338,11 +342,11 @@
     position: relative;
     z-index: 10;
     background-color: #ffffff;
-    border-radius: 32rpx 32rpx 0 0;
-    box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.04);
-    margin-top: -16rpx; /* 让圆角与底层视觉重叠 */
-    padding-top: 24rpx;
-    min-height: calc(100vh - 280rpx);
+    border-radius: 36rpx 36rpx 0 0;
+    box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.06);
+    margin-top: -24rpx; /* 让圆角与底层视觉重叠 */
+    padding-top: 32rpx;
+    min-height: calc(100vh - 220rpx);
     transition: transform 0.05s linear;
 }
 
