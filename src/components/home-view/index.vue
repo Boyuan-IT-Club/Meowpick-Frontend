@@ -496,19 +496,19 @@ $text-main: #2c2c2c;
 }
 
 .home-view-container.dark-theme .feedback-entry {
-  .feedback-entry-text { color: #666; &:active { color: #ff6b8a; } }
+  .feedback-entry-text { color: #555; &:active { color: #ff6b8a; } }
 }
 
-/* 底部"我要反馈"小字入口 */
+/* 底部"我要反馈"小字入口 - 位于最底部 */
 .feedback-entry {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 40rpx 0 80rpx;
+  padding: 80rpx 0 200rpx;
 
   .feedback-entry-text {
-    font-size: 24rpx;
-    color: #999;
+    font-size: 28rpx;
+    color: #bbb;
     text-decoration: underline;
     transition: color 0.15s;
 
