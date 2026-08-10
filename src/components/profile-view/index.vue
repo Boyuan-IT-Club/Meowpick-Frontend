@@ -256,8 +256,8 @@ try {
 const userName = ref('华师喵');
 const contribution = ref(128);
 
-// 顶部预留：胶囊底部 + 额外间距
-const topReservedHeight = computed(() => menuButtonInfo.top + menuButtonInfo.height + 40);
+// 顶部预留：胶囊底部 + 额外间距（确保底层占据视口约 1/3）
+const topReservedHeight = computed(() => menuButtonInfo.top + menuButtonInfo.height + 120);
 </script>
 
 <style scoped lang="scss">
@@ -279,7 +279,7 @@ const topReservedHeight = computed(() => menuButtonInfo.top + menuButtonInfo.hei
     pointer-events: none;
 }
 
-/* 底层：用户信息层（被"我的发布"组件覆盖） */
+/* 底层：用户信息层（占据视口约 1/3） */
 .user-info-layer {
     position: relative;
     z-index: 1;
@@ -288,7 +288,7 @@ const topReservedHeight = computed(() => menuButtonInfo.top + menuButtonInfo.hei
     align-items: center;
     gap: 28rpx;
     background-color: #f7f8fa;
-    min-height: 220rpx;
+    min-height: 280rpx;
 }
 
 .avatar-circle {
@@ -366,7 +366,7 @@ const topReservedHeight = computed(() => menuButtonInfo.top + menuButtonInfo.hei
     box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.06);
     margin-top: 0;
     padding-top: 32rpx;
-    min-height: calc(100vh - 220rpx);
+    min-height: calc(100vh - 280rpx);
     transition: transform 0.05s linear;
 }
 
