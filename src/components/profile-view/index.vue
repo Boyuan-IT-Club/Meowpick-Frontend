@@ -229,6 +229,7 @@ const topReservedHeight = computed(() => menuButtonInfo.top - 30);
     min-height: 100vh;
     box-sizing: border-box;
     background-color: #f7f8fa;
+    overflow: hidden;
 }
 
 .capsule-mask {
@@ -243,14 +244,17 @@ const topReservedHeight = computed(() => menuButtonInfo.top - 30);
 
 /* 底层：用户信息层（占据视口约 1/3，确保位置精确） */
 .user-info-layer {
-    position: relative;
+    position: absolute; /* 独立定位，不被 my-publish-card 挤压 */
+    top: 0;
+    left: 0;
+    right: 0;
     z-index: 1;
     padding: 32rpx 40rpx 40rpx;
     display: flex;
     align-items: center;
     gap: 28rpx;
     background-color: #f7f8fa;
-    min-height: 280rpx; /* 约 1/3 视口，更紧凑 */
+    min-height: 280rpx;
 }
 
 .avatar-circle {
@@ -321,14 +325,17 @@ const topReservedHeight = computed(() => menuButtonInfo.top - 30);
 
 /* "我的发布"组件（圆角矩形，紧接底层下方） */
 .my-publish-card {
-    position: relative;
+    position: absolute; /* 独立定位，不影响 user-info-layer */
+    top: 280rpx; /* 紧接 user-info-layer 下方 */
+    left: 0;
+    right: 0;
+    bottom: 0;
     z-index: 10;
     background-color: #ffffff;
     border-radius: 36rpx 36rpx 0 0;
     box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.06);
-    margin-top: 0;
     padding-top: 32rpx;
-    min-height: calc(100vh - 320rpx);
+    overflow: hidden;
 }
 
 .my-publish-header {
