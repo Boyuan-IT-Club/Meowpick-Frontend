@@ -159,6 +159,42 @@
         </view>
       </view>
     </view>
+
+    <!-- 引导弹窗 -->
+    <view v-if="showGuide" class="guide-overlay" :class="themeStore.themeClass" @click="hideGuide">
+      <view class="guide-content" @click.stop>
+        <view class="guide-header">
+          <text class="guide-title">欢迎来到"我的发布" 🎉</text>
+          <text class="guide-subtitle">管理你的吐槽和提议</text>
+        </view>
+        <view class="guide-sections">
+          <view class="guide-section">
+            <view class="section-icon">💬</view>
+            <view class="section-text">
+              <text class="section-title">吐槽课程</text>
+              <text class="section-desc">搜索已开设的课程，了解学长评价，选择心仪的选修课</text>
+            </view>
+          </view>
+          <view class="guide-section">
+            <view class="section-icon">📝</view>
+            <view class="section-text">
+              <text class="section-title">提议新课程</text>
+              <text class="section-desc">搜索不到想要的课？发起提议，让大家一起投票支持</text>
+            </view>
+          </view>
+          <view class="guide-section">
+            <view class="section-icon">🏫</view>
+            <view class="section-text">
+              <text class="section-title">闵行 & 普陀</text>
+              <text class="section-desc">两个校区的课程都有收录，搜索时可按校区筛选</text>
+            </view>
+          </view>
+        </view>
+        <view class="guide-footer">
+          <button class="start-btn" @click="hideGuide">我知道了</button>
+        </view>
+      </view>
+    </view>
   </view>
 
   <!-- Floating Action Button -->
@@ -202,6 +238,9 @@ import { ref, computed, onMounted } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
 import { waitForLogin } from '@/utils/init';
 import { http, useThemeStore } from '@/config';
+import { HISTORY_PAGE_SIZE } from '@/utils/constants';
+import FeedbackModal from '@/components/feedback/feedback-modal.vue';
+import { useRouteStore } from '@/config';
 const themeStore = useThemeStore();
 
 // 胶囊位置信息（顶部留白计算用）
@@ -217,19 +256,260 @@ try {
     }
 } catch (e) {}
 
+// 顶部预留：胶囊底部 + 胶囊下方间距
+const topReservedHeight = computed(() => menuButtonInfo.top + menuButtonInfo.height);
+
 // 用户信息（mock 占位）
 const userName = ref('华师喵');
 const contribution = ref(128);
 
-// 顶部预留：胶囊底部 + 胶囊下方间距（让底层占据视口约 1/4）
-const topReservedHeight = computed(() => menuButtonInfo.top + menuButtonInfo.height);
+// ===== 核心数据 =====
+const listData = ref<any[]>([]);
+const loading = ref(false);
+const error = ref(false);
+
+type ItemType = 'comment' | 'proposal';
+interface ListItem {
+    id: string;
+    type: ItemType;
+    time: string;
+    courseName: string;
+    content?: string;
+    likes?: number;
+    reason?: string;
+    voteCount?: number;
+    status?: 'pending' | 'approved' | 'rejected';
+}
+
+const currentFilter = ref<'all' | 'comment' | 'proposal'>('all');
+
+const filteredList = computed(() => {
+    let result = [...listData.value];
+    if (currentFilter.value !== 'all') {
+        result = result.filter(item => item.type === currentFilter.value);
+    }
+    return result.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+});
+
+const setFilter = (filter: 'all' | 'comment' | 'proposal') => {
+    currentFilter.value = filter;
+};
+
+// ===== 首次使用引导 =====
+const showGuide = ref(false);
+const GUIDE_KEY = 'meowpick_profile_guide_seen';
+
+const hideGuide = () => {
+    showGuide.value = false;
+    uni.setStorageSync(GUIDE_KEY, true);
+};
+
+const checkGuide = () => {
+    const hasSeenGuide = uni.getStorageSync(GUIDE_KEY);
+    if (!hasSeenGuide) {
+        showGuide.value = true;
+    }
+};
+
+// ===== Modals =====
+const showNicknameModal = ref(false);
+const showFeedbackModal = ref(false);
+const newNickname = ref('');
+const submittingNickname = ref(false);
+
+const openNicknameModal = () => {
+    newNickname.value = '';
+    showNicknameModal.value = true;
+};
+
+const closeNicknameModal = () => {
+    showNicknameModal.value = false;
+};
+
+const confirmNicknameChange = async () => {
+    const trimmed = newNickname.value.trim();
+    if (!trimmed) {
+        return uni.showToast({ title: '昵称不能为空', icon: 'none' });
+    }
+    if (trimmed.length > 20) {
+        return uni.showToast({ title: '昵称不超过20字符', icon: 'none' });
+    }
+    submittingNickname.value = true;
+    try {
+        uni.showLoading({ title: '提交中' });
+        await new Promise(resolve => setTimeout(resolve, 500));
+        uni.hideLoading();
+        uni.showToast({ title: '修改成功', icon: 'success' });
+        closeNicknameModal();
+    } catch (err) {
+        uni.hideLoading();
+        uni.showToast({ title: '修改失败，请重试', icon: 'none' });
+    } finally {
+        submittingNickname.value = false;
+    }
+};
+
+// ===== More Menu (⋯ 按钮) =====
+const showMoreMenu = ref(false);
+
+const toggleMoreMenu = () => {
+    showMoreMenu.value = !showMoreMenu.value;
+};
+
+const handleMenuClick = (action: 'theme' | 'feed' | 'nickname' | 'feedback') => {
+    showMoreMenu.value = false;
+    switch (action) {
+        case 'theme':
+            themeStore.toggleTheme();
+            break;
+        case 'feed':
+            uni.navigateTo({ url: '/pages/proposal/feed/feed' });
+            break;
+        case 'nickname':
+            openNicknameModal();
+            break;
+        case 'feedback':
+            showFeedbackModal.value = true;
+            break;
+    }
+};
+
+// ===== 数据加载 =====
+const loadData = async () => {
+    loading.value = true;
+    error.value = false;
+    try {
+        const [commentRes, proposalRes] = await Promise.all([
+            http.CommentController.commentHistoryCreate({ page: 1, pageSize: HISTORY_PAGE_SIZE }),
+            http.ProposalController.proposalHistoryList({ page: 1, pageSize: HISTORY_PAGE_SIZE })
+        ]);
+
+        const comments = (commentRes.data?.data?.comments || commentRes.data?.comments || []).map((c: any) => ({
+            id: c.id || c.courseId,
+            type: 'comment' as ItemType,
+            time: c.createdAt ? new Date(c.createdAt).toISOString().split('T')[0] : '',
+            courseName: c.name || c.courseName || '未知课程',
+            content: c.content || c.text || '',
+            likes: c.likeCnt || 0
+        }));
+
+        const proposals = (proposalRes.data?.data?.proposals || proposalRes.data?.proposals || []).map((p: any) => ({
+            id: p.id,
+            type: 'proposal' as ItemType,
+            time: p.createdAt ? new Date(p.createdAt).toISOString().split('T')[0] : '',
+            courseName: p.title || p.courseName || '未知提议',
+            reason: p.content || p.reason || '',
+            voteCount: p.likeCnt || p.agreeCount || 0,
+            status: p.status === 'approved' ? 'approved' : p.status === 'rejected' ? 'rejected' : 'pending'
+        }));
+
+        listData.value = [...comments, ...proposals];
+    } catch (err) {
+        console.error('[profile-view] loadData error:', err);
+        error.value = true;
+        uni.showToast({ title: '加载失败，请重试', icon: 'none' });
+    } finally {
+        loading.value = false;
+    }
+};
+
+// ===== 路由跳转 =====
+const onItemClick = (item: ListItem) => {
+    if (item.type === 'comment') {
+        uni.navigateTo({
+            url: `/pages/course/index/index?id=${item.id}`
+        });
+    } else {
+        const dataStr = encodeURIComponent(JSON.stringify(item));
+        uni.navigateTo({
+            url: `/pages/course/proposal-detail/index?data=${dataStr}`
+        });
+    }
+};
+
+const onLongPress = (item: ListItem) => {
+    const itemList: string[] = [];
+    if (item.type === 'proposal') {
+        if (item.voteCount === undefined || item.voteCount === 0) {
+            itemList.push('修改', '删除');
+        } else {
+            itemList.push('查看详情', '修改 (清空票数)', '删除');
+        }
+    } else {
+        itemList.push('查看详情', '修改', '删除');
+    }
+
+    uni.showActionSheet({
+        itemList: itemList,
+        success: (res) => {
+            const action = itemList[res.tapIndex || 0];
+            if (action.includes('删除')) {
+                deleteItem(item);
+            } else if (action.includes('修改')) {
+                uni.showToast({ title: '功能正在开发中', icon: 'none' });
+            } else if (action.includes('查看')) {
+                onItemClick(item);
+            }
+        }
+    });
+};
+
+const deleteItem = async (item: ListItem) => {
+    try {
+        if (item.type === 'proposal') {
+            await http.ProposalController.proposalDeleteCreate(item.id);
+        } else {
+            uni.showToast({ title: '评论暂不支持删除', icon: 'none' });
+            return;
+        }
+        listData.value = listData.value.filter(i => i.id !== item.id);
+        uni.showToast({ title: '已删除', icon: 'success' });
+    } catch (err) {
+        console.error('Delete failed:', err);
+        uni.showToast({ title: '删除失败', icon: 'none' });
+    }
+};
+
+const onAddClick = () => {
+    if (currentFilter.value === 'comment') {
+        uni.navigateTo({ url: '/pages/find/index/index?mode=add-comment' });
+        return;
+    }
+    if (currentFilter.value === 'proposal') {
+        uni.navigateTo({ url: '/pages/proposal/propose/propose' });
+        return;
+    }
+
+    uni.showActionSheet({
+        itemList: ['新增吐槽', '新增提议'],
+        success: (res) => {
+            if (res.tapIndex === 0) {
+                uni.navigateTo({ url: '/pages/find/index/index?mode=add-comment' });
+            } else if (res.tapIndex === 1) {
+                uni.navigateTo({ url: '/pages/proposal/propose/propose' });
+            }
+        }
+    });
+};
+
+// ===== 生命周期 =====
+onMounted(async () => {
+    await waitForLogin();
+    loadData();
+    checkGuide();
+});
+
+onShow(() => {
+    if (listData.value.length > 0) {
+        loadData();
+    }
+});
 </script>
 
 <style scoped lang="scss">
 .profile-container {
     position: relative;
-    padding: 0 40rpx 0;
-    padding-top: 0;
+    padding: 0 40rpx;
     box-sizing: border-box;
     background-color: #f7f8fa;
     min-height: 100vh;
