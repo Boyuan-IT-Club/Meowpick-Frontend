@@ -1,6 +1,7 @@
 <template>
-  <view class="profile-container" :class="themeStore.themeClass">
-    <view class="user-info-layer" :style="{ top: topReservedHeight + 'px' }">
+  <view class="profile-container" :class="themeStore.themeClass" :style="{ paddingTop: topReservedHeight + 'px' }">
+    <!-- 底层：用户信息（顶部，约 1/4 视口） -->
+    <view class="user-info-layer">
       <view class="avatar-circle">
         <text class="avatar-emoji">👤</text>
       </view>
@@ -15,145 +16,147 @@
       </view>
     </view>
 
-    <!-- "我的发布"组件（圆角矩形，紧接底层下方） -->
-    <view class="my-publish-card" :style="{ top: (topReservedHeight + 280) + 'px' }">
-      <!-- 标题 -->
-      <view class="my-publish-header">
-        <text class="page-title">我的发布</text>
-        <text class="sub-title">{{ loading ? '加载中...' : (filteredList.length + ' 条记录') }}</text>
-      </view>
+    <!-- 主体内容（包含"我的发布"圆角矩形 + 列表） -->
+    <view class="profile-body">
+      <!-- "我的发布"圆角矩形组件 -->
+      <view class="my-publish-card">
+        <!-- 标题 -->
+        <view class="my-publish-header">
+          <text class="page-title">我的发布</text>
+          <text class="sub-title">{{ loading ? '加载中...' : (filteredList.length + ' 条记录') }}</text>
+        </view>
 
-      <!-- 筛选胶囊（包含 ⋯ 按钮） -->
-      <view class="sticky-bar">
-        <view class="filter-row-wrapper">
-          <view class="filter-row">
-            <view
-              class="filter-pill"
-              :class="{ active: currentFilter === 'all' }"
-              @click="setFilter('all')"
-            >
-              <text>全部</text>
+        <!-- 筛选胶囊（包含 ⋯ 按钮） -->
+        <view class="sticky-bar">
+          <view class="filter-row-wrapper">
+            <view class="filter-row">
+              <view
+                class="filter-pill"
+                :class="{ active: currentFilter === 'all' }"
+                @click="setFilter('all')"
+              >
+                <text>全部</text>
+              </view>
+              <view
+                class="filter-pill"
+                :class="{ active: currentFilter === 'comment' }"
+                @click="setFilter('comment')"
+              >
+                <text>吐槽</text>
+              </view>
+              <view
+                class="filter-pill"
+                :class="{ active: currentFilter === 'proposal' }"
+                @click="setFilter('proposal')"
+              >
+                <text>提议</text>
+              </view>
             </view>
+
+            <!-- ⋯ 按钮 -->
             <view
-              class="filter-pill"
-              :class="{ active: currentFilter === 'comment' }"
-              @click="setFilter('comment')"
+              class="more-btn-pill"
+              :class="themeStore.themeClass"
+              @click="toggleMoreMenu"
             >
-              <text>吐槽</text>
+              <view class="line"></view>
+              <view class="line"></view>
+              <view class="line"></view>
+
+              <view v-if="showMoreMenu" class="more-menu-popover" :class="themeStore.themeClass" @click.stop>
+                <view class="menu-item" @click="handleMenuClick('theme')">切换深色模式</view>
+                <view class="menu-item" @click="handleMenuClick('feed')">提议广场</view>
+                <view class="menu-item" @click="handleMenuClick('nickname')">修改昵称</view>
+                <view class="menu-item" @click="handleMenuClick('feedback')">反馈</view>
+              </view>
             </view>
-            <view
-              class="filter-pill"
-              :class="{ active: currentFilter === 'proposal' }"
-              @click="setFilter('proposal')"
-            >
-              <text>提议</text>
-            </view>
+
+            <view v-if="showMoreMenu" class="more-menu-mask" @click="showMoreMenu = false"></view>
+          </view>
+        </view>
+
+        <!-- 列表 -->
+        <view class="list-container">
+          <view class="loading-state" v-if="loading">
+            <view class="loading-spinner"></view>
+            <text class="loading-text">加载中...</text>
           </view>
 
-          <!-- ⋯ 按钮 -->
+          <view class="error-state" v-else-if="error">
+            <text class="error-text">加载失败</text>
+            <button class="retry-btn" @click="loadData">重试</button>
+          </view>
+
+          <view class="empty-tip" v-else-if="filteredList.length === 0">
+            <text>这里空空如也~</text>
+          </view>
+
           <view
-            class="more-btn-pill"
-            :class="themeStore.themeClass"
-            @click="toggleMoreMenu"
+            v-else
+            v-for="(item, index) in filteredList"
+            :key="item.id"
+            class="list-item"
+            @click="onItemClick(item)"
+            @longpress="onLongPress(item)"
           >
-            <view class="line"></view>
-            <view class="line"></view>
-            <view class="line"></view>
-
-            <!-- Popover -->
-            <view v-if="showMoreMenu" class="more-menu-popover" :class="themeStore.themeClass" @click.stop>
-              <view class="menu-item" @click="handleMenuClick('theme')">切换深色模式</view>
-              <view class="menu-item" @click="handleMenuClick('feed')">提议广场</view>
-              <view class="menu-item" @click="handleMenuClick('nickname')">修改昵称</view>
-              <view class="menu-item" @click="handleMenuClick('feedback')">反馈</view>
-            </view>
-          </view>
-
-          <view v-if="showMoreMenu" class="more-menu-mask" @click="showMoreMenu = false"></view>
-        </view>
-      </view>
-
-      <!-- 列表 -->
-      <view class="list-container">
-        <view class="loading-state" v-if="loading">
-          <view class="loading-spinner"></view>
-          <text class="loading-text">加载中...</text>
-        </view>
-
-        <view class="error-state" v-else-if="error">
-          <text class="error-text">加载失败</text>
-          <button class="retry-btn" @click="loadData">重试</button>
-        </view>
-
-        <view class="empty-tip" v-else-if="filteredList.length === 0">
-          <text>这里空空如也~</text>
-        </view>
-
-        <view
-          v-else
-          v-for="(item, index) in filteredList"
-          :key="item.id"
-          class="list-item"
-          @click="onItemClick(item)"
-          @longpress="onLongPress(item)"
-        >
-          <view v-if="item.type === 'comment'" class="card comment-card">
-            <view class="card-main">
-              <view class="course-row-top">
-                <text class="course-name">{{ item.courseName }}</text>
-                <text class="time-text">{{ item.time }}</text>
-              </view>
-              <view class="course-row-middle">
-                <view class="course-info-item">
-                  <image src="@/images/depart-icon.png" class="info-icon" />
-                  <text>未知院系</text>
+            <view v-if="item.type === 'comment'" class="card comment-card">
+              <view class="card-main">
+                <view class="course-row-top">
+                  <text class="course-name">{{ item.courseName }}</text>
+                  <text class="time-text">{{ item.time }}</text>
+                </view>
+                <view class="course-row-middle">
+                  <view class="course-info-item">
+                    <image src="@/images/depart-icon.png" class="info-icon" />
+                    <text>未知院系</text>
+                  </view>
+                </view>
+                <text class="content-text">{{ item.content }}</text>
+                <view class="footer-row">
+                  <view class="likes-box">
+                    <image src="@/images/like-icon.png" class="like-icon" />
+                    <text class="likes-text">{{ item.likes || 0 }}</text>
+                  </view>
                 </view>
               </view>
-              <text class="content-text">{{ item.content }}</text>
-              <view class="footer-row">
-                <view class="likes-box">
-                  <image src="@/images/like-icon.png" class="like-icon" />
-                  <text class="likes-text">{{ item.likes || 0 }}</text>
+            </view>
+
+            <view v-if="item.type === 'proposal'" class="card proposal-card">
+              <view class="card-main">
+                <view class="course-row-top">
+                  <text class="course-name">{{ item.courseName }}</text>
+                  <text class="time-text">{{ item.time }}</text>
+                </view>
+                <view class="course-row-middle">
+                  <view class="course-info-item">
+                    <image src="@/images/depart-icon.png" class="info-icon" />
+                    <text>未知院系</text>
+                  </view>
+                </view>
+                <text class="content-text">{{ item.reason }}</text>
+                <view class="footer-row">
+                  <view class="vote-count-box">
+                    <image src="@/images/like_active.png" class="vote-icon" />
+                    <text class="vote-num">{{ item.voteCount || 0 }}</text>
+                    <text class="vote-label">支持</text>
+                  </view>
+                  <text
+                    class="status-badge"
+                    :class="{
+                      'status-approved': item.status === 'approved',
+                      'status-rejected': item.status === 'rejected',
+                      'status-pending': item.status === 'pending'
+                    }"
+                  >
+                    {{ item.status === 'approved' ? '已采纳' : item.status === 'rejected' ? '已拒绝' : '投票中' }}
+                  </text>
                 </view>
               </view>
             </view>
           </view>
 
-          <view v-if="item.type === 'proposal'" class="card proposal-card">
-            <view class="card-main">
-              <view class="course-row-top">
-                <text class="course-name">{{ item.courseName }}</text>
-                <text class="time-text">{{ item.time }}</text>
-              </view>
-              <view class="course-row-middle">
-                <view class="course-info-item">
-                  <image src="@/images/depart-icon.png" class="info-icon" />
-                  <text>未知院系</text>
-                </view>
-              </view>
-              <text class="content-text">{{ item.reason }}</text>
-              <view class="footer-row">
-                <view class="vote-count-box">
-                  <image src="@/images/like_active.png" class="vote-icon" />
-                  <text class="vote-num">{{ item.voteCount || 0 }}</text>
-                  <text class="vote-label">支持</text>
-                </view>
-                <text
-                  class="status-badge"
-                  :class="{
-                    'status-approved': item.status === 'approved',
-                    'status-rejected': item.status === 'rejected',
-                    'status-pending': item.status === 'pending'
-                  }"
-                >
-                  {{ item.status === 'approved' ? '已采纳' : item.status === 'rejected' ? '已拒绝' : '投票中' }}
-                </text>
-              </view>
-            </view>
-          </view>
+          <view style="height: 160rpx;"></view>
         </view>
-
-        <view style="height: 160rpx;"></view>
       </view>
     </view>
   </view>
@@ -218,18 +221,20 @@ try {
 const userName = ref('华师喵');
 const contribution = ref(128);
 
-// 顶部预留：胶囊底部 + 额外间距（让底层占据视口约 1/3）
-const topReservedHeight = computed(() => menuButtonInfo.top - 30);
+// 顶部预留：胶囊底部 + 胶囊下方间距（让底层占据视口约 1/4）
+const topReservedHeight = computed(() => menuButtonInfo.top + menuButtonInfo.height);
 </script>
 
 <style scoped lang="scss">
 .profile-container {
     position: relative;
-    padding-right: 0;
-    min-height: 100vh;
+    padding: 0 40rpx 0;
+    padding-top: 0;
     box-sizing: border-box;
     background-color: #f7f8fa;
-    overflow: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .capsule-mask {
@@ -244,11 +249,9 @@ const topReservedHeight = computed(() => menuButtonInfo.top - 30);
 
 /* 底层：用户信息层（占据视口约 1/3，确保位置精确） */
 .user-info-layer {
-    position: absolute; /* 独立定位，top 由 inline style 控制 */
-    left: 0;
-    right: 0;
-    z-index: 1;
-    padding: 32rpx 40rpx 40rpx;
+    flex-shrink: 0; /* 不被压缩 */
+    margin-top: 0;
+    padding: 32rpx 0 40rpx;
     display: flex;
     align-items: center;
     gap: 28rpx;
@@ -322,12 +325,17 @@ const topReservedHeight = computed(() => menuButtonInfo.top - 30);
 }
 
 /* "我的发布"组件（圆角矩形，紧接底层下方） */
+.profile-body {
+    flex: 1; /* 占据剩余空间 */
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
 .my-publish-card {
-    position: absolute; /* 独立定位 */
-    left: 0;
-    right: 0;
-    bottom: 0; /* 撑到屏幕底部 */
-    z-index: 10;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     background-color: #ffffff;
     border-radius: 36rpx 36rpx 0 0;
     box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.06);
@@ -462,7 +470,9 @@ const topReservedHeight = computed(() => menuButtonInfo.top - 30);
 }
 
 .list-container {
-    padding: 24rpx 32rpx 40rpx;
+    flex: 1;
+    overflow-y: auto;
+    padding: 24rpx 0 40rpx;
 }
 
 .card {
