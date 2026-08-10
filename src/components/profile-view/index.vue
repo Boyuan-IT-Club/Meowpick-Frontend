@@ -364,7 +364,7 @@ const topReservedHeight = computed(() => menuButtonInfo.top + menuButtonInfo.hei
     background-color: #ffffff;
     border-radius: 36rpx 36rpx 0 0;
     box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.06);
-    margin-top: -24rpx; /* 让圆角与底层视觉重叠 */
+    margin-top: 0;
     padding-top: 32rpx;
     min-height: calc(100vh - 220rpx);
     transition: transform 0.05s linear;
