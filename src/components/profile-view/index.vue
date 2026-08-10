@@ -1,6 +1,6 @@
 <template>
-  <view class="profile-container" :class="themeStore.themeClass" :style="{ paddingTop: topReservedHeight + 'px' }">
-    <view class="user-info-layer">
+  <view class="profile-container" :class="themeStore.themeClass">
+    <view class="user-info-layer" :style="{ top: topReservedHeight + 'px' }">
       <view class="avatar-circle">
         <text class="avatar-emoji">👤</text>
       </view>
@@ -16,7 +16,7 @@
     </view>
 
     <!-- "我的发布"组件（圆角矩形，紧接底层下方） -->
-    <view class="my-publish-card">
+    <view class="my-publish-card" :style="{ top: (topReservedHeight + 280) + 'px' }">
       <!-- 标题 -->
       <view class="my-publish-header">
         <text class="page-title">我的发布</text>
@@ -244,8 +244,7 @@ const topReservedHeight = computed(() => menuButtonInfo.top - 30);
 
 /* 底层：用户信息层（占据视口约 1/3，确保位置精确） */
 .user-info-layer {
-    position: absolute; /* 独立定位，不被 my-publish-card 挤压 */
-    top: 0;
+    position: absolute; /* 独立定位，top 由 inline style 控制 */
     left: 0;
     right: 0;
     z-index: 1;
@@ -254,7 +253,6 @@ const topReservedHeight = computed(() => menuButtonInfo.top - 30);
     align-items: center;
     gap: 28rpx;
     background-color: #f7f8fa;
-    min-height: 280rpx;
 }
 
 .avatar-circle {
@@ -325,11 +323,10 @@ const topReservedHeight = computed(() => menuButtonInfo.top - 30);
 
 /* "我的发布"组件（圆角矩形，紧接底层下方） */
 .my-publish-card {
-    position: absolute; /* 独立定位，不影响 user-info-layer */
-    top: 280rpx; /* 紧接 user-info-layer 下方 */
+    position: absolute; /* 独立定位 */
     left: 0;
     right: 0;
-    bottom: 0;
+    bottom: 0; /* 撑到屏幕底部 */
     z-index: 10;
     background-color: #ffffff;
     border-radius: 36rpx 36rpx 0 0;
