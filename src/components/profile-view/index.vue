@@ -82,8 +82,8 @@ try {
 const userName = ref('华师喵');
 const contribution = ref(128);
 
-// 顶部预留：胶囊底部 + 额外间距（确保底层占据视口约 1/3）
-const topReservedHeight = computed(() => menuButtonInfo.top + menuButtonInfo.height);
+// 顶部预留：胶囊底部 + 额外间距（让底层占据视口约 1/3）
+const topReservedHeight = computed(() => menuButtonInfo.top - 30);
 </script>
 
 <style scoped lang="scss">
@@ -114,7 +114,7 @@ const topReservedHeight = computed(() => menuButtonInfo.top + menuButtonInfo.hei
     align-items: center;
     gap: 28rpx;
     background-color: #f7f8fa;
-    min-height: 240rpx; /* 约 1/3 视口，更紧凑 */
+    min-height: 280rpx; /* 约 1/3 视口，更紧凑 */
 }
 
 .avatar-circle {
