@@ -1,5 +1,4 @@
 <template>
-  <!-- 测试专用：仅显示底层 user-info-layer，验证位置和样式 -->
   <view class="profile-container" :class="themeStore.themeClass" :style="{ paddingTop: topReservedHeight + 'px' }">
     <view class="user-info-layer">
       <view class="avatar-circle">
@@ -15,17 +14,154 @@
         <view class="line"></view>
       </view>
     </view>
+
+    <!-- "我的发布"组件（圆角矩形，紧接底层下方） -->
+    <view class="my-publish-card">
+      <!-- 标题 -->
+      <view class="my-publish-header">
+        <text class="page-title">我的发布</text>
+        <text class="sub-title">{{ loading ? '加载中...' : (filteredList.length + ' 条记录') }}</text>
+      </view>
+
+      <!-- 筛选胶囊（包含 ⋯ 按钮） -->
+      <view class="sticky-bar">
+        <view class="filter-row-wrapper">
+          <view class="filter-row">
+            <view
+              class="filter-pill"
+              :class="{ active: currentFilter === 'all' }"
+              @click="setFilter('all')"
+            >
+              <text>全部</text>
+            </view>
+            <view
+              class="filter-pill"
+              :class="{ active: currentFilter === 'comment' }"
+              @click="setFilter('comment')"
+            >
+              <text>吐槽</text>
+            </view>
+            <view
+              class="filter-pill"
+              :class="{ active: currentFilter === 'proposal' }"
+              @click="setFilter('proposal')"
+            >
+              <text>提议</text>
+            </view>
+          </view>
+
+          <!-- ⋯ 按钮 -->
+          <view
+            class="more-btn-pill"
+            :class="themeStore.themeClass"
+            @click="toggleMoreMenu"
+          >
+            <view class="line"></view>
+            <view class="line"></view>
+            <view class="line"></view>
+
+            <!-- Popover -->
+            <view v-if="showMoreMenu" class="more-menu-popover" :class="themeStore.themeClass" @click.stop>
+              <view class="menu-item" @click="handleMenuClick('theme')">切换深色模式</view>
+              <view class="menu-item" @click="handleMenuClick('feed')">提议广场</view>
+              <view class="menu-item" @click="handleMenuClick('nickname')">修改昵称</view>
+              <view class="menu-item" @click="handleMenuClick('feedback')">反馈</view>
+            </view>
+          </view>
+
+          <view v-if="showMoreMenu" class="more-menu-mask" @click="showMoreMenu = false"></view>
+        </view>
+      </view>
+
+      <!-- 列表 -->
+      <view class="list-container">
+        <view class="loading-state" v-if="loading">
+          <view class="loading-spinner"></view>
+          <text class="loading-text">加载中...</text>
+        </view>
+
+        <view class="error-state" v-else-if="error">
+          <text class="error-text">加载失败</text>
+          <button class="retry-btn" @click="loadData">重试</button>
+        </view>
+
+        <view class="empty-tip" v-else-if="filteredList.length === 0">
+          <text>这里空空如也~</text>
+        </view>
+
+        <view
+          v-else
+          v-for="(item, index) in filteredList"
+          :key="item.id"
+          class="list-item"
+          @click="onItemClick(item)"
+          @longpress="onLongPress(item)"
+        >
+          <view v-if="item.type === 'comment'" class="card comment-card">
+            <view class="card-main">
+              <view class="course-row-top">
+                <text class="course-name">{{ item.courseName }}</text>
+                <text class="time-text">{{ item.time }}</text>
+              </view>
+              <view class="course-row-middle">
+                <view class="course-info-item">
+                  <image src="@/images/depart-icon.png" class="info-icon" />
+                  <text>未知院系</text>
+                </view>
+              </view>
+              <text class="content-text">{{ item.content }}</text>
+              <view class="footer-row">
+                <view class="likes-box">
+                  <image src="@/images/like-icon.png" class="like-icon" />
+                  <text class="likes-text">{{ item.likes || 0 }}</text>
+                </view>
+              </view>
+            </view>
+          </view>
+
+          <view v-if="item.type === 'proposal'" class="card proposal-card">
+            <view class="card-main">
+              <view class="course-row-top">
+                <text class="course-name">{{ item.courseName }}</text>
+                <text class="time-text">{{ item.time }}</text>
+              </view>
+              <view class="course-row-middle">
+                <view class="course-info-item">
+                  <image src="@/images/depart-icon.png" class="info-icon" />
+                  <text>未知院系</text>
+                </view>
+              </view>
+              <text class="content-text">{{ item.reason }}</text>
+              <view class="footer-row">
+                <view class="vote-count-box">
+                  <image src="@/images/like_active.png" class="vote-icon" />
+                  <text class="vote-num">{{ item.voteCount || 0 }}</text>
+                  <text class="vote-label">支持</text>
+                </view>
+                <text
+                  class="status-badge"
+                  :class="{
+                    'status-approved': item.status === 'approved',
+                    'status-rejected': item.status === 'rejected',
+                    'status-pending': item.status === 'pending'
+                  }"
+                >
+                  {{ item.status === 'approved' ? '已采纳' : item.status === 'rejected' ? '已拒绝' : '投票中' }}
+                </text>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <view style="height: 160rpx;"></view>
+      </view>
+    </view>
   </view>
 
-  <!-- Popover（保持原有功能） -->
-  <view v-if="showMoreMenu" class="more-menu-popover" :class="themeStore.themeClass" @click.stop>
-    <view class="menu-item" @click="handleMenuClick('theme')">切换深色模式</view>
-    <view class="menu-item" @click="handleMenuClick('feed')">提议广场</view>
-    <view class="menu-item" @click="handleMenuClick('nickname')">修改昵称</view>
-    <view class="menu-item" @click="handleMenuClick('feedback')">反馈</view>
+  <!-- Floating Action Button -->
+  <view class="fab-btn" @click="onAddClick">
+    <view class="plus-icon">+</view>
   </view>
-
-  <view v-if="showMoreMenu" class="more-menu-mask" @click="showMoreMenu = false"></view>
 
   <!-- Nickname Edit Modal -->
   <view v-if="showNicknameModal" class="modal-overlay" @click="closeNicknameModal">
@@ -183,9 +319,35 @@ const topReservedHeight = computed(() => menuButtonInfo.top - 30);
     }
 }
 
-/* 旧版"我的发布"区域（暂存，后续重构为圆角矩形覆盖层） */
-.legacy-content {
-    margin-top: 32rpx;
+/* "我的发布"组件（圆角矩形，紧接底层下方） */
+.my-publish-card {
+    position: relative;
+    z-index: 10;
+    background-color: #ffffff;
+    border-radius: 36rpx 36rpx 0 0;
+    box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.06);
+    margin-top: 0;
+    padding-top: 32rpx;
+    min-height: calc(100vh - 320rpx);
+}
+
+.my-publish-header {
+    padding: 0 40rpx 16rpx;
+
+    .page-title {
+        font-size: 44rpx;
+        font-weight: 800;
+        color: #1f1f1f;
+        letter-spacing: -1rpx;
+        display: block;
+    }
+
+    .sub-title {
+        font-size: 24rpx;
+        color: #999;
+        margin-top: 4rpx;
+        display: block;
+    }
 }
 
 /* 1. Header (已迁移至 my-publish-header) */
