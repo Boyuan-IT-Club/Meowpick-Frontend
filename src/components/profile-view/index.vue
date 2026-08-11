@@ -1,10 +1,7 @@
 <template>
   <view class="profile-container" :class="themeStore.themeClass" :style="{ paddingTop: topReservedHeight + 'px' }">
     <!-- 底层：用户信息（顶部，约 1/4 视口） -->
-    <view
-      class="user-info-layer"
-      :style="{ opacity: 1 - coverProgress * 0.7, transform: 'translateY(' + (-coverProgress * 30) + 'rpx)' }"
-    >
+    <view class="user-info-layer">
       <view class="avatar-circle">
         <text class="avatar-emoji">👤</text>
       </view>
@@ -17,7 +14,6 @@
         <view class="line"></view>
         <view class="line"></view>
 
-        <!-- Popover 移至 user-more-btn 内，避免重复按钮 -->
         <view v-if="showMoreMenu" class="more-menu-popover" :class="themeStore.themeClass" @click.stop>
           <view class="menu-item" @click="handleMenuClick('theme')">切换深色模式</view>
           <view class="menu-item" @click="handleMenuClick('feed')">提议广场</view>
@@ -29,135 +25,119 @@
       <view v-if="showMoreMenu" class="more-menu-mask" @click="showMoreMenu = false"></view>
     </view>
 
-    <!-- 主体内容（包含"我的发布"圆角矩形 + 列表） -->
-    <view class="profile-body">
-      <!-- "我的发布"圆角矩形组件 -->
-      <view class="my-publish-card">
-        <!-- 标题 -->
-        <view class="my-publish-header">
-          <text class="page-title">我的发布</text>
-          <text class="sub-title">{{ loading ? '加载中...' : (filteredList.length + ' 条记录') }}</text>
-        </view>
+    <!-- "我的发布"圆角矩形（作为粘性容器，滚到顶部时停住） -->
+    <view class="my-publish-card">
+      <!-- 标题 -->
+      <view class="my-publish-header">
+        <text class="page-title">我的发布</text>
+        <text class="sub-title">{{ loading ? '加载中...' : (filteredList.length + ' 条记录') }}</text>
+      </view>
 
-        <!-- 筛选胶囊（⋯ 按钮已在 user-info-layer 中） -->
-        <view class="sticky-bar">
-          <view class="filter-row-wrapper">
-            <view class="filter-row">
-              <view
-                class="filter-pill"
-                :class="{ active: currentFilter === 'all' }"
-                @click="setFilter('all')"
-              >
-                <text>全部</text>
-              </view>
-              <view
-                class="filter-pill"
-                :class="{ active: currentFilter === 'comment' }"
-                @click="setFilter('comment')"
-              >
-                <text>吐槽</text>
-              </view>
-              <view
-                class="filter-pill"
-                :class="{ active: currentFilter === 'proposal' }"
-                @click="setFilter('proposal')"
-              >
-                <text>提议</text>
-              </view>
-            </view>
+      <!-- 筛选胶囊（sticky，滚到顶部时停住） -->
+      <view class="sticky-bar" :style="{ top: topReservedHeight + 'px' }">
+        <view class="filter-row-wrapper">
+          <view class="filter-pill"
+            :class="{ active: currentFilter === 'all' }"
+            @click="setFilter('all')"
+          >
+            <text>全部</text>
+          </view>
+          <view class="filter-pill"
+            :class="{ active: currentFilter === 'comment' }"
+            @click="setFilter('comment')"
+          >
+            <text>吐槽</text>
+          </view>
+          <view class="filter-pill"
+            :class="{ active: currentFilter === 'proposal' }"
+            @click="setFilter('proposal')"
+          >
+            <text>提议</text>
           </view>
         </view>
+      </view>
 
-        <!-- 列表（使用 scroll-view 实现覆盖滚动效果） -->
-        <scroll-view
-          class="list-scroll"
-          scroll-y
-          :scroll-top="scrollTop"
-          :scroll-with-animation="true"
-          @scroll="onListScroll"
+      <!-- 列表（my-publish-card 用 sticky 整体悬停，列表在内部自然展开） -->
+      <view class="list-container">
+        <view class="loading-state" v-if="loading">
+          <view class="loading-spinner"></view>
+          <text class="loading-text">加载中...</text>
+        </view>
+
+        <view class="error-state" v-else-if="error">
+          <text class="error-text">加载失败</text>
+          <button class="retry-btn" @click="loadData">重试</button>
+        </view>
+
+        <view class="empty-tip" v-else-if="filteredList.length === 0">
+          <text>这里空空如也~</text>
+        </view>
+
+        <view
+          v-else
+          v-for="(item, index) in filteredList"
+          :key="item.id"
+          class="list-item"
+          @click="onItemClick(item)"
+          @longpress="onLongPress(item)"
         >
-          <view class="list-container">
-            <view class="loading-state" v-if="loading">
-              <view class="loading-spinner"></view>
-              <text class="loading-text">加载中...</text>
-            </view>
-
-            <view class="error-state" v-else-if="error">
-              <text class="error-text">加载失败</text>
-              <button class="retry-btn" @click="loadData">重试</button>
-            </view>
-
-            <view class="empty-tip" v-else-if="filteredList.length === 0">
-              <text>这里空空如也~</text>
-            </view>
-
-            <view
-              v-else
-              v-for="(item, index) in filteredList"
-              :key="item.id"
-              class="list-item"
-              @click="onItemClick(item)"
-              @longpress="onLongPress(item)"
-            >
-              <view v-if="item.type === 'comment'" class="card comment-card">
-                <view class="card-main">
-                  <view class="course-row-top">
-                    <text class="course-name">{{ item.courseName }}</text>
-                    <text class="time-text">{{ item.time }}</text>
-                  </view>
-                  <view class="course-row-middle">
-                    <view class="course-info-item">
-                      <image src="@/images/depart-icon.png" class="info-icon" />
-                      <text>未知院系</text>
-                    </view>
-                  </view>
-                  <text class="content-text">{{ item.content }}</text>
-                  <view class="footer-row">
-                    <view class="likes-box">
-                      <image src="@/images/like-icon.png" class="like-icon" />
-                      <text class="likes-text">{{ item.likes || 0 }}</text>
-                    </view>
-                  </view>
+          <view v-if="item.type === 'comment'" class="card comment-card">
+            <view class="card-main">
+              <view class="course-row-top">
+                <text class="course-name">{{ item.courseName }}</text>
+                <text class="time-text">{{ item.time }}</text>
+              </view>
+              <view class="course-row-middle">
+                <view class="course-info-item">
+                  <image src="@/images/depart-icon.png" class="info-icon" />
+                  <text>未知院系</text>
                 </view>
               </view>
-
-              <view v-if="item.type === 'proposal'" class="card proposal-card">
-                <view class="card-main">
-                  <view class="course-row-top">
-                    <text class="course-name">{{ item.courseName }}</text>
-                    <text class="time-text">{{ item.time }}</text>
-                  </view>
-                  <view class="course-row-middle">
-                    <view class="course-info-item">
-                      <image src="@/images/depart-icon.png" class="info-icon" />
-                      <text>未知院系</text>
-                    </view>
-                  </view>
-                  <text class="content-text">{{ item.reason }}</text>
-                  <view class="footer-row">
-                    <view class="vote-count-box">
-                      <image src="@/images/like_active.png" class="vote-icon" />
-                      <text class="vote-num">{{ item.voteCount || 0 }}</text>
-                      <text class="vote-label">支持</text>
-                    </view>
-                    <text
-                      class="status-badge"
-                      :class="{
-                        'status-approved': item.status === 'approved',
-                        'status-rejected': item.status === 'rejected',
-                        'status-pending': item.status === 'pending'
-                      }"
-                    >
-                      {{ item.status === 'approved' ? '已采纳' : item.status === 'rejected' ? '已拒绝' : '投票中' }}
-                    </text>
-                  </view>
+              <text class="content-text">{{ item.content }}</text>
+              <view class="footer-row">
+                <view class="likes-box">
+                  <image src="@/images/like-icon.png" class="like-icon" />
+                  <text class="likes-text">{{ item.likes || 0 }}</text>
                 </view>
               </view>
             </view>
-
-            <view style="height: 160rpx;"></view>
           </view>
-        </scroll-view>
+
+          <view v-if="item.type === 'proposal'" class="card proposal-card">
+            <view class="card-main">
+              <view class="course-row-top">
+                <text class="course-name">{{ item.courseName }}</text>
+                <text class="time-text">{{ item.time }}</text>
+              </view>
+              <view class="course-row-middle">
+                <view class="course-info-item">
+                  <image src="@/images/depart-icon.png" class="info-icon" />
+                  <text>未知院系</text>
+                </view>
+              </view>
+              <text class="content-text">{{ item.reason }}</text>
+              <view class="footer-row">
+                <view class="vote-count-box">
+                  <image src="@/images/like_active.png" class="vote-icon" />
+                  <text class="vote-num">{{ item.voteCount || 0 }}</text>
+                  <text class="vote-label">支持</text>
+                </view>
+                <text
+                  class="status-badge"
+                  :class="{
+                    'status-approved': item.status === 'approved',
+                    'status-rejected': item.status === 'rejected',
+                    'status-pending': item.status === 'pending'
+                  }"
+                >
+                  {{ item.status === 'approved' ? '已采纳' : item.status === 'rejected' ? '已拒绝' : '投票中' }}
+                </text>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <view style="height: 160rpx;"></view>
       </view>
     </view>
 
@@ -376,24 +356,8 @@ const handleMenuClick = (action: 'theme' | 'feed' | 'nickname' | 'feedback') => 
 };
 
 // ===== 滚动覆盖效果 =====
-const scrollTop = ref(0);
-const coverProgress = ref(0); // 0-1，覆盖进度（0=未覆盖，1=完全覆盖）
-let ticking = false;
-
-const onListScroll = (e: any) => {
-    if (!ticking) {
-        requestAnimationFrame(() => {
-            const top = e.detail.scrollTop;
-            scrollTop.value = top;
-            // 计算覆盖进度：当 scrollTop > 50 时开始覆盖
-            // 0-150px 范围内 progress 从 0 增到 1
-            const progress = Math.min(Math.max((top - 50) / 150, 0), 1);
-            coverProgress.value = progress;
-            ticking = false;
-        });
-        ticking = true;
-    }
-};
+// 现在依赖外层 scroll-view 滚动：user-info-layer 滚出屏幕后 my-publish-card 视觉上覆盖
+// 筛选胶囊 sticky 在 my-publish-card 顶部，滚动时一直可见
 
 // ===== 数据加载 =====
 const loadData = async () => {
@@ -536,6 +500,7 @@ onShow(() => {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow: visible;
 }
 
 .capsule-mask {
@@ -560,8 +525,6 @@ onShow(() => {
     /* 层次感：底层 z-index 较低 */
     z-index: 1;
     position: relative;
-    /* 滚动时透明度可变化（覆盖效果） */
-    transition: opacity 0.15s ease-out;
 }
 
 .avatar-circle {
@@ -642,7 +605,6 @@ onShow(() => {
 }
 
 .my-publish-card {
-    flex: 1;
     display: flex;
     flex-direction: column;
     background-color: #ffffff;
@@ -652,11 +614,10 @@ onShow(() => {
     margin: 0 -40rpx;
     padding-top: 32rpx;
     overflow: hidden;
-    /* 提升层次感的阴影渐变 */
+    /* 不使用 sticky - 整个 profile-container 在外层 scroll-view 滚动 */
+    /* user-info-layer 滚出屏幕 → my-publish-card 视觉上覆盖 */
     position: relative;
     z-index: 5;
-    /* 动画过渡：阴影变化平滑 */
-    transition: box-shadow 0.2s ease-out;
 }
 
 .my-publish-header {
@@ -682,13 +643,20 @@ onShow(() => {
 
 /* 2. Filter Bar: 在 my-publish-card 内部，普通 block 布局 */
 .sticky-bar {
+    position: sticky; /* 下滑时悬停在顶部 */
+    top: 0;
+    z-index: 10;
     padding: 16rpx 40rpx 8rpx;
-    background-color: transparent;
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12rpx);
+    -webkit-backdrop-filter: blur(12rpx);
+    /* 轻微阴影增强层次感 */
+    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
 
     .filter-row-wrapper {
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         padding: 0;
     }
 
