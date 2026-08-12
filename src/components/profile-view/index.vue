@@ -517,7 +517,8 @@ onShow(() => {
 .user-info-layer {
     flex-shrink: 0; /* 不被压缩 */
     margin-top: 0;
-    padding: 32rpx 0 40rpx;
+    padding: 48rpx 0 60rpx;
+    min-height: 200rpx; /* 保证底层足够高 */
     display: flex;
     align-items: center;
     gap: 28rpx;
@@ -607,15 +608,16 @@ onShow(() => {
 .my-publish-card {
     display: flex;
     flex-direction: column;
+    flex: 1; /* 占据 user-info 下方剩余空间 */
+    min-height: 70vh; /* 保证有内容可滚动 */
     background-color: #ffffff;
     border-radius: 36rpx 36rpx 0 0;
     box-shadow: 0 -4rpx 24rpx rgba(0, 0, 0, 0.08), 0 -1rpx 0 rgba(0, 0, 0, 0.04);
-    /* 负 margin 抵消 profile-container 的 padding，与屏幕等宽 */
     margin: 0 -40rpx;
     padding-top: 32rpx;
-    overflow: hidden;
-    /* 不使用 sticky - 整个 profile-container 在外层 scroll-view 滚动 */
-    /* user-info-layer 滚出屏幕 → my-publish-card 视觉上覆盖 */
+    /* 不再 overflow-y: auto，让外层 scroll-view 统一管理滚动 */
+    /* 但保留这个属性备用：如果内容真的超过 my-publish-card 高度，则需要 */
+    /* overflow-y: auto; */
     position: relative;
     z-index: 5;
 }
@@ -643,15 +645,17 @@ onShow(() => {
 
 /* 2. Filter Bar: 在 my-publish-card 内部，普通 block 布局 */
 .sticky-bar {
-    position: sticky; /* 下滑时悬停在顶部 */
+    position: sticky;
     top: 0;
     z-index: 10;
     padding: 16rpx 40rpx 8rpx;
     background-color: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(12rpx);
     -webkit-backdrop-filter: blur(12rpx);
-    /* 轻微阴影增强层次感 */
     box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+    /* sticky 需要可滚动父容器，所以需要让 my-publish-card 内部可滚动 */
+    /* 这里让 sticky 元素是 my-publish-card 的子元素 */
+    /* my-publish-card 必须 overflow scroll 才能让 sticky 生效 */
 
     .filter-row-wrapper {
         display: flex;
@@ -755,6 +759,7 @@ onShow(() => {
 
 .list-container {
     padding: 24rpx 40rpx 40rpx;
+    min-height: 300rpx; /* 保证列表区域足够大 */
 }
 
 .list-scroll {
