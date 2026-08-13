@@ -28,7 +28,7 @@
     <!-- "我的发布"圆角矩形（作为粘性容器，滚到顶部时停住） -->
     <view class="my-publish-card">
       <!-- 标题 -->
-      <view class="my-publish-header">
+      <view class="my-publish-header" :style="myPublishHeaderStyle">
         <text class="page-title">我的发布</text>
         <text class="sub-title">{{ loading ? '加载中...' : (filteredList.length + ' 条记录') }}</text>
       </view>
@@ -497,9 +497,7 @@ onShow(() => {
     padding: 0 40rpx;
     box-sizing: border-box;
     background-color: #f7f8fa;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    min-height: 110vh; /* 强制超出 viewport 让 scroll-view 滚动 */
     overflow: visible;
 }
 
@@ -515,15 +513,13 @@ onShow(() => {
 
 /* 底层：用户信息层（占据视口约 1/3，确保位置精确） */
 .user-info-layer {
-    flex-shrink: 0; /* 不被压缩 */
     margin-top: 0;
     padding: 48rpx 0 60rpx;
-    min-height: 200rpx; /* 保证底层足够高 */
+    min-height: 200rpx;
     display: flex;
     align-items: center;
     gap: 28rpx;
     background-color: #f7f8fa;
-    /* 层次感：底层 z-index 较低 */
     z-index: 1;
     position: relative;
 }
@@ -606,18 +602,13 @@ onShow(() => {
 }
 
 .my-publish-card {
-    display: flex;
-    flex-direction: column;
-    flex: 1; /* 占据 user-info 下方剩余空间 */
-    min-height: 70vh; /* 保证有内容可滚动 */
+    display: block; /* 重要：block 让 sticky 行为可预测 */
+    min-height: 70vh;
     background-color: #ffffff;
     border-radius: 36rpx 36rpx 0 0;
-    box-shadow: 0 -4rpx 24rpx rgba(0, 0, 0, 0.08), 0 -1rpx 0 rgba(0, 0, 0, 0.04);
+    box-shadow: 0 -4rpx 24px rgba(0, 0, 0, 0.08), 0 -1px 0 rgba(0, 0, 0, 0.04);
     margin: 0 -40rpx;
     padding-top: 32rpx;
-    /* 不再 overflow-y: auto，让外层 scroll-view 统一管理滚动 */
-    /* 但保留这个属性备用：如果内容真的超过 my-publish-card 高度，则需要 */
-    /* overflow-y: auto; */
     position: relative;
     z-index: 5;
 }
