@@ -602,14 +602,19 @@ onShow(() => {
 }
 
 .my-publish-card {
-    display: block; /* 重要：block 让 sticky 行为可预测 */
+    display: block;
     min-height: 70vh;
     background-color: #ffffff;
     border-radius: 36rpx 36rpx 0 0;
     box-shadow: 0 -4rpx 24px rgba(0, 0, 0, 0.08), 0 -1px 0 rgba(0, 0, 0, 0.04);
     margin: 0 -40rpx;
     padding-top: 32rpx;
-    position: relative;
+    /* 关键：sticky 元素相对于外层 scroll-view 滚动 */
+    /* top: <user-info-layer 高度> + topReservedHeight */
+    /* 当 user-info-layer 滚出屏幕时，my-publish-card 停住 */
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
     z-index: 5;
 }
 
