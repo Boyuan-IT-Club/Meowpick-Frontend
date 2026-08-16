@@ -23,16 +23,16 @@
 
     <view class="tab-bar">
       <view class="tab-container">
-        <view 
-          class="tab-item" 
-          :class="{ active: activeTab === 'comment' }" 
+        <view
+          class="tab-item"
+          :class="{ active: activeTab === 'comment' }"
           @click="switchTab('comment')"
         >
           <text class="tab-text">吐槽</text>
         </view>
-        <view 
-          class="tab-item" 
-          :class="{ active: activeTab === 'proposal' }" 
+        <view
+          class="tab-item"
+          :class="{ active: activeTab === 'proposal' }"
           @click="switchTab('proposal')"
         >
           <text class="tab-text">提案</text>
@@ -75,59 +75,44 @@
             <!-- 原始提交信息 -->
             <view class="proposal-info" v-if="item.course">
               <view class="info-section-title" v-if="item.status === 'approved' && (item as any).finalCourse">原始提交</view>
-              <view class="info-row" v-if="item.course.department">
-                <view class="info-dot" />
-                <text class="info-label">院系：</text>
-                <text class="info-text">{{ item.course.department }}</text>
+              <view class="course-detail" v-if="item.course.campuses?.length">
+                <span class="detail-item">校区：{{ item.course.campuses.join('、') }}</span>
               </view>
-              <view class="info-row" v-if="item.course.category">
-                <view class="info-dot" />
-                <text class="info-label">分类：</text>
-                <text class="info-text">{{ item.course.category }}</text>
+              <view class="course-detail" v-if="item.course.department">
+                <span class="detail-item">院系：{{ item.course.department }}</span>
               </view>
-              <view class="info-row" v-if="item.course.campuses?.length">
-                <view class="info-dot" />
-                <text class="info-label">校区：</text>
-                <text class="info-text">{{ item.course.campuses.join('、') }}</text>
+              <view class="course-detail" v-if="item.course.category">
+                <span class="detail-item">分类：{{ item.course.category }}</span>
               </view>
-              <view class="info-row" v-if="item.course.teachers?.length">
-                <view class="info-dot" />
-                <text class="info-label">教师：</text>
-                <text class="info-text">{{ item.course.teachers.map((t: any) => typeof t === 'string' ? t : t.name || '').join('、') }}</text>
+              <view class="course-detail" v-if="item.course.teachers?.length">
+                <span class="detail-item">教师：{{ item.course.teachers.map((t: any) => typeof t === 'string' ? t : t.name || '').join('、') }}</span>
               </view>
             </view>
 
             <!-- 最终课程信息（已通过且存在finalCourse时双栏展示） -->
             <view class="proposal-info final-info" v-if="item.status === 'approved' && (item as any).finalCourse">
               <view class="info-section-title">最终课程</view>
-              <view class="info-row" v-if="(item as any).finalCourse.department">
-                <view class="info-dot final-dot" />
-                <text class="info-label">院系：</text>
-                <text class="info-text">{{ (item as any).finalCourse.department }}</text>
+              <view class="course-detail" v-if="(item as any).finalCourse.campuses?.length">
+                <span class="detail-item">校区：{{ (item as any).finalCourse.campuses.join('、') }}</span>
               </view>
-              <view class="info-row" v-if="(item as any).finalCourse.category">
-                <view class="info-dot final-dot" />
-                <text class="info-label">分类：</text>
-                <text class="info-text">{{ (item as any).finalCourse.category }}</text>
+              <view class="course-detail" v-if="(item as any).finalCourse.department">
+                <span class="detail-item">院系：{{ (item as any).finalCourse.department }}</span>
               </view>
-              <view class="info-row" v-if="(item as any).finalCourse.campuses?.length">
-                <view class="info-dot final-dot" />
-                <text class="info-label">校区：</text>
-                <text class="info-text">{{ (item as any).finalCourse.campuses.join('、') }}</text>
+              <view class="course-detail" v-if="(item as any).finalCourse.category">
+                <span class="detail-item">分类：{{ (item as any).finalCourse.category }}</span>
               </view>
-              <view class="info-row" v-if="(item as any).finalCourse.teachers?.length">
-                <view class="info-dot final-dot" />
-                <text class="info-label">教师：</text>
-                <text class="info-text">{{ (item as any).finalCourse.teachers.map((t: any) => typeof t === 'string' ? t : t.name || '').join('、') }}</text>
+              <view class="course-detail" v-if="(item as any).finalCourse.teachers?.length">
+                <span class="detail-item">教师：{{ (item as any).finalCourse.teachers.map((t: any) => typeof t === 'string' ? t : t.name || '').join('、') }}</span>
               </view>
             </view>
 
+            <!-- 贡献者 -->
+            <view class="contributor-row">
+              <span class="contributor-text">贡献者：喵同学</span>
+            </view>
+
             <view class="proposal-footer">
-              <view class="like-area" @click.stop="likeProposal(item.id!)" v-if="item.status === 'approved'">
-                <image :src="item.like ? Liked : Like" class="like-icon" />
-                <text class="like-count">{{ item.likeCnt || 0 }}人同意</text>
-              </view>
-              <view class="footer-spacer" v-else />
+              <view class="footer-spacer" />
               <view class="delete-area" @click.stop="handleDelete(index)" v-if="item.status === 'pending'">
                 <text class="delete-text">删除</text>
               </view>
@@ -155,8 +140,6 @@ import { onShow, onPageScroll } from "@dcloudio/uni-app";
 import { http } from "@/config";
 import type { DtoCommentVO, DtoProposalVO } from "@/api/data-contracts";
 import MyCommentBox from "@/pages/my-comments/MyCommentBox.vue";
-import Liked from "@/images/like_active.png";
-import Like from "@/images/like-icon.png";
 
 const activeTab = ref<'comment' | 'proposal'>('comment');
 const commentList = ref<DtoCommentVO[]>([]);
@@ -193,6 +176,15 @@ function formatTime(dateStr?: string | Date): string {
   return `${y}-${m}-${day} ${h}:${min}`;
 }
 
+function getStatusText(status?: string): string {
+  const statusMap: Record<string, string> = {
+    'pending': '待审核',
+    'approved': '已通过',
+    'rejected': '已拒绝'
+  };
+  return statusMap[status || ''] || status || '';
+}
+
 function handleReEdit(item: DtoProposalVO) {
   uni.navigateTo({
     url: `/pages/proposal/propose?editProposalId=${item.id}`
@@ -207,15 +199,6 @@ onShow(() => {
   } else if (activeTab.value === 'proposal') {
     fetchProposals(0);
     proposalInitialized = true;
-  }
-});
-
-uni.$on('proposalLikeUpdated', (data: any) => {
-  if (!data?.id) return;
-  const idx = proposalList.value.findIndex(p => p.id === data.id);
-  if (idx > -1) {
-    proposalList.value[idx].like = data.like ?? proposalList.value[idx].like;
-    proposalList.value[idx].likeCnt = data.likeCnt ?? proposalList.value[idx].likeCnt;
   }
 });
 
@@ -274,9 +257,6 @@ function fetchProposals(page: number) {
     if (res.data?.code === 0) {
       const responseData = res.data.data || res.data;
       const proposals = responseData?.proposals || [];
-      if (proposals.length > 0) {
-        console.log('[DEBUG] fetchProposals first item like field:', proposals[0].like);
-      }
       proposals.forEach((proposal) => {
         proposalList.value.push(proposal);
       });
@@ -311,32 +291,6 @@ function likeComment(target: string) {
   });
 }
 
-function likeProposal(target: string) {
-  const proposal = proposalList.value.find(p => p.id === target);
-  if (!proposal) return;
-
-  http.LikeController.likeCreate(target, {
-    targetId: target,
-    targetType: 'proposal'
-  }).then((res) => {
-    console.log('[DEBUG] likeProposal response:', JSON.stringify(res.data));
-    if (res.data?.code === 0) {
-      const isLiked = res.data?.like ?? res.data?.data?.like ?? !proposal.like;
-      const newCnt = res.data?.likeCnt ?? res.data?.data?.likeCnt ?? (isLiked ? (proposal.likeCnt || 0) + 1 : (proposal.likeCnt || 1) - 1);
-      console.log('[DEBUG] likeProposal result: isLiked=', isLiked, 'newCnt=', newCnt, 'oldCnt=', proposal.likeCnt);
-      proposal.like = isLiked;
-      proposal.likeCnt = newCnt;
-      uni.$emit('proposalLikeUpdated', {
-        id: target,
-        like: isLiked,
-        likeCnt: newCnt
-      });
-    }
-  }).catch((err) => {
-    console.error('[API] 点赞提案失败:', err);
-  });
-}
-
 function handleDelete(index: number) {
   const proposal = proposalList.value[index];
   if (!proposal?.id) return;
@@ -346,7 +300,7 @@ function handleDelete(index: number) {
     content: '确定要删除该提案吗？删除后不可恢复。',
     success: (res) => {
       if (res.confirm) {
-        http.ProposalController.proposalDeleteCreate(proposal.id!).then((res) => {
+        http.ProposalController.proposalDeleteCreate(proposal.id!, {}).then((res) => {
           if (res.data?.code === 0) {
             uni.showToast({ title: '已删除', icon: 'success' });
             proposalList.value.splice(index, 1);
@@ -363,18 +317,9 @@ function handleDelete(index: number) {
 }
 
 function goToProposalDetail(item: DtoProposalVO) {
-  uni.navigateTo({ 
-    url: `/pages/proposal/detail?id=${item.id}&data=${encodeURIComponent(JSON.stringify(item))}` 
+  uni.navigateTo({
+    url: `/pages/proposal/detail?id=${item.id}&data=${encodeURIComponent(JSON.stringify(item))}`
   });
-}
-
-function getStatusText(status?: string): string {
-  const statusMap: Record<string, string> = {
-    'pending': '待审核',
-    'approved': '已通过',
-    'rejected': '已拒绝'
-  };
-  return statusMap[status || ''] || status || '';
 }
 
 function handleBottom() {
@@ -400,8 +345,9 @@ onPageScroll((e) => {
 .comment {
   margin-top: 30vw;
   margin-left: 5vw;
+  margin-right: 5vw;
   height: 200vw;
-  width: 100vw;
+  width: 90vw;
 }
 
 .profile-card {
@@ -604,36 +550,18 @@ onPageScroll((e) => {
       border-bottom: 1px dashed #ffd6e7;
     }
 
-    .info-row {
+    .course-detail {
       display: flex;
-      flex-direction: row;
-      align-items: center;
-      margin-top: 2vw;
+      flex-wrap: wrap;
+      gap: 2vw;
+      margin-bottom: 2vw;
 
-      .info-dot {
-        width: 2vw;
-        height: 2vw;
-        border-radius: 50%;
-        background-color: #b70030;
-        margin-left: 1vw;
-        flex-shrink: 0;
-
-        &.final-dot {
-          background-color: #52c41a;
-        }
-      }
-
-      .info-label {
-        margin-left: 1.5vw;
-        font-size: 3.2vw;
-        color: #999;
-        flex-shrink: 0;
-      }
-
-      .info-text {
-        margin-left: 1vw;
-        font-size: 3.5vw;
-        color: #555;
+      .detail-item {
+        font-size: 3vw;
+        color: #666666;
+        background-color: #f5f5f5;
+        padding: 0.5vw 2vw;
+        border-radius: 2vw;
       }
     }
 
@@ -641,10 +569,6 @@ onPageScroll((e) => {
       margin-top: 3vw;
       padding-top: 3vw;
       border-top: 1px solid #f0f0f0;
-
-      .info-text {
-        color: #333;
-      }
     }
   }
 
@@ -684,17 +608,13 @@ onPageScroll((e) => {
     }
   }
 
-  .proposal-content {
-    margin-top: 3vw;
-    font-size: 3.8vw;
-    color: #444;
-    line-height: 1.5;
-    letter-spacing: 0.3vw;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+  .contributor-row {
+    margin-bottom: 2vw;
+
+    .contributor-text {
+      font-size: 3.2vw;
+      color: #888888;
+    }
   }
 
   .proposal-footer {
@@ -705,23 +625,6 @@ onPageScroll((e) => {
     margin-top: 3vw;
     padding-top: 3vw;
     border-top: 1px solid #f0f0f0;
-
-    .like-area {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-
-      .like-icon {
-        width: 5vw;
-        height: 5vw;
-      }
-
-      .like-count {
-        margin-left: 1.5vw;
-        font-size: 3.5vw;
-        color: #666;
-      }
-    }
 
     .delete-area {
       padding: 1.5vw 3vw;

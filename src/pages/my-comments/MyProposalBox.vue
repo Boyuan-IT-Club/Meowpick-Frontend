@@ -23,39 +23,22 @@
           </view>
         </view>
       </view>
-      <view class="time">{{ formatTime(props.data.createdAt) }}</view>
-      <view class="content">{{ props.data.content }}</view>
-      <view class="like">
-        <image
-          :src="props.data.like ? Liked : Like"
-          class="like-icon"
-          @click="like"
-        />
-        <view class="like-num">{{ props.data.likeCnt || 0 }}</view>
+      <view class="contributor">
+        <view class="circle" />
+        <view class="contributor-text">贡献者：喵同学</view>
       </view>
+      <view class="time">{{ formatTime(props.data.createdAt) }}</view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
 import type { DtoProposalVO } from "@/api/data-contracts";
-import Liked from "@/images/like_active.png";
-import Like from "@/images/like-icon.png";
 
 type Props = {
   data: DtoProposalVO;
 };
 const props = defineProps<Props>();
-
-const emit = defineEmits<{
-  like: (id: string) => void;
-}>();
-
-function like() {
-  if (props.data.id) {
-    emit("like", props.data.id);
-  }
-}
 
 function getStatusText(status?: string): string {
   const statusMap: Record<string, string> = {
@@ -216,40 +199,32 @@ function formatTime(timeStamp?: string): string {
       }
     }
 
+    .contributor {
+      display: flex;
+      flex-direction: row;
+      margin-top: 2vw;
+
+      .circle {
+        width: 2vw;
+        height: 2vw;
+        border-radius: 50%;
+        background-color: #b70030;
+        margin-left: 4vw;
+        margin-top: 1.5vw;
+        flex-shrink: 0;
+      }
+
+      .contributor-text {
+        margin-left: 1.5vw;
+        font-size: 3.5vw;
+        color: #666666;
+      }
+    }
+
     .time {
       margin-left: 55vw;
       font-size: 3.5vw;
       margin-top: 2vw;
-    }
-
-    .content {
-      margin-top: 3vw;
-      width: 82.93vw;
-      margin-left: 3.5vw;
-      letter-spacing: 0.3vw;
-      line-height: 1.5;
-      font-size: 3.9vw;
-    }
-
-    .like {
-      display: flex;
-      flex-direction: row;
-      margin-left: 75vw;
-      margin-top: 2vw;
-      margin-bottom: 3vw;
-
-      .like-icon {
-        top: 5vw;
-        width: 5.86vw;
-        height: 5.86vw;
-      }
-
-      .like-num {
-        top: 5.5vw;
-        margin-left: 2vw;
-        margin-top: 1vw;
-        font-size: 3.8vw;
-      }
     }
   }
 }

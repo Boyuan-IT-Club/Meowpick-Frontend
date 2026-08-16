@@ -19,7 +19,7 @@ export function useChoose() {
       console.log('[useChoose] search called:', { keyword: keyword.value, type: type.value, page: p });
       http.CoursesController.searchCreate({
         keyword: keyword.value,
-        type: type.value === 'department' || type.value === 'category' ? 'course' : type.value,
+        type: type.value,
         page: p,
         pageSize: 10
       }).then((res) => {

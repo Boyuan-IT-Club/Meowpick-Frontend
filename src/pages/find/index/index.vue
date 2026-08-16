@@ -112,6 +112,8 @@ function safeDecode(str?: string): string {
   position: fixed;
   top: 35vw;
   left: 5vw;
+  right: 5vw;
+  padding-bottom: 20vw;
 
   .hot {
     margin-top: 4vw;
@@ -200,8 +202,10 @@ function safeDecode(str?: string): string {
 
     .propose-entry-text {
       font-size: 3.2vw;
-      color: #b70030;
-      text-decoration: underline;
+      color: #ffffff;
+      background-color: #b70030;
+      padding: 2vw 5vw;
+      border-radius: 5vw;
     }
   }
 }

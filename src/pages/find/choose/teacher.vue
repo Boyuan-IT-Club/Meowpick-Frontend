@@ -91,8 +91,10 @@ function goToPropose() {
 
   .propose-entry-text {
     font-size: 3.2vw;
-    color: #b70030;
-    text-decoration: underline;
+    color: #ffffff;
+    background-color: #b70030;
+    padding: 2vw 5vw;
+    border-radius: 5vw;
   }
 }
 .scroll-bottom-spacer {

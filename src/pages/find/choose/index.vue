@@ -66,6 +66,7 @@ function goToPropose() {
 .box {
   margin-top: 30vw;
   margin-left: 5vw;
+  margin-right: 5vw;
 }
 
 .course-item {
@@ -98,8 +99,10 @@ function goToPropose() {
 
   .propose-entry-text {
     font-size: 3.2vw;
-    color: #b70030;
-    text-decoration: underline;
+    color: #ffffff;
+    background-color: #b70030;
+    padding: 2vw 5vw;
+    border-radius: 5vw;
   }
 }
 

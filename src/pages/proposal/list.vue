@@ -27,9 +27,9 @@
     </div>
 
     <div class="proposal-list" v-else-if="proposals.length > 0">
-      <div 
-        v-for="(item, index) in proposals" 
-        :key="item.id" 
+      <div
+        v-for="(item, index) in proposals"
+        :key="item.id"
         class="proposal-item"
         :class="{ 'status-approved': item.status === 'approved', 'status-rejected': item.status === 'rejected' }"
         @click="goToDetail(item)"
@@ -48,40 +48,32 @@
           <div class="course-detail">
             <span class="detail-item">教师：{{ item.teachers || '暂无' }}</span>
           </div>
-          <p class="reason">{{ item.reason }}</p>
+          <div class="contributor-row">
+            <span class="contributor-text">贡献者：{{ item.contributor }}</span>
+          </div>
           <div class="status-tags" v-if="item.status">
             <span class="status-tag" :class="item.status">{{ getStatusText(item.status) }}</span>
           </div>
         </div>
-        <div v-if="!isAdmin" class="proposal-action" @click.stop="handleAgree(index)">
-          <span class="agree-count">{{ item.agreeCount }}人同意</span>
-          <button 
-            class="agree-btn" 
-            :class="{ 'agreed': item.isAgreed }"
-          >
-            {{ item.isAgreed ? '已同意' : '同意' }}
-          </button>
-        </div>
-        <div v-else class="admin-action" @click.stop>
-          <span class="agree-count">{{ item.agreeCount }}人同意</span>
+        <div v-if="isAdmin" class="admin-action" @click.stop>
           <div class="admin-btns">
             <template v-if="item.status === 'pending'">
-              <button 
-                class="admin-btn approve" 
+              <button
+                class="admin-btn approve"
                 @click="handleApprove(index)"
               >
                 通过
               </button>
-              <button 
-                class="admin-btn reject" 
+              <button
+                class="admin-btn reject"
                 @click="handleReject(index)"
               >
                 拒绝
               </button>
             </template>
-            <button 
+            <button
               v-else
-              class="admin-btn withdraw" 
+              class="admin-btn withdraw"
               @click="handleWithdraw(index)"
             >
               撤回
@@ -202,12 +194,10 @@ interface Proposal {
   department: string;
   teachers: string;
   category: string;
-  reason: string;
-  agreeCount: number;
-  isAgreed: boolean;
   creatorId: string;
   status?: 'pending' | 'approved' | 'rejected';
   date: string;
+  contributor: string;
 }
 
 const isAdmin = ref(false);
@@ -280,16 +270,14 @@ const mapProposalItem = (item: any): Proposal => ({
   courseName: item.title || '未知课程',
   campus: Array.isArray(item.course?.campuses) ? item.course.campuses.join('、') : '',
   department: item.course?.department || '',
-  teachers: Array.isArray(item.course?.teachers) 
-    ? item.course.teachers.map((t: any) => typeof t === 'string' ? t : t.name || '').join('、') 
+  teachers: Array.isArray(item.course?.teachers)
+    ? item.course.teachers.map((t: any) => typeof t === 'string' ? t : t.name || '').join('、')
     : '',
   category: item.course?.category || '',
-  reason: item.content || '',
-  agreeCount: item.likeCnt || 0,
-  isAgreed: item.like === true,
   creatorId: item.userId || '',
   status: item.status || 'pending',
-  date: item.createdAt || ''
+  date: item.createdAt || '',
+  contributor: '喵同学'
 });
 
 const fetchProposals = async (page: number = 0) => {
@@ -305,9 +293,6 @@ const fetchProposals = async (page: number = 0) => {
     if (res.data?.code === 0) {
       const responseData = res.data.data || res.data;
       const list = responseData?.proposals || [];
-      if (list.length > 0) {
-        console.log('[DEBUG] fetchProposals first item like field:', list[0].like, 'full item:', JSON.stringify(list[0]).substring(0, 500));
-      }
       const mapped = list.filter((item: any) => item).map(mapProposalItem);
       if (page === 0) {
         proposals.value = mapped;
@@ -500,46 +485,21 @@ const getStatusText = (status: string) => {
   return statusMap[status] || status;
 };
 
-const handleAgree = async (index: number) => {
-  const proposal = proposals.value[index];
-  if (!proposal) return;
-
-  try {
-    const res = await http.LikeController.likeCreate(proposal.id, {
-      targetId: proposal.id,
-      targetType: 'proposal'
-    });
-
-    if (res.data?.code === 0) {
-      const isLiked = res.data?.like ?? res.data?.data?.like ?? !proposal.isAgreed;
-      const newCnt = res.data?.likeCnt ?? res.data?.data?.likeCnt ?? (isLiked ? proposal.agreeCount + 1 : proposal.agreeCount - 1);
-      proposal.isAgreed = isLiked;
-      proposal.agreeCount = newCnt;
-      uni.showToast({ title: isLiked ? '已同意' : '已取消同意', icon: 'success' });
-    } else {
-      uni.showToast({ title: '操作失败', icon: 'none' });
-    }
-  } catch (err) {
-    console.error('[API] 点赞失败:', err);
-    uni.showToast({ title: '操作失败', icon: 'none' });
-  }
-};
-
 const goToDetail = (item: Proposal) => {
-  uni.navigateTo({ 
-    url: `/pages/proposal/detail?id=${item.id}&data=${encodeURIComponent(JSON.stringify(item))}` 
+  uni.navigateTo({
+    url: `/pages/proposal/detail?id=${item.id}&data=${encodeURIComponent(JSON.stringify(item))}`
   });
 };
 
 const goToPropose = () => {
-  uni.navigateTo({ 
-    url: "/pages/proposal/propose" 
+  uni.navigateTo({
+    url: "/pages/proposal/propose"
   });
 };
 
 const goToLog = () => {
-  uni.navigateTo({ 
-    url: "/pages/proposal/log" 
+  uni.navigateTo({
+    url: "/pages/proposal/log"
   });
 };
 
@@ -633,15 +593,6 @@ onShow(() => {
     fetchFilteredProposals(0);
   } else {
     fetchProposals(0);
-  }
-});
-
-uni.$on('proposalLikeUpdated', (data: any) => {
-  if (!data?.id) return;
-  const idx = proposals.value.findIndex(p => p.id === data.id);
-  if (idx > -1) {
-    proposals.value[idx].isAgreed = data.like ?? proposals.value[idx].isAgreed;
-    proposals.value[idx].agreeCount = data.likeCnt ?? proposals.value[idx].agreeCount;
   }
 });
 
@@ -761,7 +712,7 @@ const handleContentScroll = (e: any) => {
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 0;
+  padding: 0 0 20vw 0;
   width: 100%;
   box-sizing: border-box;
   overflow-y: auto;
@@ -833,45 +784,13 @@ const handleContentScroll = (e: any) => {
   }
 }
 
-.reason {
-  font-size: 3.2vw;
-  color: #555555;
-  line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
+.contributor-row {
+  margin-bottom: 2vw;
 
-.proposal-action {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2vw;
-  cursor: pointer;
-}
-
-.agree-count {
-  font-size: 3.5vw;
-  color: #b70030;
-  font-weight: bold;
-}
-
-.agree-btn {
-  width: 18vw;
-  height: 8vw;
-  background-color: #b70030;
-  color: white;
-  border-radius: 4vw;
-  font-size: 3.5vw;
-  line-height: 8vw;
-  text-align: center;
-  border: none;
-  padding: 0;
-}
-
-.agree-btn.agreed {
-  background-color: #ccc;
+  .contributor-text {
+    font-size: 3.2vw;
+    color: #888888;
+  }
 }
 
 .admin-action {

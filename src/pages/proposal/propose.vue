@@ -9,7 +9,7 @@
         </view>
         <!-- Title following Back Button with specific gap -->
         <view class="nav-title-container">
-            <text class="nav-title">新增提案</text>
+            <text class="nav-title">{{ isApproveMode ? '通过提案' : '新增提案' }}</text>
         </view>
       </view>
     </view>
@@ -76,19 +76,7 @@
          </view>
       </view>
 
-      <!-- Section 3: 提议理由（选填） -->
-      <view class="card">
-         <view class="card-title">提议理由 <text class="optional-mark">（选填）</text></view>
-         <textarea
-            class="reason-area"
-            v-model="formData.reason"
-            placeholder="请详细描述新增该课程的理由，例如：这是一门新开的通识课..."
-            maxlength="300"
-         />
-         <view class="word-count">{{ formData.reason.length }}/300</view>
-      </view>
-
-      <!-- Section 4: 展示昵称 -->
+      <!-- Section 3: 展示昵称 -->
       <view class="card">
          <view class="card-title">展示设置</view>
          <view class="form-row-inline">
@@ -113,8 +101,22 @@
          <view class="field-hint">选择"是"将在提案通过后展示你的昵称</view>
       </view>
 
+      <!-- Section 4: 提议理由 -->
+      <view class="card">
+         <view class="card-title">提议理由 <text class="optional-tag">选填</text></view>
+         <view class="form-col">
+            <textarea
+                class="reason-textarea"
+                v-model="formData.reason"
+                placeholder="请输入提议理由（选填）"
+                :maxlength="500"
+                auto-height
+            />
+         </view>
+      </view>
+
       <!-- Submit Button -->
-      <button class="submit-btn" @click="submit" :disabled="submitting">提交提案</button>
+      <button class="submit-btn" @click="submit" :disabled="submitting">{{ isApproveMode ? '通过' : '提交提案' }}</button>
       <view class="safe-area-bottom"></view>
 
     </view>
@@ -146,6 +148,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue';
+import { onLoad } from "@dcloudio/uni-app";
 import { http } from '@/config';
 import { campusesData } from '@/data/mappingData';
 import SearchModal from '@/components/proposal-components/SearchModal.vue';
@@ -218,6 +221,9 @@ const contentSpacerStyle = computed(() => {
 });
 
 const submitting = ref(false);
+const isApproveMode = ref(false);
+const approveProposalId = ref('');
+const editProposalId = ref('');
 
 const formData = reactive({
     courseName: '',
@@ -226,8 +232,8 @@ const formData = reactive({
     category: '',
     teachers: [] as Teacher[],
     campuses: [] as string[],
-    reason: '',
-    showUsername: null as boolean | null
+    showUsername: null as boolean | null,
+    reason: ''
 });
 
 const campusOptions = campusesData;
@@ -315,72 +321,136 @@ const goBack = () => {
     uni.navigateBack();
 };
 
+const fillFormFromProposal = (proposal: any) => {
+    const course = proposal.course || {};
+    formData.courseName = course.name || proposal.title || '';
+    formData.courseCode = course.code || '';
+    formData.department = course.department || '';
+    formData.category = course.category || '';
+    formData.campuses = Array.isArray(course.campuses) ? [...course.campuses] : [];
+    formData.teachers = Array.isArray(course.teachers)
+        ? course.teachers.map((t: any) => ({
+            name: typeof t === 'string' ? t : t.name || '',
+            department: typeof t === 'string' ? '' : t.department || ''
+          }))
+        : [];
+    formData.showUsername = proposal.showUsername ?? null;
+    formData.reason = proposal.content || '';
+};
+
+const fetchProposalForForm = async (id: string) => {
+    try {
+        const res = await http.ProposalController.proposalDetail(id, id);
+        if (res.data?.code === 0) {
+            const proposal = res.data.proposal || res.data.data?.proposal;
+            if (proposal) {
+                fillFormFromProposal(proposal);
+            }
+        } else {
+            uni.showToast({ title: res.data?.msg || '获取提案信息失败', icon: 'none' });
+        }
+    } catch (err) {
+        console.error('[API] 获取提案详情失败:', err);
+        uni.showToast({ title: '获取提案信息失败', icon: 'none' });
+    }
+};
+
+onLoad((options: any) => {
+    if (options.approveProposalId) {
+        isApproveMode.value = true;
+        approveProposalId.value = options.approveProposalId;
+        fetchProposalForForm(options.approveProposalId);
+    } else if (options.editProposalId) {
+        editProposalId.value = options.editProposalId;
+        fetchProposalForForm(options.editProposalId);
+    }
+});
+
 const submit = async () => {
     if (!formData.courseName.trim()) return uni.showToast({ title: '请输入课程名称', icon: 'none' });
     if (!formData.department) return uni.showToast({ title: '请选择开课院系', icon: 'none' });
-    if (!formData.reason.trim()) return uni.showToast({ title: '请填写提议理由', icon: 'none' });
     if (formData.teachers.length === 0) return uni.showToast({ title: '请添加授课教师', icon: 'none' });
     if (formData.campuses.length === 0) return uni.showToast({ title: '请选择开课校区', icon: 'none' });
 
     submitting.value = true;
-    
-    try {
-        const requestBody = {
-            title: formData.courseName,
-            content: formData.reason,
-            course: {
-                name: formData.courseName,
-                code: formData.courseCode,
-                department: formData.department,
-                category: formData.category,
-                teachers: formData.teachers,
-                campuses: formData.campuses
-            }
-        };
 
-        console.log('[API] 准备提交提案:', {
-            courseName: formData.courseName,
-            department: formData.department,
-            category: formData.category,
-            campuses: formData.campuses,
-            teachers: formData.teachers
-        });
-        
-        console.log('[API] 开始提交提案');
-        const res = await http.request({
-            path: `/api/proposal/add`,
-            method: 'POST',
-            body: requestBody,
-            headers: {
-                'Content-Type': 'application/json'
+    try {
+        if (isApproveMode.value && approveProposalId.value) {
+            const approveBody = {
+                proposalID: approveProposalId.value,
+                final_course: {
+                    name: formData.courseName.trim(),
+                    code: (formData.courseCode || '').trim().toUpperCase(),
+                    department: formData.department,
+                    category: formData.category,
+                    campuses: formData.campuses,
+                    teachers: formData.teachers.map(t => ({
+                        name: t.name,
+                        title: (t as any).title || '',
+                        department: t.department || '',
+                        teacherId: (t as any).teacherId || ''
+                    }))
+                }
+            };
+
+            const res = await http.request({
+                path: `/api/proposal/${approveProposalId.value}/approve`,
+                method: 'POST',
+                body: approveBody,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (res.data && res.data.code === 0) {
+                uni.showToast({ title: '已通过', icon: 'success' });
+                uni.$emit('proposalListShouldRefresh');
+                setTimeout(() => uni.navigateBack(), 1500);
+            } else {
+                uni.showToast({ title: res.data?.msg || '操作失败', icon: 'none' });
             }
-        });
-        
-        console.log('[API] 提交提案响应:', res.data);
-        
-        if (res.data && res.data.code === 0) {
-            console.log('[API] 提案提交成功');
-            uni.showToast({ title: '提交成功', icon: 'success' });
-            setTimeout(() => uni.navigateBack(), 1500);
         } else {
-            console.error('[API] 提案提交失败:', res.data?.msg || '未知错误');
-            uni.showToast({ title: res.data?.msg || '提交失败', icon: 'none' });
+            const requestBody = {
+                title: formData.courseName.trim(),
+                content: formData.reason.trim(),
+                course: {
+                    name: formData.courseName.trim(),
+                    code: (formData.courseCode || '').trim().toUpperCase(),
+                    department: formData.department,
+                    category: formData.category,
+                    teachers: formData.teachers.map(t => ({
+                        name: t.name,
+                        title: (t as any).title || '',
+                        department: t.department || '',
+                        teacherId: (t as any).teacherId || ''
+                    })),
+                    campuses: formData.campuses
+                },
+                showUsername: formData.showUsername
+            };
+
+            const res = await http.request({
+                path: `/api/proposal/add`,
+                method: 'POST',
+                body: requestBody,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (res.data && res.data.code === 0) {
+                uni.showToast({ title: '提交成功', icon: 'success' });
+                uni.$emit('proposalListShouldRefresh');
+                setTimeout(() => uni.navigateBack(), 1500);
+            } else {
+                uni.showToast({ title: res.data?.msg || '提交失败', icon: 'none' });
+            }
         }
-    } catch (error) {
-        console.error('[API] 提交提案请求失败:', error.message || error);
-        if (error.response) {
-            console.error('[API] 服务器错误:', error.response.data);
-            uni.showToast({ title: `服务器错误: ${error.response.status}`, icon: 'none' });
-        } else if (error.request) {
-            console.error('[API] 网络错误: 未收到服务器响应');
-            uni.showToast({ title: '网络错误，请检查网络连接', icon: 'none' });
-        } else {
-            console.error('[API] 其他错误:', error.message);
-            uni.showToast({ title: `错误: ${error.message}`, icon: 'none' });
-        }
+    } catch (error: any) {
+        console.error('[API] 提案提交请求失败:', error.message || error);
+        uni.showToast({ title: '网络错误，请检查网络连接', icon: 'none' });
     } finally {
         submitting.value = false;
-        console.log('[API] 提案提交流程完成');
     }
 };
 
@@ -561,6 +631,25 @@ const submit = async () => {
     font-weight: normal;
 }
 
+.optional-tag {
+    font-size: 22rpx;
+    color: #999;
+    font-weight: normal;
+    margin-left: 8rpx;
+}
+
+.reason-textarea {
+    width: 100%;
+    min-height: 120rpx;
+    padding: 20rpx;
+    font-size: 28rpx;
+    color: #333;
+    background-color: #f9f9f9;
+    border-radius: 12rpx;
+    box-sizing: border-box;
+    line-height: 1.6;
+}
+
 .form-row-inline {
     display: flex;
     align-items: center;
@@ -575,21 +664,6 @@ const submit = async () => {
     .inline-tags {
         gap: 16rpx;
     }
-}
-
-.reason-area {
-    width: 100%;
-    height: 200rpx;
-    font-size: 28rpx;
-    line-height: 1.6;
-    color: #333;
-}
-
-.word-count {
-    text-align: right;
-    font-size: 24rpx;
-    color: #ccc;
-    margin-top: 10rpx;
 }
 
 .submit-btn {

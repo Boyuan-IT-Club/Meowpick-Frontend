@@ -28,12 +28,23 @@
         <image src="@/images/campus-icon.png" class="icon" />
         <text class="tip">开设校区</text>
       </view>
-      <text class="content">{{ (data.campuses || []).join('、') }}</text>
+      <view class="campus-list">
+        <view class="content" v-for="(campus, index) in (data.campuses || [])" :key="index">
+          {{ campus }}
+        </view>
+      </view>
     </view>
     <view class="link">
       <view class="title">
-        <image src="@/images/link-icon.png" class="icon" />
-        <text class="tip">相关课程</text>
+        <view class="title-left">
+          <image src="@/images/link-icon.png" class="icon" />
+          <view v-if="statusType" class="status-badge" :class="statusType">
+            <text class="status-text">{{ statusText }}</text>
+          </view>
+          <text v-if="statusType && statusDate" class="status-date">{{ statusDate }}</text>
+          <text v-if="!statusType" class="tip">{{ linkTitle || '相关课程' }}</text>
+        </view>
+        <text class="contributor">贡献者：{{ contributor || '/' }}</text>
       </view>
       <view
         v-for="(item, index) of limitedList(data.link)"
@@ -51,6 +62,11 @@ import type { DtoCourseVO } from "@/api/data-contracts";
 
 type Props = {
   data: DtoCourseVO;
+  contributor?: string;
+  linkTitle?: string;
+  statusType?: 'pending' | 'approved' | 'rejected';
+  statusText?: string;
+  statusDate?: string;
 };
 const props = defineProps<Props>();
 
@@ -174,22 +190,35 @@ const limitedList = (link: string[][] | null) => {
         margin-left: 4vw;
       }
     }
-    .content {
-      font-weight: bold;
-      font-size: 3.8vw;
+    .campus-list {
       margin-top: 3vw;
       margin-left: 10vw;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5vw;
+
+      .content {
+        font-weight: bold;
+        font-size: 3.8vw;
+      }
     }
   }
   .link {
     display: flex;
     flex-direction: column;
-    margin-top: 3vw;
+    margin-top: 5vw;
     grid-column-start: 1;
     grid-column-end: 3;
     .title {
       display: flex;
       flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      .title-left {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
       .icon {
         width: 6vw;
         height: 6vw;
@@ -199,6 +228,37 @@ const limitedList = (link: string[][] | null) => {
         font-size: 3.5vw;
         margin-left: 4vw;
         margin-top: 0.6vw;
+      }
+      .status-badge {
+        margin-left: 4vw;
+        padding: 0.5vw 2vw;
+        border-radius: 2vw;
+
+        .status-text {
+          font-size: 3.2vw;
+        }
+        &.pending {
+          background-color: #fff7e6;
+          .status-text { color: #fa8c16; }
+        }
+        &.approved {
+          background-color: #f6ffed;
+          .status-text { color: #52c41a; }
+        }
+        &.rejected {
+          background-color: #fff1f0;
+          .status-text { color: #ff4d4f; }
+        }
+      }
+      .status-date {
+        font-size: 3.2vw;
+        color: #999;
+        margin-left: 2vw;
+      }
+      .contributor {
+        font-size: 3.2vw;
+        color: #999;
+        margin-right: 2vw;
       }
     }
     .class-link {
