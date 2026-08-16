@@ -19,7 +19,8 @@
       </view>
       <view class="tip">
         <view
-          v-for="item of getTop3List(props.data?.tagCount!)"
+          v-for="item of getTop3List(props.data?.tagCount || {})"
+          :key="item.tag"
           class="item"
         >
           <image class="emoji" :src="Emoji(item.tag)" />

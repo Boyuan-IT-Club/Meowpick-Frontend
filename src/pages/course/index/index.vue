@@ -34,6 +34,9 @@
 <script setup lang="ts">
 import { useCourse } from "./index";
 import CommentList from "@/pages/course/index/CommentList.vue";
+import CourseHeader from "@/components/course/course-header/index.vue";
+import { onLoad, onShow } from "@dcloudio/uni-app";
+import PubSub from "@/config/utils/pubsub";
 
 let course_id = "";
 const { fetch, id, course, teachers, trends } = useCourse();

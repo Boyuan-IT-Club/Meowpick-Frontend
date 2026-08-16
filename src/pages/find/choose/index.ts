@@ -1,23 +1,11 @@
 import type { DtoCourseVO } from "@/api/data-contracts";
 
-type choose = {
-  course?: DtoCourseVO[];
-  teacher?: DtoCourseVO[];
-  department?: DtoCourseVO[];
-  category?: any[];
-};
-
 export function useChoose() {
   const keyword = shallowRef("");
   const type = shallowRef<"course" | "teacher" | "department" | "category">(
     "course"
   );
-  const rows = ref<choose>({
-    course: [],
-    teacher: [],
-    department: [],
-    category: []
-  });
+  const rows = ref<DtoCourseVO[]>([]);
   const page = ref(0);
 
   function jump(id: string) {
@@ -28,37 +16,45 @@ export function useChoose() {
 
   function search(p: number) {
     if (keyword.value.length > 0) {
+      console.log('[useChoose] search called:', { keyword: keyword.value, type: type.value, page: p });
       http.CoursesController.searchCreate({
         keyword: keyword.value,
         type: type.value === 'department' || type.value === 'category' ? 'course' : type.value,
         page: p,
         pageSize: 10
       }).then((res) => {
-        if (!rows.value[type.value]) {
-          rows.value[type.value] = [];
-        }
-        
-        const rawData = res.data?.courses || res.data.data?.courses || res.data.data?.data?.courses || [];
+        console.log('[useChoose] response:', JSON.stringify(res.data).substring(0, 500));
+
+        const rawData = res.data?.data?.courses || res.data?.courses || res.data?.data?.data?.courses || [];
+        console.log('[useChoose] rawData:', rawData);
         const courses = rawData.map((course: any) => ({
           ...course,
           teacherList: course.teachers || [],
           tagCount: course.tagCount || {}
         }));
-        
-        rows.value[type.value] = [
-          ...rows.value[type.value]!,
-          ...courses
-        ];
+
+        if (p === 0) {
+          rows.value = courses;
+        } else {
+          rows.value = [...rows.value, ...courses];
+        }
+        console.log('[useChoose] rows updated:', rows.value);
+      }).catch((err) => {
+        console.error('[useChoose] search error:', err);
+        rows.value = [];
       });
     }
   }
 
-  watch([page], () => {
+  function loadMore() {
+    page.value++;
     search(page.value);
-  });
+  }
+
   watch([keyword, type], () => {
-    rows.value[type.value] = [];
-    search(page.value);
+    rows.value = [];
+    page.value = 0;
+    search(0);
   });
 
   return {
@@ -66,6 +62,8 @@ export function useChoose() {
     type,
     rows,
     page,
-    jump
+    jump,
+    search,
+    loadMore
   };
 }

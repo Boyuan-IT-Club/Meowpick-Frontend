@@ -97,11 +97,11 @@
       },
       {
         "pagePath": "pages/my-comments/my-comments",
-        "text": "我的吐槽"
+        "text": "我的"
       },
       {
         "pagePath": "pages/proposal/list",
-        "text": "新增"
+        "text": "提案"
       }
     ]
   }

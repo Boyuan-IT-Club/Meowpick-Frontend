@@ -22,13 +22,17 @@
           <text class="loading-text">搜索中...</text>
         </view>
         <template v-else>
-          <view 
-            class="result-item" 
-            v-for="(item, index) in searchResults" 
+          <view
+            class="result-item"
+            v-for="(item, index) in searchResults"
             :key="index"
             @click="handleSelect(item)"
           >
-            {{ item }}
+            <text class="result-text">{{ item }}</text>
+            <!-- 教师搜索时显示已开课程（占位，待接口返回） -->
+            <view class="teacher-courses" v-if="field === 'teacherName'">
+              <text class="course-tag">已开课程：待接口返回</text>
+            </view>
           </view>
           <view class="no-result" v-if="searchResults.length === 0 && searchKeyword">
             未找到匹配项，请点击"新增"按钮添加
@@ -275,7 +279,25 @@ export default defineComponent({
   border-bottom: 1rpx solid #F5F5F5;
   font-size: 28rpx;
   color: #333;
-  
+
+  .result-text {
+    font-size: 28rpx;
+    color: #333;
+  }
+
+  .teacher-courses {
+    margin-top: 12rpx;
+    padding-left: 16rpx;
+
+    .course-tag {
+      font-size: 24rpx;
+      color: #999;
+      background: #f5f5f5;
+      padding: 4rpx 12rpx;
+      border-radius: 8rpx;
+    }
+  }
+
   &:active {
     background: #F5F5F5;
   }

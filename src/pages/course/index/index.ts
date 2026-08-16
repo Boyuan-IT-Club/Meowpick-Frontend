@@ -1,18 +1,21 @@
-import type { Course, CourseVO, TeacherVO } from "@/api/data-contracts";
+import type { DtoCourseVO, DtoTeacherVO } from "@/api/data-contracts";
 import { useCourseStore } from "@/config";
-import { data } from "autoprefixer";
+
+type CourseData = { data: DtoCourseVO };
 
 export function useCourse() {
   const id = ref("");
-  const course = shallowRef<Course>({ data: useCourseStore().course });
-  const teachers = shallowRef<TeacherVO[]>([]);
-  const trends = shallowRef<CourseVO[]>([]);
+  const course = shallowRef<CourseData>({ data: useCourseStore().course });
+  const teachers = shallowRef<DtoTeacherVO[]>([]);
+  const trends = shallowRef<DtoCourseVO[]>([]);
 
   function fetch(data: string) {
     id.value = data;
     http.CourseController.courseDetail(data).then((res) => {
-      if (res.data.code === 0) {
-        const courseData = res.data.data || res.data;
+      console.log('[useCourse] response:', JSON.stringify(res.data));
+      const courseData = res.data?.data?.course || res.data?.course || res.data?.data || res.data;
+      console.log('[useCourse] courseData:', courseData);
+      if (courseData) {
         course.value = {
           data: courseData,
         };
@@ -23,6 +26,8 @@ export function useCourse() {
       _link.forEach((ln) => {
         link.push(ln[0]);
       });
+    }).catch((err) => {
+      console.error('[useCourse] fetch error:', err);
     });
   }
   return {

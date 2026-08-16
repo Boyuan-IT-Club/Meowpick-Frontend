@@ -1,6 +1,26 @@
 <template>
   <top-bar :selected="1" />
   <view class="comment">
+    <!-- 个人信息卡片 -->
+    <view class="profile-card">
+      <view class="profile-info">
+        <view class="profile-avatar">
+          <text class="avatar-placeholder">🐱</text>
+        </view>
+        <view class="profile-detail">
+          <text class="profile-name">{{ userInfo.username || '加载中...' }}</text>
+          <view class="profile-contribution">
+            <text class="contribution-label">贡献值：</text>
+            <text class="contribution-value">{{ userInfo.contribution || 0 }}</text>
+          </view>
+        </view>
+      </view>
+      <view class="edit-nickname-btn" @click="goToEditNickname">
+        <text class="edit-icon">✎</text>
+        <text class="edit-text">编辑昵称</text>
+      </view>
+    </view>
+
     <view class="tab-bar">
       <view class="tab-container">
         <view 
@@ -36,10 +56,25 @@
         <view v-for="(item, index) of proposalList" :key="item.id" class="proposal-item" @click="goToProposalDetail(item)">
           <view class="proposal-card">
             <view class="proposal-header">
-              <text class="proposal-title">{{ item.title || '未知课程' }}</text>
+              <text class="proposal-title">{{ item.title || item.course?.name || '未知课程' }}</text>
               <view class="status-tag" :class="item.status">{{ getStatusText(item.status) }}</view>
             </view>
+
+            <!-- 审批时间 -->
+            <view class="review-time" v-if="item.status === 'approved' || item.status === 'rejected'">
+              <text class="review-time-label">{{ item.status === 'approved' ? '通过时间' : '拒绝时间' }}：</text>
+              <text class="review-time-value">{{ formatTime(item.updatedAt) }}</text>
+            </view>
+
+            <!-- 拒绝原因 -->
+            <view class="reject-reason" v-if="item.status === 'rejected' && item.rejectReason">
+              <text class="reject-label">拒绝原因：</text>
+              <text class="reject-text">{{ item.rejectReason }}</text>
+            </view>
+
+            <!-- 原始提交信息 -->
             <view class="proposal-info" v-if="item.course">
+              <view class="info-section-title" v-if="item.status === 'approved' && (item as any).finalCourse">原始提交</view>
               <view class="info-row" v-if="item.course.department">
                 <view class="info-dot" />
                 <text class="info-label">院系：</text>
@@ -61,14 +96,43 @@
                 <text class="info-text">{{ item.course.teachers.map((t: any) => typeof t === 'string' ? t : t.name || '').join('、') }}</text>
               </view>
             </view>
-            <view class="proposal-content" v-if="item.content">{{ item.content }}</view>
+
+            <!-- 最终课程信息（已通过且存在finalCourse时双栏展示） -->
+            <view class="proposal-info final-info" v-if="item.status === 'approved' && (item as any).finalCourse">
+              <view class="info-section-title">最终课程</view>
+              <view class="info-row" v-if="(item as any).finalCourse.department">
+                <view class="info-dot final-dot" />
+                <text class="info-label">院系：</text>
+                <text class="info-text">{{ (item as any).finalCourse.department }}</text>
+              </view>
+              <view class="info-row" v-if="(item as any).finalCourse.category">
+                <view class="info-dot final-dot" />
+                <text class="info-label">分类：</text>
+                <text class="info-text">{{ (item as any).finalCourse.category }}</text>
+              </view>
+              <view class="info-row" v-if="(item as any).finalCourse.campuses?.length">
+                <view class="info-dot final-dot" />
+                <text class="info-label">校区：</text>
+                <text class="info-text">{{ (item as any).finalCourse.campuses.join('、') }}</text>
+              </view>
+              <view class="info-row" v-if="(item as any).finalCourse.teachers?.length">
+                <view class="info-dot final-dot" />
+                <text class="info-label">教师：</text>
+                <text class="info-text">{{ (item as any).finalCourse.teachers.map((t: any) => typeof t === 'string' ? t : t.name || '').join('、') }}</text>
+              </view>
+            </view>
+
             <view class="proposal-footer">
-              <view class="like-area" @click.stop="likeProposal(item.id!)">
+              <view class="like-area" @click.stop="likeProposal(item.id!)" v-if="item.status === 'approved'">
                 <image :src="item.like ? Liked : Like" class="like-icon" />
                 <text class="like-count">{{ item.likeCnt || 0 }}人同意</text>
               </view>
-              <view class="delete-area" @click.stop="handleDelete(index)">
+              <view class="footer-spacer" v-else />
+              <view class="delete-area" @click.stop="handleDelete(index)" v-if="item.status === 'pending'">
                 <text class="delete-text">删除</text>
+              </view>
+              <view class="edit-area" @click.stop="handleReEdit(item)" v-if="item.status === 'rejected'">
+                <text class="edit-area-text">重新编辑</text>
               </view>
             </view>
           </view>
@@ -80,6 +144,7 @@
       <view v-if="loading" class="loading-more">
         <text class="loading-text">加载中...</text>
       </view>
+      <view class="bottom-safe-area"></view>
     </scroll>
   </view>
 </template>
@@ -105,6 +170,34 @@ const proposalLoading = ref(false);
 const loading = ref(false);
 let commentInitialized = false;
 let proposalInitialized = false;
+
+// 用户信息（占位，后续接口对接）
+const userInfo = ref({
+  username: '加载中...',
+  contribution: 0
+});
+
+function goToEditNickname() {
+  uni.showToast({ title: '昵称编辑功能开发中', icon: 'none' });
+}
+
+function formatTime(dateStr?: string | Date): string {
+  if (!dateStr) return '--';
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return '--';
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const h = String(d.getHours()).padStart(2, '0');
+  const min = String(d.getMinutes()).padStart(2, '0');
+  return `${y}-${m}-${day} ${h}:${min}`;
+}
+
+function handleReEdit(item: DtoProposalVO) {
+  uni.navigateTo({
+    url: `/pages/proposal/propose?editProposalId=${item.id}`
+  });
+}
 
 onShow(() => {
   uni.hideTabBar();
@@ -181,6 +274,9 @@ function fetchProposals(page: number) {
     if (res.data?.code === 0) {
       const responseData = res.data.data || res.data;
       const proposals = responseData?.proposals || [];
+      if (proposals.length > 0) {
+        console.log('[DEBUG] fetchProposals first item like field:', proposals[0].like);
+      }
       proposals.forEach((proposal) => {
         proposalList.value.push(proposal);
       });
@@ -276,7 +372,7 @@ function getStatusText(status?: string): string {
   const statusMap: Record<string, string> = {
     'pending': '待审核',
     'approved': '已通过',
-    'rejected': '已下架'
+    'rejected': '已拒绝'
   };
   return statusMap[status || ''] || status || '';
 }
@@ -306,6 +402,83 @@ onPageScroll((e) => {
   margin-left: 5vw;
   height: 200vw;
   width: 100vw;
+}
+
+.profile-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 87vw;
+  background: linear-gradient(135deg, #fff5f8, #fff);
+  border-radius: 3vw;
+  box-shadow: 1px 1px 5px 0px #0000001f;
+  padding: 4vw;
+  margin-bottom: 3vw;
+
+  .profile-info {
+    display: flex;
+    align-items: center;
+
+    .profile-avatar {
+      width: 12vw;
+      height: 12vw;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ffb3c6, #ff8fab);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      .avatar-placeholder {
+        font-size: 6vw;
+      }
+    }
+
+    .profile-detail {
+      margin-left: 3vw;
+
+      .profile-name {
+        font-size: 4vw;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .profile-contribution {
+        margin-top: 1vw;
+
+        .contribution-label {
+          font-size: 3.2vw;
+          color: #999;
+        }
+
+        .contribution-value {
+          font-size: 3.5vw;
+          font-weight: 600;
+          color: #b70030;
+        }
+      }
+    }
+  }
+
+  .edit-nickname-btn {
+    display: flex;
+    align-items: center;
+    background: #fff0f6;
+    padding: 2vw 3vw;
+    border-radius: 2vw;
+    border: 1px solid #ffadd2;
+
+    .edit-icon {
+      font-size: 3.5vw;
+      color: #b70030;
+    }
+
+    .edit-text {
+      font-size: 3vw;
+      color: #b70030;
+      margin-left: 1vw;
+    }
+  }
 }
 
 .tab-bar {
@@ -422,6 +595,15 @@ onPageScroll((e) => {
   .proposal-info {
     margin-top: 3vw;
 
+    .info-section-title {
+      font-size: 3vw;
+      font-weight: 600;
+      color: #b70030;
+      margin-bottom: 2vw;
+      padding-bottom: 1vw;
+      border-bottom: 1px dashed #ffd6e7;
+    }
+
     .info-row {
       display: flex;
       flex-direction: row;
@@ -435,6 +617,10 @@ onPageScroll((e) => {
         background-color: #b70030;
         margin-left: 1vw;
         flex-shrink: 0;
+
+        &.final-dot {
+          background-color: #52c41a;
+        }
       }
 
       .info-label {
@@ -449,6 +635,52 @@ onPageScroll((e) => {
         font-size: 3.5vw;
         color: #555;
       }
+    }
+
+    &.final-info {
+      margin-top: 3vw;
+      padding-top: 3vw;
+      border-top: 1px solid #f0f0f0;
+
+      .info-text {
+        color: #333;
+      }
+    }
+  }
+
+  .review-time {
+    margin-top: 2vw;
+    display: flex;
+    align-items: center;
+
+    .review-time-label {
+      font-size: 3vw;
+      color: #999;
+    }
+
+    .review-time-value {
+      font-size: 3vw;
+      color: #666;
+      margin-left: 1vw;
+    }
+  }
+
+  .reject-reason {
+    margin-top: 2vw;
+    background: #fff1f0;
+    border-radius: 2vw;
+    padding: 2vw 3vw;
+
+    .reject-label {
+      font-size: 3vw;
+      color: #ff4d4f;
+      font-weight: 600;
+    }
+
+    .reject-text {
+      font-size: 3vw;
+      color: #cf1322;
+      margin-left: 1vw;
     }
   }
 
@@ -501,6 +733,21 @@ onPageScroll((e) => {
         color: #ff4d4f;
       }
     }
+
+    .edit-area {
+      padding: 1.5vw 3vw;
+      border-radius: 2vw;
+      background-color: #f6ffed;
+
+      .edit-area-text {
+        font-size: 3.2vw;
+        color: #52c41a;
+      }
+    }
+
+    .footer-spacer {
+      flex: 1;
+    }
   }
 }
 
@@ -525,5 +772,9 @@ onPageScroll((e) => {
     font-size: 3.5vw;
     color: #999;
   }
+}
+
+.bottom-safe-area {
+  height: 30vw;
 }
 </style>

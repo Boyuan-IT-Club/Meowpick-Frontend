@@ -76,7 +76,7 @@
                 class="admin-btn reject" 
                 @click="handleReject(index)"
               >
-                下架
+                拒绝
               </button>
             </template>
             <button 
@@ -92,8 +92,8 @@
     </div>
 
     <div class="empty-state" v-else>
-      <text>暂无提议，快来发起第一个吧～</text>
-      <button class="empty-btn" @click="goToPropose">发起提议</button>
+      <text>暂无提案，快来发起第一个吧～</text>
+      <button class="empty-btn" @click="goToPropose">发起提案</button>
     </div>
 
     <div v-if="noMore && proposals.length > 0 && !loading" class="no-more">
@@ -180,6 +180,11 @@
     :field="currentField"
     @select="handleSearchSelect"
   />
+
+  <RejectModal
+    v-model:visible="showRejectModal"
+    @confirm="handleRejectConfirm"
+  />
 </template>
 
 <script setup lang="ts">
@@ -188,6 +193,7 @@ import { onShow, onPageScroll } from '@dcloudio/uni-app';
 import { http } from '@/config';
 import { campusesData } from '@/data/mappingData';
 import SearchModal from '@/components/proposal-components/SearchModal.vue';
+import RejectModal from '@/components/proposal-components/RejectModal.vue';
 
 interface Proposal {
   id: string;
@@ -210,6 +216,8 @@ const loading = ref(true);
 const searchKeyword = ref('');
 const showFilterModal = ref(false);
 const showSearchModal = ref(false);
+const showRejectModal = ref(false);
+const rejectTargetId = ref('');
 const currentField = ref('');
 const currentPage = ref(0);
 const pageSize = 10;
@@ -220,7 +228,7 @@ let searchTimer: ReturnType<typeof setTimeout> | null = null;
 const statusOptions = [
   { label: '待审核', value: 'pending' },
   { label: '已通过', value: 'approved' },
-  { label: '已下架', value: 'rejected' }
+  { label: '已拒绝', value: 'rejected' }
 ];
 
 const campusOptions = campusesData;
@@ -278,7 +286,7 @@ const mapProposalItem = (item: any): Proposal => ({
   category: item.course?.category || '',
   reason: item.content || '',
   agreeCount: item.likeCnt || 0,
-  isAgreed: item.like || false,
+  isAgreed: item.like === true,
   creatorId: item.userId || '',
   status: item.status || 'pending',
   date: item.createdAt || ''
@@ -297,6 +305,9 @@ const fetchProposals = async (page: number = 0) => {
     if (res.data?.code === 0) {
       const responseData = res.data.data || res.data;
       const list = responseData?.proposals || [];
+      if (list.length > 0) {
+        console.log('[DEBUG] fetchProposals first item like field:', list[0].like, 'full item:', JSON.stringify(list[0]).substring(0, 500));
+      }
       const mapped = list.filter((item: any) => item).map(mapProposalItem);
       if (page === 0) {
         proposals.value = mapped;
@@ -484,7 +495,7 @@ const getStatusText = (status: string) => {
   const statusMap: Record<string, string> = {
     'pending': '待审核',
     'approved': '已通过',
-    'rejected': '已下架'
+    'rejected': '已拒绝'
   };
   return statusMap[status] || status;
 };
@@ -532,51 +543,47 @@ const goToLog = () => {
   });
 };
 
-const handleApprove = async (index: number) => {
+const handleApprove = (index: number) => {
   const proposal = proposals.value[index];
   if (!proposal) return;
 
-  try {
-    const res = await http.ProposalController.proposalApproveCreate(proposal.id);
-    if (res.data?.code === 0) {
-      uni.showToast({ title: '已通过', icon: 'success' });
-      if (isFilterMode.value) {
-        fetchFilteredProposals(currentPage.value);
-      } else {
-        fetchProposals(currentPage.value);
-      }
-    } else {
-      uni.showToast({ title: '通过失败', icon: 'none' });
-    }
-  } catch (err) {
-    console.error('[API] 通过提议失败:', err);
-    uni.showToast({ title: '通过失败', icon: 'none' });
-  }
+  uni.navigateTo({
+    url: `/pages/proposal/propose?approveProposalId=${proposal.id}&data=${encodeURIComponent(JSON.stringify(proposal))}`
+  });
 };
 
-const handleReject = async (index: number) => {
+const handleReject = (index: number) => {
   const proposal = proposals.value[index];
   if (!proposal) return;
+  rejectTargetId.value = proposal.id;
+  showRejectModal.value = true;
+};
+
+const handleRejectConfirm = async (reason: string) => {
+  const proposalId = rejectTargetId.value;
+  if (!proposalId) return;
 
   try {
-    const res = await http.ProposalController.proposalRejectCreate(proposal.id, {
-      proposalId: proposal.id,
-      reason: '管理员下架'
+    const res = await http.ProposalController.proposalRejectCreate(proposalId, {
+      proposalId,
+      reason
     });
 
     if (res.data?.code === 0) {
-      uni.showToast({ title: '已下架', icon: 'success' });
+      uni.showToast({ title: '已拒绝', icon: 'success' });
       if (isFilterMode.value) {
         fetchFilteredProposals(currentPage.value);
       } else {
         fetchProposals(currentPage.value);
       }
     } else {
-      uni.showToast({ title: res.data?.message || '下架失败', icon: 'none' });
+      uni.showToast({ title: res.data?.message || '拒绝失败', icon: 'none' });
     }
   } catch (err) {
-    console.error('[API] 下架提议失败:', err);
-    uni.showToast({ title: '下架失败', icon: 'none' });
+    console.error('[API] 拒绝提案失败:', err);
+    uni.showToast({ title: '拒绝失败', icon: 'none' });
+  } finally {
+    rejectTargetId.value = '';
   }
 };
 

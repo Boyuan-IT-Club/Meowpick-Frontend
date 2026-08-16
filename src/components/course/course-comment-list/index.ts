@@ -14,7 +14,7 @@ export function useCourseComment(p: Props) {
       query = true;
     }
     if (query) {
-      http.CommentController.commentQueryList({ courseId: id, page, pageSize: 10 }).then((res) => {
+      http.CommentController.commentQueryList({ id: id, page, pageSize: 10 }).then((res) => {
         const responseData = res.data.data || res.data;
         responseData?.rows?.forEach((comment) => {
           list.value[comment.id!] = comment;

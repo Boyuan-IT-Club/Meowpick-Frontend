@@ -9,7 +9,7 @@
         </view>
         <!-- Title following Back Button with specific gap -->
         <view class="nav-title-container">
-            <text class="nav-title">新增提议</text>
+            <text class="nav-title">新增提案</text>
         </view>
       </view>
     </view>
@@ -76,20 +76,45 @@
          </view>
       </view>
 
-      <!-- Section 3: Reason -->
+      <!-- Section 3: 提议理由（选填） -->
       <view class="card">
-         <view class="card-title">提议理由</view>
-         <textarea 
-            class="reason-area" 
-            v-model="formData.reason" 
-            placeholder="请详细描述新增该课程的理由，例如：这是一门新开的通识课..." 
+         <view class="card-title">提议理由 <text class="optional-mark">（选填）</text></view>
+         <textarea
+            class="reason-area"
+            v-model="formData.reason"
+            placeholder="请详细描述新增该课程的理由，例如：这是一门新开的通识课..."
             maxlength="300"
          />
          <view class="word-count">{{ formData.reason.length }}/300</view>
       </view>
 
+      <!-- Section 4: 展示昵称 -->
+      <view class="card">
+         <view class="card-title">展示设置</view>
+         <view class="form-row-inline">
+            <view class="label">展示昵称</view>
+            <view class="tags-group inline-tags">
+                <view
+                    class="tag-item"
+                    :class="{ active: formData.showUsername === true }"
+                    @click="formData.showUsername = true"
+                >
+                    是
+                </view>
+                <view
+                    class="tag-item"
+                    :class="{ active: formData.showUsername === false }"
+                    @click="formData.showUsername = false"
+                >
+                    否
+                </view>
+            </view>
+         </view>
+         <view class="field-hint">选择"是"将在提案通过后展示你的昵称</view>
+      </view>
+
       <!-- Submit Button -->
-      <button class="submit-btn" @click="submit" :disabled="submitting">发布提议</button>
+      <button class="submit-btn" @click="submit" :disabled="submitting">提交提案</button>
       <view class="safe-area-bottom"></view>
 
     </view>
@@ -201,7 +226,8 @@ const formData = reactive({
     category: '',
     teachers: [] as Teacher[],
     campuses: [] as string[],
-    reason: ''
+    reason: '',
+    showUsername: null as boolean | null
 });
 
 const campusOptions = campusesData;
@@ -520,6 +546,34 @@ const submit = async () => {
         background: #FFF0F6;
         color: #b70030;
         border-color: #ffadd2;
+    }
+}
+
+.field-hint {
+    font-size: 24rpx;
+    color: #999;
+    margin-top: 12rpx;
+}
+
+.optional-mark {
+    font-size: 24rpx;
+    color: #999;
+    font-weight: normal;
+}
+
+.form-row-inline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .label {
+        font-size: 28rpx;
+        color: #333;
+        flex-shrink: 0;
+    }
+
+    .inline-tags {
+        gap: 16rpx;
     }
 }
 

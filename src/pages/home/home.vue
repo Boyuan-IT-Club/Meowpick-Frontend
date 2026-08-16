@@ -12,6 +12,11 @@
         </view>
         <ToolBox class="toolbox" />
         <!-- <DebugPanel class="debug-panel" /> -->
+
+        <!-- 新增提案 FAB 按钮 -->
+        <view class="fab-btn" @click="goToPropose">
+            <text class="fab-plus">+</text>
+        </view>
     </view>
 </template>
 
@@ -34,6 +39,12 @@ onPageScroll((e) => {
 const goToSearch = () => {
     uni.navigateTo({
         url: "/pages/find/index/index"
+    });
+};
+
+const goToPropose = () => {
+    uni.navigateTo({
+        url: "/pages/proposal/propose"
     });
 };
 </script>
@@ -66,6 +77,31 @@ const goToSearch = () => {
 
     .mewochat {
         margin-top: 150vw;
+    }
+
+    .fab-btn {
+        position: fixed;
+        bottom: 25vw;
+        right: 5vw;
+        width: 15vw;
+        height: 15vw;
+        background: linear-gradient(135deg, #b70030, #ff4d6a);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(183, 0, 48, 0.3);
+        z-index: 100;
+
+        &:active {
+            transform: scale(0.95);
+        }
+
+        .fab-plus {
+            font-size: 8vw;
+            line-height: 1;
+            color: #ffffff;
+        }
     }
 
 }

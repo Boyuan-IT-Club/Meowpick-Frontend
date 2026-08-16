@@ -26,7 +26,7 @@
           <view class="box">
             <view v-for="item in recent" class="item">
               <view class="txt" @click="jump2Recent(item.query!)">
-                {{ item.query }}
+                {{ safeDecode(item.query) }}
               </view>
               <!--                                <div class="icon" @click="commitInput(item.text!)">↖</div>-->
             </view>
@@ -36,6 +36,11 @@
     </view>
     <div class="category" />
     <div class="recommend" />
+
+    <!-- 新增提案入口 -->
+    <view class="propose-entry" @click="goToPropose">
+      <text class="propose-entry-text">没有想搜的课程？点击这里新增课程</text>
+    </view>
   </view>
 </template>
 
@@ -72,7 +77,7 @@ function jump2search(keyword: string) {
 }
 
 function jump2Recent(keyword: string) {
-  PubSub.publish("commit_input", keyword);
+  PubSub.publish("commit_input", safeDecode(keyword));
   PubSub.publish("get_recent");
 }
 
@@ -85,6 +90,21 @@ const deleteHistory = () => {
   // 接口已变更，暂时注释
   // http.SearchController.removeRecent(tokenStore.userId);
 };
+
+const goToPropose = () => {
+  uni.navigateTo({
+    url: "/pages/proposal/propose"
+  });
+};
+
+function safeDecode(str?: string): string {
+  if (!str) return "";
+  try {
+    return decodeURIComponent(str);
+  } catch {
+    return str;
+  }
+}
 </script>
 
 <style scoped lang="scss">
@@ -169,6 +189,19 @@ const deleteHistory = () => {
           }
         }
       }
+    }
+  }
+
+  .propose-entry {
+    margin-top: 8vw;
+    display: flex;
+    justify-content: center;
+    padding: 3vw 0;
+
+    .propose-entry-text {
+      font-size: 3.2vw;
+      color: #b70030;
+      text-decoration: underline;
     }
   }
 }

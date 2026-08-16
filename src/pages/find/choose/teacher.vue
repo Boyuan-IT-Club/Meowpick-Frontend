@@ -30,17 +30,26 @@
           </div>
         </view>
       </view>
+      <view class="bottom">--- 到底了哟 ---</view>
+
+      <view class="propose-entry" @click="goToPropose">
+        <text class="propose-entry-text">没有想搜的课程？点击这里新增课程</text>
+      </view>
+      <view class="scroll-bottom-spacer" />
     </scroll>
   </view>
 </template>
 <script setup lang="ts">
 import { useChoose } from "./teacher";
 import { Emoji, getTop3List } from "@/utils/tags";
+import { onLoad } from "@dcloudio/uni-app";
+import PubSub from "@/config/utils/pubsub";
 
 const { keyword, rows, page, jump } = useChoose();
 onLoad((options: any) => {
-  keyword.value = options.keyword;
-  PubSub.publish("commit_input", options.keyword);
+  const decodedKeyword = decodeURIComponent(options.keyword || "");
+  keyword.value = decodedKeyword;
+  PubSub.publish("commit_input", decodedKeyword);
 });
 
 function handleScrollBottom() {
@@ -50,6 +59,12 @@ function handleScrollBottom() {
 function handleScroll(e: any) {
   const scrollTop = e.detail?.scrollTop || 0;
   uni.$emit('pageScroll', { scrollTop });
+}
+
+function goToPropose() {
+  uni.navigateTo({
+    url: "/pages/proposal/propose"
+  });
 }
 </script>
 <style scoped lang="scss">
@@ -68,6 +83,20 @@ function handleScroll(e: any) {
   margin-top: 2.5vw;
   font-size: 3.3vw;
   color: #777777;
+}
+.propose-entry {
+  display: flex;
+  justify-content: center;
+  padding: 3vw 0;
+
+  .propose-entry-text {
+    font-size: 3.2vw;
+    color: #b70030;
+    text-decoration: underline;
+  }
+}
+.scroll-bottom-spacer {
+  height: 22vw;
 }
 .content {
   margin-top: 30vw;

@@ -12,7 +12,7 @@
             <text class="back-text">←</text>
          </view>
          <view class="title-wrapper">
-             <text class="page-title">提议详情</text>
+             <text class="page-title">提案详情</text>
          </view>
        </view>
     </view>
@@ -25,15 +25,18 @@
       
       <view v-else class="proposal-card">
           <view class="card-header">
-              <view class="proposal-badge">新课提议</view>
-              <text class="proposal-date">{{ formatDate(proposalData.createdAt) }}</text>
+              <view class="proposal-badge">新课提案</view>
+              <view class="header-right">
+                <view class="status-tag" :class="proposalData.status" v-if="proposalData.status">{{ getStatusText(proposalData.status) }}</view>
+                <text class="proposal-date">{{ formatDate(proposalData.createdAt) }}</text>
+              </view>
           </view>
           
-          <view class="proposal-title">{{ proposalData.title || '未命名提议' }}</view>
+          <view class="proposal-title">{{ proposalData.title || proposalData.course?.name || '未命名提案' }}</view>
           
           <view class="proposal-info-row single-item" v-if="teacherNames">
               <view class="info-item full-width">
-                  <text class="info-label">提议教师：</text>
+                  <text class="info-label">授课教师：</text>
                   <text class="info-value">{{ teacherNames }}</text>
               </view>
           </view>
@@ -59,9 +62,44 @@
               </view>
           </view>
           
-          <view class="proposal-reason-box">
-              <text class="reason-label">提议理由：</text>
-              <text class="reason-content">{{ proposalData.content || '暂无理由' }}</text>
+          <view class="proposal-reason-box" v-if="proposalData.content">
+              <text class="reason-label">提案内容：</text>
+              <text class="reason-content">{{ proposalData.content }}</text>
+          </view>
+
+          <!-- 拒绝原因 -->
+          <view class="reject-reason-box" v-if="proposalData.status === 'rejected' && proposalData.rejectReason">
+              <text class="reject-label">拒绝原因：</text>
+              <text class="reject-content">{{ proposalData.rejectReason }}</text>
+          </view>
+
+          <!-- 最终课程信息（已通过且存在finalCourse时展示） -->
+          <view class="final-course-box" v-if="proposalData.status === 'approved' && proposalData.finalCourse">
+              <view class="section-title">最终课程信息</view>
+              <view class="proposal-info-row single-item" v-if="proposalData.finalCourse.department">
+                  <view class="info-item full-width">
+                      <text class="info-label">院系：</text>
+                      <text class="info-value">{{ proposalData.finalCourse.department }}</text>
+                  </view>
+              </view>
+              <view class="proposal-info-row single-item" v-if="proposalData.finalCourse.category">
+                  <view class="info-item full-width">
+                      <text class="info-label">分类：</text>
+                      <text class="info-value">{{ proposalData.finalCourse.category }}</text>
+                  </view>
+              </view>
+              <view class="proposal-info-row single-item" v-if="proposalData.finalCourse.campuses?.length">
+                  <view class="info-item full-width">
+                      <text class="info-label">校区：</text>
+                      <text class="info-value">{{ proposalData.finalCourse.campuses.join('、') }}</text>
+                  </view>
+              </view>
+              <view class="proposal-info-row single-item" v-if="proposalData.finalCourse.teachers?.length">
+                  <view class="info-item full-width">
+                      <text class="info-label">教师：</text>
+                      <text class="info-value">{{ proposalData.finalCourse.teachers.map((t: any) => typeof t === 'string' ? t : t.name || '').join('、') }}</text>
+                  </view>
+              </view>
           </view>
           
           <view class="vote-area">
@@ -126,7 +164,7 @@ const campusText = computed(() => {
 
 const formatDate = (dateString: string) => {
     if (!dateString) return '刚刚';
-    
+
     try {
         let normalized = dateString;
         if (!normalized.includes('Z') && !normalized.includes('+') && !normalized.includes('T')) {
@@ -143,6 +181,15 @@ const formatDate = (dateString: string) => {
     } catch (e) {
         return '刚刚';
     }
+};
+
+const getStatusText = (status: string) => {
+    const statusMap: Record<string, string> = {
+        'pending': '待审核',
+        'approved': '已通过',
+        'rejected': '已拒绝'
+    };
+    return statusMap[status] || status;
 };
 
 const fetchProposalDetail = async () => {
@@ -162,6 +209,7 @@ const fetchProposalDetail = async () => {
         }
         
         if (proposal) {
+            console.log('[DEBUG] fetchProposalDetail proposal.like:', proposal.like, 'full proposal keys:', Object.keys(proposal));
             proposalData.value = proposal;
         } else {
             console.error('[API] 无法从响应中提取提案数据, res.data keys:', Object.keys(res.data || {}));
@@ -362,7 +410,7 @@ $proposal-bg-end: #f8f9fa;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 24rpx;
-        
+
         .proposal-badge {
             background-color: #fff0f0;
             color: $brand-red;
@@ -371,7 +419,35 @@ $proposal-bg-end: #f8f9fa;
             border-radius: 8rpx;
             font-weight: 600;
         }
-        
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12rpx;
+        }
+
+        .status-tag {
+            font-size: 22rpx;
+            padding: 6rpx 16rpx;
+            border-radius: 8rpx;
+            font-weight: 600;
+
+            &.pending {
+                background-color: #fff7e6;
+                color: #fa8c16;
+            }
+
+            &.approved {
+                background-color: #f6ffed;
+                color: #52c41a;
+            }
+
+            &.rejected {
+                background-color: #fff1f0;
+                color: #ff4d4f;
+            }
+        }
+
         .proposal-date {
             font-size: 24rpx;
             color: #999;
@@ -422,7 +498,7 @@ $proposal-bg-end: #f8f9fa;
     
     .proposal-reason-box {
         margin-bottom: 40rpx;
-        
+
         .reason-label {
             font-size: 28rpx;
             font-weight: 600;
@@ -430,12 +506,47 @@ $proposal-bg-end: #f8f9fa;
             display: block;
             margin-bottom: 12rpx;
         }
-        
+
         .reason-content {
             font-size: 28rpx;
             color: #444;
             line-height: 1.6;
             text-align: justify;
+        }
+    }
+
+    .reject-reason-box {
+        margin-bottom: 40rpx;
+        background: #fff1f0;
+        border-radius: 12rpx;
+        padding: 24rpx;
+
+        .reject-label {
+            font-size: 28rpx;
+            font-weight: 600;
+            color: #ff4d4f;
+            display: block;
+            margin-bottom: 12rpx;
+        }
+
+        .reject-content {
+            font-size: 28rpx;
+            color: #cf1322;
+            line-height: 1.6;
+        }
+    }
+
+    .final-course-box {
+        margin-bottom: 40rpx;
+        background: #f6ffed;
+        border-radius: 12rpx;
+        padding: 24rpx;
+
+        .section-title {
+            font-size: 28rpx;
+            font-weight: 600;
+            color: #52c41a;
+            margin-bottom: 16rpx;
         }
     }
     

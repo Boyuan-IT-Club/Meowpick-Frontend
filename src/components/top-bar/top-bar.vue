@@ -31,7 +31,7 @@
           class="nav-icon" 
           :src="selected === 2 ? addWhite : addBlack" 
         />
-        <text class="nav-text" :class="{ 'nav-text-active': selected === 2 }">新增</text>
+        <text class="nav-text" :class="{ 'nav-text-active': selected === 2 }">提案</text>
         <image class="chosen-search" src="../../images/chosen_line.png" v-if="selected === 2" />
       </view>
     </view>
