@@ -158,6 +158,7 @@ import AddTeacherModal from '@/components/proposal-components/AddTeacherModal.vu
 interface Teacher {
   name: string;
   department: string;
+  teacherId?: string;
 }
 
 const sysInfo = uni.getSystemInfoSync();
@@ -340,11 +341,14 @@ const fillFormFromProposal = (proposal: any) => {
 
 const fetchProposalForForm = async (id: string) => {
     try {
-        const res = await http.ProposalController.proposalDetail(id, id);
+        const res = await http.ProposalController.proposalDetail(id);
         if (res.data?.code === 0) {
             const proposal = res.data.proposal || res.data.data?.proposal;
             if (proposal) {
-                fillFormFromProposal(proposal);
+                fillFormFromProposal({
+                    ...proposal,
+                    finalCourse: proposal.finalCourse || proposal.final_course
+                });
             }
         } else {
             uni.showToast({ title: res.data?.msg || '获取提案信息失败', icon: 'none' });
@@ -378,7 +382,7 @@ const submit = async () => {
         if (isApproveMode.value && approveProposalId.value) {
             const approveBody = {
                 proposalID: approveProposalId.value,
-                final_course: {
+                finalCourse: {
                     name: formData.courseName.trim(),
                     code: (formData.courseCode || '').trim().toUpperCase(),
                     department: formData.department,
@@ -393,14 +397,10 @@ const submit = async () => {
                 }
             };
 
-            const res = await http.request({
-                path: `/api/proposal/${approveProposalId.value}/approve`,
-                method: 'POST',
-                body: approveBody,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
+            const res = await http.ProposalController.proposalApproveCreate(
+                approveProposalId.value,
+                approveBody
+            );
 
             if (res.data && res.data.code === 0) {
                 uni.showToast({ title: '已通过', icon: 'success' });
@@ -429,14 +429,7 @@ const submit = async () => {
                 showUsername: formData.showUsername
             };
 
-            const res = await http.request({
-                path: `/api/proposal/add`,
-                method: 'POST',
-                body: requestBody,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
+            const res = await http.ProposalController.proposalAddCreate(requestBody);
 
             if (res.data && res.data.code === 0) {
                 uni.showToast({ title: '提交成功', icon: 'success' });

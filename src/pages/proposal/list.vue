@@ -6,7 +6,7 @@
       <image src="@/images/search-icon.png" class="search-icon" />
       <input 
         type="text" 
-        placeholder="搜索课程或教师" 
+        placeholder="搜索提案名称"
         v-model="searchKeyword"
         @input="handleSearchDebounce"
         @confirm="handleSearchConfirm"
@@ -35,17 +35,17 @@
         @click="goToDetail(item)"
       >
         <div class="proposal-info">
-          <h3 class="course-name">{{ item.courseName }}</h3>
-          <div class="course-detail">
+          <h3 class="course-name" :class="{ 'changed-field': isAdmin && item.changedFields?.name }">{{ item.courseName }}</h3>
+          <div class="course-detail" :class="{ 'changed-field': isAdmin && item.changedFields?.campus }">
             <span class="detail-item">校区：{{ item.campus }}</span>
           </div>
-          <div class="course-detail">
+          <div class="course-detail" :class="{ 'changed-field': isAdmin && item.changedFields?.department }">
             <span class="detail-item">院系：{{ item.department }}</span>
           </div>
-          <div class="course-detail">
+          <div class="course-detail" :class="{ 'changed-field': isAdmin && item.changedFields?.category }">
             <span class="detail-item">分类：{{ item.category }}</span>
           </div>
-          <div class="course-detail">
+          <div class="course-detail" :class="{ 'changed-field': isAdmin && item.changedFields?.teachers }">
             <span class="detail-item">教师：{{ item.teachers || '暂无' }}</span>
           </div>
           <div class="contributor-row">
@@ -110,14 +110,14 @@
       </div>
       <div class="filter-content">
         <div class="filter-section">
-          <div class="filter-label">提案状态 <span class="required-mark">(多选)</span></div>
+          <div class="filter-label">提案状态 <span v-if="isAdmin" class="required-mark">(多选)</span></div>
           <div class="tags-group">
-            <div 
+            <div
               class="tag-item" 
-              v-for="status in statusOptions" 
+              v-for="status in visibleStatusOptions"
               :key="status.value"
               :class="{ active: filterForm.status.includes(status.value) }"
-              @click="toggleStatus(status.value)"
+              @click="isAdmin && toggleStatus(status.value)"
             >
               {{ status.label }}
             </div>
@@ -195,9 +195,11 @@ interface Proposal {
   teachers: string;
   category: string;
   creatorId: string;
+  finalCourseId?: string;
   status?: 'pending' | 'approved' | 'rejected';
   date: string;
   contributor: string;
+  changedFields?: Record<'name' | 'campus' | 'department' | 'category' | 'teachers', boolean>;
 }
 
 const isAdmin = ref(false);
@@ -220,6 +222,10 @@ const statusOptions = [
   { label: '已通过', value: 'approved' },
   { label: '已拒绝', value: 'rejected' }
 ];
+
+const visibleStatusOptions = computed(() => isAdmin.value
+  ? statusOptions
+  : statusOptions.filter(status => status.value === 'approved'));
 
 const campusOptions = campusesData;
 
@@ -265,20 +271,68 @@ const checkAdmin = async () => {
   }
 };
 
-const mapProposalItem = (item: any): Proposal => ({
-  id: item.id || '',
-  courseName: item.title || '未知课程',
-  campus: Array.isArray(item.course?.campuses) ? item.course.campuses.join('、') : '',
-  department: item.course?.department || '',
-  teachers: Array.isArray(item.course?.teachers)
-    ? item.course.teachers.map((t: any) => typeof t === 'string' ? t : t.name || '').join('、')
-    : '',
-  category: item.course?.category || '',
-  creatorId: item.userId || '',
-  status: item.status || 'pending',
-  date: item.createdAt || '',
-  contributor: '喵同学'
-});
+const mapProposalItem = (item: any): Proposal => {
+  // Public lists contain approved proposals only for regular users. Prefer the
+  // final course when the API returns it so administrators see what was approved.
+  const originalCourse = item.course || {};
+  const finalCourse = item.finalCourse || item.final_course;
+  const course = finalCourse || originalCourse;
+  const courseValue = (courseData: any, field: 'name' | 'campus' | 'department' | 'category' | 'teachers') => {
+    if (field === 'campus') return Array.isArray(courseData?.campuses) ? courseData.campuses.join('、') : '';
+    if (field === 'teachers') {
+      return Array.isArray(courseData?.teachers)
+        ? courseData.teachers.map((teacher: any) => typeof teacher === 'string' ? teacher : teacher.name || '').join('、')
+        : '';
+    }
+    return courseData?.[field] || '';
+  };
+  const changedFields = finalCourse ? {
+    name: courseValue(originalCourse, 'name') !== courseValue(finalCourse, 'name'),
+    campus: courseValue(originalCourse, 'campus') !== courseValue(finalCourse, 'campus'),
+    department: courseValue(originalCourse, 'department') !== courseValue(finalCourse, 'department'),
+    category: courseValue(originalCourse, 'category') !== courseValue(finalCourse, 'category'),
+    teachers: courseValue(originalCourse, 'teachers') !== courseValue(finalCourse, 'teachers')
+  } : undefined;
+  return {
+    id: item.id || '',
+    courseName: course.name || item.title || '未知课程',
+    campus: Array.isArray(course.campuses) ? course.campuses.join('、') : '',
+    department: course.department || '',
+    teachers: Array.isArray(course.teachers)
+      ? course.teachers.map((t: any) => typeof t === 'string' ? t : t.name || '').join('、')
+      : '',
+    category: course.category || '',
+    creatorId: item.userId || '',
+    finalCourseId: item.finalCourse?.id || item.final_course?.id || (item.status === 'approved' ? course.id : ''),
+    status: item.status || 'pending',
+    date: item.createdAt || '',
+    contributor: '喵同学',
+    changedFields
+  };
+};
+
+const fillFinalCourses = async (items: any[]) => {
+  const details = await Promise.all(items.map(async (item) => {
+    if (item?.status !== 'approved' || item.finalCourse || item.final_course || !item.id) {
+      return item;
+    }
+
+    try {
+      const res = await http.ProposalController.proposalDetail(item.id);
+      if (res.data?.code === 0) {
+        const proposal = res.data.data?.proposal || res.data?.proposal;
+        if (proposal?.finalCourse || proposal?.final_course) {
+          return { ...item, ...proposal };
+        }
+      }
+    } catch (err) {
+      console.error('[API] 获取最终课程信息失败:', err);
+    }
+    return item;
+  }));
+
+  return details;
+};
 
 const fetchProposals = async (page: number = 0) => {
   if (loading.value && page > 0) return;
@@ -292,7 +346,7 @@ const fetchProposals = async (page: number = 0) => {
 
     if (res.data?.code === 0) {
       const responseData = res.data.data || res.data;
-      const list = responseData?.proposals || [];
+      const list = await fillFinalCourses(responseData?.proposals || []);
       const mapped = list.filter((item: any) => item).map(mapProposalItem);
       if (page === 0) {
         proposals.value = mapped;
@@ -333,7 +387,7 @@ const fetchFilteredProposals = async (page: number = 0) => {
 
     if (res.data?.code === 0) {
       const responseData = res.data.data || res.data;
-      const list = responseData?.proposals || [];
+      const list = await fillFinalCourses(responseData?.proposals || []);
       const mapped = list.filter((item: any) => item).map(mapProposalItem);
       if (page === 0) {
         proposals.value = mapped;
@@ -375,7 +429,7 @@ const handleSearchConfirm = async () => {
 
   loading.value = true;
   try {
-    const res = await http.ProposalController.proposalSuggestCreate({
+    const res = await http.ProposalController.proposalSuggestList({
       keyword,
       page: 0,
       pageSize: 50
@@ -388,7 +442,7 @@ const handleSearchConfirm = async () => {
         const ids = suggestions.map((s: any) => s.id).filter(Boolean);
         if (ids.length > 0) {
           const detailPromises = ids.map((id: string) => 
-            http.ProposalController.proposalDetail(id, id).catch(() => null)
+            http.ProposalController.proposalDetail(id).catch(() => null)
           );
           const results = await Promise.all(detailPromises);
           proposals.value = results
@@ -461,7 +515,7 @@ const handleSearchSelect = (item: string) => {
 
 const resetFilter = () => {
   filterForm.value = {
-    status: statusOptions.map(s => s.value),
+    status: isAdmin.value ? statusOptions.map(s => s.value) : ['approved'],
     campus: [...campusOptions],
     department: '',
     category: ''
@@ -486,6 +540,13 @@ const getStatusText = (status: string) => {
 };
 
 const goToDetail = (item: Proposal) => {
+  if (!isAdmin.value && item.status === 'approved' && item.finalCourseId) {
+    uni.navigateTo({
+      url: `/pages/course/index/index?id=${item.finalCourseId}`
+    });
+    return;
+  }
+
   uni.navigateTo({
     url: `/pages/proposal/detail?id=${item.id}&data=${encodeURIComponent(JSON.stringify(item))}`
   });
@@ -551,14 +612,14 @@ const handleWithdraw = async (index: number) => {
   const proposal = proposals.value[index];
   if (!proposal) return;
 
-  // 根据 proposal 当前状态决定撤回的 actionType
-  let actionType = '';
+  // RevokeProposal is only for administrator approval results.
+  let actionType: 'approve' | 'reject';
   if (proposal.status === 'approved') {
     actionType = 'approve';
   } else if (proposal.status === 'rejected') {
     actionType = 'reject';
   } else {
-    actionType = 'delete';
+    return;
   }
 
   try {
@@ -588,12 +649,13 @@ onMounted(() => {
 });
 
 onShow(() => {
-  checkAdmin();
-  if (isFilterMode.value) {
-    fetchFilteredProposals(0);
-  } else {
-    fetchProposals(0);
-  }
+  // Re-entering the proposal tab must always show the default list, not the
+  // filter state retained from a previous visit.
+  isFilterMode.value = false;
+  fetchProposals(0);
+  // Do not block the default list request on the permission request; refresh
+  // the filter options once the current role is known.
+  checkAdmin().finally(resetFilter);
 });
 
 onPageScroll((e) => {
@@ -767,6 +829,10 @@ const handleContentScroll = (e: any) => {
   font-weight: bold;
   color: #333333;
   margin-bottom: 2vw;
+
+  &.changed-field {
+    color: #b70030;
+  }
 }
 
 .course-detail {
@@ -781,6 +847,12 @@ const handleContentScroll = (e: any) => {
     background-color: #f5f5f5;
     padding: 0.5vw 2vw;
     border-radius: 2vw;
+  }
+
+  &.changed-field .detail-item {
+    background-color: #fff1f0;
+    border: 1px solid #ffccc7;
+    color: #b70030;
   }
 }
 

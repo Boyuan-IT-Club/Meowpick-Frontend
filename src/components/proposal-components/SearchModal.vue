@@ -28,10 +28,9 @@
             :key="index"
             @click="handleSelect(item)"
           >
-            <text class="result-text">{{ item }}</text>
-            <!-- 教师搜索时显示已开课程（占位，待接口返回） -->
-            <view class="teacher-courses" v-if="field === 'teacherName'">
-              <text class="course-tag">已开课程：待接口返回</text>
+            <text class="result-text">{{ item.value }}</text>
+            <view class="teacher-courses" v-if="field === 'teacherName' && item.courses.length">
+              <text class="course-tag">已开课程：{{ item.courses.join('、') }}</text>
             </view>
           </view>
           <view class="no-result" v-if="searchResults.length === 0 && searchKeyword">
@@ -55,6 +54,11 @@ interface Props {
   field: string;
   multiple?: boolean;
   selectedItems?: string[];
+}
+
+interface Suggestion {
+  value: string;
+  courses: string[];
 }
 
 export default defineComponent({
@@ -88,7 +92,7 @@ export default defineComponent({
   emits: ['update:visible', 'select', 'close'],
   setup(props, { emit }) {
     const searchKeyword = ref('');
-    const searchResults = ref<string[]>([]);
+    const searchResults = ref<Suggestion[]>([]);
     const searchLoading = ref(false);
     let searchTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -117,7 +121,14 @@ export default defineComponent({
         if (res.data?.code === 0) {
           const responseData = res.data.data || res.data;
           const suggestions = responseData?.suggestions || [];
-          searchResults.value = suggestions.map((s: any) => s.value || s.label || '');
+          searchResults.value = suggestions
+            .map((s: any) => ({
+              value: s.value || s.label || '',
+              courses: Array.isArray(s.courses)
+                ? s.courses.map((course: any) => course.name || '').filter(Boolean)
+                : []
+            }))
+            .filter((suggestion: Suggestion) => suggestion.value);
         } else {
           searchResults.value = [];
         }
@@ -142,8 +153,8 @@ export default defineComponent({
       }, 300);
     };
 
-    const handleSelect = (item: string) => {
-      emit('select', item);
+    const handleSelect = (item: Suggestion) => {
+      emit('select', item.value);
       emit('update:visible', false);
     };
 
@@ -153,7 +164,7 @@ export default defineComponent({
         uni.showToast({ title: '请输入内容', icon: 'none' });
         return;
       }
-      handleSelect(value);
+      handleSelect({ value, courses: [] });
     };
 
     const handleClose = () => {

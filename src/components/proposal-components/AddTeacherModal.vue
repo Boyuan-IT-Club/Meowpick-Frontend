@@ -20,14 +20,17 @@
           <scroll-view class="options-list" scroll-y v-if="filteredTeacherNames.length > 0 || teacherNameLoading">
             <view v-if="teacherNameLoading" class="loading-hint">搜索中...</view>
             <template v-else>
-              <view 
-                class="option-item" 
-                v-for="(name, index) in filteredTeacherNames" 
-                :key="index"
-                :class="{ active: teacherData.name === name }"
-                @click="selectTeacherName(name)"
+              <view
+                class="option-item"
+                v-for="(teacher, index) in filteredTeacherNames"
+                :key="teacher.id || index"
+                :class="{ active: teacherData.name === teacher.name }"
+                @click="selectTeacherName(teacher)"
               >
-                {{ name }}
+                <view>{{ teacher.name }}</view>
+                <view v-if="teacher.courses.length" class="teacher-courses">
+                  已开课程：{{ teacher.courses.join('、') }}
+                </view>
               </view>
             </template>
           </scroll-view>
@@ -72,6 +75,13 @@ import { http } from '@/config';
 interface Teacher {
   name: string;
   department: string;
+  teacherId?: string;
+}
+
+interface TeacherSuggestion {
+  id: string;
+  name: string;
+  courses: string[];
 }
 
 export default defineComponent({
@@ -91,7 +101,7 @@ export default defineComponent({
 
     // 教师姓名搜索
     const teacherNameKeyword = ref('');
-    const filteredTeacherNames = ref<string[]>([]);
+    const filteredTeacherNames = ref<TeacherSuggestion[]>([]);
     const teacherNameLoading = ref(false);
     let teacherNameTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -105,6 +115,7 @@ export default defineComponent({
       if (newVal) {
         teacherData.name = '';
         teacherData.department = '';
+        teacherData.teacherId = undefined;
         teacherNameKeyword.value = '';
         filteredTeacherNames.value = [];
         departmentSearchKeyword.value = '';
@@ -130,7 +141,15 @@ export default defineComponent({
         if (res.data?.code === 0) {
           const responseData = res.data.data || res.data;
           const suggestions = responseData?.suggestions || [];
-          filteredTeacherNames.value = suggestions.map((s: any) => s.value || s.label || '');
+          filteredTeacherNames.value = suggestions
+            .map((s: any) => ({
+              id: s.id || '',
+              name: s.value || s.label || '',
+              courses: Array.isArray(s.courses)
+                ? s.courses.map((course: any) => course.name || '').filter(Boolean)
+                : []
+            }))
+            .filter((teacher: TeacherSuggestion) => teacher.name);
         } else {
           filteredTeacherNames.value = [];
         }
@@ -144,6 +163,9 @@ export default defineComponent({
 
     const handleTeacherNameSearch = () => {
       const keyword = teacherNameKeyword.value.trim();
+      if (keyword !== teacherData.name) {
+        teacherData.teacherId = undefined;
+      }
       if (!keyword) {
         filteredTeacherNames.value = [];
         return;
@@ -155,9 +177,10 @@ export default defineComponent({
       }, 300);
     };
 
-    const selectTeacherName = (name: string) => {
-      teacherData.name = name;
-      teacherNameKeyword.value = name;
+    const selectTeacherName = (teacher: TeacherSuggestion) => {
+      teacherData.name = teacher.name;
+      teacherData.teacherId = teacher.id || undefined;
+      teacherNameKeyword.value = teacher.name;
       filteredTeacherNames.value = [];
     };
 
@@ -222,7 +245,8 @@ export default defineComponent({
       }
       emit('confirm', {
         name,
-        department: teacherData.department
+        department: teacherData.department,
+        teacherId: teacherData.teacherId
       });
       handleClose();
     };
@@ -362,6 +386,12 @@ export default defineComponent({
   &:active {
     background: #F0F0F0;
   }
+}
+
+.teacher-courses {
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: #999;
 }
 
 .loading-hint {

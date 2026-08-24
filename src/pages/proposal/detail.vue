@@ -3,17 +3,21 @@
     <view class="top-bar">
       <view class="go-back" @click="goBack">
         <image src="@/images/go-back.png" class="icon" />
-        <view class="txt">{{ proposalData.title || '提案详情' }}</view>
+        <view class="title-names">
+          <view class="txt original-title" :class="{ changed: hasCourseNameChanged }">{{ originalTitle }}</view>
+          <view v-if="hasCourseNameChanged" class="txt final-title">{{ finalCourse.name }}</view>
+        </view>
       </view>
     </view>
     <view class="ellipse" />
 
     <course-header
       :data="courseData"
-      :contributor="'喵同学'"
+      :contributor="'/'"
       :statusType="proposalData.status"
       :statusText="statusText"
       :statusDate="statusDate"
+      :finalCourse="hasFinalCourse ? finalCourse : undefined"
       class="information"
     />
     <view class="line" />
@@ -35,6 +39,10 @@
       <view class="reason-content empty" v-else>暂无提案理由</view>
     </view>
 
+    <button v-if="isAdmin && finalCourse.id" class="go-course-btn" @click="goToFinalCourse">
+      前往课程详情
+    </button>
+
     <view class="bottom-spacer" />
   </view>
 </template>
@@ -47,18 +55,26 @@ import CourseHeader from '@/components/course/course-header/index.vue';
 
 const proposalData = ref<any>({});
 const proposalId = ref('');
+const isAdmin = ref(false);
 
-const courseData = computed(() => {
-  const course = proposalData.value.course || {};
-  return {
-    category: course.category || '',
-    department: course.department || '',
-    teachers: Array.isArray(course.teachers) ? course.teachers : [],
-    campuses: Array.isArray(course.campuses) ? course.campuses : [],
-    link: null,
-    name: course.name || proposalData.value.title || '',
-  };
-});
+const originalCourse = computed(() => proposalData.value.course || {});
+const finalCourse = computed(() => proposalData.value.finalCourse || proposalData.value.final_course || {});
+const hasFinalCourse = computed(() => proposalData.value.status === 'approved' && Boolean(finalCourse.value?.id || finalCourse.value?.name));
+const originalTitle = computed(() => originalCourse.value.name || proposalData.value.title || '提案详情');
+const hasCourseNameChanged = computed(() => Boolean(
+  hasFinalCourse.value
+    && finalCourse.value.name
+    && finalCourse.value.name !== originalTitle.value
+));
+
+const courseData = computed(() => ({
+  category: originalCourse.value.category || '',
+  department: originalCourse.value.department || '',
+  teachers: Array.isArray(originalCourse.value.teachers) ? originalCourse.value.teachers : [],
+  campuses: Array.isArray(originalCourse.value.campuses) ? originalCourse.value.campuses : [],
+  link: null,
+  name: originalCourse.value.name || proposalData.value.title || ''
+}));
 
 const statusText = computed(() => {
   const status = proposalData.value.status;
@@ -104,11 +120,14 @@ const getStatusText = (status: string) => {
 const fetchProposalDetail = async () => {
   if (!proposalId.value) return;
   try {
-    const res = await http.ProposalController.proposalDetail(proposalId.value, proposalId.value);
+    const res = await http.ProposalController.proposalDetail(proposalId.value);
     if (res.data?.code === 0) {
       const proposal = res.data.proposal || res.data.data?.proposal;
       if (proposal) {
-        proposalData.value = { ...proposal };
+        proposalData.value = {
+          ...proposal,
+          finalCourse: proposal.finalCourse || proposal.final_course
+        };
       }
     }
   } catch (err) {
@@ -134,7 +153,20 @@ onLoad((options: any) => {
   if (proposalId.value) {
     fetchProposalDetail();
   }
+  http.AuthController.authIsAdminList().then((res) => {
+    if (res.data?.code === 0) {
+      const result = res.data.data || res.data;
+      isAdmin.value = result?.isAdmin ?? false;
+    }
+  }).catch(() => {
+    isAdmin.value = false;
+  });
 });
+
+const goToFinalCourse = () => {
+  if (!finalCourse.value?.id) return;
+  uni.navigateTo({ url: `/pages/course/index/index?id=${finalCourse.value.id}` });
+};
 
 const goBack = () => {
   uni.navigateBack();
@@ -173,6 +205,36 @@ const goBack = () => {
       white-space: nowrap;
       overflow: scroll;
       text-overflow: ellipsis;
+    }
+    .title-names {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      max-width: 73vw;
+      margin-left: 2vw;
+      white-space: nowrap;
+
+      .txt {
+        // Override the global .go-back .txt { width: 100vw }, otherwise the
+        // original name consumes a full row and pushes the final name away.
+        width: auto;
+        margin-left: 0;
+        max-width: 35vw;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex: 0 1 auto;
+      }
+      .original-title.changed {
+        color: #ffd6df;
+        text-decoration: line-through;
+        text-decoration-color: #ffffff;
+        text-decoration-thickness: 2rpx;
+      }
+      .final-title {
+        margin-top: 0;
+        margin-left: 2vw;
+        color: #ffffff;
+      }
     }
     .icon {
       display: flex;
@@ -277,5 +339,13 @@ const goBack = () => {
 }
 .bottom-spacer {
   height: 10vw;
+}
+.go-course-btn {
+  width: 84vw;
+  margin: 7vw auto 2vw;
+  border-radius: 5vw;
+  background: #b70030;
+  color: #fff;
+  font-size: 3.8vw;
 }
 </style>

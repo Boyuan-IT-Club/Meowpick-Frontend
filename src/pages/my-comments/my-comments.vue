@@ -15,7 +15,11 @@
           </view>
         </view>
       </view>
-      <view class="edit-nickname-btn" @click="goToEditNickname">
+      <view
+        class="edit-nickname-btn"
+        :class="{ disabled: !userInfo.canEditUsername }"
+        @click="goToEditNickname"
+      >
         <text class="edit-icon">✎</text>
         <text class="edit-text">编辑昵称</text>
       </view>
@@ -56,7 +60,7 @@
         <view v-for="(item, index) of proposalList" :key="item.id" class="proposal-item" @click="goToProposalDetail(item)">
           <view class="proposal-card">
             <view class="proposal-header">
-              <text class="proposal-title">{{ item.title || item.course?.name || '未知课程' }}</text>
+              <text class="proposal-title" :class="{ 'changed-field': isCourseFieldChanged(item, 'name') }">{{ displayCourse(item).name || item.title || '未知课程' }}</text>
               <view class="status-tag" :class="item.status">{{ getStatusText(item.status) }}</view>
             </view>
 
@@ -72,43 +76,24 @@
               <text class="reject-text">{{ item.rejectReason }}</text>
             </view>
 
-            <!-- 原始提交信息 -->
-            <view class="proposal-info" v-if="item.course">
-              <view class="info-section-title" v-if="item.status === 'approved' && (item as any).finalCourse">原始提交</view>
-              <view class="course-detail" v-if="item.course.campuses?.length">
-                <span class="detail-item">校区：{{ item.course.campuses.join('、') }}</span>
+            <view class="proposal-info" v-if="displayCourse(item)">
+              <view class="course-detail" :class="{ 'changed-field': isCourseFieldChanged(item, 'campuses') }" v-if="displayCourse(item).campuses?.length">
+                <span class="detail-item">校区：{{ displayCourse(item).campuses.join('、') }}</span>
               </view>
-              <view class="course-detail" v-if="item.course.department">
-                <span class="detail-item">院系：{{ item.course.department }}</span>
+              <view class="course-detail" :class="{ 'changed-field': isCourseFieldChanged(item, 'department') }" v-if="displayCourse(item).department">
+                <span class="detail-item">院系：{{ displayCourse(item).department }}</span>
               </view>
-              <view class="course-detail" v-if="item.course.category">
-                <span class="detail-item">分类：{{ item.course.category }}</span>
+              <view class="course-detail" :class="{ 'changed-field': isCourseFieldChanged(item, 'category') }" v-if="displayCourse(item).category">
+                <span class="detail-item">分类：{{ displayCourse(item).category }}</span>
               </view>
-              <view class="course-detail" v-if="item.course.teachers?.length">
-                <span class="detail-item">教师：{{ item.course.teachers.map((t: any) => typeof t === 'string' ? t : t.name || '').join('、') }}</span>
-              </view>
-            </view>
-
-            <!-- 最终课程信息（已通过且存在finalCourse时双栏展示） -->
-            <view class="proposal-info final-info" v-if="item.status === 'approved' && (item as any).finalCourse">
-              <view class="info-section-title">最终课程</view>
-              <view class="course-detail" v-if="(item as any).finalCourse.campuses?.length">
-                <span class="detail-item">校区：{{ (item as any).finalCourse.campuses.join('、') }}</span>
-              </view>
-              <view class="course-detail" v-if="(item as any).finalCourse.department">
-                <span class="detail-item">院系：{{ (item as any).finalCourse.department }}</span>
-              </view>
-              <view class="course-detail" v-if="(item as any).finalCourse.category">
-                <span class="detail-item">分类：{{ (item as any).finalCourse.category }}</span>
-              </view>
-              <view class="course-detail" v-if="(item as any).finalCourse.teachers?.length">
-                <span class="detail-item">教师：{{ (item as any).finalCourse.teachers.map((t: any) => typeof t === 'string' ? t : t.name || '').join('、') }}</span>
+              <view class="course-detail" :class="{ 'changed-field': isCourseFieldChanged(item, 'teachers') }" v-if="displayCourse(item).teachers?.length">
+                <span class="detail-item">教师：{{ teachersText(displayCourse(item).teachers) }}</span>
               </view>
             </view>
 
             <!-- 贡献者 -->
-            <view class="contributor-row">
-              <span class="contributor-text">贡献者：喵同学</span>
+            <view class="contributor-row" v-if="item.showUsername">
+              <span class="contributor-text">贡献者：{{ userInfo.username || '/' }}</span>
             </view>
 
             <view class="proposal-footer">
@@ -145,23 +130,83 @@ const activeTab = ref<'comment' | 'proposal'>('comment');
 const commentList = ref<DtoCommentVO[]>([]);
 const proposalList = ref<DtoProposalVO[]>([]);
 const commentPage = shallowRef(0);
-const proposalPage = ref(0);
+const proposalPage = ref(1);
 const commentHasMore = ref(true);
 const proposalHasMore = ref(true);
 const commentLoading = ref(false);
 const proposalLoading = ref(false);
 const loading = ref(false);
-let commentInitialized = false;
-let proposalInitialized = false;
-
-// 用户信息（占位，后续接口对接）
 const userInfo = ref({
   username: '加载中...',
-  contribution: 0
+  contribution: 0,
+  avatar: '',
+  dailyQuota: 0,
+  dailyQuotaLimit: 0,
+  canEditUsername: true
 });
 
+async function fetchUserProfile() {
+  try {
+    const res = await http.UserController.userProfileList();
+    if (res.data?.code !== 0) {
+      uni.showToast({ title: res.data?.msg || '用户信息异常', icon: 'none' });
+      return;
+    }
+
+    const profile = res.data.data || res.data;
+    userInfo.value = {
+      username: profile?.username || '',
+      contribution: profile?.contribution ?? 0,
+      avatar: profile?.avatar || '',
+      dailyQuota: profile?.dailyQuota ?? profile?.daily_quota ?? 0,
+      dailyQuotaLimit: profile?.dailyQuotaLimit ?? profile?.daily_quota_limit ?? 0,
+      canEditUsername: profile?.canEditUsername ?? profile?.can_edit_username ?? true
+    };
+  } catch (err) {
+    console.error('[API] 获取用户资料失败:', err);
+    uni.showToast({ title: '获取用户信息失败', icon: 'none' });
+  }
+}
+
 function goToEditNickname() {
-  uni.showToast({ title: '昵称编辑功能开发中', icon: 'none' });
+  if (!userInfo.value.canEditUsername) {
+    uni.showToast({ title: '昵称30天内仅可修改一次', icon: 'none' });
+    return;
+  }
+
+  uni.showModal({
+    title: '编辑昵称',
+    content: '请输入不超过20个字符的昵称',
+    editable: true,
+    placeholderText: userInfo.value.username,
+    success: async (result: any) => {
+      if (!result.confirm) return;
+      const username = String(result.content || '').trim();
+      if (!username) {
+        uni.showToast({ title: '请输入昵称', icon: 'none' });
+        return;
+      }
+      if (username.length > 20) {
+        uni.showToast({ title: '昵称不能超过20个字符', icon: 'none' });
+        return;
+      }
+
+      try {
+        const res = await http.UserController.userProfileUpdateCreate({ username });
+        if (res.data?.code === 0) {
+          const profile = res.data.data || res.data;
+          userInfo.value.username = profile?.username || username;
+          userInfo.value.canEditUsername = false;
+          uni.showToast({ title: '昵称已更新', icon: 'success' });
+        } else {
+          uni.showToast({ title: res.data?.msg || '昵称更新失败', icon: 'none' });
+        }
+      } catch (err) {
+        console.error('[API] 更新昵称失败:', err);
+        uni.showToast({ title: '昵称更新失败', icon: 'none' });
+      }
+    }
+  } as any);
 }
 
 function formatTime(dateStr?: string | Date): string {
@@ -185,6 +230,28 @@ function getStatusText(status?: string): string {
   return statusMap[status || ''] || status || '';
 }
 
+function displayCourse(item: DtoProposalVO): any {
+  return (item as any).finalCourse || item.course || {};
+}
+
+function teachersText(teachers: any[] = []): string {
+  return teachers.map((teacher: any) => typeof teacher === 'string' ? teacher : teacher.name || '').filter(Boolean).join('、');
+}
+
+function isCourseFieldChanged(item: DtoProposalVO, field: 'name' | 'campuses' | 'department' | 'category' | 'teachers'): boolean {
+  const finalCourse = (item as any).finalCourse;
+  if (!finalCourse) return false;
+  const stringify = (value: any) => {
+    if (field === 'teachers') {
+      return Array.isArray(value)
+        ? value.map((teacher: any) => typeof teacher === 'string' ? teacher : teacher.name || '').join('、')
+        : '';
+    }
+    return Array.isArray(value) ? value.join('、') : value || '';
+  };
+  return stringify(item.course?.[field]) !== stringify(finalCourse[field]);
+}
+
 function handleReEdit(item: DtoProposalVO) {
   uni.navigateTo({
     url: `/pages/proposal/propose?editProposalId=${item.id}`
@@ -193,24 +260,20 @@ function handleReEdit(item: DtoProposalVO) {
 
 onShow(() => {
   uni.hideTabBar();
+  fetchUserProfile();
   if (activeTab.value === 'comment') {
     fetchComments(0);
-    commentInitialized = true;
   } else if (activeTab.value === 'proposal') {
-    fetchProposals(0);
-    proposalInitialized = true;
+    fetchProposals(1, true);
   }
 });
 
 const switchTab = (tab: 'comment' | 'proposal') => {
-  if (activeTab.value === tab) return;
   activeTab.value = tab;
-  if (tab === 'comment' && !commentInitialized) {
+  if (tab === 'comment') {
     fetchComments(0);
-    commentInitialized = true;
-  } else if (tab === 'proposal' && !proposalInitialized) {
-    fetchProposals(0);
-    proposalInitialized = true;
+  } else {
+    fetchProposals(1, true);
   }
 };
 
@@ -243,12 +306,12 @@ function fetchComments(page: number) {
   });
 }
 
-function fetchProposals(page: number) {
-  if (!proposalHasMore.value && page > 0) return;
+function fetchProposals(page: number, forceRefresh = false) {
+  if (!forceRefresh && !proposalHasMore.value && page > 1) return;
   proposalLoading.value = true;
   loading.value = true;
 
-  if (page === 0) {
+  if (page === 1) {
     proposalList.value = [];
     proposalHasMore.value = true;
   }
@@ -258,7 +321,10 @@ function fetchProposals(page: number) {
       const responseData = res.data.data || res.data;
       const proposals = responseData?.proposals || [];
       proposals.forEach((proposal) => {
-        proposalList.value.push(proposal);
+        proposalList.value.push({
+          ...proposal,
+          finalCourse: proposal.finalCourse || (proposal as any).final_course
+        });
       });
       const total = responseData?.total || 0;
       proposalHasMore.value = proposalList.value.length < total;
@@ -300,7 +366,9 @@ function handleDelete(index: number) {
     content: '确定要删除该提案吗？删除后不可恢复。',
     success: (res) => {
       if (res.confirm) {
-        http.ProposalController.proposalDeleteCreate(proposal.id!, {}).then((res) => {
+        http.ProposalController.proposalDeleteCreate(proposal.id!, {
+          proposalId: proposal.id
+        }).then((res) => {
           if (res.data?.code === 0) {
             uni.showToast({ title: '已删除', icon: 'success' });
             proposalList.value.splice(index, 1);
@@ -424,6 +492,10 @@ onPageScroll((e) => {
       color: #b70030;
       margin-left: 1vw;
     }
+
+    &.disabled {
+      opacity: 0.5;
+    }
   }
 }
 
@@ -509,10 +581,14 @@ onPageScroll((e) => {
     align-items: center;
 
     .proposal-title {
+      flex: 1;
       font-size: 4vw;
       font-weight: bold;
       color: #333;
-      flex: 1;
+
+      &.changed-field {
+        color: #b70030;
+      }
     }
 
     .status-tag {
@@ -565,10 +641,10 @@ onPageScroll((e) => {
       }
     }
 
-    &.final-info {
-      margin-top: 3vw;
-      padding-top: 3vw;
-      border-top: 1px solid #f0f0f0;
+    .course-detail.changed-field .detail-item {
+      background-color: #fff1f0;
+      border: 1px solid #ffccc7;
+      color: #b70030;
     }
   }
 

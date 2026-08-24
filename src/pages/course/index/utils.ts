@@ -28,10 +28,29 @@ export function useCourseComment(p: Props) {
     }
   }
 
-  function like(target: string) {
-    list.value[target].like = !list.value[target].like;
-    list.value[target].likeCnt! += list.value[target].like ? 1 : -1;
-    http.ActionController.like(target, {});
+  async function like(target: string) {
+    const comment = list.value[target];
+    if (!comment) return;
+
+    const previousLike = comment.like ?? false;
+    const previousCount = comment.likeCnt ?? 0;
+    comment.like = !previousLike;
+    comment.likeCnt = previousCount + (comment.like ? 1 : -1);
+
+    try {
+      const res = await http.LikeController.likeCreate(target, { targetType: "comment" });
+      if (res.data?.code !== 0) {
+        throw new Error(res.data?.msg || "点赞失败");
+      }
+      const result = res.data.data || res.data;
+      comment.like = result?.like ?? comment.like;
+      comment.likeCnt = result?.likeCnt ?? comment.likeCnt;
+    } catch (err) {
+      comment.like = previousLike;
+      comment.likeCnt = previousCount;
+      console.error("[API] 点赞吐槽失败:", err);
+      uni.showToast({ title: "点赞失败", icon: "none" });
+    }
   }
 
   function next() {

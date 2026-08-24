@@ -23,9 +23,9 @@
           </view>
         </view>
       </view>
-      <view class="contributor">
+      <view class="contributor" v-if="props.data.showUsername">
         <view class="circle" />
-        <view class="contributor-text">贡献者：喵同学</view>
+        <view class="contributor-text">贡献者：{{ (props.data as any).creatorName || (props.data as any).username || '/' }}</view>
       </view>
       <view class="time">{{ formatTime(props.data.createdAt) }}</view>
     </view>

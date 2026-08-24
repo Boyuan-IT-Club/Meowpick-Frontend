@@ -8,6 +8,7 @@ import { Like } from "@/api/Like";
 import { Proposal } from "@/api/Proposal";
 import { Auth } from "@/api/Auth";
 import { ChangeLog } from "@/api/Changelog";
+import { User } from "@/api/User";
 import { StorageKeys } from "@/utils/const";
 import { UniAdapter } from "uniapp-axios-adapter";
 import { useTokenStore } from "@/config";
@@ -25,6 +26,7 @@ class HttpRequest<
   public LikeController = new Like(this);
   public AuthController = new Auth(this);
   public ChangeLogController = new ChangeLog(this);
+  public UserController = new User(this);
 
   async sign_in(data: any) {
     const resp = await this.request({

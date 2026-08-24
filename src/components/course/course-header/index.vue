@@ -5,22 +5,25 @@
         <image src="@/images/category-icon.png" class="icon" />
         <text class="tip">课程类别</text>
       </view>
-      <text class="content">{{ data.category }}</text>
+      <text class="content" :class="{ changed: isChanged('category') }">{{ data.category }}</text>
+      <text v-if="isChanged('category')" class="content final-value">{{ finalCourse?.category }}</text>
     </view>
     <view class="department">
       <view class="title">
         <image src="@/images/depart-icon.png" class="icon" />
         <text class="tip">开课院系</text>
       </view>
-      <text class="content">{{ data.department }}</text>
+      <text class="content" :class="{ changed: isChanged('department') }">{{ data.department }}</text>
+      <text v-if="isChanged('department')" class="content final-value">{{ finalCourse?.department }}</text>
     </view>
     <view class="teacher">
       <view class="title">
         <image src="@/images/teacher-icon.png" class="icon" />
         <text class="tip">任课教师</text>
       </view>
-      <view v-for="item of data.teachers" class="teachers">
-        <view class="content">{{ item.name }}</view>
+      <view class="teachers">
+        <view class="content" :class="{ changed: isChanged('teachers') }">{{ teachersText(data.teachers) }}</view>
+        <view v-if="isChanged('teachers')" class="content final-value">{{ teachersText(finalCourse?.teachers) }}</view>
       </view>
     </view>
     <view class="campus">
@@ -29,9 +32,8 @@
         <text class="tip">开设校区</text>
       </view>
       <view class="campus-list">
-        <view class="content" v-for="(campus, index) in (data.campuses || [])" :key="index">
-          {{ campus }}
-        </view>
+        <view class="content" :class="{ changed: isChanged('campuses') }">{{ campusesText(data.campuses) }}</view>
+        <view v-if="isChanged('campuses')" class="content final-value">{{ campusesText(finalCourse?.campuses) }}</view>
       </view>
     </view>
     <view class="link">
@@ -67,8 +69,32 @@ type Props = {
   statusType?: 'pending' | 'approved' | 'rejected';
   statusText?: string;
   statusDate?: string;
+  finalCourse?: {
+    category?: string;
+    department?: string;
+    teachers?: Array<{ name?: string } | string>;
+    campuses?: string[];
+  };
 };
 const props = defineProps<Props>();
+
+const teachersText = (teachers?: Array<{ name?: string } | string>) => (teachers || [])
+  .map(teacher => typeof teacher === "string" ? teacher : teacher.name || "")
+  .filter(Boolean)
+  .join("、");
+
+const campusesText = (campuses?: string[]) => (campuses || []).join("、");
+
+const isChanged = (field: "category" | "department" | "teachers" | "campuses") => {
+  if (!props.finalCourse) return false;
+  if (field === "teachers") {
+    return teachersText(props.data.teachers) !== teachersText(props.finalCourse.teachers);
+  }
+  if (field === "campuses") {
+    return campusesText(props.data.campuses) !== campusesText(props.finalCourse.campuses);
+  }
+  return props.data[field] !== props.finalCourse[field];
+};
 
 const jump = (id: string) => {
   uni.navigateTo({
@@ -125,6 +151,17 @@ const limitedList = (link: string[][] | null) => {
       font-size: 3.8vw;
       margin-left: 10vw;
     }
+    .final-value {
+      display: block;
+      margin-top: 1vw;
+      color: #b70030;
+    }
+    .changed {
+      color: #888;
+      text-decoration: line-through;
+      text-decoration-color: #b70030;
+      text-decoration-thickness: 2rpx;
+    }
   }
   .department {
     display: flex;
@@ -147,6 +184,17 @@ const limitedList = (link: string[][] | null) => {
       margin-top: 3vw;
       font-size: 3.8vw;
       margin-left: 10vw;
+    }
+    .final-value {
+      display: block;
+      margin-top: 1vw;
+      color: #b70030;
+    }
+    .changed {
+      color: #888;
+      text-decoration: line-through;
+      text-decoration-color: #b70030;
+      text-decoration-thickness: 2rpx;
     }
   }
   .teacher {
@@ -172,6 +220,17 @@ const limitedList = (link: string[][] | null) => {
       font-size: 3.8vw;
       width: 18.5vw;
       margin-left: 10vw;
+    }
+    .final-value {
+      display: block;
+      margin-top: 1vw;
+      color: #b70030;
+    }
+    .changed {
+      color: #888;
+      text-decoration: line-through;
+      text-decoration-color: #b70030;
+      text-decoration-thickness: 2rpx;
     }
   }
   .campus {
@@ -200,6 +259,17 @@ const limitedList = (link: string[][] | null) => {
       .content {
         font-weight: bold;
         font-size: 3.8vw;
+      }
+      .final-value {
+        display: block;
+        margin-top: 1vw;
+        color: #b70030;
+      }
+      .changed {
+        color: #888;
+        text-decoration: line-through;
+        text-decoration-color: #b70030;
+        text-decoration-thickness: 2rpx;
       }
     }
   }
@@ -277,6 +347,16 @@ const limitedList = (link: string[][] | null) => {
         text-overflow: ellipsis;
       }
     }
+  }
+
+  .type .content,
+  .department .content,
+  .teacher .content,
+  .campus .campus-list .content {
+    width: 23vw;
+    box-sizing: border-box;
+    line-height: 1.35;
+    word-break: break-all;
   }
 }
 </style>
