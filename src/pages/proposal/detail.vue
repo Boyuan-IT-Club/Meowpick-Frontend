@@ -13,7 +13,7 @@
 
     <course-header
       :data="courseData"
-      :contributor="'/'"
+      :contributor="contributor"
       :statusType="proposalData.status"
       :statusText="statusText"
       :statusDate="statusDate"
@@ -56,6 +56,7 @@ import CourseHeader from '@/components/course/course-header/index.vue';
 const proposalData = ref<any>({});
 const proposalId = ref('');
 const isAdmin = ref(false);
+const contributor = ref('/');
 
 const originalCourse = computed(() => proposalData.value.course || {});
 const finalCourse = computed(() => proposalData.value.finalCourse || proposalData.value.final_course || {});
@@ -117,17 +118,34 @@ const getStatusText = (status: string) => {
   return statusMap[status] || status;
 };
 
+const fetchContributor = async (proposal: any) => {
+  contributor.value = '/';
+  if (proposal?.showUsername !== true || !proposal?.userId) return;
+
+  try {
+    const res = await http.UserController.userUsernameDetail(String(proposal.userId));
+    if (res.data?.code === 0) {
+      const responseData: any = res.data.data || res.data;
+      contributor.value = responseData?.username || '/';
+    }
+  } catch (err) {
+    console.error('[API] 获取贡献者昵称失败:', err);
+  }
+};
+
 const fetchProposalDetail = async () => {
   if (!proposalId.value) return;
   try {
     const res = await http.ProposalController.proposalDetail(proposalId.value);
     if (res.data?.code === 0) {
-      const proposal = res.data.proposal || res.data.data?.proposal;
+      const responseData: any = res.data;
+      const proposal = responseData.proposal || responseData.data?.proposal;
       if (proposal) {
         proposalData.value = {
           ...proposal,
           finalCourse: proposal.finalCourse || proposal.final_course
         };
+        await fetchContributor(proposalData.value);
       }
     }
   } catch (err) {
@@ -145,6 +163,9 @@ onLoad((options: any) => {
       proposalData.value = { ...data };
       if (!proposalId.value && data.id) {
         proposalId.value = data.id;
+      }
+      if (!proposalId.value) {
+        fetchContributor(proposalData.value);
       }
     } catch (e) {
       console.error("解析提案数据失败", e);

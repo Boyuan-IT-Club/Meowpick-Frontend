@@ -10,6 +10,7 @@
     <course-header
       :data="course.data"
       :teachers="teachers"
+      :contributor="contributor"
       class="information"
     />
     <view class="line" />
@@ -39,7 +40,7 @@ import { onLoad, onShow } from "@dcloudio/uni-app";
 import PubSub from "@/config/utils/pubsub";
 
 let course_id = "";
-const { fetch, id, course, teachers, trends } = useCourse();
+const { fetch, id, course, teachers, trends, contributor } = useCourse();
 onLoad((options: any) => {
   course_id = options.id;
 });

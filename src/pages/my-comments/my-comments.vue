@@ -64,10 +64,10 @@
               <view class="status-tag" :class="item.status">{{ getStatusText(item.status) }}</view>
             </view>
 
-            <!-- 审批时间 -->
-            <view class="review-time" v-if="item.status === 'approved' || item.status === 'rejected'">
-              <text class="review-time-label">{{ item.status === 'approved' ? '通过时间' : '拒绝时间' }}：</text>
-              <text class="review-time-value">{{ formatTime(item.updatedAt) }}</text>
+            <!-- 提案时间 -->
+            <view class="review-time" v-if="item.status">
+              <text class="review-time-label">{{ getProposalTimeLabel(item.status) }}：</text>
+              <text class="review-time-value">{{ formatTime(item.status === 'pending' ? item.createdAt : item.updatedAt) }}</text>
             </view>
 
             <!-- 拒绝原因 -->
@@ -89,11 +89,6 @@
               <view class="course-detail" :class="{ 'changed-field': isCourseFieldChanged(item, 'teachers') }" v-if="displayCourse(item).teachers?.length">
                 <span class="detail-item">教师：{{ teachersText(displayCourse(item).teachers) }}</span>
               </view>
-            </view>
-
-            <!-- 贡献者 -->
-            <view class="contributor-row" v-if="item.showUsername">
-              <span class="contributor-text">贡献者：{{ userInfo.username || '/' }}</span>
             </view>
 
             <view class="proposal-footer">
@@ -228,6 +223,15 @@ function getStatusText(status?: string): string {
     'rejected': '已拒绝'
   };
   return statusMap[status || ''] || status || '';
+}
+
+function getProposalTimeLabel(status?: string): string {
+  const labelMap: Record<string, string> = {
+    'pending': '发布时间',
+    'approved': '通过时间',
+    'rejected': '拒绝时间'
+  };
+  return labelMap[status || ''] || '时间';
 }
 
 function displayCourse(item: DtoProposalVO): any {
@@ -681,15 +685,6 @@ onPageScroll((e) => {
       font-size: 3vw;
       color: #cf1322;
       margin-left: 1vw;
-    }
-  }
-
-  .contributor-row {
-    margin-bottom: 2vw;
-
-    .contributor-text {
-      font-size: 3.2vw;
-      color: #888888;
     }
   }
 

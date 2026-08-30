@@ -23,10 +23,6 @@
           </view>
         </view>
       </view>
-      <view class="contributor" v-if="props.data.showUsername">
-        <view class="circle" />
-        <view class="contributor-text">贡献者：{{ (props.data as any).creatorName || (props.data as any).username || '/' }}</view>
-      </view>
       <view class="time">{{ formatTime(props.data.createdAt) }}</view>
     </view>
   </view>
@@ -196,28 +192,6 @@ function formatTime(timeStamp?: string): string {
           font-size: 3.5vw;
           margin-right: 2vw;
         }
-      }
-    }
-
-    .contributor {
-      display: flex;
-      flex-direction: row;
-      margin-top: 2vw;
-
-      .circle {
-        width: 2vw;
-        height: 2vw;
-        border-radius: 50%;
-        background-color: #b70030;
-        margin-left: 4vw;
-        margin-top: 1.5vw;
-        flex-shrink: 0;
-      }
-
-      .contributor-text {
-        margin-left: 1.5vw;
-        font-size: 3.5vw;
-        color: #666666;
       }
     }
 

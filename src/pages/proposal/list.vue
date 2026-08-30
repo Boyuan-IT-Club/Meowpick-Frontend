@@ -48,9 +48,6 @@
           <div class="course-detail" :class="{ 'changed-field': isAdmin && item.changedFields?.teachers }">
             <span class="detail-item">教师：{{ item.teachers || '暂无' }}</span>
           </div>
-          <div class="contributor-row">
-            <span class="contributor-text">贡献者：{{ item.contributor }}</span>
-          </div>
           <div class="status-tags" v-if="item.status">
             <span class="status-tag" :class="item.status">{{ getStatusText(item.status) }}</span>
           </div>
@@ -197,8 +194,6 @@ interface Proposal {
   creatorId: string;
   finalCourseId?: string;
   status?: 'pending' | 'approved' | 'rejected';
-  date: string;
-  contributor: string;
   changedFields?: Record<'name' | 'campus' | 'department' | 'category' | 'teachers', boolean>;
 }
 
@@ -305,8 +300,6 @@ const mapProposalItem = (item: any): Proposal => {
     creatorId: item.userId || '',
     finalCourseId: item.finalCourse?.id || item.final_course?.id || (item.status === 'approved' ? course.id : ''),
     status: item.status || 'pending',
-    date: item.createdAt || '',
-    contributor: '喵同学',
     changedFields
   };
 };
@@ -853,15 +846,6 @@ const handleContentScroll = (e: any) => {
     background-color: #fff1f0;
     border: 1px solid #ffccc7;
     color: #b70030;
-  }
-}
-
-.contributor-row {
-  margin-bottom: 2vw;
-
-  .contributor-text {
-    font-size: 3.2vw;
-    color: #888888;
   }
 }
 
