@@ -20,13 +20,19 @@
     </button>
   </div>
 
-  <div class="content" @scroll="handleContentScroll">
-    <div class="loading-state" v-if="loading">
+  <scroll-view
+    scroll-y
+    class="content"
+    :lower-threshold="80"
+    @scroll="handleContentScroll"
+    @scrolltolower="handleLoadMore"
+  >
+    <div class="loading-state" v-if="loading && proposals.length === 0">
       <div class="loading-spinner"></div>
       <text class="loading-text">加载中...</text>
     </div>
 
-    <div class="proposal-list" v-else-if="proposals.length > 0">
+    <div class="proposal-list" v-if="proposals.length > 0">
       <div
         v-for="(item, index) in proposals"
         :key="item.id"
@@ -80,7 +86,11 @@
       </div>
     </div>
 
-    <div class="empty-state" v-else>
+    <div v-if="loading && proposals.length > 0" class="loading-more">
+      <text class="loading-more-text">加载中...</text>
+    </div>
+
+    <div class="empty-state" v-if="!loading && proposals.length === 0">
       <text>暂无提案，快来发起第一个吧～</text>
       <button class="empty-btn" @click="goToPropose">发起提案</button>
     </div>
@@ -88,7 +98,7 @@
     <div v-if="noMore && proposals.length > 0 && !loading" class="no-more">
       <text class="no-more-text">没有更多了</text>
     </div>
-  </div>
+  </scroll-view>
 
   <div class="fab-group">
     <button v-if="isAdmin" class="log-btn" @click="goToLog">
@@ -177,7 +187,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed } from 'vue';
 import { onShow, onPageScroll } from '@dcloudio/uni-app';
 import { http } from '@/config';
 import { campusesData } from '@/data/mappingData';
@@ -199,7 +209,7 @@ interface Proposal {
 
 const isAdmin = ref(false);
 const proposals = ref<Proposal[]>([]);
-const loading = ref(true);
+const loading = ref(false);
 const searchKeyword = ref('');
 const showFilterModal = ref(false);
 const showSearchModal = ref(false);
@@ -328,7 +338,7 @@ const fillFinalCourses = async (items: any[]) => {
 };
 
 const fetchProposals = async (page: number = 0) => {
-  if (loading.value && page > 0) return;
+  if (loading.value) return;
   loading.value = true;
 
   try {
@@ -346,8 +356,9 @@ const fetchProposals = async (page: number = 0) => {
       } else {
         proposals.value = [...proposals.value, ...mapped];
       }
-      const total = responseData?.total || 0;
-      noMore.value = proposals.value.length >= total;
+      const total = responseData?.total;
+      const hasValidTotal = typeof total === 'number' && total >= proposals.value.length;
+      noMore.value = hasValidTotal ? proposals.value.length >= total : list.length < pageSize;
       currentPage.value = page;
     } else if (res.data?.code === 108000001) {
       proposals.value = [];
@@ -358,14 +369,17 @@ const fetchProposals = async (page: number = 0) => {
     }
   } catch (err) {
     console.error('[API] 获取提案列表失败:', err);
-    proposals.value = [];
-    noMore.value = true;
+    if (page === 0) {
+      proposals.value = [];
+      noMore.value = true;
+    }
   } finally {
     loading.value = false;
   }
 };
 
 const fetchFilteredProposals = async (page: number = 0) => {
+  if (loading.value) return;
   loading.value = true;
 
   try {
@@ -387,8 +401,9 @@ const fetchFilteredProposals = async (page: number = 0) => {
       } else {
         proposals.value = [...proposals.value, ...mapped];
       }
-      const total = responseData?.total || 0;
-      noMore.value = proposals.value.length >= total;
+      const total = responseData?.total;
+      const hasValidTotal = typeof total === 'number' && total >= proposals.value.length;
+      noMore.value = hasValidTotal ? proposals.value.length >= total : list.length < pageSize;
       currentPage.value = page;
     } else {
       proposals.value = [];
@@ -396,8 +411,10 @@ const fetchFilteredProposals = async (page: number = 0) => {
     }
   } catch (err) {
     console.error('[API] 筛选提案失败:', err);
-    proposals.value = [];
-    noMore.value = true;
+    if (page === 0) {
+      proposals.value = [];
+      noMore.value = true;
+    }
   } finally {
     loading.value = false;
   }
@@ -636,11 +653,6 @@ const handleWithdraw = async (index: number) => {
   }
 };
 
-onMounted(() => {
-  checkAdmin();
-  fetchProposals(0);
-});
-
 onShow(() => {
   // Re-entering the proposal tab must always show the default list, not the
   // filter state retained from a previous visit.
@@ -659,6 +671,16 @@ const handleContentScroll = (e: any) => {
   const target = e.target || e.detail;
   const scrollTop = target?.scrollTop || 0;
   uni.$emit('pageScroll', { scrollTop });
+};
+
+const handleLoadMore = () => {
+  if (loading.value || noMore.value || searchKeyword.value.trim()) return;
+  const nextPage = currentPage.value + 1;
+  if (isFilterMode.value) {
+    fetchFilteredProposals(nextPage);
+  } else {
+    fetchProposals(nextPage);
+  }
 };
 </script>
 
@@ -797,6 +819,17 @@ const handleContentScroll = (e: any) => {
 
 .proposal-list {
   padding: 0 5vw;
+}
+
+.loading-more {
+  display: flex;
+  justify-content: center;
+  padding: 4vw 0;
+
+  .loading-more-text {
+    font-size: 3.2vw;
+    color: #999;
+  }
 }
 
 .proposal-item {

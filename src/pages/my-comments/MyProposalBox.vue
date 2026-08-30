@@ -3,7 +3,7 @@
     <view class="proposal-box">
       <view class="title">
         <view class="name">{{ props.data.title || '未知课程' }}</view>
-        <view class="status-tag" :class="props.data.status">{{ getStatusText(props.data.status) }}</view>
+        <view class="status-tag" :class="getStatusClass()">{{ getStatusText() }}</view>
       </view>
       <view class="information" v-if="props.data.course">
         <view class="circle" />
@@ -36,13 +36,18 @@ type Props = {
 };
 const props = defineProps<Props>();
 
-function getStatusText(status?: string): string {
+function getStatusClass(): string {
+  return props.data.deleted ? 'deleted' : props.data.status || '';
+}
+
+function getStatusText(): string {
+  if (props.data.deleted) return '已删除';
   const statusMap: Record<string, string> = {
     'pending': '待审核',
     'approved': '已通过',
     'rejected': '已下架'
   };
-  return statusMap[status || ''] || status || '';
+  return statusMap[props.data.status || ''] || props.data.status || '';
 }
 
 function formatTime(timeStamp?: string): string {
@@ -118,6 +123,11 @@ function formatTime(timeStamp?: string): string {
         &.rejected {
           background-color: #fff1f0;
           color: #ff4d4f;
+        }
+
+        &.deleted {
+          background-color: #f5f5f5;
+          color: #8c8c8c;
         }
       }
     }

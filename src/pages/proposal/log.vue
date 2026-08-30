@@ -165,7 +165,11 @@ const getActionClass = (actionType: string): string => {
     'DELETE': 'reject',
     'UPDATE': 'new',
     'GRANT_ADMIN': 'approve',
-    'REVOKE_ADMIN': 'reject'
+    'REVOKE_ADMIN': 'reject',
+    'REVOKE': 'revoke',
+    'REVOKE_APPROVAL': 'revoke',
+    'REVOKE_PROPOSAL': 'revoke',
+    'UNKNOWN': 'revoke'
   };
   return map[actionType] || 'new';
 };
@@ -178,7 +182,11 @@ const getActionText = (actionType: string): string => {
     'DELETE': '已删除',
     'UPDATE': '已更新',
     'GRANT_ADMIN': '授权管理员',
-    'REVOKE_ADMIN': '撤销管理员'
+    'REVOKE_ADMIN': '撤销管理员',
+    'REVOKE': '撤销',
+    'REVOKE_APPROVAL': '撤销',
+    'REVOKE_PROPOSAL': '撤销',
+    'UNKNOWN': '撤销'
   };
   return map[actionType] || actionType;
 };
@@ -201,10 +209,9 @@ const fetchLogs = async (pageNum: number) => {
       } else {
         logs.value = [...logs.value, ...newLogs];
       }
-      const total = responseData?.total || 0;
-      if (logs.value.length >= total) {
-        noMore.value = true;
-      }
+      const total = responseData?.total;
+      const hasValidTotal = typeof total === 'number' && total >= logs.value.length;
+      noMore.value = hasValidTotal ? logs.value.length >= total : newLogs.length < pageSize;
     } else {
       if (pageNum === 0) {
         logs.value = [];
@@ -346,6 +353,10 @@ const goBack = () => {
     background-color: #ff4d4f;
     box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.15);
   }
+  &.revoke {
+    background-color: #fa8c16;
+    box-shadow: 0 0 0 2px rgba(250, 140, 22, 0.15);
+  }
 }
 
 .timeline-line {
@@ -418,6 +429,10 @@ const goBack = () => {
   &.reject {
     background-color: rgba(255, 77, 79, 0.08);
     color: #ff4d4f;
+  }
+  &.revoke {
+    background-color: rgba(250, 140, 22, 0.08);
+    color: #fa8c16;
   }
 }
 

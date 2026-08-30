@@ -7,23 +7,32 @@ type Props = {
 export function useCourseComment(p: Props) {
   const page = shallowRef(0);
   const list = ref<{ [key: string]: CommentVO }>({});
+  const pageSize = 10;
   let query = true;
+  let loading = false;
 
   function fetch(id: string, page: number) {
     if (page == 0) {
       query = true;
     }
-    if (query) {
-      http.CommentController.commentQueryList({ id: id, page, pageSize: 10 }).then((res) => {
+    if (query && !loading) {
+      loading = true;
+      http.CommentController.commentQueryList({ id: id, page, pageSize }).then((res) => {
         const responseData = res.data.data || res.data;
-        responseData?.comments?.forEach((comment) => {
+        const comments = responseData?.comments || [];
+        comments.forEach((comment) => {
           list.value[comment.id!] = {
             ...comment,
             like: comment.like ?? false,
             likeCnt: comment.likeCnt ?? 0
           };
         });
-        query = Object.values(list.value).length < (responseData?.total ?? 0);
+        const total = responseData?.total;
+        query = typeof total === "number" && total >= Object.values(list.value).length
+          ? Object.values(list.value).length < total
+          : comments.length === pageSize;
+      }).finally(() => {
+        loading = false;
       });
     }
   }
@@ -54,7 +63,9 @@ export function useCourseComment(p: Props) {
   }
 
   function next() {
-    page.value++;
+    if (query && !loading) {
+      page.value++;
+    }
   }
 
   watch([list], () => {

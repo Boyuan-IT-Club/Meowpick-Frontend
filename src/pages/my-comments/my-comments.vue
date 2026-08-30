@@ -47,7 +47,13 @@
       </view>
     </view>
 
-    <scroll @bottom="handleBottom">
+    <scroll-view
+      scroll-y
+      class="main-scroll"
+      :lower-threshold="80"
+      @scroll="handleListScroll"
+      @scrolltolower="handleBottom"
+    >
       <template v-if="activeTab === 'comment'">
         <view v-for="item of commentList" :key="item.id" class="item">
           <MyCommentBox :data="item" @like="likeComment" />
@@ -61,13 +67,13 @@
           <view class="proposal-card">
             <view class="proposal-header">
               <text class="proposal-title" :class="{ 'changed-field': isCourseFieldChanged(item, 'name') }">{{ displayCourse(item).name || item.title || '未知课程' }}</text>
-              <view class="status-tag" :class="item.status">{{ getStatusText(item.status) }}</view>
+              <view class="status-tag" :class="getProposalDisplayStatus(item)">{{ getProposalStatusText(item) }}</view>
             </view>
 
             <!-- 提案时间 -->
-            <view class="review-time" v-if="item.status">
-              <text class="review-time-label">{{ getProposalTimeLabel(item.status) }}：</text>
-              <text class="review-time-value">{{ formatTime(item.status === 'pending' ? item.createdAt : item.updatedAt) }}</text>
+            <view class="review-time" v-if="item.status || item.deleted">
+              <text class="review-time-label">{{ getProposalTimeLabel(item) }}：</text>
+              <text class="review-time-value">{{ formatTime(getProposalTime(item)) }}</text>
             </view>
 
             <!-- 拒绝原因 -->
@@ -93,7 +99,7 @@
 
             <view class="proposal-footer">
               <view class="footer-spacer" />
-              <view class="delete-area" @click.stop="handleDelete(index)" v-if="item.status === 'pending'">
+              <view class="delete-area" @click.stop="handleDelete(index)" v-if="item.status === 'pending' && !item.deleted">
                 <text class="delete-text">删除</text>
               </view>
               <view class="edit-area" @click.stop="handleReEdit(item)" v-if="item.status === 'rejected'">
@@ -110,7 +116,7 @@
         <text class="loading-text">加载中...</text>
       </view>
       <view class="bottom-safe-area"></view>
-    </scroll>
+    </scroll-view>
   </view>
 </template>
 
@@ -131,6 +137,8 @@ const proposalHasMore = ref(true);
 const commentLoading = ref(false);
 const proposalLoading = ref(false);
 const loading = ref(false);
+const commentPageSize = 5;
+const proposalPageSize = 5;
 const userInfo = ref({
   username: '加载中...',
   contribution: 0,
@@ -225,13 +233,29 @@ function getStatusText(status?: string): string {
   return statusMap[status || ''] || status || '';
 }
 
-function getProposalTimeLabel(status?: string): string {
+function getProposalDisplayStatus(item: DtoProposalVO): string {
+  return item.deleted ? 'deleted' : item.status || '';
+}
+
+function getProposalStatusText(item: DtoProposalVO): string {
+  return item.deleted ? '已删除' : getStatusText(item.status);
+}
+
+function getProposalTimeLabel(item: DtoProposalVO): string {
+  if (item.deleted) return '删除时间';
   const labelMap: Record<string, string> = {
     'pending': '发布时间',
     'approved': '通过时间',
     'rejected': '拒绝时间'
   };
-  return labelMap[status || ''] || '时间';
+  return labelMap[item.status || ''] || '时间';
+}
+
+function getProposalTime(item: DtoProposalVO): string | undefined {
+  if (item.deleted) {
+    return (item as any).deletedAt || item.updatedAt || item.createdAt;
+  }
+  return item.status === 'pending' ? item.createdAt : item.updatedAt;
 }
 
 function displayCourse(item: DtoProposalVO): any {
@@ -282,7 +306,7 @@ const switchTab = (tab: 'comment' | 'proposal') => {
 };
 
 function fetchComments(page: number) {
-  if (!commentHasMore.value && page > 0) return;
+  if (commentLoading.value || (!commentHasMore.value && page > 0)) return;
   commentLoading.value = true;
   loading.value = true;
 
@@ -291,15 +315,17 @@ function fetchComments(page: number) {
     commentHasMore.value = true;
   }
 
-  http.CommentController.commentHistoryCreate({ page, pageSize: 5 }).then((res) => {
+  http.CommentController.commentHistoryCreate({ page, pageSize: commentPageSize }).then((res) => {
     if (res.data?.code === 0) {
       const responseData = res.data.data || res.data;
       const comments = responseData?.comments || [];
       comments.forEach((comment) => {
         commentList.value.push(comment);
       });
-      const total = responseData?.total || 0;
-      commentHasMore.value = commentList.value.length < total;
+      const total = responseData?.total;
+      commentHasMore.value = typeof total === 'number' && total >= commentList.value.length
+        ? commentList.value.length < total
+        : comments.length === commentPageSize;
       commentPage.value = page;
     }
   }).catch((err) => {
@@ -311,7 +337,7 @@ function fetchComments(page: number) {
 }
 
 function fetchProposals(page: number, forceRefresh = false) {
-  if (!forceRefresh && !proposalHasMore.value && page > 1) return;
+  if (proposalLoading.value || (!forceRefresh && !proposalHasMore.value && page > 1)) return;
   proposalLoading.value = true;
   loading.value = true;
 
@@ -320,7 +346,7 @@ function fetchProposals(page: number, forceRefresh = false) {
     proposalHasMore.value = true;
   }
 
-  http.ProposalController.proposalHistoryList({ page, pageSize: 5 }).then((res) => {
+  http.ProposalController.proposalHistoryList({ page, pageSize: proposalPageSize }).then((res) => {
     if (res.data?.code === 0) {
       const responseData = res.data.data || res.data;
       const proposals = responseData?.proposals || [];
@@ -330,8 +356,10 @@ function fetchProposals(page: number, forceRefresh = false) {
           finalCourse: proposal.finalCourse || (proposal as any).final_course
         });
       });
-      const total = responseData?.total || 0;
-      proposalHasMore.value = proposalList.value.length < total;
+      const total = responseData?.total;
+      proposalHasMore.value = typeof total === 'number' && total >= proposalList.value.length
+        ? proposalList.value.length < total
+        : proposals.length === proposalPageSize;
       proposalPage.value = page;
     }
   }).catch((err) => {
@@ -396,16 +424,18 @@ function goToProposalDetail(item: DtoProposalVO) {
 
 function handleBottom() {
   if (activeTab.value === 'comment') {
-    if (commentHasMore.value) {
-      commentPage.value++;
-      fetchComments(commentPage.value);
+    if (commentHasMore.value && !commentLoading.value) {
+      fetchComments(commentPage.value + 1);
     }
   } else {
-    if (proposalHasMore.value) {
-      proposalPage.value++;
-      fetchProposals(proposalPage.value);
+    if (proposalHasMore.value && !proposalLoading.value) {
+      fetchProposals(proposalPage.value + 1);
     }
   }
+}
+
+function handleListScroll(e: any) {
+  uni.$emit('pageScroll', { scrollTop: e.detail?.scrollTop || 0 });
 }
 
 onPageScroll((e) => {
@@ -418,8 +448,16 @@ onPageScroll((e) => {
   margin-top: 30vw;
   margin-left: 5vw;
   margin-right: 5vw;
-  height: 200vw;
+  height: calc(100vh - 30vw - env(safe-area-inset-bottom));
   width: 90vw;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.main-scroll {
+  flex: 1;
+  min-height: 0;
 }
 
 .profile-card {
@@ -614,6 +652,11 @@ onPageScroll((e) => {
       &.rejected {
         background-color: #fff1f0;
         color: #ff4d4f;
+      }
+
+      &.deleted {
+        background-color: #f5f5f5;
+        color: #8c8c8c;
       }
     }
   }
