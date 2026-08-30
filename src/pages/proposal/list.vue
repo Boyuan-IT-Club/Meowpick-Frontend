@@ -27,6 +27,8 @@
     @scroll="handleContentScroll"
     @scrolltolower="handleLoadMore"
   >
+    <view class="content-top-spacer" />
+
     <div class="loading-state" v-if="loading && proposals.length === 0">
       <div class="loading-spinner"></div>
       <text class="loading-text">加载中...</text>
@@ -98,6 +100,8 @@
     <div v-if="noMore && proposals.length > 0 && !loading" class="no-more">
       <text class="no-more-text">没有更多了</text>
     </div>
+
+    <view class="content-bottom-spacer" />
   </scroll-view>
 
   <div class="fab-group">
@@ -665,6 +669,7 @@ const handleWithdraw = async (index: number) => {
 };
 
 onShow(() => {
+  uni.hideTabBar({ animation: false });
   // Re-entering the proposal tab must always show the default list, not the
   // filter state retained from a previous visit.
   isFilterMode.value = false;
@@ -698,18 +703,16 @@ const handleLoadMore = () => {
 <style scoped lang="scss">
 .search-bar {
   position: fixed;
-  top: calc(20vw + 44px);
-  left: 0;
-  right: 0;
-  padding: 2vw 5vw;
-  background-color: #fff;
+  top: calc(20vw + 44px + 3vw);
+  left: 5vw;
+  right: 5vw;
   z-index: 100;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
   gap: 2vw;
-  height: 15vw;
-  box-sizing: border-box;
+  height: 11vw;
+  background: transparent;
+  pointer-events: none;
 }
 
 .search-input {
@@ -720,8 +723,9 @@ const handleLoadMore = () => {
   border-radius: 40rpx;
   height: 11vw;
   padding: 0 3vw;
-  border: 0.45vw solid #e61e1e;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 0.45vw solid #b70030;
+  box-shadow: 0 10rpx 28rpx rgba(0, 0, 0, 0.18);
+  pointer-events: auto;
 }
 
 .search-icon {
@@ -769,9 +773,10 @@ const handleLoadMore = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10rpx 28rpx rgba(0, 0, 0, 0.18);
   transition: all 0.2s;
   flex-shrink: 0;
+  pointer-events: auto;
   
   &:active {
     background-color: #F5F5F5;
@@ -796,7 +801,7 @@ const handleLoadMore = () => {
 
 .content {
   position: fixed;
-  top: calc(20vw + 44px + 15vw);
+  top: calc(20vw + 44px);
   left: 0;
   right: 0;
   bottom: 0;
@@ -805,6 +810,14 @@ const handleLoadMore = () => {
   box-sizing: border-box;
   overflow-y: auto;
   z-index: 1;
+}
+
+.content-top-spacer {
+  height: 18vw;
+}
+
+.content-bottom-spacer {
+  height: calc(26vw + env(safe-area-inset-bottom));
 }
 
 .loading-state {

@@ -25,97 +25,101 @@
       </view>
     </view>
 
-    <view class="tab-bar">
-      <view class="tab-container">
-        <view
-          class="tab-item"
-          :class="{ active: activeTab === 'comment' }"
-          @click="switchTab('comment')"
-        >
-          <text class="tab-text">吐槽</text>
-        </view>
-        <view
-          class="tab-item"
-          :class="{ active: activeTab === 'proposal' }"
-          @click="switchTab('proposal')"
-        >
-          <text class="tab-text">提案</text>
-        </view>
-        <view class="tab-indicator-wrapper">
-          <view class="tab-indicator" :class="{ 'right': activeTab === 'proposal' }" />
+    <view class="list-area">
+      <view class="tab-bar">
+        <view class="tab-container">
+          <view
+            class="tab-item"
+            :class="{ active: activeTab === 'comment' }"
+            @click="switchTab('comment')"
+          >
+            <text class="tab-text">吐槽</text>
+          </view>
+          <view
+            class="tab-item"
+            :class="{ active: activeTab === 'proposal' }"
+            @click="switchTab('proposal')"
+          >
+            <text class="tab-text">提案</text>
+          </view>
+          <view class="tab-indicator-wrapper">
+            <view class="tab-indicator" :class="{ 'right': activeTab === 'proposal' }" />
+          </view>
         </view>
       </view>
-    </view>
 
-    <scroll-view
-      scroll-y
-      class="main-scroll"
-      :lower-threshold="80"
-      @scroll="handleListScroll"
-      @scrolltolower="handleBottom"
-    >
-      <template v-if="activeTab === 'comment'">
-        <view v-for="item of commentList" :key="item.id" class="item">
-          <MyCommentBox :data="item" @like="likeComment" />
-        </view>
-        <view v-if="commentList.length === 0 && !commentLoading" class="empty-state">
-          <text class="empty-text">暂无吐槽记录</text>
-        </view>
-      </template>
-      <template v-else>
-        <view v-for="(item, index) of proposalList" :key="item.id" class="proposal-item" @click="goToProposalDetail(item)">
-          <view class="proposal-card">
-            <view class="proposal-header">
-              <text class="proposal-title" :class="{ 'changed-field': isCourseFieldChanged(item, 'name') }">{{ displayCourse(item).name || item.title || '未知课程' }}</text>
-              <view class="status-tag" :class="getProposalDisplayStatus(item)">{{ getProposalStatusText(item) }}</view>
-            </view>
+      <scroll-view
+        scroll-y
+        class="main-scroll"
+        :lower-threshold="80"
+        @scroll="handleListScroll"
+        @scrolltolower="handleBottom"
+      >
+        <view class="list-top-spacer" />
+        <template v-if="activeTab === 'comment'">
+          <view v-for="item of commentList" :key="item.id" class="item">
+            <MyCommentBox :data="item" @like="likeComment" />
+          </view>
+          <view v-if="commentList.length === 0 && !commentLoading" class="empty-state">
+            <text class="empty-text">暂无吐槽记录</text>
+          </view>
+        </template>
+        <template v-else>
+          <view v-for="(item, index) of proposalList" :key="item.id" class="proposal-item" @click="goToProposalDetail(item)">
+            <view class="proposal-card">
+              <view class="proposal-header">
+                <text class="proposal-title" :class="{ 'changed-field': isCourseFieldChanged(item, 'name') }">{{ displayCourse(item).name || item.title || '未知课程' }}</text>
+                <view class="status-tag" :class="getProposalDisplayStatus(item)">{{ getProposalStatusText(item) }}</view>
+              </view>
 
-            <!-- 提案时间 -->
-            <view class="review-time" v-if="item.status || item.deleted">
-              <text class="review-time-label">{{ getProposalTimeLabel(item) }}：</text>
-              <text class="review-time-value">{{ formatTime(getProposalTime(item)) }}</text>
-            </view>
+              <!-- 提案时间 -->
+              <view class="review-time" v-if="item.status || item.deleted">
+                <text class="review-time-label">{{ getProposalTimeLabel(item) }}：</text>
+                <text class="review-time-value">{{ formatTime(getProposalTime(item)) }}</text>
+              </view>
 
-            <!-- 拒绝原因 -->
-            <view class="reject-reason" v-if="item.status === 'rejected' && item.rejectReason">
-              <text class="reject-label">拒绝原因：</text>
-              <text class="reject-text">{{ item.rejectReason }}</text>
-            </view>
+              <!-- 拒绝原因 -->
+              <view class="reject-reason" v-if="item.status === 'rejected' && item.rejectReason">
+                <text class="reject-label">拒绝原因：</text>
+                <text class="reject-text">{{ item.rejectReason }}</text>
+              </view>
 
-            <view class="proposal-info" v-if="displayCourse(item)">
-              <view class="course-detail" :class="{ 'changed-field': isCourseFieldChanged(item, 'campuses') }" v-if="displayCourse(item).campuses?.length">
-                <span class="detail-item">校区：{{ displayCourse(item).campuses.join('、') }}</span>
+              <view class="proposal-info" v-if="displayCourse(item)">
+                <view class="course-detail" :class="{ 'changed-field': isCourseFieldChanged(item, 'campuses') }" v-if="displayCourse(item).campuses?.length">
+                  <span class="detail-item">校区：{{ displayCourse(item).campuses.join('、') }}</span>
+                </view>
+                <view class="course-detail" :class="{ 'changed-field': isCourseFieldChanged(item, 'department') }" v-if="displayCourse(item).department">
+                  <span class="detail-item">院系：{{ displayCourse(item).department }}</span>
+                </view>
+                <view class="course-detail" :class="{ 'changed-field': isCourseFieldChanged(item, 'category') }" v-if="displayCourse(item).category">
+                  <span class="detail-item">分类：{{ displayCourse(item).category }}</span>
+                </view>
+                <view class="course-detail" :class="{ 'changed-field': isCourseFieldChanged(item, 'teachers') }" v-if="displayCourse(item).teachers?.length">
+                  <span class="detail-item">教师：{{ teachersText(displayCourse(item).teachers) }}</span>
+                </view>
               </view>
-              <view class="course-detail" :class="{ 'changed-field': isCourseFieldChanged(item, 'department') }" v-if="displayCourse(item).department">
-                <span class="detail-item">院系：{{ displayCourse(item).department }}</span>
-              </view>
-              <view class="course-detail" :class="{ 'changed-field': isCourseFieldChanged(item, 'category') }" v-if="displayCourse(item).category">
-                <span class="detail-item">分类：{{ displayCourse(item).category }}</span>
-              </view>
-              <view class="course-detail" :class="{ 'changed-field': isCourseFieldChanged(item, 'teachers') }" v-if="displayCourse(item).teachers?.length">
-                <span class="detail-item">教师：{{ teachersText(displayCourse(item).teachers) }}</span>
-              </view>
-            </view>
 
-            <view class="proposal-footer">
-              <view class="footer-spacer" />
-              <view class="delete-area" @click.stop="handleDelete(index)" v-if="item.status === 'pending' && !item.deleted">
-                <text class="delete-text">删除</text>
-              </view>
-              <view class="edit-area" @click.stop="handleReEdit(item)" v-if="item.status === 'rejected'">
-                <text class="edit-area-text">重新编辑</text>
+              <view class="proposal-footer">
+                <view class="footer-spacer" />
+                <view class="delete-area" @click.stop="handleDelete(index)" v-if="item.status === 'pending' && !item.deleted">
+                  <text class="delete-text">删除</text>
+                </view>
+                <view class="edit-area" @click.stop="handleReEdit(item)" v-if="item.status === 'rejected'">
+                  <text class="edit-area-text">重新编辑</text>
+                </view>
               </view>
             </view>
           </view>
+          <view v-if="proposalList.length === 0 && !proposalLoading" class="empty-state">
+            <text class="empty-text">暂无提案记录</text>
+          </view>
+        </template>
+        <view v-if="loading" class="loading-more">
+          <text class="loading-text">加载中...</text>
         </view>
-        <view v-if="proposalList.length === 0 && !proposalLoading" class="empty-state">
-          <text class="empty-text">暂无提案记录</text>
-        </view>
-      </template>
-      <view v-if="loading" class="loading-more">
-        <text class="loading-text">加载中...</text>
-      </view>
-    </scroll-view>
+        <view class="list-bottom-spacer" />
+      </scroll-view>
+    </view>
   </view>
 </template>
 
@@ -289,7 +293,7 @@ function handleReEdit(item: DtoProposalVO) {
 }
 
 onShow(() => {
-  uni.hideTabBar();
+  uni.hideTabBar({ animation: false });
   fetchUserProfile();
   if (activeTab.value === 'comment') {
     fetchComments(0);
@@ -446,20 +450,41 @@ onPageScroll((e) => {
 </script>
 
 <style scoped lang="scss">
+:global(page) {
+  background-color: #f8f8f8;
+}
+
 .comment {
   margin-top: 30vw;
   margin-left: 5vw;
   margin-right: 5vw;
-  height: calc(100vh - 30vw - env(safe-area-inset-bottom));
+  height: calc(100vh - 30vw);
   width: 90vw;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background-color: #f8f8f8;
+}
+
+.list-area {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  background-color: #f8f8f8;
 }
 
 .main-scroll {
-  flex: 1;
-  min-height: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #f8f8f8;
+}
+
+.list-top-spacer {
+  height: 18vw;
+}
+
+.list-bottom-spacer {
+  height: calc(26vw + env(safe-area-inset-bottom));
 }
 
 .profile-card {
@@ -472,6 +497,7 @@ onPageScroll((e) => {
   box-shadow: 1px 1px 5px 0px #0000001f;
   padding: 4vw;
   margin-bottom: 3vw;
+  flex-shrink: 0;
 
   .profile-info {
     display: flex;
@@ -544,26 +570,34 @@ onPageScroll((e) => {
 }
 
 .tab-bar {
+  position: absolute;
+  top: 1vw;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 4vw;
-  padding: 2vw 0;
+  width: 64vw;
+  background: transparent;
 }
 
 .tab-container {
   display: flex;
   position: relative;
+  width: 100%;
   background-color: #f5f5f5;
   border-radius: 8vw;
   padding: 1vw;
+  box-shadow: 0 10rpx 28rpx rgba(0, 0, 0, 0.18);
 }
 
 .tab-item {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2.5vw 8vw;
+  flex: 1;
+  padding: 2.5vw 0;
   z-index: 2;
   cursor: pointer;
   position: relative;
