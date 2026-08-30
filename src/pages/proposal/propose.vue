@@ -127,6 +127,7 @@
       :title="modalTitle"
       :placeholder="searchPlaceholder"
       :field="currentField"
+      :initial-value="currentSearchValue"
       @select="handleSearchSelect"
     />
 
@@ -135,13 +136,16 @@
       v-model:visible="showTeacherModal"
       :teachers="formData.teachers"
       @add="handleAddTeacher"
+      @edit="handleEditTeacher"
       @remove="handleRemoveTeacher"
     />
 
     <!-- Add Teacher Form Modal Component -->
     <AddTeacherModal
       v-model:visible="showAddTeacherForm"
+      :initial-teacher="teacherBeingEdited"
       @confirm="handleConfirmAddTeacher"
+      @close="handleTeacherEditorClose"
     />
   </view>
 </template>
@@ -157,7 +161,8 @@ import AddTeacherModal from '@/components/proposal-components/AddTeacherModal.vu
 
 interface Teacher {
   name: string;
-  department: string;
+  department?: string;
+  title?: string;
   teacherId?: string;
 }
 
@@ -242,7 +247,13 @@ const campusOptions = campusesData;
 const showSearchModal = ref(false);
 const showTeacherModal = ref(false);
 const showAddTeacherForm = ref(false);
+const editingTeacherIndex = ref(-1);
 const currentField = ref('');
+
+const teacherBeingEdited = computed<Teacher | null>(() => {
+    if (editingTeacherIndex.value < 0) return null;
+    return formData.teachers[editingTeacherIndex.value] || null;
+});
 
 const modalTitle = computed(() => {
     const titles: Record<string, string> = {
@@ -264,6 +275,16 @@ const searchPlaceholder = computed(() => {
         campuses: '请输入开课校区进行搜索'
     };
     return placeholders[currentField.value] || '请输入关键词';
+});
+
+const currentSearchValue = computed(() => {
+    const values: Record<string, string> = {
+        courseName: formData.courseName,
+        courseCode: formData.courseCode,
+        department: formData.department,
+        category: formData.category
+    };
+    return values[currentField.value] || '';
 });
 
 const openSearchModal = (field: string) => {
@@ -307,6 +328,14 @@ const openTeacherModal = () => {
 };
 
 const handleAddTeacher = () => {
+    editingTeacherIndex.value = -1;
+    showTeacherModal.value = false;
+    showAddTeacherForm.value = true;
+};
+
+const handleEditTeacher = (index: number) => {
+    editingTeacherIndex.value = index;
+    showTeacherModal.value = false;
     showAddTeacherForm.value = true;
 };
 
@@ -315,7 +344,18 @@ const handleRemoveTeacher = (index: number) => {
 };
 
 const handleConfirmAddTeacher = (teacher: Teacher) => {
-    formData.teachers.push(teacher);
+    if (editingTeacherIndex.value >= 0) {
+        formData.teachers.splice(editingTeacherIndex.value, 1, teacher);
+    } else {
+        formData.teachers.push(teacher);
+    }
+    editingTeacherIndex.value = -1;
+    showTeacherModal.value = true;
+};
+
+const handleTeacherEditorClose = () => {
+    editingTeacherIndex.value = -1;
+    showTeacherModal.value = true;
 };
 
 const goBack = () => {
@@ -330,13 +370,51 @@ const fillFormFromProposal = (proposal: any) => {
     formData.category = course.category || '';
     formData.campuses = Array.isArray(course.campuses) ? [...course.campuses] : [];
     formData.teachers = Array.isArray(course.teachers)
-        ? course.teachers.map((t: any) => ({
+        ? course.teachers.map((t: any, index: number) => ({
             name: typeof t === 'string' ? t : t.name || '',
-            department: typeof t === 'string' ? '' : t.department || ''
+            department: typeof t === 'string' ? '' : t.department || '',
+            title: typeof t === 'string' ? '' : t.title || '',
+            teacherId: typeof t === 'string'
+                ? course.teacherIds?.[index] || course.teacher_ids?.[index] || undefined
+                : t.teacherId || t.teacherID || t.teacher_id || t.id || t._id || t.teacher?.id
+                    || course.teacherIds?.[index] || course.teacher_ids?.[index] || undefined
           }))
         : [];
     formData.showUsername = proposal.showUsername ?? null;
     formData.reason = proposal.content || '';
+};
+
+const hydrateExistingTeacherIdsForApproval = async () => {
+    const unresolvedTeachers = formData.teachers.filter(teacher => !teacher.teacherId && teacher.name.trim());
+    await Promise.all(unresolvedTeachers.map(async (teacher) => {
+        try {
+            const res = await http.ProposalController.proposalFieldSuggestionsList({
+                field: 'teacherName',
+                keyword: teacher.name.trim(),
+                page: 0,
+                pageSize: 50
+            });
+            if (res.data?.code !== 0) return;
+            const responseData: any = res.data.data || res.data;
+            const exactMatches = (responseData?.suggestions || []).filter((suggestion: any) => {
+                const suggestionName = String(suggestion.value || suggestion.label || '').trim();
+                return suggestion.id && suggestionName === teacher.name.trim();
+            });
+            const titleMatches = teacher.title
+                ? exactMatches.filter((suggestion: any) => {
+                    const suggestionTitle = String(suggestion.title || '').trim();
+                    const label = String(suggestion.label || '').trim();
+                    return suggestionTitle === teacher.title || label.endsWith(`- ${teacher.title}`);
+                })
+                : [];
+            const matchedTeacher = titleMatches[0] || exactMatches[0];
+            if (matchedTeacher) {
+                teacher.teacherId = matchedTeacher.id;
+            }
+        } catch (err) {
+            console.error('[API] 补全已有教师ID失败:', err);
+        }
+    }));
 };
 
 const fetchProposalForForm = async (id: string) => {
@@ -349,6 +427,9 @@ const fetchProposalForForm = async (id: string) => {
                     ...proposal,
                     finalCourse: proposal.finalCourse || proposal.final_course
                 });
+                if (isApproveMode.value) {
+                    await hydrateExistingTeacherIdsForApproval();
+                }
             }
         } else {
             uni.showToast({ title: res.data?.msg || '获取提案信息失败', icon: 'none' });
@@ -357,6 +438,20 @@ const fetchProposalForForm = async (id: string) => {
         console.error('[API] 获取提案详情失败:', err);
         uni.showToast({ title: '获取提案信息失败', icon: 'none' });
     }
+};
+
+const getProposalSubmitErrorMessage = (message: unknown, fallback: string) => {
+    const text = String(message || '').trim();
+    const normalized = text.toLowerCase();
+    const isDailyLimitError = /(daily|today|quota|limit|maximum|too many|exceed|max)/.test(normalized)
+        && /(proposal|submit|create|quota|limit)/.test(normalized);
+    if (isDailyLimitError) {
+        return '今日提案提交次数已达上限，请明天再试';
+    }
+    if (normalized === 'network error') {
+        return '网络错误，请检查网络连接';
+    }
+    return text || fallback;
 };
 
 onLoad((options: any) => {
@@ -407,7 +502,7 @@ const submit = async () => {
                 uni.$emit('proposalListShouldRefresh');
                 setTimeout(() => uni.navigateBack(), 1500);
             } else {
-                uni.showToast({ title: res.data?.msg || '操作失败', icon: 'none' });
+                uni.showToast({ title: getProposalSubmitErrorMessage(res.data?.msg, '操作失败'), icon: 'none' });
             }
         } else {
             const requestBody = {
@@ -436,12 +531,13 @@ const submit = async () => {
                 uni.$emit('proposalListShouldRefresh');
                 setTimeout(() => uni.navigateBack(), 1500);
             } else {
-                uni.showToast({ title: res.data?.msg || '提交失败', icon: 'none' });
+                uni.showToast({ title: getProposalSubmitErrorMessage(res.data?.msg, '提交失败'), icon: 'none' });
             }
         }
     } catch (error: any) {
         console.error('[API] 提案提交请求失败:', error.message || error);
-        uni.showToast({ title: '网络错误，请检查网络连接', icon: 'none' });
+        const responseMessage = error?.response?.data?.msg || error?.response?.data?.message || error?.message;
+        uni.showToast({ title: getProposalSubmitErrorMessage(responseMessage, '网络错误，请检查网络连接'), icon: 'none' });
     } finally {
         submitting.value = false;
     }

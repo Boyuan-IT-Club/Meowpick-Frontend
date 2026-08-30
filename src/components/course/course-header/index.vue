@@ -22,8 +22,23 @@
         <text class="tip">任课教师</text>
       </view>
       <view class="teachers">
-        <view class="content" :class="{ changed: isChanged('teachers') }">{{ teachersText(data.teachers) }}</view>
-        <view v-if="isChanged('teachers')" class="content final-value">{{ teachersText(finalCourse?.teachers) }}</view>
+        <view
+          v-for="(teacher, index) in data.teachers || []"
+          :key="teacherKey(teacher, index)"
+          class="content"
+          :class="{ changed: isChanged('teachers') }"
+        >
+          {{ teacherText(teacher) }}
+        </view>
+        <template v-if="isChanged('teachers')">
+          <view
+            v-for="(teacher, index) in finalCourse?.teachers || []"
+            :key="`final-${teacherKey(teacher, index)}`"
+            class="content final-value"
+          >
+            {{ teacherText(teacher) }}
+          </view>
+        </template>
       </view>
     </view>
     <view class="campus">
@@ -72,14 +87,23 @@ type Props = {
   finalCourse?: {
     category?: string;
     department?: string;
-    teachers?: Array<{ name?: string } | string>;
+    teachers?: Array<{ name?: string; title?: string } | string>;
     campuses?: string[];
   };
 };
 const props = defineProps<Props>();
 
-const teachersText = (teachers?: Array<{ name?: string } | string>) => (teachers || [])
-  .map(teacher => typeof teacher === "string" ? teacher : teacher.name || "")
+const teacherText = (teacher: { name?: string; title?: string } | string) => {
+  if (typeof teacher === "string") return teacher;
+  return [teacher.name, teacher.title].filter(Boolean).join("");
+};
+
+const teacherKey = (teacher: { name?: string; title?: string } | string, index: number) => (
+  `${teacherText(teacher)}-${index}`
+);
+
+const teachersText = (teachers?: Array<{ name?: string; title?: string } | string>) => (teachers || [])
+  .map(teacherText)
   .filter(Boolean)
   .join("、");
 

@@ -54,6 +54,7 @@ interface Props {
   field: string;
   multiple?: boolean;
   selectedItems?: string[];
+  initialValue?: string;
 }
 
 interface Suggestion {
@@ -87,6 +88,10 @@ export default defineComponent({
     selectedItems: {
       type: Array as () => string[],
       default: () => []
+    },
+    initialValue: {
+      type: String,
+      default: ''
     }
   },
   emits: ['update:visible', 'select', 'close'],
@@ -98,8 +103,11 @@ export default defineComponent({
 
     watch(() => props.visible, (newVal) => {
       if (newVal) {
-        searchKeyword.value = '';
+        searchKeyword.value = props.initialValue || '';
         searchResults.value = [];
+        if (searchKeyword.value.trim()) {
+          fetchSuggestions(searchKeyword.value.trim());
+        }
       }
     });
 

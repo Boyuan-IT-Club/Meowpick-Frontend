@@ -6,12 +6,12 @@
         <view class="close-btn" @click="handleClose">×</view>
       </view>
       <view class="teacher-list">
-        <view class="teacher-item" v-for="(teacher, index) in teachers" :key="index">
+        <view class="teacher-item" v-for="(teacher, index) in teachers" :key="index" @click="handleEdit(index)">
           <view class="teacher-info">
-            <view class="teacher-name">{{ teacher.name }}</view>
-            <view class="teacher-detail">{{ teacher.department }}</view>
+            <view class="teacher-name">{{ teacher.name }}{{ teacher.title || '' }}</view>
+            <view class="teacher-detail">{{ teacher.teacherId ? '已有教师' : '新增教师' }}</view>
           </view>
-          <view class="delete-teacher" @click="handleRemove(index)">×</view>
+          <view class="delete-teacher" @click.stop="handleRemove(index)">×</view>
         </view>
         <view class="empty-tip" v-if="teachers.length === 0">
           暂无教师信息，请点击下方按钮添加
@@ -30,7 +30,9 @@ import { defineComponent } from 'vue';
 
 interface Teacher {
   name: string;
-  department: string;
+  department?: string;
+  title?: string;
+  teacherId?: string;
 }
 
 export default defineComponent({
@@ -45,7 +47,7 @@ export default defineComponent({
       required: true
     }
   },
-  emits: ['update:visible', 'add', 'remove', 'close'],
+  emits: ['update:visible', 'add', 'edit', 'remove', 'close'],
   setup(props, { emit }) {
     const handleAdd = () => {
       emit('add');
@@ -55,6 +57,10 @@ export default defineComponent({
       emit('remove', index);
     };
 
+    const handleEdit = (index: number) => {
+      emit('edit', index);
+    };
+
     const handleClose = () => {
       emit('close');
       emit('update:visible', false);
@@ -62,6 +68,7 @@ export default defineComponent({
 
     return {
       handleAdd,
+      handleEdit,
       handleRemove,
       handleClose
     };

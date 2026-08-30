@@ -115,7 +115,6 @@
       <view v-if="loading" class="loading-more">
         <text class="loading-text">加载中...</text>
       </view>
-      <view class="bottom-safe-area"></view>
     </scroll-view>
   </view>
 </template>
@@ -263,7 +262,10 @@ function displayCourse(item: DtoProposalVO): any {
 }
 
 function teachersText(teachers: any[] = []): string {
-  return teachers.map((teacher: any) => typeof teacher === 'string' ? teacher : teacher.name || '').filter(Boolean).join('、');
+  return teachers
+    .map((teacher: any) => typeof teacher === 'string' ? teacher : `${teacher.name || ''}${teacher.title || ''}`)
+    .filter(Boolean)
+    .join('、');
 }
 
 function isCourseFieldChanged(item: DtoProposalVO, field: 'name' | 'campuses' | 'department' | 'category' | 'teachers'): boolean {
@@ -272,7 +274,7 @@ function isCourseFieldChanged(item: DtoProposalVO, field: 'name' | 'campuses' | 
   const stringify = (value: any) => {
     if (field === 'teachers') {
       return Array.isArray(value)
-        ? value.map((teacher: any) => typeof teacher === 'string' ? teacher : teacher.name || '').join('、')
+        ? value.map((teacher: any) => typeof teacher === 'string' ? teacher : `${teacher.name || ''}${teacher.title || ''}`).join('、')
         : '';
     }
     return Array.isArray(value) ? value.join('、') : value || '';
@@ -791,7 +793,4 @@ onPageScroll((e) => {
   }
 }
 
-.bottom-safe-area {
-  height: 30vw;
-}
 </style>

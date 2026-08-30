@@ -15,7 +15,7 @@
         <text class="clear-text">✕</text>
       </view>
     </div>
-    <button class="filter-btn" :class="{ active: isFiltered }" @click="showFilterModal = true">
+    <button class="filter-btn" :class="{ active: isFilterMode && isFiltered }" @click="showFilterModal = true">
       <text class="filter-icon">筛选</text>
     </button>
   </div>
@@ -177,6 +177,7 @@
     :title="modalTitle"
     :placeholder="searchPlaceholder"
     :field="currentField"
+    :initial-value="currentFilterSearchValue"
     @select="handleSearchSelect"
   />
 
@@ -257,11 +258,21 @@ const searchPlaceholder = computed(() => {
   return placeholders[currentField.value] || '请输入关键词';
 });
 
+const currentFilterSearchValue = computed(() => {
+  if (currentField.value === 'department') return filterForm.value.department;
+  if (currentField.value === 'category') return filterForm.value.category;
+  return '';
+});
+
 const isFiltered = computed(() => {
-  return filterForm.value.status.length > 0 ||
-         filterForm.value.campus.length > 0 ||
-         filterForm.value.department ||
-         filterForm.value.category;
+  const defaultStatuses = isAdmin.value ? statusOptions.map(item => item.value) : ['approved'];
+  const hasSameItems = (left: string[], right: string[]) => (
+    left.length === right.length && left.every(item => right.includes(item))
+  );
+  return !hasSameItems(filterForm.value.status, defaultStatuses) ||
+         !hasSameItems(filterForm.value.campus, campusOptions) ||
+         Boolean(filterForm.value.department) ||
+         Boolean(filterForm.value.category);
 });
 
 const checkAdmin = async () => {
@@ -286,7 +297,7 @@ const mapProposalItem = (item: any): Proposal => {
     if (field === 'campus') return Array.isArray(courseData?.campuses) ? courseData.campuses.join('、') : '';
     if (field === 'teachers') {
       return Array.isArray(courseData?.teachers)
-        ? courseData.teachers.map((teacher: any) => typeof teacher === 'string' ? teacher : teacher.name || '').join('、')
+        ? courseData.teachers.map((teacher: any) => typeof teacher === 'string' ? teacher : `${teacher.name || ''}${teacher.title || ''}`).join('、')
         : '';
     }
     return courseData?.[field] || '';
@@ -304,7 +315,7 @@ const mapProposalItem = (item: any): Proposal => {
     campus: Array.isArray(course.campuses) ? course.campuses.join('、') : '',
     department: course.department || '',
     teachers: Array.isArray(course.teachers)
-      ? course.teachers.map((t: any) => typeof t === 'string' ? t : t.name || '').join('、')
+      ? course.teachers.map((t: any) => typeof t === 'string' ? t : `${t.name || ''}${t.title || ''}`).join('、')
       : '',
     category: course.category || '',
     creatorId: item.userId || '',
@@ -709,7 +720,7 @@ const handleLoadMore = () => {
   border-radius: 40rpx;
   height: 11vw;
   padding: 0 3vw;
-  border: 1px solid #E8E8E8;
+  border: 0.45vw solid #e61e1e;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
@@ -749,8 +760,8 @@ const handleLoadMore = () => {
 
 .filter-btn {
   background-color: #ffffff;
-  color: #333;
-  border: 1px solid #E8E8E8;
+  color: #b70030;
+  border: 1px solid #b70030;
   border-radius: 40rpx;
   height: 11vw;
   padding: 0 4vw;
@@ -789,7 +800,7 @@ const handleLoadMore = () => {
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 0 0 20vw 0;
+  padding: 0;
   width: 100%;
   box-sizing: border-box;
   overflow-y: auto;

@@ -19,7 +19,7 @@
         <view class="circle" />
         <view class="teacher-list">
           <view v-for="teacher of props.data.course.teachers" :key="typeof teacher === 'string' ? teacher : teacher.name" class="instructor">
-            {{ typeof teacher === 'string' ? teacher : teacher.name }}
+            {{ typeof teacher === 'string' ? teacher : `${teacher.name || ''}${teacher.title || ''}` }}
           </view>
         </view>
       </view>
