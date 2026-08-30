@@ -1,31 +1,30 @@
 <template>
   <top-bar :selected="1" />
   <view class="comment">
-    <!-- 个人信息卡片 -->
-    <view class="profile-card">
-      <view class="profile-info">
-        <view class="profile-avatar">
-          <text class="avatar-placeholder">🐱</text>
-        </view>
-        <view class="profile-detail">
-          <text class="profile-name">{{ userInfo.username || '加载中...' }}</text>
-          <view class="profile-contribution">
-            <text class="contribution-label">贡献值：</text>
-            <text class="contribution-value">{{ userInfo.contribution || 0 }}</text>
+    <view class="my-toolbar">
+      <!-- 紧凑用户信息卡片 -->
+      <view class="profile-card">
+        <view class="profile-info">
+          <view class="profile-avatar">
+            <text class="avatar-placeholder">🐱</text>
+          </view>
+          <view class="profile-detail">
+            <text class="profile-name">{{ userInfo.username || '加载中...' }}</text>
+            <view class="profile-contribution">
+              <text class="contribution-label">贡献值</text>
+              <text class="contribution-value">{{ userInfo.contribution || 0 }}</text>
+            </view>
           </view>
         </view>
+        <view
+          class="edit-nickname-btn"
+          :class="{ disabled: !userInfo.canEditUsername }"
+          @click="goToEditNickname"
+        >
+          <text class="edit-icon">✎</text>
+        </view>
       </view>
-      <view
-        class="edit-nickname-btn"
-        :class="{ disabled: !userInfo.canEditUsername }"
-        @click="goToEditNickname"
-      >
-        <text class="edit-icon">✎</text>
-        <text class="edit-text">编辑昵称</text>
-      </view>
-    </view>
 
-    <view class="list-area">
       <view class="tab-bar">
         <view class="tab-container">
           <view
@@ -33,29 +32,36 @@
             :class="{ active: activeTab === 'comment' }"
             @click="switchTab('comment')"
           >
-            <text class="tab-text">吐槽</text>
+            <image
+              class="tab-icon"
+              :src="activeTab === 'comment' ? commentWhiteIcon : commentBlackIcon"
+            />
           </view>
           <view
             class="tab-item"
             :class="{ active: activeTab === 'proposal' }"
             @click="switchTab('proposal')"
           >
-            <text class="tab-text">提案</text>
+            <image
+              class="tab-icon"
+              :src="activeTab === 'proposal' ? proposalWhiteIcon : proposalBlackIcon"
+            />
           </view>
           <view class="tab-indicator-wrapper">
             <view class="tab-indicator" :class="{ 'right': activeTab === 'proposal' }" />
           </view>
         </view>
       </view>
+    </view>
 
-      <scroll-view
-        scroll-y
-        class="main-scroll"
-        :lower-threshold="80"
-        @scroll="handleListScroll"
-        @scrolltolower="handleBottom"
-      >
-        <view class="list-top-spacer" />
+    <scroll-view
+      scroll-y
+      class="main-scroll"
+      :lower-threshold="80"
+      @scroll="handleListScroll"
+      @scrolltolower="handleBottom"
+    >
+      <view class="list-top-spacer" />
         <template v-if="activeTab === 'comment'">
           <view v-for="item of commentList" :key="item.id" class="item">
             <MyCommentBox :data="item" @like="likeComment" />
@@ -117,9 +123,8 @@
         <view v-if="loading" class="loading-more">
           <text class="loading-text">加载中...</text>
         </view>
-        <view class="list-bottom-spacer" />
-      </scroll-view>
-    </view>
+      <view class="list-bottom-spacer" />
+    </scroll-view>
   </view>
 </template>
 
@@ -129,6 +134,10 @@ import { onShow, onPageScroll } from "@dcloudio/uni-app";
 import { http } from "@/config";
 import type { DtoCommentVO, DtoProposalVO } from "@/api/data-contracts";
 import MyCommentBox from "@/pages/my-comments/MyCommentBox.vue";
+import commentWhiteIcon from "@/images/comment_white.png";
+import commentBlackIcon from "@/images/comment_black.png";
+import proposalWhiteIcon from "@/images/add_white.png";
+import proposalBlackIcon from "@/images/add_black.png";
 
 const activeTab = ref<'comment' | 'proposal'>('comment');
 const commentList = ref<DtoCommentVO[]>([]);
@@ -293,7 +302,7 @@ function handleReEdit(item: DtoProposalVO) {
 }
 
 onShow(() => {
-  uni.hideTabBar({ animation: false });
+  uni.hideTabBar();
   fetchUserProfile();
   if (activeTab.value === 'comment') {
     fetchComments(0);
@@ -463,49 +472,45 @@ onPageScroll((e) => {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background-color: #f8f8f8;
-}
-
-.list-area {
-  flex: 1;
-  min-height: 0;
-  position: relative;
-  background-color: #f8f8f8;
+  background: transparent;
 }
 
 .main-scroll {
+  flex: 1;
+  min-height: 0;
   width: 100%;
-  height: 100%;
-  background-color: #f8f8f8;
+  background: transparent;
 }
 
 .list-top-spacer {
-  height: 18vw;
+  height: 24vw;
 }
 
 .list-bottom-spacer {
-  height: calc(26vw + env(safe-area-inset-bottom));
+  height: 20vw;
+  background: transparent;
 }
 
 .profile-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 87vw;
-  background: linear-gradient(135deg, #fff5f8, #fff);
-  border-radius: 3vw;
-  box-shadow: 1px 1px 5px 0px #0000001f;
-  padding: 4vw;
-  margin-bottom: 3vw;
-  flex-shrink: 0;
+  flex: 1;
+  min-width: 0;
+  height: 13vw;
+  background: #ffffff;
+  border: 0.4vw solid #b70030;
+  border-radius: 7vw;
+  box-shadow: 0 10rpx 28rpx rgba(0, 0, 0, 0.18);
+  padding: 1.2vw 2vw;
 
   .profile-info {
     display: flex;
     align-items: center;
 
     .profile-avatar {
-      width: 12vw;
-      height: 12vw;
+      width: 8.5vw;
+      height: 8.5vw;
       border-radius: 50%;
       background: linear-gradient(135deg, #ffb3c6, #ff8fab);
       display: flex;
@@ -514,29 +519,43 @@ onPageScroll((e) => {
       flex-shrink: 0;
 
       .avatar-placeholder {
-        font-size: 6vw;
+        font-size: 4.5vw;
       }
     }
 
     .profile-detail {
-      margin-left: 3vw;
+      min-width: 0;
+      margin-left: 2vw;
+      display: flex;
+      flex-direction: column;
 
       .profile-name {
-        font-size: 4vw;
+        display: block;
+        max-width: 28vw;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-size: 3.2vw;
         font-weight: bold;
         color: #333;
       }
 
       .profile-contribution {
-        margin-top: 1vw;
+        display: flex;
+        align-items: center;
+        margin-top: 0.3vw;
 
         .contribution-label {
-          font-size: 3.2vw;
+          font-size: 2.5vw;
           color: #999;
+
+          &::after {
+            content: "：";
+          }
         }
 
         .contribution-value {
-          font-size: 3.5vw;
+          font-size: 2.8vw;
           font-weight: 600;
           color: #b70030;
         }
@@ -547,20 +566,17 @@ onPageScroll((e) => {
   .edit-nickname-btn {
     display: flex;
     align-items: center;
+    justify-content: center;
+    width: 7vw;
+    height: 7vw;
+    margin-left: 1vw;
     background: #fff0f6;
-    padding: 2vw 3vw;
-    border-radius: 2vw;
+    border-radius: 50%;
     border: 1px solid #ffadd2;
 
     .edit-icon {
-      font-size: 3.5vw;
+      font-size: 3.8vw;
       color: #b70030;
-    }
-
-    .edit-text {
-      font-size: 3vw;
-      color: #b70030;
-      margin-left: 1vw;
     }
 
     &.disabled {
@@ -569,16 +585,32 @@ onPageScroll((e) => {
   }
 }
 
+.my-toolbar {
+  position: fixed;
+  top: calc(20vw + 44px + 3vw);
+  left: 5vw;
+  right: 5vw;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 2vw;
+  height: 13vw;
+  background: transparent;
+  pointer-events: none;
+
+  .profile-card,
+  .tab-bar {
+    pointer-events: auto;
+  }
+}
+
 .tab-bar {
-  position: absolute;
-  top: 1vw;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 64vw;
+  width: 25vw;
+  height: 13vw;
+  flex-shrink: 0;
   background: transparent;
 }
 
@@ -586,8 +618,9 @@ onPageScroll((e) => {
   display: flex;
   position: relative;
   width: 100%;
+  height: 100%;
   background-color: #f5f5f5;
-  border-radius: 8vw;
+  border-radius: 7vw;
   padding: 1vw;
   box-shadow: 0 10rpx 28rpx rgba(0, 0, 0, 0.18);
 }
@@ -597,25 +630,14 @@ onPageScroll((e) => {
   align-items: center;
   justify-content: center;
   flex: 1;
-  padding: 2.5vw 0;
+  padding: 0;
   z-index: 2;
   cursor: pointer;
   position: relative;
 
-  .tab-text {
-    font-size: 4vw;
-    color: #999;
-    font-weight: normal;
-    transition: color 0.3s;
-    text-align: center;
-    min-width: 10vw;
-  }
-
-  &.active {
-    .tab-text {
-      color: #b70030;
-      font-weight: bold;
-    }
+  .tab-icon {
+    width: 4.8vw;
+    height: 4.8vw;
   }
 }
 
@@ -630,7 +652,7 @@ onPageScroll((e) => {
   .tab-indicator {
     width: 100%;
     height: 100%;
-    background-color: #ffffff;
+    background-color: #b70030;
     border-radius: 7vw;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);

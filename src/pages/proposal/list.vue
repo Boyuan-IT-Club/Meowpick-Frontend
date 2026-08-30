@@ -669,7 +669,6 @@ const handleWithdraw = async (index: number) => {
 };
 
 onShow(() => {
-  uni.hideTabBar({ animation: false });
   // Re-entering the proposal tab must always show the default list, not the
   // filter state retained from a previous visit.
   isFilterMode.value = false;
