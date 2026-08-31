@@ -454,6 +454,74 @@ const getProposalSubmitErrorMessage = (message: unknown, fallback: string) => {
     return text || fallback;
 };
 
+const promptAndSaveNickname = () => new Promise<boolean>((resolve) => {
+    uni.showModal({
+        title: '请先设置昵称',
+        content: '你选择了展示昵称，但尚未编辑昵称，请输入昵称后再提交。',
+        editable: true,
+        placeholderText: '请输入不超过20个字符的昵称',
+        success: async (result: any) => {
+            if (!result.confirm) {
+                resolve(false);
+                return;
+            }
+
+            const username = String(result.content || '').trim();
+            if (!username) {
+                uni.showToast({ title: '请输入昵称', icon: 'none' });
+                resolve(false);
+                return;
+            }
+            if (username.length > 20) {
+                uni.showToast({ title: '昵称不能超过20个字符', icon: 'none' });
+                resolve(false);
+                return;
+            }
+
+            try {
+                const res = await http.UserController.userProfileUpdateCreate({ username });
+                if (res.data?.code === 0) {
+                    uni.showToast({ title: '昵称已保存', icon: 'success' });
+                    resolve(true);
+                } else {
+                    uni.showToast({ title: res.data?.msg || '昵称保存失败', icon: 'none' });
+                    resolve(false);
+                }
+            } catch (err) {
+                console.error('[API] 保存昵称失败:', err);
+                uni.showToast({ title: '昵称保存失败', icon: 'none' });
+                resolve(false);
+            }
+        },
+        fail: () => resolve(false)
+    } as any);
+});
+
+const ensureDisplayUsername = async (): Promise<boolean> => {
+    try {
+        const res = await http.UserController.userProfileList();
+        if (res.data?.code !== 0) {
+            uni.showToast({ title: res.data?.msg || '获取用户昵称失败', icon: 'none' });
+            return false;
+        }
+
+        const profile: any = res.data.data || res.data;
+        if (String(profile?.username || '').trim()) return true;
+
+        const canEditUsername = profile?.canEditUsername ?? profile?.can_edit_username ?? true;
+        if (!canEditUsername) {
+            uni.showToast({ title: '当前无法修改昵称，请选择不展示昵称', icon: 'none' });
+            return false;
+        }
+
+        return promptAndSaveNickname();
+    } catch (err) {
+        console.error('[API] 检查用户昵称失败:', err);
+        uni.showToast({ title: '获取用户昵称失败', icon: 'none' });
+        return false;
+    }
+};
+
 onLoad((options: any) => {
     if (options.approveProposalId) {
         isApproveMode.value = true;
@@ -472,6 +540,14 @@ const submit = async () => {
     if (formData.campuses.length === 0) return uni.showToast({ title: '请选择开课校区', icon: 'none' });
 
     submitting.value = true;
+
+    if (!isApproveMode.value && formData.showUsername === true) {
+        const usernameReady = await ensureDisplayUsername();
+        if (!usernameReady) {
+            submitting.value = false;
+            return;
+        }
+    }
 
     try {
         if (isApproveMode.value && approveProposalId.value) {

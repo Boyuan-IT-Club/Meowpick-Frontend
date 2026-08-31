@@ -1,7 +1,6 @@
 <template>
   <top-bar :selected="1" />
-  <view class="comment">
-    <view class="my-toolbar">
+  <view class="my-toolbar">
       <!-- 紧凑用户信息卡片 -->
       <view class="profile-card">
         <view class="profile-info">
@@ -13,6 +12,8 @@
             <view class="profile-contribution">
               <text class="contribution-label">贡献值</text>
               <text class="contribution-value">{{ userInfo.contribution || 0 }}</text>
+              <text class="quota-label">今日可发布次数：</text>
+              <text class="quota-value">{{ availableDailyQuota }}</text>
             </view>
           </view>
         </view>
@@ -52,16 +53,17 @@
           </view>
         </view>
       </view>
-    </view>
+  </view>
 
-    <scroll-view
-      scroll-y
-      class="main-scroll"
-      :lower-threshold="80"
-      @scroll="handleListScroll"
-      @scrolltolower="handleBottom"
-    >
-      <view class="list-top-spacer" />
+  <scroll-view
+    scroll-y
+    class="content"
+    :lower-threshold="80"
+    @scroll="handleListScroll"
+    @scrolltolower="handleBottom"
+  >
+    <view class="content-top-spacer" />
+    <view class="history-list">
         <template v-if="activeTab === 'comment'">
           <view v-for="item of commentList" :key="item.id" class="item">
             <MyCommentBox :data="item" @like="likeComment" />
@@ -123,13 +125,13 @@
         <view v-if="loading" class="loading-more">
           <text class="loading-text">加载中...</text>
         </view>
-      <view class="list-bottom-spacer" />
-    </scroll-view>
-  </view>
+    </view>
+    <view class="content-bottom-spacer" />
+  </scroll-view>
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef } from "vue";
+import { computed, ref, shallowRef } from "vue";
 import { onShow, onPageScroll } from "@dcloudio/uni-app";
 import { http } from "@/config";
 import type { DtoCommentVO, DtoProposalVO } from "@/api/data-contracts";
@@ -160,6 +162,11 @@ const userInfo = ref({
   canEditUsername: true
 });
 
+const availableDailyQuota = computed(() => Math.max(
+  userInfo.value.dailyQuotaLimit - userInfo.value.dailyQuota,
+  0
+));
+
 async function fetchUserProfile() {
   try {
     const res = await http.UserController.userProfileList();
@@ -170,7 +177,7 @@ async function fetchUserProfile() {
 
     const profile = res.data.data || res.data;
     userInfo.value = {
-      username: profile?.username || '',
+      username: String(profile?.username || '').trim() || '默认用户',
       contribution: profile?.contribution ?? 0,
       avatar: profile?.avatar || '',
       dailyQuota: profile?.dailyQuota ?? profile?.daily_quota ?? 0,
@@ -463,32 +470,29 @@ onPageScroll((e) => {
   background-color: #f8f8f8;
 }
 
-.comment {
-  margin-top: 30vw;
-  margin-left: 5vw;
-  margin-right: 5vw;
-  height: calc(100vh - 30vw);
-  width: 90vw;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  background: transparent;
-}
-
-.main-scroll {
-  flex: 1;
-  min-height: 0;
+.content {
+  position: fixed;
+  top: calc(20vw + 44px);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0;
   width: 100%;
-  background: transparent;
+  box-sizing: border-box;
+  overflow-y: auto;
+  z-index: 1;
 }
 
-.list-top-spacer {
-  height: 24vw;
+.content-top-spacer {
+  height: 18vw;
 }
 
-.list-bottom-spacer {
-  height: 20vw;
-  background: transparent;
+.history-list {
+  padding: 0 5vw;
+}
+
+.content-bottom-spacer {
+  height: calc(26vw + env(safe-area-inset-bottom));
 }
 
 .profile-card {
@@ -555,6 +559,18 @@ onPageScroll((e) => {
         }
 
         .contribution-value {
+          font-size: 2.8vw;
+          font-weight: 600;
+          color: #b70030;
+        }
+
+        .quota-label {
+          margin-left: 1.5vw;
+          font-size: 2.5vw;
+          color: #999;
+        }
+
+        .quota-value {
           font-size: 2.8vw;
           font-weight: 600;
           color: #b70030;

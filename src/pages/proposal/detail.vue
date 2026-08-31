@@ -126,7 +126,7 @@ const fetchContributor = async (proposal: any) => {
     const res = await http.UserController.userUsernameDetail(String(proposal.userId));
     if (res.data?.code === 0) {
       const responseData: any = res.data.data || res.data;
-      contributor.value = responseData?.username || '/';
+      contributor.value = String(responseData?.username || '').trim() || '默认用户';
     }
   } catch (err) {
     console.error('[API] 获取贡献者昵称失败:', err);

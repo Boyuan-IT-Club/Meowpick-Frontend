@@ -323,11 +323,18 @@ const mapProposalItem = (item: any): Proposal => {
       : '',
     category: course.category || '',
     creatorId: item.userId || '',
-    finalCourseId: item.finalCourse?.id || item.final_course?.id || (item.status === 'approved' ? course.id : ''),
+    finalCourseId: item.finalCourse?.id || item.final_course?.id || item.finalCourseId ||
+      item.final_course_id || item.courseId || item.course_id ||
+      (item.status === 'approved' ? course.id : ''),
     status: item.status || 'pending',
     changedFields
   };
 };
+
+const mapVisibleProposals = (items: any[]): Proposal[] => items
+  .filter(Boolean)
+  .map(mapProposalItem)
+  .filter(item => isAdmin.value || item.status === 'approved');
 
 const fillFinalCourses = async (items: any[]) => {
   const details = await Promise.all(items.map(async (item) => {
@@ -365,7 +372,7 @@ const fetchProposals = async (page: number = 0) => {
     if (res.data?.code === 0) {
       const responseData = res.data.data || res.data;
       const list = await fillFinalCourses(responseData?.proposals || []);
-      const mapped = list.filter((item: any) => item).map(mapProposalItem);
+      const mapped = mapVisibleProposals(list);
       if (page === 0) {
         proposals.value = mapped;
       } else {
@@ -373,7 +380,9 @@ const fetchProposals = async (page: number = 0) => {
       }
       const total = responseData?.total;
       const hasValidTotal = typeof total === 'number' && total >= proposals.value.length;
-      noMore.value = hasValidTotal ? proposals.value.length >= total : list.length < pageSize;
+      noMore.value = isAdmin.value && hasValidTotal
+        ? proposals.value.length >= total
+        : list.length < pageSize;
       currentPage.value = page;
     } else if (res.data?.code === 108000001) {
       proposals.value = [];
@@ -398,19 +407,30 @@ const fetchFilteredProposals = async (page: number = 0) => {
   loading.value = true;
 
   try {
-    const res = await http.ProposalController.proposalFilterList({
-      status: filterForm.value.status,
+    const query: {
+      status: string[];
+      campus: string[];
+      department?: string;
+      category?: string;
+      page: number;
+      pageSize: number;
+    } = {
+      status: isAdmin.value ? filterForm.value.status : ['approved'],
       campus: filterForm.value.campus,
-      department: filterForm.value.department || undefined,
-      category: filterForm.value.category || undefined,
       page,
       pageSize
-    });
+    };
+    const department = filterForm.value.department.trim();
+    const category = filterForm.value.category.trim();
+    if (department) query.department = department;
+    if (category) query.category = category;
+
+    const res = await http.ProposalController.proposalFilterList(query);
 
     if (res.data?.code === 0) {
       const responseData = res.data.data || res.data;
       const list = await fillFinalCourses(responseData?.proposals || []);
-      const mapped = list.filter((item: any) => item).map(mapProposalItem);
+      const mapped = mapVisibleProposals(list);
       if (page === 0) {
         proposals.value = mapped;
       } else {
@@ -418,7 +438,9 @@ const fetchFilteredProposals = async (page: number = 0) => {
       }
       const total = responseData?.total;
       const hasValidTotal = typeof total === 'number' && total >= proposals.value.length;
-      noMore.value = hasValidTotal ? proposals.value.length >= total : list.length < pageSize;
+      noMore.value = isAdmin.value && hasValidTotal
+        ? proposals.value.length >= total
+        : list.length < pageSize;
       currentPage.value = page;
     } else {
       proposals.value = [];
@@ -435,6 +457,10 @@ const fetchFilteredProposals = async (page: number = 0) => {
   }
 };
 
+const fetchDefaultProposals = (page: number = 0) => {
+  return isAdmin.value ? fetchProposals(page) : fetchFilteredProposals(page);
+};
+
 const handleSearchDebounce = () => {
   if (searchTimer) clearTimeout(searchTimer);
   searchTimer = setTimeout(() => {
@@ -448,7 +474,7 @@ const handleSearchConfirm = async () => {
     isFilterMode.value = false;
     currentPage.value = 0;
     noMore.value = false;
-    fetchProposals(0);
+    fetchDefaultProposals(0);
     return;
   }
 
@@ -476,7 +502,9 @@ const handleSearchConfirm = async () => {
               const proposal = r.data?.proposal || r.data?.data?.proposal;
               return proposal ? mapProposalItem(proposal) : null;
             })
-            .filter(Boolean) as Proposal[];
+            .filter((item: Proposal | null): item is Proposal => (
+              Boolean(item) && (isAdmin.value || item?.status === 'approved')
+            ));
         } else {
           proposals.value = [];
         }
@@ -501,7 +529,7 @@ const clearSearch = () => {
   isFilterMode.value = false;
   currentPage.value = 0;
   noMore.value = false;
-  fetchProposals(0);
+  fetchDefaultProposals(0);
 };
 
 const toggleStatus = (status: string) => {
@@ -564,11 +592,29 @@ const getStatusText = (status: string) => {
   return statusMap[status] || status;
 };
 
-const goToDetail = (item: Proposal) => {
-  if (!isAdmin.value && item.status === 'approved' && item.finalCourseId) {
-    uni.navigateTo({
-      url: `/pages/course/index/index?id=${item.finalCourseId}`
-    });
+const goToDetail = async (item: Proposal) => {
+  if (!isAdmin.value) {
+    let courseId = item.finalCourseId;
+
+    if (!courseId && item.id) {
+      try {
+        const res = await http.ProposalController.proposalDetail(item.id);
+        const proposal = res.data?.data?.proposal || res.data?.proposal;
+        courseId = proposal?.finalCourse?.id || proposal?.final_course?.id ||
+          proposal?.finalCourseId || proposal?.final_course_id ||
+          proposal?.courseId || proposal?.course_id;
+      } catch (err) {
+        console.error('[API] 获取提案对应课程失败:', err);
+      }
+    }
+
+    if (courseId) {
+      uni.navigateTo({
+        url: `/pages/course/index/index?id=${courseId}`
+      });
+    } else {
+      uni.showToast({ title: '未找到对应课程', icon: 'none' });
+    }
     return;
   }
 
@@ -668,14 +714,16 @@ const handleWithdraw = async (index: number) => {
   }
 };
 
-onShow(() => {
+onShow(async () => {
   // Re-entering the proposal tab must always show the default list, not the
   // filter state retained from a previous visit.
   isFilterMode.value = false;
-  fetchProposals(0);
-  // Do not block the default list request on the permission request; refresh
-  // the filter options once the current role is known.
-  checkAdmin().finally(resetFilter);
+  proposals.value = [];
+  currentPage.value = 0;
+  noMore.value = false;
+  await checkAdmin();
+  resetFilter();
+  await fetchDefaultProposals(0);
 });
 
 onPageScroll((e) => {
@@ -694,7 +742,7 @@ const handleLoadMore = () => {
   if (isFilterMode.value) {
     fetchFilteredProposals(nextPage);
   } else {
-    fetchProposals(nextPage);
+    fetchDefaultProposals(nextPage);
   }
 };
 </script>

@@ -2,7 +2,7 @@ export const campusesData = [
   '普陀校区',
   '闵行校区',
   '临港校区',
-  '滴水湖软楼'
+  '滴水湖软件楼'
 ];
 
 export const categoriesData = [

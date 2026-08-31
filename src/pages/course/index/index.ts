@@ -53,7 +53,7 @@ export function useCourse() {
       const profileRes = await http.UserController.userUsernameDetail(String(userId));
       if (profileRes.data?.code === 0) {
         const profile: any = profileRes.data.data || profileRes.data;
-        contributor.value = profile?.username || '/';
+        contributor.value = String(profile?.username || '').trim() || '默认用户';
       }
     } catch (err) {
       console.error('[useCourse] fetch contributor profile error:', err);
