@@ -563,7 +563,7 @@ const submit = async () => {
                         name: t.name,
                         title: (t as any).title || '',
                         department: t.department || '',
-                        teacherId: (t as any).teacherId || ''
+                        id: (t as any).teacherId || ''
                     }))
                 }
             };
@@ -593,7 +593,7 @@ const submit = async () => {
                         name: t.name,
                         title: (t as any).title || '',
                         department: t.department || '',
-                        teacherId: (t as any).teacherId || ''
+                        id: (t as any).teacherId || ''
                     })),
                     campuses: formData.campuses
                 },

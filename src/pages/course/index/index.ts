@@ -2,19 +2,6 @@ import type { DtoCourseVO, DtoTeacherVO } from "@/api/data-contracts";
 import { useCourseStore } from "@/config";
 
 type CourseData = { data: DtoCourseVO };
-type CourseWithProposal = DtoCourseVO & {
-  proposalId?: string;
-  proposal_id?: string;
-  sourceProposalId?: string;
-  userId?: string;
-  user_id?: string;
-  showUsername?: boolean;
-  show_username?: boolean;
-  proposal?: {
-    userId?: string;
-    showUsername?: boolean;
-  };
-};
 
 export function useCourse() {
   const id = ref("");
@@ -23,41 +10,14 @@ export function useCourse() {
   const trends = shallowRef<DtoCourseVO[]>([]);
   const contributor = ref('/');
 
-  async function fetchContributor(courseData: CourseWithProposal) {
-    contributor.value = '/';
-
-    let proposal = courseData.proposal;
-    const proposalId = courseData.proposalId || courseData.proposal_id || courseData.sourceProposalId;
-    const directShowUsername = courseData.showUsername ?? courseData.show_username;
-
-    if (directShowUsername === false || proposal?.showUsername === false) return;
-
-    if (!proposal && proposalId) {
-      try {
-        const proposalRes = await http.ProposalController.proposalDetail(proposalId);
-        if (proposalRes.data?.code === 0) {
-          const responseData: any = proposalRes.data;
-          proposal = responseData.data?.proposal || responseData.proposal;
-        }
-      } catch (err) {
-        console.error('[useCourse] fetch proposal contributor settings error:', err);
-        return;
-      }
+  function setContributor(courseData: DtoCourseVO) {
+    const contributorData = courseData.contributor;
+    if (contributorData?.showUsername !== true) {
+      contributor.value = '/';
+      return;
     }
 
-    const showUsername = proposal?.showUsername ?? directShowUsername;
-    const userId = proposal?.userId || courseData.userId || courseData.user_id;
-    if (showUsername !== true || !userId) return;
-
-    try {
-      const profileRes = await http.UserController.userUsernameDetail(String(userId));
-      if (profileRes.data?.code === 0) {
-        const profile: any = profileRes.data.data || profileRes.data;
-        contributor.value = String(profile?.username || '').trim() || '默认用户';
-      }
-    } catch (err) {
-      console.error('[useCourse] fetch contributor profile error:', err);
-    }
+    contributor.value = String(contributorData.username || '').trim() || '默认用户';
   }
 
   async function fetch(data: string) {
@@ -73,7 +33,7 @@ export function useCourse() {
         course.value = {
           data: courseData,
         };
-        await fetchContributor(courseData as CourseWithProposal);
+        setContributor(courseData as DtoCourseVO);
       }
 
       const _link = course.value.data?.link ?? [];
