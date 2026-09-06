@@ -14,6 +14,7 @@
       <p class="text">{{ text10 }}</p>
       <p class="text">{{ text11 }}</p>
       <p class="text">{{ text12 }}</p>
+      <p class="text">{{ text13 }}</p>
     </view>
   </view>
 </template>
@@ -35,7 +36,8 @@ const text8 = ``;
 const text9 = `未来，我们还计划逐步推出更多功能，`;
 const text10 = `包括大家期待已久的「新增课程和老师」功能等。`;
 const text11 = `感谢大家一直以来对选课猫的喜爱与支持 ❤`;
-const text12 = `选课猫团队 2025年10月13日`;
+const text12 = `欢迎加入选课猫官方反馈QQ群：344213052，期待您的建议与反馈`;
+const text13 = `选课猫团队 2025年10月13日`;
 </script>
 
 <style scoped lang="scss">
