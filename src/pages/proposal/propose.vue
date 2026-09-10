@@ -551,10 +551,12 @@ const submit = async () => {
 
     try {
         if (isApproveMode.value && approveProposalId.value) {
+            const approvedCourseName = formData.courseName.trim();
             const approveBody = {
                 proposalID: approveProposalId.value,
+                title: approvedCourseName,
                 finalCourse: {
-                    name: formData.courseName.trim(),
+                    name: approvedCourseName,
                     code: (formData.courseCode || '').trim().toUpperCase(),
                     department: formData.department,
                     category: formData.category,

@@ -221,11 +221,13 @@ const showSearchModal = ref(false);
 const showRejectModal = ref(false);
 const rejectTargetId = ref('');
 const currentField = ref('');
-const currentPage = ref(0);
+const FIRST_PAGE = 1;
+const currentPage = ref(FIRST_PAGE);
 const pageSize = 10;
 const noMore = ref(false);
 const isFilterMode = ref(false);
 let searchTimer: ReturnType<typeof setTimeout> | null = null;
+let preserveQueryOnNextShow = false;
 
 const statusOptions = [
   { label: '待审核', value: 'pending' },
@@ -291,12 +293,43 @@ const checkAdmin = async () => {
   }
 };
 
+const normalizeId = (value: unknown): string => {
+  if (typeof value === 'string' || typeof value === 'number') {
+    return String(value);
+  }
+  if (value && typeof value === 'object') {
+    const objectId = value as Record<string, unknown>;
+    return normalizeId(objectId.$oid || objectId.oid || objectId.value);
+  }
+  return '';
+};
+
+const getCourseObjectId = (course: any): string => normalizeId(
+  course?.id || course?._id || course?.courseId || course?.courseID || course?.course_id
+);
+
+/**
+ * Approved proposals may expose their formal course in different shapes between
+ * list and detail endpoints. Read the explicit relationship first, then fall
+ * back to the approved course object returned by the public list.
+ */
+const getProposalCourseId = (proposal: any): string => {
+  const finalCourse = proposal?.finalCourse || proposal?.final_course ||
+    proposal?.approvedCourse || proposal?.approved_course;
+  const explicitId = proposal?.finalCourseId || proposal?.finalCourseID ||
+    proposal?.final_course_id || proposal?.approvedCourseId ||
+    proposal?.approved_course_id || proposal?.courseId ||
+    proposal?.courseID || proposal?.course_id;
+
+  return getCourseObjectId(finalCourse) || normalizeId(explicitId) ||
+    (proposal?.status === 'approved' ? getCourseObjectId(proposal?.course) : '');
+};
+
 const mapProposalItem = (item: any): Proposal => {
-  // Public lists contain approved proposals only for regular users. Prefer the
-  // final course when the API returns it so administrators see what was approved.
   const originalCourse = item.course || {};
   const finalCourse = item.finalCourse || item.final_course;
-  const course = finalCourse || originalCourse;
+  // 已通过提案展示审批后的正式课程；待审核和已拒绝提案展示用户原始填写内容。
+  const course = item.status === 'approved' && finalCourse ? finalCourse : originalCourse;
   const courseValue = (courseData: any, field: 'name' | 'campus' | 'department' | 'category' | 'teachers') => {
     if (field === 'campus') return Array.isArray(courseData?.campuses) ? courseData.campuses.join('、') : '';
     if (field === 'teachers') {
@@ -306,7 +339,8 @@ const mapProposalItem = (item: any): Proposal => {
     }
     return courseData?.[field] || '';
   };
-  const changedFields = finalCourse ? {
+  // 只有管理员需要在卡片上标记审批前后的字段差异。
+  const changedFields = isAdmin.value && item.status === 'approved' && finalCourse ? {
     name: courseValue(originalCourse, 'name') !== courseValue(finalCourse, 'name'),
     campus: courseValue(originalCourse, 'campus') !== courseValue(finalCourse, 'campus'),
     department: courseValue(originalCourse, 'department') !== courseValue(finalCourse, 'department'),
@@ -323,9 +357,7 @@ const mapProposalItem = (item: any): Proposal => {
       : '',
     category: course.category || '',
     creatorId: item.userId || '',
-    finalCourseId: item.finalCourse?.id || item.final_course?.id || item.finalCourseId ||
-      item.final_course_id || item.courseId || item.course_id ||
-      (item.status === 'approved' ? course.id : ''),
+    finalCourseId: getProposalCourseId(item),
     status: item.status || 'pending',
     changedFields
   };
@@ -336,30 +368,7 @@ const mapVisibleProposals = (items: any[]): Proposal[] => items
   .map(mapProposalItem)
   .filter(item => isAdmin.value || item.status === 'approved');
 
-const fillFinalCourses = async (items: any[]) => {
-  const details = await Promise.all(items.map(async (item) => {
-    if (item?.status !== 'approved' || item.finalCourse || item.final_course || !item.id) {
-      return item;
-    }
-
-    try {
-      const res = await http.ProposalController.proposalDetail(item.id);
-      if (res.data?.code === 0) {
-        const proposal = res.data.data?.proposal || res.data?.proposal;
-        if (proposal?.finalCourse || proposal?.final_course) {
-          return { ...item, ...proposal };
-        }
-      }
-    } catch (err) {
-      console.error('[API] 获取最终课程信息失败:', err);
-    }
-    return item;
-  }));
-
-  return details;
-};
-
-const fetchProposals = async (page: number = 0) => {
+const fetchProposals = async (page: number = FIRST_PAGE) => {
   if (loading.value) return;
   loading.value = true;
 
@@ -371,9 +380,9 @@ const fetchProposals = async (page: number = 0) => {
 
     if (res.data?.code === 0) {
       const responseData = res.data.data || res.data;
-      const list = await fillFinalCourses(responseData?.proposals || []);
+      const list = responseData?.proposals || [];
       const mapped = mapVisibleProposals(list);
-      if (page === 0) {
+      if (page === FIRST_PAGE) {
         proposals.value = mapped;
       } else {
         proposals.value = [...proposals.value, ...mapped];
@@ -393,7 +402,7 @@ const fetchProposals = async (page: number = 0) => {
     }
   } catch (err) {
     console.error('[API] 获取提案列表失败:', err);
-    if (page === 0) {
+    if (page === FIRST_PAGE) {
       proposals.value = [];
       noMore.value = true;
     }
@@ -402,12 +411,13 @@ const fetchProposals = async (page: number = 0) => {
   }
 };
 
-const fetchFilteredProposals = async (page: number = 0) => {
+const fetchSuggestedProposals = async (page: number = FIRST_PAGE) => {
   if (loading.value) return;
   loading.value = true;
 
   try {
     const query: {
+      keyword?: string;
       status: string[];
       campus: string[];
       department?: string;
@@ -420,25 +430,27 @@ const fetchFilteredProposals = async (page: number = 0) => {
       page,
       pageSize
     };
+    const keyword = searchKeyword.value.trim();
     const department = filterForm.value.department.trim();
     const category = filterForm.value.category.trim();
+    if (keyword) query.keyword = keyword;
     if (department) query.department = department;
     if (category) query.category = category;
 
-    const res = await http.ProposalController.proposalFilterList(query);
+    const res = await http.ProposalController.proposalSuggestList(query);
 
     if (res.data?.code === 0) {
       const responseData = res.data.data || res.data;
-      const list = await fillFinalCourses(responseData?.proposals || []);
+      const list = responseData?.proposals || [];
       const mapped = mapVisibleProposals(list);
-      if (page === 0) {
+      if (page === FIRST_PAGE) {
         proposals.value = mapped;
       } else {
         proposals.value = [...proposals.value, ...mapped];
       }
       const total = responseData?.total;
       const hasValidTotal = typeof total === 'number' && total >= proposals.value.length;
-      noMore.value = isAdmin.value && hasValidTotal
+      noMore.value = hasValidTotal
         ? proposals.value.length >= total
         : list.length < pageSize;
       currentPage.value = page;
@@ -447,8 +459,8 @@ const fetchFilteredProposals = async (page: number = 0) => {
       noMore.value = true;
     }
   } catch (err) {
-    console.error('[API] 筛选提案失败:', err);
-    if (page === 0) {
+    console.error('[API] 搜索或筛选提案失败:', err);
+    if (page === FIRST_PAGE) {
       proposals.value = [];
       noMore.value = true;
     }
@@ -457,9 +469,13 @@ const fetchFilteredProposals = async (page: number = 0) => {
   }
 };
 
-const fetchDefaultProposals = (page: number = 0) => {
-  return isAdmin.value ? fetchProposals(page) : fetchFilteredProposals(page);
+const fetchDefaultProposals = (page: number = FIRST_PAGE) => {
+  return isAdmin.value ? fetchProposals(page) : fetchSuggestedProposals(page);
 };
+
+const shouldUseSuggest = () => (
+  !isAdmin.value || isFilterMode.value || Boolean(searchKeyword.value.trim())
+);
 
 const handleSearchDebounce = () => {
   if (searchTimer) clearTimeout(searchTimer);
@@ -468,68 +484,25 @@ const handleSearchDebounce = () => {
   }, 500);
 };
 
-const handleSearchConfirm = async () => {
-  const keyword = searchKeyword.value.trim();
-  if (!keyword) {
-    isFilterMode.value = false;
-    currentPage.value = 0;
-    noMore.value = false;
-    fetchDefaultProposals(0);
-    return;
-  }
-
-  loading.value = true;
-  try {
-    const res = await http.ProposalController.proposalSuggestList({
-      keyword,
-      page: 0,
-      pageSize: 50
-    });
-
-    if (res.data?.code === 0) {
-      const suggestData = res.data.data || res.data;
-      const suggestions = suggestData?.suggestions || [];
-      if (suggestions.length > 0) {
-        const ids = suggestions.map((s: any) => s.id).filter(Boolean);
-        if (ids.length > 0) {
-          const detailPromises = ids.map((id: string) => 
-            http.ProposalController.proposalDetail(id).catch(() => null)
-          );
-          const results = await Promise.all(detailPromises);
-          proposals.value = results
-            .filter((r: any) => r?.data?.code === 0)
-            .map((r: any) => {
-              const proposal = r.data?.proposal || r.data?.data?.proposal;
-              return proposal ? mapProposalItem(proposal) : null;
-            })
-            .filter((item: Proposal | null): item is Proposal => (
-              Boolean(item) && (isAdmin.value || item?.status === 'approved')
-            ));
-        } else {
-          proposals.value = [];
-        }
-      } else {
-        proposals.value = [];
-      }
-    } else {
-      proposals.value = [];
-    }
-    noMore.value = true;
-  } catch (err) {
-    console.error('[API] 搜索提案失败:', err);
-    proposals.value = [];
-    noMore.value = true;
-  } finally {
-    loading.value = false;
+const handleSearchConfirm = () => {
+  currentPage.value = FIRST_PAGE;
+  noMore.value = false;
+  if (shouldUseSuggest()) {
+    fetchSuggestedProposals(FIRST_PAGE);
+  } else {
+    fetchProposals(FIRST_PAGE);
   }
 };
 
 const clearSearch = () => {
   searchKeyword.value = '';
-  isFilterMode.value = false;
-  currentPage.value = 0;
+  currentPage.value = FIRST_PAGE;
   noMore.value = false;
-  fetchDefaultProposals(0);
+  if (shouldUseSuggest()) {
+    fetchSuggestedProposals(FIRST_PAGE);
+  } else {
+    fetchProposals(FIRST_PAGE);
+  }
 };
 
 const toggleStatus = (status: string) => {
@@ -578,9 +551,9 @@ const resetFilter = () => {
 const applyFilter = () => {
   showFilterModal.value = false;
   isFilterMode.value = true;
-  currentPage.value = 0;
+  currentPage.value = FIRST_PAGE;
   noMore.value = false;
-  fetchFilteredProposals(0);
+  fetchSuggestedProposals(FIRST_PAGE);
 };
 
 const getStatusText = (status: string) => {
@@ -592,35 +565,29 @@ const getStatusText = (status: string) => {
   return statusMap[status] || status;
 };
 
-const goToDetail = async (item: Proposal) => {
-  if (!isAdmin.value) {
-    let courseId = item.finalCourseId;
-
-    if (!courseId && item.id) {
-      try {
-        const res = await http.ProposalController.proposalDetail(item.id);
-        const proposal = res.data?.data?.proposal || res.data?.proposal;
-        courseId = proposal?.finalCourse?.id || proposal?.final_course?.id ||
-          proposal?.finalCourseId || proposal?.final_course_id ||
-          proposal?.courseId || proposal?.course_id;
-      } catch (err) {
-        console.error('[API] 获取提案对应课程失败:', err);
-      }
+const navigateFromProposalCard = (url: string) => {
+  preserveQueryOnNextShow = true;
+  uni.navigateTo({
+    url,
+    fail: () => {
+      preserveQueryOnNextShow = false;
     }
+  });
+};
 
-    if (courseId) {
-      uni.navigateTo({
-        url: `/pages/course/index/index?id=${courseId}`
-      });
+const goToDetail = (item: Proposal) => {
+  if (!isAdmin.value) {
+    if (item.finalCourseId) {
+      navigateFromProposalCard(`/pages/course/index/index?id=${item.finalCourseId}`);
     } else {
       uni.showToast({ title: '未找到对应课程', icon: 'none' });
     }
     return;
   }
 
-  uni.navigateTo({
-    url: `/pages/proposal/detail?id=${item.id}&data=${encodeURIComponent(JSON.stringify(item))}`
-  });
+  navigateFromProposalCard(
+    `/pages/proposal/detail?id=${item.id}&data=${encodeURIComponent(JSON.stringify(item))}`
+  );
 };
 
 const goToPropose = () => {
@@ -663,8 +630,8 @@ const handleRejectConfirm = async (reason: string) => {
 
     if (res.data?.code === 0) {
       uni.showToast({ title: '已拒绝', icon: 'success' });
-      if (isFilterMode.value) {
-        fetchFilteredProposals(currentPage.value);
+      if (shouldUseSuggest()) {
+        fetchSuggestedProposals(currentPage.value);
       } else {
         fetchProposals(currentPage.value);
       }
@@ -700,8 +667,8 @@ const handleWithdraw = async (index: number) => {
 
     if (res.data?.code === 0) {
       uni.showToast({ title: '已撤回', icon: 'success' });
-      if (isFilterMode.value) {
-        fetchFilteredProposals(currentPage.value);
+      if (shouldUseSuggest()) {
+        fetchSuggestedProposals(currentPage.value);
       } else {
         fetchProposals(currentPage.value);
       }
@@ -715,15 +682,28 @@ const handleWithdraw = async (index: number) => {
 };
 
 onShow(async () => {
-  // Re-entering the proposal tab must always show the default list, not the
-  // filter state retained from a previous visit.
+  // 从卡片详情返回时保留当前列表、搜索词、筛选条件和分页位置。
+  if (preserveQueryOnNextShow) {
+    preserveQueryOnNextShow = false;
+    return;
+  }
+
+  // 从其他入口重新进入提案列表时恢复默认查询状态。
+  if (searchTimer) {
+    clearTimeout(searchTimer);
+    searchTimer = null;
+  }
+  searchKeyword.value = '';
   isFilterMode.value = false;
+  showFilterModal.value = false;
+  showSearchModal.value = false;
+  currentField.value = '';
   proposals.value = [];
-  currentPage.value = 0;
+  currentPage.value = FIRST_PAGE;
   noMore.value = false;
   await checkAdmin();
   resetFilter();
-  await fetchDefaultProposals(0);
+  await fetchDefaultProposals(FIRST_PAGE);
 });
 
 onPageScroll((e) => {
@@ -737,10 +717,10 @@ const handleContentScroll = (e: any) => {
 };
 
 const handleLoadMore = () => {
-  if (loading.value || noMore.value || searchKeyword.value.trim()) return;
+  if (loading.value || noMore.value) return;
   const nextPage = currentPage.value + 1;
-  if (isFilterMode.value) {
-    fetchFilteredProposals(nextPage);
+  if (shouldUseSuggest()) {
+    fetchSuggestedProposals(nextPage);
   } else {
     fetchDefaultProposals(nextPage);
   }

@@ -1,5 +1,6 @@
 import type {
   DtoSearchHistoryVO,
+  DtoSearchSuggestionsVO,
   DtoCommentVO,
   DtoCourseVO,
   DtoTeacherVO
@@ -50,6 +51,7 @@ type choose = {
 };
 
 export function useSuggest() {
+  const SUGGEST_PAGE_SIZE = 10;
   const keyword = shallowRef("");
   const type = shallowRef<"course" | "teacher" | "comment" | "post">("course");
   const rows = ref<choose>({
@@ -59,7 +61,10 @@ export function useSuggest() {
     post: []
   });
   const suggestList = ref<any[]>([]);
-  const page = ref(0);
+  const page = ref(1);
+  const suggestLoading = ref(false);
+  const suggestNoMore = ref(false);
+  let requestVersion = 0;
 
   function jump(id: string) {
     // map[type.value].setData(item)
@@ -81,40 +86,62 @@ export function useSuggest() {
   //     }
   // }
 
-  function suggestContent() {
-    if (!keyword.value) return;
+  async function suggestContent(targetPage: number, reset: boolean) {
+    const currentKeyword = keyword.value.trim();
+    if (!currentKeyword || suggestLoading.value) return;
 
-    http.SearchController.searchSuggestList({
-      keyword: keyword.value
-    }).then((res) => {
+    const version = ++requestVersion;
+    suggestLoading.value = true;
+    try {
+      const res = await http.SearchController.searchSuggestList({
+        keyword: currentKeyword,
+        page: targetPage,
+        pageSize: SUGGEST_PAGE_SIZE
+      });
+      if (version !== requestVersion || currentKeyword !== keyword.value.trim()) return;
+
       console.log('[DEBUG] searchSuggest response:', JSON.stringify(res.data));
-      const suggestions = res.data?.suggestions || res.data.data?.suggestions || res.data.data?.data?.suggestions || [];
+      const suggestions: DtoSearchSuggestionsVO[] = res.data?.suggestions ||
+        res.data.data?.suggestions || res.data.data?.data?.suggestions || [];
 
-      const mapped = suggestions.map((item: any, index: number) => ({
-        data: item.name || '',
-        type: item.type || 'course',
-        id: `${item.type || 'course'}-${item.name || ''}-${index}`
-      }));
-
-      const unique = mapped.filter(
-        (item, index, self) =>
-          index === self.findIndex(
-            (t) => t.type === item.type && t.data === item.data
-          )
+      // 后端已按匹配度统一排序，前端按分页顺序追加，不按建议类型重排。
+      const mapped = suggestions
+        .filter(item => Boolean(item.searchValue))
+        .map(item => ({
+          data: item.searchValue!,
+          type: item.type || 'course',
+          id: `${item.type || 'course'}-${item.searchValue}`
+        }));
+      const combined = reset ? mapped : [...suggestList.value, ...mapped];
+      suggestList.value = combined.filter(
+        (item, index, self) => index === self.findIndex(
+          candidate => candidate.type === item.type && candidate.data === item.data
+        )
       );
-
-      suggestList.value = unique;
-    }).catch((err) => {
-      console.error('[API] 搜索建议失败:', err);
-    });
+      page.value = targetPage;
+      suggestNoMore.value = suggestions.length < SUGGEST_PAGE_SIZE;
+    } catch (err) {
+      if (version === requestVersion) {
+        console.error('[API] 搜索建议失败:', err);
+        if (reset) suggestList.value = [];
+      }
+    } finally {
+      if (version === requestVersion) suggestLoading.value = false;
+    }
   }
 
-  watch([page], () => {
-    suggestContent();
-  });
+  function loadMoreSuggestions() {
+    if (suggestLoading.value || suggestNoMore.value || !keyword.value.trim()) return;
+    suggestContent(page.value + 1, false);
+  }
+
   watch([keyword, type], () => {
+    requestVersion++;
     suggestList.value = [];
-    suggestContent();
+    page.value = 1;
+    suggestNoMore.value = false;
+    suggestLoading.value = false;
+    if (keyword.value.trim()) suggestContent(1, true);
   });
 
   return {
@@ -123,7 +150,10 @@ export function useSuggest() {
     rows,
     page,
     jump,
-    suggestList
+    suggestList,
+    suggestLoading,
+    suggestNoMore,
+    loadMoreSuggestions
   };
 }
 

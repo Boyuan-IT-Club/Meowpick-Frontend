@@ -16,9 +16,14 @@
         @click="jump2List(keyword, 'course')"
       />
     </view>
-    <scroll v-if="isVisible && searchText" class="search-list" @bottom="bottom">
-      <ul>
-        <li
+    <scroll-view
+      v-if="isVisible && searchText"
+      scroll-y
+      class="search-list"
+      :lower-threshold="80"
+      @scrolltolower="bottom"
+    >
+        <view
           v-for="item in suggestList"
           :key="item.id"
           class="search-item"
@@ -36,9 +41,12 @@
             <view class="name">{{ item.data }}</view>
           </view>
           <view class="line" />
-        </li>
-      </ul>
-    </scroll>
+        </view>
+        <view v-if="suggestLoading" class="suggest-state">加载中...</view>
+        <view v-else-if="suggestNoMore && suggestList.length > 0" class="suggest-state">没有更多了</view>
+        <view v-else-if="suggestNoMore && suggestList.length === 0" class="suggest-state">暂无匹配结果</view>
+        <view class="suggest-bottom-spacer" />
+    </scroll-view>
   </view>
 </template>
 
@@ -56,7 +64,13 @@ const emit = defineEmits<{
 }>();
 
 const { searchText, placeHolder, list, searchHistory, text } = useInput();
-const { keyword, type, rows, page, jump, suggestList } = useSuggest();
+const {
+  keyword,
+  suggestList,
+  suggestLoading,
+  suggestNoMore,
+  loadMoreSuggestions
+} = useSuggest();
 
 const isVisible = ref(false);
 function handleInput() {
@@ -100,7 +114,7 @@ const GoBack = () => {
 };
 
 const bottom = () => {
-  page.value++;
+  loadMoreSuggestions();
 };
 
 const jump2List = (keyword: string, type: string) => {
@@ -151,7 +165,7 @@ const jump2List = (keyword: string, type: string) => {
   position: absolute;
   background-color: #ffffff;
   width: 100vw;
-  height: 216vw;
+  height: calc(100vh - 58vw - env(safe-area-inset-bottom));
   z-index: 99;
   .search-item {
     display: flex;
@@ -208,6 +222,15 @@ const jump2List = (keyword: string, type: string) => {
       background-color: #ebebeb;
       margin-top: 3vw;
     }
+  }
+  .suggest-state {
+    padding: 5vw 0;
+    color: #999999;
+    font-size: 3.2vw;
+    text-align: center;
+  }
+  .suggest-bottom-spacer {
+    height: 22vw;
   }
 }
 </style>
